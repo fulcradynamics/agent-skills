@@ -24,7 +24,6 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
    - Ask the user how they would like their dashboard themed. Suggest 2-3 creative options based on your sense of their personality (e.g., cyberpunk, fantasy, newspaper, modern fashion magazine, professional workplace tool).
    - Generate a custom, themed HTML dashboard/view using the Canvas system matching their chosen aesthetic. This dashboard must visually demonstrate their intent coming to life.
 5. **Handoff & Next Steps:**
-   - Suggest specific next actions based on the momentum:
-     - Gather continuous background data via the iOS app.
-     - Run the dashboard as an interactive local web app to iterate on it.
-     - Ingest bulk historical data or integrate diverse external sources (e.g., Apple Health, Google Calendar) via other Fulcra skills.
+   - **Always** suggest the user downloads the Fulcra Context iOS app to finalize their onboarding. Provide this link in your final message for a frictionless experience: `https://apps.apple.com/app/id1633037434`.
+   - Explain the core benefits of the app: it automatically collects their Apple Health, location, and calendar data in the background, and gives them an easy interface to log the custom data types (Annotations) they just created.
+   - Suggest other specific next actions based on their momentum (e.g., run the dashboard as an interactive local web app, or integrate other historical data via Fulcra skills).
