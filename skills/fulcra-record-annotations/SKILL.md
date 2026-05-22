@@ -54,7 +54,7 @@ Used for logging the occurrence of an event without a specific value.
 ```
 
 #### 3. Numeric Annotation
-Used for logging a specific quantity or number.
+Used for logging a specific quantity or number. The `value` should be a float or integer.
 ```json
 {
   "metadata": {
@@ -66,12 +66,12 @@ Used for logging a specific quantity or number.
       "com.fulcradynamics.annotation.<ANNOTATION_ID>"
     ]
   },
-  "data": "{\"note\":\"Recorded 15 pushups.\",\"value\":15}"
+  "data": "{\"note\":\"Recorded 15.5 miles run.\",\"value\":15.5}"
 }
 ```
 
 #### 4. Boolean Annotation
-Used for logging a Yes/No or True/False state.
+Used for logging a Yes/No or True/False state. The `value` must be a boolean (`true` or `false`).
 ```json
 {
   "metadata": {
