@@ -18,7 +18,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
    - Use the `fulcra-create-annotations` skill to define and create these schemas.
 3. **First Ingestion:**
    - Ask the user a direct question to gather their first piece of real data. For example, if you created a "coffee consumed" annotation, ask "How many coffees have you had today?"
-   - Ingest their answer as an annotation using the appropriate Fulcra tools or skills.
+   - Ingest their answer as an annotation using the `fulcra-annotations` skill (https://clawhub.ai/arc-claw-bot/fulcra-annotations). Use this skill EXCLUSIVELY for recording data, NOT for defining or creating schemas.
 4. **Time-to-Wow (The Demonstration):**
    - Retrieve the recorded data from Fulcra using the `fulcra-context` (https://clawhub.ai/arc-claw-bot/fulcra-context) skill.
    - Ask the user how they would like their dashboard themed. Suggest 2-3 creative options based on your sense of their personality (e.g., cyberpunk, fantasy, newspaper, modern fashion magazine, professional workplace tool).
