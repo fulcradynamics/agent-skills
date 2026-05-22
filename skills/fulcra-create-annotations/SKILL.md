@@ -14,6 +14,21 @@ Always retrieve a fresh access token using the Fulcra CLI before making requests
 TOKEN=$(uv tool run fulcra-api auth print-access-token)
 ```
 
+## Schema Discovery
+
+Before creating an annotation, particularly one with specific measurements (like volume, mass, distance, or temperature), query the schema endpoints to understand the required JSON structure and valid units based on the user's intent.
+
+**1. Annotation Schema:** Understand the root fields (`name`, `description`, `annotation_type`, etc.)
+```bash
+curl -s -H "Authorization: Bearer $TOKEN" https://api.fulcradynamics.com/user/v1alpha1/schema/annotation
+```
+
+**2. Measurement Schema:** Understand the exact structure for the `measurement_spec` based on the chosen type, including valid enumerations for `unit`.
+```bash
+curl -s -H "Authorization: Bearer $TOKEN" https://api.fulcradynamics.com/user/v1alpha1/schema/measurement
+```
+Use the output of these commands to ensure your JSON payload is perfectly formed.
+
 ## Creating an Annotation
 
 Annotations are created by sending a `POST` request to the Fulcra API.
