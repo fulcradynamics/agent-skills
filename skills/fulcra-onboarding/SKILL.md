@@ -25,9 +25,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
    - Once they answer, record their response into Fulcra by reading and following the instructions in `skills/fulcra-record-annotations/SKILL.md`.
 
 5. **Time-to-Wow (The Demonstration):**
-   - Retrieve the recorded data from Fulcra using the `fulcra-context` (https://clawhub.ai/arc-claw-bot/fulcra-context) skill.
-   - Ask the user how they would like their dashboard themed. Suggest 2-3 creative options based on your sense of their personality (e.g., cyberpunk, fantasy, newspaper, modern fashion magazine, professional workplace tool).
-   - Generate a custom, themed HTML dashboard/view using the Canvas system matching their chosen aesthetic. This dashboard must visually demonstrate their intent coming to life.
+   - Read and execute the instructions in `skills/fulcra-onboarding-demonstration/SKILL.md` to retrieve the recorded data, ask the user for a preferred aesthetic, and generate a custom themed Canvas dashboard.
 
 6. **Handoff & Next Steps:**
    - **App Download (Required):** Always conclude by directing the user to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
