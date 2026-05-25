@@ -11,7 +11,7 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
 
 1. **Retrieve Data:**
    - Retrieve the user's recently recorded data from Fulcra. 
-   - *Note:* Use the `fulcra-context` skill (from https://clawhub.ai/arc-claw-bot/fulcra-context) to fetch this data if available, or use the `fulcra-api` CLI directly if necessary.
+   - **How to retrieve:** Use the `uv tool run fulcra-api get-records` CLI command. This is the most reliable method for accessing raw recorded data. Do *not* use the `fulcra-context` skill or other external tools for this step.
 
 2. **Theme Selection:**
    - Ask the user how they would like their dashboard themed.
