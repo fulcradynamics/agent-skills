@@ -9,14 +9,14 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
 
 ## Workflow
 
-1. **Authentication Check (STRICTLY ISOLATED):**
-   - Verify if the user is currently authenticated with Fulcra.
-   - If not authenticated, run `uv tool run fulcra-api auth login` and guide the user through the device code flow.
-   - **CRITICAL:** Do *not* ask the user about their goals, intent, or what they want to track in the same message as the authentication instructions. Present the auth link and code, and wait for them to complete it. Combining tasks causes friction and user drop-off.
+1. **Intent Discovery (PRE-AUTH):**
+   - *Before* asking the user to authenticate or click any links, engage them to uncover their core intent. What brought them to Fulcra? What do they want to track, remember, or build?
+   - **Keep it frictionless:** Keep your messages extremely short and punchy. Assume the user has a low attention span. Do not send walls of text. Ask one simple, conversational question to get them invested.
 
-2. **Intent Discovery (POST-AUTH ONLY):**
-   - Only *after* authentication is fully complete, engage the user to uncover their core intent. What do they want to track, remember, or build?
-   - **Keep it frictionless:** Keep your messages extremely short and punchy. Assume the user has a low attention span. Do not send walls of text. Ask one simple question at a time.
+2. **Authentication Check (STRICTLY ISOLATED):**
+   - Once the user has shared their intent and is excited about what they are about to build, verify if they are currently authenticated with Fulcra.
+   - If not authenticated, run `uv tool run fulcra-api auth login` and guide the user through the device code flow.
+   - **CRITICAL:** Do *not* combine the authentication instructions with further brainstorming. Present the auth link and code, explain it's the required next step to build what they just asked for, and wait for them to complete it.
 
 3. **Proactive Suggestions:**
    - Suggest simple, concrete examples of how they could use Fulcra (e.g., specific Annotations to track).
