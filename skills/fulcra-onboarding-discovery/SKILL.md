@@ -19,6 +19,7 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
 
 2. **Authentication Check (STRICTLY ISOLATED):**
    - Once the user has shared their intent and is excited about what they are about to build, verify if they are currently authenticated with Fulcra.
+   - **How to verify:** Silently run `uv tool run fulcra-api user-info`. If it returns valid JSON, the user is authenticated. If it returns an error or fails, they are not authenticated.
    - If not authenticated, run `uv tool run fulcra-api auth login` and guide the user through the device code flow.
    - **CRITICAL:** Do *not* combine the authentication instructions with further brainstorming. Present the auth link and code, explain it's the required next step to build what they just asked for, and wait for them to complete it.
 
