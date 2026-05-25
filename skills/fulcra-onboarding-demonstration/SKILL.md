@@ -1,11 +1,11 @@
 ---
 name: fulcra-onboarding-demonstration
-description: "Handles the 'Time-to-Wow' demonstration phase of Fulcra onboarding by generating a custom themed HTML Canvas dashboard visualizing the user's recorded data."
+description: "Handles the 'Time-to-Wow' demonstration phase of Fulcra onboarding by generating a custom themed SVG dashboard visualizing the user's recorded data."
 ---
 
 # Fulcra Onboarding: Demonstration (Time-to-Wow)
 
-This skill handles Step 5 of the onboarding process. The goal is to immediately show the user the value of the data they just modeled and recorded by presenting it in a highly personalized, visual way.
+This skill handles Step 5 of the onboarding process. The goal is to immediately show the user the value of the data they just modeled and recorded by presenting it in a highly personalized, visual way using an inline SVG.
 
 ## Workflow
 
@@ -18,12 +18,12 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
    - Suggest 2-3 creative, distinct options based on your sense of their personality and the data they are tracking (e.g., cyberpunk, fantasy, newspaper, modern fashion magazine, professional workplace tool, retro 8-bit).
    - Keep this interaction brief and engaging.
 
-3. **Generate Canvas Dashboard:**
-   - Once a theme is chosen, generate a custom HTML/CSS dashboard using the OpenClaw Canvas system.
+3. **Generate SVG Dashboard:**
+   - Once a theme is chosen, generate a custom SVG file visualizing the data.
    - Ensure the dashboard visually incorporates the actual data retrieved in Step 1.
-   - Present the Canvas to the user (e.g., using the `[embed ...]` directive or the appropriate canvas tool command).
+   - Present the SVG to the user directly in the chat thread (e.g., by writing it to the workspace and attaching it to your message).
    - The design should heavily reflect their chosen aesthetic and make the data look interesting.
 
 ## Handoff
 
-Once the dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to handle the final App Download handoff.
+Once the SVG dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to handle the final App Download handoff.
