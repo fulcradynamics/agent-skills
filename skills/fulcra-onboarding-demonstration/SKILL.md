@@ -31,7 +31,10 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
      - **Intent-Driven Copy:** Include clever, personalized micro-copy in the dashboard that nods to the user's broader intent and the specific theme.
      - **Visual Extensibility:** Design the layout to explicitly convey that this is a living, expandable surface. Include UI hints like "Empty Slots," grayed-out "Coming Soon" sections, or placeholder modules for other related data types they might want to track in Fulcra next.
    - Ensure the dashboard visually incorporates the actual data retrieved in Step 1.
-   - Present the HTML to the user directly in the chat thread (e.g., by writing it to the workspace and providing a way to view it).
+   - **Bulletproof Presentation:** To avoid permission or rendering errors, present the HTML to the user using this three-pronged approach:
+     1. Save the generated HTML to a file in the workspace (e.g., `fulcra-dashboard.html`).
+     2. Output the absolute path to the saved file and tell the user they can open it directly in their web browser (e.g., `open /absolute/path/to/fulcra-dashboard.html`).
+     3. Provide the full HTML source code in a markdown ` ```html ` block within your response as a final fallback. Do not attempt to reconfigure the agent's canvas or media settings.
 
 ## Handoff
 
