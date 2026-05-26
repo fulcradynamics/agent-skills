@@ -2,11 +2,7 @@
   import AgentChat from './AgentChat.svelte';
   import D3Timeline from './D3Timeline.svelte';
 
-  const annotations = [
-    { time: "2026-05-13T17:26:40Z", label: "Dashboard Scaffolded", details: "Scaffolded SvelteKit base app." },
-    { time: "2026-05-15T16:45:00Z", label: "Milestone Stream Created", details: "Initialized Agent Milestones in Fulcra." },
-    { time: "2026-05-15T16:48:00Z", label: "Theme Applied", details: "Applied CSS and background gradients." }
-  ];
+  const annotations = [];
 
   // Helper to format timestamps
   function formatTime(isoString) {
