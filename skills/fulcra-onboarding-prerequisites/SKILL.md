@@ -1,5 +1,5 @@
 ---
-name: fulcra-prerequisites
+name: fulcra-onboarding-prerequisites
 description: "Verifies and sets up the required environment for Fulcra, including ensuring the 'uv' package manager is installed."
 ---
 

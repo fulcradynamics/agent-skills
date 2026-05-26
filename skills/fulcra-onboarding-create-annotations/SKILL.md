@@ -1,5 +1,5 @@
 ---
-name: fulcra-create-annotations
+name: fulcra-onboarding-create-annotations
 description: "Define and create custom data types and schemas (Annotations) in Fulcra using CURL during user onboarding."
 ---
 
