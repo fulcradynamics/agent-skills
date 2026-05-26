@@ -5,6 +5,8 @@ description: "Handles the initial discovery and authentication phase for new Ful
 
 # Fulcra Onboarding: Discovery
 
+**Tone Reminder:** Keep the energy high! Use emojis when suggesting ideas, and maintain a conversational, exciting vibe that hints at the vast possibilities of what they can build.
+
 This skill handles the first phase of the Fulcra onboarding process (Step 1). Its primary goals are to ensure the user is authenticated and to rapidly identify how Fulcra can be most useful to them right now.
 
 ## Workflow
