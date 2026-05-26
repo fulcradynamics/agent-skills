@@ -40,7 +40,7 @@
     </section>
   </div>
   
-  <ControlUI />
+  <AgentChat />
 </main>
 
 <style>

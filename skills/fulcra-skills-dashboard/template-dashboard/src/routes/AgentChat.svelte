@@ -91,6 +91,7 @@
     <div class="status-indicator" class:active={!isTyping} class:typing={isTyping}></div>
   </div>
 
+  <!-- 
   <div class="suggestions-panel">
     <div class="suggestions-title">Available Skills</div>
     <div class="suggestions-grid">
@@ -102,6 +103,7 @@
       {/each}
     </div>
   </div>
+  -->
 
   <div class="chat-window" bind:this={chatWindow}>
     {#each messages as msg}
