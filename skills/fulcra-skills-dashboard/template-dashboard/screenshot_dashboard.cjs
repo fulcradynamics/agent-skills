@@ -9,6 +9,6 @@ const puppeteer = require('puppeteer-core');
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 1000 });
   await page.goto('http://localhost:5175', { waitUntil: 'networkidle2' });
-  await page.screenshot({ path: 'dashboard_swamp.png', fullPage: true });
+  await page.screenshot({ path: 'dashboard.png', fullPage: true });
   await browser.close();
 })();

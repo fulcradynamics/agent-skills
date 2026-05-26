@@ -5,7 +5,7 @@
   const annotations = [
     { time: "2026-05-13T17:26:40Z", label: "Dashboard Scaffolded", details: "Scaffolded SvelteKit base app." },
     { time: "2026-05-15T16:45:00Z", label: "Milestone Stream Created", details: "Initialized Agent Milestones in Fulcra." },
-    { time: "2026-05-15T16:48:00Z", label: "Swamp Theme Applied", details: "Applied CSS and background gradients." }
+    { time: "2026-05-15T16:48:00Z", label: "Theme Applied", details: "Applied CSS and background gradients." }
   ];
 
   // Helper to format timestamps
@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-  <title>Fulcra Swamp Dashboard</title>
+  <title>Fulcra Dashboard</title>
 </svelte:head>
 
 <main class="dashboard-container">

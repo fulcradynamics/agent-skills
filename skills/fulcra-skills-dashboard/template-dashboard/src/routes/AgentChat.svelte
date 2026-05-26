@@ -130,7 +130,7 @@
 <style>
   /* 
     Agents: These styles are modular but should be adapted to fit the user's chosen theme!
-    For example, in the Swamp theme, change borders to #5a7d65 and backgrounds to #14281e. 
+    For example, in a Cyberpunk theme, change borders to #ff00ff and backgrounds to #0a0a0a. 
   */
   .agent-chat-container {
     position: fixed;
