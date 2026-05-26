@@ -40,7 +40,8 @@ As part of this skill, after the dashboard is scaffolded, **you MUST prompt the 
    - **Go all out:** Honor the user's theme to the max. Use the `image_generate` tool to create background textures, decorative UI elements, or thematic hero images and save them to `src/lib/assets/` to include in the dashboard.
    - **Animations:** Inject CSS animations (glows, pulsing borders, scrolling backgrounds, or enter-transitions) to make the dashboard feel alive and highly polished.
 3. **Data Ingestion:** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI. 
-   - If the user previously set up custom Annotations during the `fulcra-onboarding` flow, you must fetch and display the data for *those* specific annotations instead of generic milestones.
+   - **Discover Annotations:** Silently run `uv tool run fulcra-api catalog` to check for any user-created annotations. Annotation data types will be identified by the pattern `*Annotation/${ANNOTATION_ID}` (e.g., `Annotation/00000000-0000-0000-0000-000000000000`).
+   - If the user has custom Annotations (either from the `fulcra-onboarding` flow or found via the catalog check), you must fetch and display the data for *those* specific annotations instead of generic milestones.
    - Inject this data into the dashboard's `src/lib/data` or `static/data` folder, or directly into the Svelte components.
 4. **Run:** Start the dev server.
    ```bash
