@@ -34,7 +34,9 @@ As part of this skill, after the dashboard is scaffolded, **you MUST prompt the 
 ## Workflow
 
 1. **Scaffold:** The script copies a clean, un-styled SvelteKit dashboard template (which includes the OpenClaw Control UI embed and D3 timeline components) and installs dependencies.
-2. **Theming (Agent Task):** Because the scaffolded dashboard is deliberately un-styled, you should immediately ask the user what sort of "theme" or "vibe" they want for their dashboard (e.g., minimalist dark mode, cyberpunk, a swamp, a space station). Once they decide, directly edit `src/routes/+page.svelte` and `src/routes/D3Timeline.svelte` to apply CSS that matches their requested theme!
+2. **Theming (Agent Task):** Because the scaffolded dashboard is deliberately un-styled, you must heavily stylize it based on the user's preference. 
+   - **Theme Discovery:** If the user already established a theme in a previous step (e.g., during the `fulcra-onboarding` HTML dashboard generation), you must automatically carry over that exact theme, aesthetic, and visual language to this new SvelteKit dashboard. If no previous theme exists, immediately ask the user what "theme" or "vibe" they want (e.g., minimalist dark mode, cyberpunk, a swamp, a space station). 
+   - **Apply the Theme:** Directly edit `src/routes/+page.svelte` and `src/routes/D3Timeline.svelte` to apply CSS that matches the requested theme!
    - **Go all out:** Honor the user's theme to the max. Use the `image_generate` tool to create background textures, decorative UI elements, or thematic hero images and save them to `src/lib/assets/` to include in the dashboard.
    - **Animations:** Inject CSS animations (glows, pulsing borders, scrolling backgrounds, or enter-transitions) to make the dashboard feel alive and highly polished.
 3. **Data Ingestion:** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI and inject it into the dashboard's `src/lib/data` or `static/data` folder, or directly into the Svelte components.
