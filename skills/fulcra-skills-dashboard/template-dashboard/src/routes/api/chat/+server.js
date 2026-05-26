@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import util from 'util';
 
 const execPromise = util.promisify(exec);
-const CHAT_FILE = path.join(process.cwd(), 'chat.json');
+        const CHAT_FILE = path.join(process.cwd(), 'src/lib/data/chat.json');
 
 // Initialize if not exists
 if (!fs.existsSync(CHAT_FILE)) {
