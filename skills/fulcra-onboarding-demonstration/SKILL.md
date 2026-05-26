@@ -23,9 +23,14 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
 
 3. **Generate HTML Dashboard:**
    - Once a theme is chosen, generate a custom HTML file visualizing the data.
+   - **Crucial: The "Wow" Factor:** Because the user has likely only recorded a single piece of data, the design must carry the experience. Do not generate a boring standard chart. 
+   - **Design Directives:**
+     - **Metaphorical UI:** Design a UI that fits the data type and theme (e.g., a retro receipt for coffee, a glowing HUD for fitness, a vintage polaroid for a mood check-in).
+     - **Rich Styling:** Use embedded CSS to create a highly polished look. Leverage Google Fonts, CSS gradients, complex box-shadows, and layout techniques (Flexbox/Grid).
+     - **CSS Animations:** Include simple CSS animations (e.g., pulsing glows, slide-ins, typing effects) to make the dashboard feel alive.
+     - **Intent-Driven Copy:** Include clever, personalized micro-copy in the dashboard that nods to the user's broader intent and the specific theme.
    - Ensure the dashboard visually incorporates the actual data retrieved in Step 1.
    - Present the HTML to the user directly in the chat thread (e.g., by writing it to the workspace and providing a way to view it).
-   - The design should heavily reflect their chosen aesthetic and make the data look interesting.
 
 ## Handoff
 
