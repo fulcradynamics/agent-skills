@@ -18,9 +18,10 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
      - Then, use that identifier as the `DATA_TYPE` argument in the `uv tool run fulcra-api get-records <DATA_TYPE> <TIME_RANGE>` CLI command (e.g., `uv tool run fulcra-api get-records "MyCustomAnnotation" "1 day"`). 
      - This is the most reliable method for accessing raw recorded data. Do *not* use external skills for this step.
 
-2. **Theme Selection:**
-   - Ask the user how they would like their dashboard themed.
-   - Suggest 2-3 creative, distinct options based on your sense of their personality and the data they are tracking (e.g., cyberpunk, fantasy, newspaper, modern fashion magazine, professional workplace tool, retro 8-bit).
+2. **Theme Selection (REQUIRED):**
+   - You must ask the user how they would like their dashboard themed. Do not skip this step or auto-generate a theme without their input.
+   - Suggest 2-3 creative, distinct options based on your sense of their personality and the data they are tracking (e.g., if tracking coffee, suggest a "retro diner receipt" or a "cyberpunk neon HUD").
+   - Even if you have a perfect theme in mind, always present it as an option and ask the user to confirm or choose their own. 
    - Keep this interaction brief and engaging.
 
 3. **Generate HTML Dashboard:**
