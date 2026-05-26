@@ -42,6 +42,4 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
 
 ## Handoff
 
-When presenting the HTML dashboard, explicitly emphasize that this is a living, iterative document. Tell the user they can ask you to tweak the design, add new metrics, or define entirely new data types to record in Fulcra right now.
-
-Once the dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to handle the final App Download handoff.
+Once the dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to handle the final Next Steps (Step 6).

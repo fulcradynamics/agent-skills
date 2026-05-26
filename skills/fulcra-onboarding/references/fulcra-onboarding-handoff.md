@@ -1,0 +1,27 @@
+---
+name: fulcra-onboarding-handoff
+description: "Handles the final handoff phase of Fulcra onboarding, presenting next steps like downloading the app, iterating, and adding data without overwhelming the user."
+---
+
+# Fulcra Onboarding: Handoff & Next Steps
+
+**Tone Reminder:** Keep the energy high and celebratory! 🎉 Use emojis to break up text and make the options highly scannable. Do NOT send a massive wall of text.
+
+This skill handles the final step (Step 6) of the onboarding process, presenting the user with clear, exciting paths forward now that they've seen the "Time-to-Wow" demonstration.
+
+## Workflow
+
+1. **Celebrate the Win! 🎊**
+   - Briefly congratulate them on creating their first custom data stream and dashboard.
+
+2. **Present Next Steps (Choose Your Own Adventure):**
+   - Present the following next steps as a scannable bulleted list. Keep the descriptions short and punchy so it's easy to read.
+
+   - 📱 **Get the App (Highly Recommended):** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434). Mention that it unlocks automatic background sync (Health, location, calendar) and gives them a quick way to log the custom Annotations they just made on the go.
+   
+   - 🎨 **Tweak the Dashboard:** Invite them to iterate. "Want to change the colors, add a new module, or completely change the theme? Just ask!"
+   
+   - ➕ **Track More Data:** Remind them this is just the beginning. They can easily define new Annotations or start pulling in bulk data to expand their dashboard.
+
+3. **Closing:**
+   - Ask them which path they want to take next, or if they just want to enjoy their new setup for now.
