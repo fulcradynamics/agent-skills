@@ -33,8 +33,7 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
    - Ensure the dashboard visually incorporates the actual data retrieved in Step 1.
    - **Bulletproof Presentation:** To avoid permission or rendering errors, present the HTML to the user using this resilient approach:
      1. **Primary Display (Optional):** If you are confident you can display the dashboard in a richer way (e.g., using a native Canvas integration or Control UI embed), you may attempt it. However, do not attempt to reconfigure the agent's settings to achieve this.
-     2. **File Fallback (Required):** Always save the generated HTML to a file in the workspace (e.g., `fulcra-dashboard.html`), output the absolute path, and tell the user they can open it directly in their web browser.
-     3. **Source Fallback (Required):** Always provide the full HTML source code in a markdown ` ```html ` block within your response as an ultimate fallback.
+     2. **File Fallback (Required):** Always save the generated HTML to a file in the workspace (e.g., `fulcra-dashboard.html`). Output the absolute path and tell the user they can open it directly in their web browser (e.g., `open /absolute/path/to/fulcra-dashboard.html`) to view the final rendered result. Do not output the raw HTML source code in the chat, as this clutters the experience.
 
 ## Handoff
 
