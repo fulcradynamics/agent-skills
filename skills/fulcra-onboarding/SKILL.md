@@ -38,6 +38,4 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
    - Read and execute the instructions in `references/fulcra-onboarding-demonstration.md` to retrieve the recorded data, ask the user for a preferred aesthetic, and generate a custom themed HTML dashboard to display directly in the chat.
 
 6. **Handoff & Next Steps:**
-   - **App Download (Required):** Always conclude by directing the user to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
-   - **Value Proposition:** Briefly explain that the app unlocks automatic background sync (Apple Health, location, calendar) and gives them a quick, native interface to log the custom Annotations they just created.
-   - **Optional Momentum:** If the user is highly engaged, suggest running their new dashboard locally or exploring further bulk data integrations.
+   - Read and execute the instructions in `references/fulcra-onboarding-handoff.md` to cleanly present the final steps (downloading the app, iterating on the dashboard, tracking more data) without overwhelming the user.
