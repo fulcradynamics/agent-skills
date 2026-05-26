@@ -39,7 +39,9 @@ As part of this skill, after the dashboard is scaffolded, **you MUST prompt the 
    - **Apply the Theme:** Directly edit `src/routes/+page.svelte` and `src/routes/D3Timeline.svelte` to apply CSS that matches the requested theme!
    - **Go all out:** Honor the user's theme to the max. Use the `image_generate` tool to create background textures, decorative UI elements, or thematic hero images and save them to `src/lib/assets/` to include in the dashboard.
    - **Animations:** Inject CSS animations (glows, pulsing borders, scrolling backgrounds, or enter-transitions) to make the dashboard feel alive and highly polished.
-3. **Data Ingestion:** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI and inject it into the dashboard's `src/lib/data` or `static/data` folder, or directly into the Svelte components.
+3. **Data Ingestion:** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI. 
+   - If the user previously set up custom Annotations during the `fulcra-onboarding` flow, you must fetch and display the data for *those* specific annotations instead of generic milestones.
+   - Inject this data into the dashboard's `src/lib/data` or `static/data` folder, or directly into the Svelte components.
 4. **Run:** Start the dev server.
    ```bash
    cd <target-directory>
