@@ -1,15 +1,32 @@
 <script>
   import D3Timeline from './D3Timeline.svelte';
+  import D3BarChart from './D3BarChart.svelte';
 
   // These are the baseline props passed from +page.svelte
-  let { annotations = [] } = $props();
+  let { 
+    annotations = [],
+    victoryImpact = [],
+    recordsProcessed = [] 
+  } = $props();
 </script>
 
 <div class="dashboard-grid">
-  <!-- Milestone Annotations -->
+  <!-- Victory Impact -->
   <section class="card full-width">
-    <h2>Milestone Annotations</h2>
-    <D3Timeline data={annotations} title="" color="#4a5568" />
+    <h2>Victory Impact</h2>
+    <D3Timeline data={victoryImpact} title="" color="#10b981" />
+  </section>
+
+  <!-- Agent Victories -->
+  <section class="card full-width">
+    <h2>Agent Victories</h2>
+    <D3Timeline data={annotations} title="" color="#34d399" />
+  </section>
+
+  <!-- Records Processed -->
+  <section class="card full-width">
+    <h2>Records Processed (Data Volume)</h2>
+    <D3BarChart data={recordsProcessed} title="Records Processed by Type" />
   </section>
 </div>
 
