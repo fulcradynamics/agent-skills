@@ -3,7 +3,7 @@
   // Agents: When adding this to the dashboard, inject it at the bottom of +page.svelte
   // or as a persistent overlay.
 
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   let messages = $state([]);
   let input = $state('');
@@ -14,9 +14,24 @@
     try {
       const res = await fetch('/api/chat');
       if (res.ok) {
-        messages = await res.json();
+        const newMessages = await res.json();
+        
+        // Only update if the messages actually changed
+        if (JSON.stringify(newMessages) !== JSON.stringify(messages)) {
+            messages = newMessages;
+            
+            // Scroll to bottom when new messages arrive
+            await tick();
+            if (chatWindow) {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        }
+
+        // Set typing indicator if the last message is from the user
         if (messages.length > 0) {
             isTyping = messages[messages.length - 1].role === 'user';
+        } else {
+            isTyping = false;
         }
       }
     } catch (err) {
