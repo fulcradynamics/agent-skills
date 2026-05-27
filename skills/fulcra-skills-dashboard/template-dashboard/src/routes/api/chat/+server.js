@@ -43,7 +43,8 @@ export async function POST({ request }) {
         
         // Trigger OpenClaw immediately (fire and forget, but detached so it survives the request ending)
         console.log('New user message detected, calling OpenClaw immediately...');
-        const prompt = `A new user message was posted in the Fulcra dashboard chat. Read the local chat.json file in this directory. Respond to the user's latest message, and append your response to the chat.json file as role 'assistant' with a timestamp. Do not modify the history. Reply with a short summary when done.`;
+        const safeMessage = body.message.replace(/"/g, '\\"');
+        const prompt = `A new user message was posted in the Fulcra dashboard chat: "${safeMessage}". Read the local chat.json file in this directory to get full context. Respond to the user's latest message, and append your response to the chat.json file as role 'assistant' with a timestamp. Do not modify the history. Reply with a short summary when done.`;
         
         // Using exec in the background cleanly. We pass --to main to route it to the main session.
         exec(`openclaw agent --to main --message "${prompt}" > /dev/null 2>&1 &`, (error) => {
