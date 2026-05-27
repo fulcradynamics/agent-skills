@@ -7,13 +7,11 @@ description: "Record data for custom Annotations within the Fulcra environment d
 
 Use this skill to record (ingest) data entries for existing custom Annotations in a user's Fulcra account. 
 
-## Authentication
+## Authentication & Security
 
-Always retrieve a fresh access token using the Fulcra CLI before making requests:
-```bash
-TOKEN=$(uv tool run fulcra-api auth print-access-token)
-```
-**Security Note:** Do not print or echo this access token into the chat. It is highly sensitive. Keep it entirely within memory or local script execution.
+Do not store the access token in a shell variable (e.g., `TOKEN=...`). Instead, inject the token securely at the moment of execution using command substitution `$(...)` directly within the `curl` command.
+
+**Security Note:** Do not print or echo the access token into the chat. It is highly sensitive.
 
 ## User Consent for Data Transmission
 Before sending the user's data to the external API, you **must explicitly confirm** with the user that they are comfortable storing this specific piece of data in Fulcra. Briefly explain that the data will be sent securely to their remote Fulcra account. Only proceed once they agree.
@@ -24,7 +22,7 @@ Data is recorded by sending a `POST` request to the Fulcra Ingest API.
 
 ```bash
 curl -i -X POST \
-  -H "Authorization: Bearer $TOKEN" \
+  -H "Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)" \
   -H "Content-Type: application/json" \
   -d '{ ... json payload ... }' \
   https://api.fulcradynamics.com/ingest/v1/record

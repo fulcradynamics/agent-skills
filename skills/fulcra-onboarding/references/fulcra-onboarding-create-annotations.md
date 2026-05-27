@@ -7,13 +7,11 @@ description: "Define and create custom data types and schemas (Annotations) in F
 
 This utility skill provides the exact CURL commands and JSON schemas needed to create custom data types (Annotations) in a user's Fulcra account. Use this primarily during onboarding to set up the data structures for a user's intent.
 
-## Authentication
+## Authentication & Security
 
-Always retrieve a fresh access token using the Fulcra CLI before making requests:
-```bash
-TOKEN=$(uv tool run fulcra-api auth print-access-token)
-```
-**Security Note:** Do not print or echo this access token into the chat. It is highly sensitive. Keep it entirely within memory or local script execution.
+Do not store the access token in a shell variable (e.g., `TOKEN=...`). Instead, inject the token securely at the moment of execution using command substitution `$(...)` directly within the `curl` command.
+
+**Security Note:** Do not print or echo the access token into the chat. It is highly sensitive.
 
 ## Schema Discovery
 
@@ -21,12 +19,12 @@ Before creating an annotation, particularly one with specific measurements (like
 
 **1. Annotation Schema:** Understand the root fields (`name`, `description`, `annotation_type`, etc.)
 ```bash
-curl -s -H "Authorization: Bearer $TOKEN" https://api.fulcradynamics.com/user/v1alpha1/schema/annotation
+curl -s -H "Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)" https://api.fulcradynamics.com/user/v1alpha1/schema/annotation
 ```
 
 **2. Measurement Schema:** Understand the exact structure for the `measurement_spec` based on the chosen type, including valid enumerations for `unit`.
 ```bash
-curl -s -H "Authorization: Bearer $TOKEN" https://api.fulcradynamics.com/user/v1alpha1/schema/measurement
+curl -s -H "Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)" https://api.fulcradynamics.com/user/v1alpha1/schema/measurement
 ```
 Use the output of these commands to ensure your JSON payload is perfectly formed.
 
@@ -38,7 +36,7 @@ Annotations are created by sending a `POST` request to the Fulcra API.
 
 ```bash
 curl -i -X POST \
-  -H "Authorization: Bearer $TOKEN" \
+  -H "Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)" \
   -H "Content-Type: application/json" \
   -d '{ ... json payload ... }' \
   https://api.fulcradynamics.com/user/v1alpha1/annotation
