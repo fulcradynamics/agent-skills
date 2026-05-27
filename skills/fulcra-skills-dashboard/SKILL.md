@@ -40,6 +40,7 @@ As part of this skill, after the dashboard is scaffolded, **you MUST prompt the 
      - `ThemeStyles.svelte` (Global backgrounds and typography)
      - `HeroHeader.svelte` (Titles, banners, and hero art injection)
      - `DashboardGrid.svelte` (Card containers and layout)
+       - **Chart Title Art:** You must inject themed emojis, SVG icons, or small generated art assets into the `<h2>` tags for each chart in `DashboardGrid.svelte` (e.g., `<h2>🦖 Agent Victories</h2>` or `<h2><img src={customIcon} class="inline-icon"/> Records Processed</h2>`) to give each section more visual personality.
      - `AgentChat.svelte` (The floating chat window)
      - `D3Timeline.svelte` (Chart specific styling and custom icons)
        - **Crucial Icon Theming:** The `D3Timeline.svelte` component has a `getIcon(d)` function that defaults to returning generic emojis (e.g., '📝', '💾'). You must modify this function to return theme-appropriate emojis or SVGs that match the user's requested vibe (e.g., if the theme is "Subterranean Garden", it should return '🐉', '🐢', '🐕', etc., instead of the default icons).
