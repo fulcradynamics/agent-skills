@@ -20,7 +20,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 ## Workflow
 
 1. **Pre-flight Check:**
-   - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to silently verify and install `uv` if necessary. This must pass before proceeding.
+   - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to verify and install `uv` if necessary, asking the user for confirmation before installation. This must pass before proceeding.
 
 2. **Discovery:**
    - Read and execute the instructions in `references/fulcra-onboarding-discovery.md` to handle user authentication, uncover their core intent, and suggest concrete use cases. Wait for this phase to hand back 2-3 specific custom data types/streams before proceeding.

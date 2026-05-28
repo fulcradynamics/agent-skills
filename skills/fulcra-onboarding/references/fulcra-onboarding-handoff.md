@@ -17,7 +17,7 @@ This skill handles the final step (Step 6) of the onboarding process, presenting
 2. **Present Next Steps (Choose Your Own Adventure):**
    - Present the following next steps as a scannable bulleted list. Keep the descriptions short and punchy so it's easy to read.
 
-   - 📱 **Get the App (Highly Recommended):** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434). Mention that it unlocks automatic background sync (Health, location, calendar) and gives them a quick way to log the custom Annotations they just made on the go.
+   - 📱 **Get the App (Highly Recommended):** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434). Mention that it can unlock automatic background sync (such as Apple Health, location, and calendar). **PRIVACY WARNING:** Explicitly inform the user that these are highly sensitive data types. Assure them that they will be asked for explicit permissions by iOS and can choose exactly what to share, and can turn it off at any time. It also gives them a quick way to log the custom Annotations they just made on the go.
    
    - 💻 **Context Web:** Remind them they can instantly view their data on desktop by visiting [Context Web](https://context.fulcradynamics.com/). Note that while it doesn't collect/record data automatically like the mobile app, it's a great place to explore what they've built.
    
