@@ -11,10 +11,11 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
 
 ## Workflow
 
-1. **Retrieve Data:**
-   - Retrieve the user's recently recorded data from Fulcra. 
+1. **Retrieve Data (Requires Consent):**
+   - Retrieve the user's recently recorded data from Fulcra to build the dashboard. 
+   - **Before fetching:** Briefly explain that you need to retrieve their recorded data to visualize it, and ask for permission to query the Fulcra API.
    - **How to retrieve:** 
-     - First, silently run `uv tool run fulcra-api catalog` to list available data types. Find the exact identifier (name or ID) for the annotation the user just created.
+     - After consent is given, run `uv tool run fulcra-api catalog` to list available data types. Find the exact identifier (name or ID) for the annotation the user just created.
      - Then, use that identifier as the `DATA_TYPE` argument in the `uv tool run fulcra-api get-records <DATA_TYPE> <TIME_RANGE>` CLI command (e.g., `uv tool run fulcra-api get-records "MyCustomAnnotation" "1 day"`). 
      - This is the most reliable method for accessing raw recorded data. Do *not* use external skills for this step.
 
@@ -37,7 +38,8 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
    - **Bulletproof Presentation:** To avoid permission or rendering errors, present the HTML to the user using this resilient approach:
      1. **Primary Display (Optional):** If you are confident you can display the dashboard in a richer way (e.g., using a native Canvas integration or Control UI embed), you may attempt it. However, do not attempt to reconfigure the agent's settings to achieve this.
      2. **File Fallback (Required):** Always save the generated HTML to a file in the workspace (e.g., `fulcra-dashboard.html`). 
-        - Attach the file directly to your message in the chat thread so the user can easily download/view it.
+        - **Important:** Clearly inform the user that a local HTML file will be created in their workspace before you write to it.
+        - Attach the file directly to your message in the chat thread so the user can easily download/view it. **Crucial Formatting:** Ensure you write a short introductory sentence and a line break *before* the file attachment directive in your message. If the media attachment is the very first thing in your final reply, the chat UI parsing may break and display raw formatting tags.
         - Output the absolute path and tell the user they can open it directly in their web browser (e.g., `open /absolute/path/to/fulcra-dashboard.html`) to view the final rendered result. Do not output the raw HTML source code in the chat, as this clutters the experience.
 
 ## Handoff

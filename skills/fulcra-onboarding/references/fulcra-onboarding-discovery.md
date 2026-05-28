@@ -20,11 +20,11 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
      - *Health:* Logging coffee intake, water, or sleep quality.
      - *Media:* Keeping a log of books read or movies watched.
 
-2. **Authentication Check (STRICTLY ISOLATED):**
-   - Once the user has shared their intent and is excited about what they are about to build, verify if they are currently authenticated with Fulcra.
-   - **How to verify:** Silently run `uv tool run fulcra-api user-info`. If it returns valid JSON, the user is authenticated. If it returns an error or fails, they are not authenticated.
-   - If not authenticated, run `uv tool run fulcra-api auth login` using the `exec` tool. 
-   - **CRITICAL EXECUTION NOTE:** This command will output an authorization URL and a device code, and then the process will hang/wait in the background while it waits for the user to authenticate in their browser. Do *not* kill the process thinking it is stuck. 
+2. **Authentication Check & Login (Requires Consent):**
+   - Once the user has shared their intent and is excited about what they are about to build, **ask for their permission** to check their Fulcra authentication state and initiate a login flow if necessary.
+   - **How to verify:** After obtaining consent, run `uv tool run fulcra-api user-info`. If it returns valid JSON, the user is authenticated. If it returns an error or fails, they are not authenticated.
+   - If not authenticated, explain that you will now generate a secure login link, and then run `uv tool run fulcra-api auth login` using the `exec` tool. 
+   - **CRITICAL EXECUTION NOTE:** This command will output an authorization URL and a device code, and then the process will hang/wait in the background while it waits for the user to authenticate in their browser. Do *not* kill the process thinking it is stuck. If there is a chance you are running on a remote machine, the browser will not open automatically for the user. You *must* extract the login URL and code from the output and send the link directly to the user in the chat so they can click it.
    - Extract the URL and code from the stdout, present them to the user, explain it's the required next step to build what they just asked for, and wait for them to tell you they have completed the login. Do *not* combine the authentication instructions with further brainstorming.
 
 3. **Proactive Suggestions:**
