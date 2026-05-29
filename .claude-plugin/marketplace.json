@@ -1,0 +1,23 @@
+{
+  "name": "fulcra-agent-skills",
+  "description": "Fulcra skills for agent workflows",
+  "owner": {
+    "name": "Fulcra Dynamics",
+    "email": "support@fulcradynamics.com"
+  },
+  "plugins": [
+    {
+      "name": "fulcra-collect",
+      "displayName": "Fulcra Collect",
+      "description": "Create Fulcra annotation types and record consented user data through the Fulcra CLI.",
+      "version": "0.1.0",
+      "source": "./plugins/fulcra-collect",
+      "homepage": "https://github.com/fulcradynamics/agent-skills",
+      "repository": "https://github.com/fulcradynamics/agent-skills",
+      "license": "MIT",
+      "keywords": ["fulcra", "annotations", "personal-context", "data-collection"],
+      "category": "productivity",
+      "tags": ["fulcra", "skills", "annotations"]
+    }
+  ]
+}
