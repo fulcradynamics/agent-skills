@@ -1,0 +1,13 @@
+{
+  "name": "fulcra-collect",
+  "description": "Create Fulcra annotation types and record consented user data through the Fulcra CLI.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Fulcra Dynamics",
+    "email": "support@fulcradynamics.com"
+  },
+  "homepage": "https://github.com/fulcradynamics/agent-skills",
+  "repository": "https://github.com/fulcradynamics/agent-skills",
+  "license": "MIT",
+  "skills": "./skills"
+}
