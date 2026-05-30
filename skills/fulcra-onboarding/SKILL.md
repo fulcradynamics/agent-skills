@@ -20,7 +20,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 ## Workflow
 
 1. **Pre-flight Check:**
-   - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to verify and install `uv` if necessary, asking the user for confirmation before installation. This must pass before proceeding.
+   - Verify that the [`uv`](https://docs.astral.sh/uv/) package manager is available by running `uv --version`. **If it succeeds, proceed silently to step 2 — do not mention installation and do not ask the user about it.** Only if `uv --version` fails should you read `references/fulcra-onboarding-prerequisites.md` to install it (which will ask for the user's consent before running the installer). In other words: this step is silent on success; the user only ever hears about it if a real install is needed.
 
 2. **Discovery:**
    - Read and execute the instructions in `references/fulcra-onboarding-discovery.md` to handle user authentication, uncover their core intent, and suggest concrete use cases. Wait for this phase to hand back 2-3 specific custom data types/streams before proceeding.

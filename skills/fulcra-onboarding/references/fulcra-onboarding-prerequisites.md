@@ -5,7 +5,11 @@ description: "Verifies and sets up the required environment for Fulcra, includin
 
 # Fulcra Prerequisites Check
 
-This skill ensures the host environment is ready to interact with the Fulcra API.
+This skill ensures the host environment is ready to interact with the Fulcra
+API. **It is only invoked when the parent skill's pre-flight check found that
+`uv` is missing.** When `uv --version` already succeeds, the parent skill
+proceeds without invoking this — do not re-verify or prompt the user about
+installation in that case.
 
 ## Workflow
 
