@@ -31,48 +31,59 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
      to step 3. If it fails (any non-zero exit), they are not authenticated;
      proceed to login.
 
-   - **Login (this requires the user to click a URL in their browser).** Run
-     **exactly** the command below. The `timeout`, `2>&1`, and `|| true` are
-     all required: they cause the device-flow command to print the URL and
-     code to stdout and *return*, instead of hanging in the background where
-     most agents cannot reliably capture stdout:
+   - **Start the login in the BACKGROUND and capture the URL + code from a
+     log file on disk.** The device-flow command needs to keep polling auth0
+     for the ~10 minutes the code is valid; a foreground `timeout` would
+     terminate that polling and the user's sign-in would never reach disk.
+     Reading from a log file on disk is reliable even while the producer
+     process is still running, unlike trying to read stdout from a hanging
+     pipe. Run **exactly** this single line:
 
      ```bash
-     timeout 12 uv tool run fulcra-api auth login 2>&1 || true
+     rm -f /tmp/fulcra-auth.log && nohup uv tool run fulcra-api auth login > /tmp/fulcra-auth.log 2>&1 & for i in $(seq 1 10); do grep -q 'activate?user_code=' /tmp/fulcra-auth.log 2>/dev/null && break; sleep 1; done; cat /tmp/fulcra-auth.log
      ```
 
-     The output will contain two pieces you **MUST** relay to the user
-     immediately and verbatim:
+     The output (from `cat /tmp/fulcra-auth.log`) contains two pieces you
+     **MUST** relay to the user immediately and verbatim:
        - an **authorization URL** (e.g. `https://fulcra.us.auth0.com/activate?user_code=XXXX-YYYY`)
        - a **device code** (e.g. `XXXX-YYYY`)
 
-     Present them like this (do **not** summarize, shorten, or paraphrase
-     the URL or code):
+     Present them using **exactly** this template. Render the URL wrapped in
+     **backticks** (inline code) — do **NOT** format it as a markdown link
+     `[label](url)`; the user must see the literal URL string so they can
+     verify the code matches and (if needed) copy it:
 
-     > 🔐 To connect to Fulcra, open this URL in your browser to sign in or
-     > create your account:
+     > 🔐 Open this URL in your browser to sign in or create your Fulcra
+     > account:
      >
-     > **`<URL>`**
+     > `https://fulcra.us.auth0.com/activate?user_code=XXXX-YYYY`
      >
-     > Confirm the code shown on that page matches: **`<CODE>`**
+     > Confirm the code on that page matches: **XXXX-YYYY**
      >
-     > Reply "done" when you've finished and I'll continue.
+     > Reply "done" when you've finished signing in.
 
-     **DO NOT** run a bare `uv tool run fulcra-api auth login` (without
-     `timeout`/`2>&1`) — it blocks indefinitely and the URL never reaches the
-     user. **DO NOT** spawn it as a background process and poll its log; the
-     stdout of a hanging child process is not reliably readable from many
-     agent runtimes.
+     The `fulcra-api auth login` process started above is **STILL RUNNING in
+     the background**, polling auth0 for the user to complete the flow.
+     **Do NOT kill it. Do NOT start another one.** It will write credentials
+     to disk and exit on its own when the user finishes.
 
-   - **After the user replies "done", verify the login completed:**
+     **DO NOT** run a foreground `uv tool run fulcra-api auth login` (with or
+     without `timeout`). The bare foreground command blocks indefinitely; a
+     `timeout`-wrapped one returns the URL but also terminates the polling so
+     the user's eventual sign-in is never received.
+
+   - **When the user replies "done", verify the login completed:**
 
      ```bash
      uv tool run fulcra-api user-info
      ```
 
-     If it's still a 401, retry once or twice with a short pause — there can
-     be a brief gap between completing browser auth and the token becoming
-     available.
+     If it returns 401, the background poll hasn't received the token yet —
+     wait 3 seconds and retry `user-info` (up to 3 times). **Do NOT start a
+     new `auth login`** — there is already one running in the background.
+     Starting a new one creates a new code and invalidates the user's
+     current sign-in. If still 401 after 3 retries, ask the user to confirm
+     they clicked Confirm on the device-code page AND signed in to Fulcra.
 
    - **Security note:** the authorization URL and device code grant access
      to the user's Fulcra account. In a public or group channel, warn the
