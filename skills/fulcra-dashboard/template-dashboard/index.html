@@ -103,6 +103,36 @@ window.addEventListener('unhandledrejection', function(event) {
             <div class="chart-container bar-chart-zone" x-ref="barChartZone"></div>
         </section>
         
+        <!-- Chat Envoy -->
+        <div class="chat-envoy-container" x-data="chatEnvoy()">
+            <div class="chat-header">
+                <h3><span class="title-icon">🛰️</span> Sub-Surface Relay</h3>
+                <div class="status-indicator" :class="isTyping ? 'typing' : 'active'"></div>
+            </div>
+
+            <div class="chat-window" x-ref="chatWindow">
+                <template x-for="msg in messages" :key="Math.random()">
+                    <div class="message" :class="msg.role">
+                        <div class="bubble" x-text="msg.text"></div>
+                    </div>
+                </template>
+                
+                <div class="message assistant typing-indicator" x-show="isTyping">
+                    <div class="bubble">...</div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea 
+                    x-model="input" 
+                    @keydown="handleKeydown"
+                    placeholder="Transmit coordinates..."
+                    rows="2">
+                </textarea>
+                <button @click="sendMessage" :disabled="isTyping || !input.trim()">Send</button>
+            </div>
+        </div>
+
     </main>
 
     <!-- ========================================== -->
@@ -298,5 +328,6 @@ window.addEventListener('unhandledrejection', function(event) {
                 });
         }
     </script>
+    <script src="envoy.js"></script>
 </body>
 </html>
