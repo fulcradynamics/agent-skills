@@ -2,8 +2,9 @@ import http.server
 import socketserver
 import json
 import os
+import sys
 
-PORT = 8080
+PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", 8081))
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
