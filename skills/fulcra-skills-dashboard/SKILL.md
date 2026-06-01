@@ -41,7 +41,7 @@ As part of this skill, after the dashboard is scaffolded, **you MUST prompt the 
      - `HeroHeader.svelte` (Titles, banners, and hero art injection)
      - `DashboardGrid.svelte` (Card containers and layout)
        - **Chart Title Art:** You must inject themed emojis, SVG icons, or small generated art assets into the `<h2>` tags for each chart in `DashboardGrid.svelte` (e.g., `<h2>🦖 Agent Victories</h2>` or `<h2><img src={customIcon} class="inline-icon"/> Records Processed</h2>`) to give each section more visual personality.
-     - `AgentChat.svelte` (The floating chat window)
+   - **The Holographic Envoy (Optional Chat):** The default template includes `AgentChat.svelte`. By default, you must leave this in a "dormant preview" state. The UI should look like a chat window with a themed greeting, but the actual live connection should remain inactive. Do not attempt to trigger `openclaw sessions send` or seek device approval during the initial setup. Focus entirely on the visual presentation and data visualization.
      - `D3Timeline.svelte` (Chart specific styling and custom icons)
        - **Crucial Icon Theming:** The `D3Timeline.svelte` component has a `getIcon(d)` function that defaults to returning generic emojis (e.g., '📝', '💾'). You must modify this function to return theme-appropriate emojis or SVGs that match the user's requested vibe (e.g., if the theme is "Subterranean Garden", it should return '🐉', '🐢', '🐕', etc., instead of the default icons).
    - **Original Art (Required):** You must provide one piece of highly creative thematic art for the dashboard (e.g., a mascot, a landscape, a retro poster) and inject it into the dashboard layout. You have two options:
@@ -65,10 +65,16 @@ As part of this skill, after the dashboard is scaffolded, **you MUST prompt the 
    sleep 2 && cat dev.log
    ```
    - **Crucial Error Recovery:** SvelteKit (`vite dev`) will crash with a 500 error if your CSS/HTML edits in step 2 introduced invalid syntax (e.g., duplicated `</style>` tags, missing brackets). You *must* check the output of `dev.log` immediately after starting the server. If you see Vite/Svelte compiler errors, use your file editing tools to fix the syntax in `src/routes/+page.svelte` or `src/routes/AgentChat.svelte` until `dev.log` shows the server is running cleanly without 500 errors. Only present the dashboard to the user once you confirm it compiles successfully.
-   - **Crucial Chat API Scope Approval:** The `AgentChat.svelte` component uses `openclaw sessions send` in the background to send messages from the dashboard to you. Because the dev server runs in your sandbox, it will trigger a pending scope upgrade request the first time it tries to send a message. You must actively monitor `openclaw devices list` for this pending request. When you see it, ask the user for permission in chat, and then execute `openclaw devices approve <request-id>` so the dashboard chat works out of the box.
-5. **Next Steps:** At the end of the dashboard setup and theming, ask the user what they want to do next. **Crucial:** Provide your own personalized suggestions for next steps based on your knowledge of the user (e.g., specific annotations to track, other data streams to visualize, or goals they are working towards). You can also suggest:
+5. **Static Deployment Prep:** Because we aim to deploy these dashboards to simple static hosts (like GitHub Pages), you must configure the SvelteKit app for static generation.
+   - Install the adapter: `npm i -D @sveltejs/adapter-static`
+   - Modify `svelte.config.js` to use `adapter-static` instead of `adapter-auto`.
+   - Add a `src/routes/+layout.js` file containing `export const prerender = true;`.
+6. **Next Steps & Chat Awakening:** At the end of the dashboard setup and theming, ask the user what they want to do next. **Crucial:** You must specifically ask if they would like to "awaken the chat envoy." If they say yes, only *then* should you configure the live connection:
+   - Instruct the user on the OpenClaw device approval process.
+   - Activate the live `openclaw sessions send` logic in `AgentChat.svelte`.
+   You can also suggest:
    - Starting to upload data from the agent as a new annotation or file upload.
-   - Downloading the Context app (see fulcradynamics.com) to get personal data into the Fulcra database. **Important:** Before suggesting the Context app, perform a quick check for step count data in the user's Fulcra account using the CLI (e.g., checking `RecordsProcessed` or querying for step count). If the user already has step count data, assume they have the Context app installed and *do not* suggest downloading it.
+   - Downloading the Context app (see fulcradynamics.com) to get personal data into the Fulcra database. **Important:** Before suggesting the Context app, perform a quick check for step count data in the user's Fulcra account using the CLI. If the user already has step count data, assume they have the Context app installed and *do not* suggest downloading it.
 
 ## Notes for the Agent
 
