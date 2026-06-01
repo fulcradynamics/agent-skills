@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fulcra Dashboard</title>
+    <!-- Tailwind CSS (CDN is permitted for GitHub Pages/Static deployment) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- External Theming CSS -->
+    <link rel="stylesheet" href="theme.css">
+
+    <!-- Alpine.js & D3.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen relative" x-data="dashboard()">
+    
+    <!-- ========================================== -->
+    <!-- 🏛️ PROVINCE: DASHBOARD LAYOUT & UI         -->
+    <!-- ========================================== -->
+    <main class="max-w-6xl mx-auto p-6 relative z-10 layout-container">
+        
+        <!-- Hero Header -->
+        <header class="mb-12 border-b pb-8 relative rounded-xl overflow-hidden shadow-sm hero-header">
+            <!-- Dynamic Hero Image Fallback/Background -->
+            <div class="hero-art-container absolute inset-0 z-0">
+                <!-- Agents: Inject the generated image source here -->
+                <img id="hero-img" src="" alt="Theme Art" class="hero-img" style="display:none;" onload="this.style.display='block'" onerror="this.style.display='none'">
+            </div>
+            
+            <div class="relative z-20 p-8 pt-16 hero-content">
+                <!-- Agents: Inject custom CSS animations/elements into this layer -->
+                <div class="animation-layer"></div>
+                
+                <h1 class="text-5xl font-bold mb-4 flex items-center gap-4 dashboard-title">
+                    <span class="title-icon">📊</span>
+                    <span class="title-text">Fulcra Dashboard</span>
+                </h1>
+                <p class="text-xl subtitle">A canvas for your data.</p>
+            </div>
+        </header>
+
+        <!-- Charts will be injected here in later steps -->
+        
+    </main>
+
+    <!-- ========================================== -->
+    <!-- 🧠 PROVINCE: ALPINE.JS STATE & LOGIC       -->
+    <!-- ========================================== -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dashboard', () => ({
+                // State variables will go here
+                
+                async init() {
+                    // Data loading logic will go here
+                    console.log("Dashboard initialized.");
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
