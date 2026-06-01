@@ -85,7 +85,7 @@
         </div>
 
         <!-- Records Processed Bar Chart -->
-        <section class="card bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-12" x-show="recordsProcessed && recordsProcessed.length > 0" x-data="barChartComponent()">
+        <section class="card bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-12" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
             <h2 class="text-2xl font-semibold mb-4 border-b border-gray-100 pb-2 flex items-center gap-3 timeline-title">
                 <span class="timeline-icon">📊</span>
                 <span>Records Processed (Data Volume)</span>
@@ -165,13 +165,16 @@
 
             Alpine.data('barChartComponent', () => ({
                 init() {
-                    this.$nextTick(() => {
-                        // The dashboard component holds the recordsProcessed array
-                        const data = this.$data.recordsProcessed;
-                        if (data && data.length > 0 && this.$refs.barChartZone) {
+                    // Initialization can be empty; x-effect handles the drawing
+                },
+                
+                updateChart(data) {
+                    if (data && data.length > 0 && this.$refs.barChartZone) {
+                        // Small delay to ensure the div is fully un-hidden by x-show before drawing
+                        setTimeout(() => {
                             drawD3BarChart(data, this.$refs.barChartZone);
-                        }
-                    });
+                        }, 50);
+                    }
                 }
             }));
         });
