@@ -78,4 +78,4 @@ If no `<target-directory>` is provided, it defaults to creating a `fulcra-dashbo
    - Provide the user with the localhost link.
 6. **Chat Envoy & GitHub Deployment:** 
    - The dashboard includes a "Sub-Surface Relay" chat envoy. Remind the user that this envoy only functions locally via the Python server.
-   - If the user pushes the repository to GitHub Pages, the CSS is designed to automatically hide the envoy, allowing the site to function as a pure, secure data snapshot.
+   - If the user pushes the repository to GitHub Pages, the CSS is designed to automatically hide the envoy to prevent user confusion, as the chat interface cannot route messages to the local Python bridge from a remote host.
