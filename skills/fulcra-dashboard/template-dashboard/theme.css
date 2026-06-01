@@ -41,6 +41,40 @@
     /* e.g., color: #aaaaaa; */
 }
 
+/* Timeline & Card Theming */
+.card {
+    /* e.g., background: #111; border-color: #333; */
+}
+
+.timeline-title {
+    /* e.g., color: #fff; border-bottom-color: #333; */
+}
+
+.timeline-icon {
+    /* Filters or shadows on the title icon */
+}
+
+/* Log Entries */
+.log-entry {
+    /* Background of the log item. Alpine inline styles handle the hover borders. */
+}
+
+.log-icon-wrapper {
+    /* Background of the circle containing the emoji */
+}
+
+.log-header h4 {
+    /* Date text */
+}
+
+.log-badge {
+    /* The tiny pill badge indicating type */
+}
+
+.log-body {
+    /* The main text of the log */
+}
+
 /* Animation Hooks */
 .animation-layer {
     position: absolute;

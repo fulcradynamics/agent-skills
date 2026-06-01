@@ -41,7 +41,48 @@
             </div>
         </header>
 
-        <!-- Charts will be injected here in later steps -->
+        <!-- Dynamic Timelines -->
+        <div class="grid grid-cols-1 gap-8 mb-12">
+            <template x-for="timeline in timelines" :key="timeline.id">
+                <section class="card bg-white p-6 rounded-xl border border-gray-200 shadow-sm" x-data="timelineComponent(timeline)">
+                    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-100 pb-2 flex items-center gap-3 timeline-title">
+                        <span x-text="timeline.icon" class="timeline-icon"></span>
+                        <span x-text="timeline.title"></span>
+                    </h2>
+                    
+                    <div class="chart-container w-full h-32 relative" x-ref="chartZone" @timeline-hover="hoverIndex = $event.detail.index"></div>
+                    
+                    <!-- Logs List -->
+                    <div class="mt-6 flex flex-col gap-4">
+                        <template x-for="detail in displayedDetails" :key="detail.item.recorded_at">
+                            <div class="flex gap-4 items-start p-4 rounded-lg border transition-all duration-300 relative overflow-hidden bg-gray-50 log-entry"
+                                 :style="detail.isHovered ? `border-color: ${timeline.color}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.01);` : 'border-color: #e5e7eb;'">
+                                
+                                <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full border bg-white z-10 log-icon-wrapper"
+                                     :style="`border-color: ${detail.isHovered ? timeline.color : '#e5e7eb'}; color: ${timeline.color};`">
+                                    <span class="text-xl" x-text="getIcon(detail.item)"></span>
+                                </div>
+                                
+                                <div class="flex-1 z-10">
+                                    <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2 log-header">
+                                        <h4 class="font-semibold text-gray-800 m-0 text-sm" 
+                                            x-text="detail.item.parsedDate.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })">
+                                        </h4>
+                                        <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full border log-badge"
+                                              x-text="getTier(detail.item)">
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 m-0 log-body">
+                                        <strong class="text-gray-900" x-text="detail.item.label || detail.item.type"></strong><br/>
+                                        <span x-text="detail.item.details || detail.item.size || ''"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+            </template>
+        </div>
         
     </main>
 
@@ -50,15 +91,115 @@
     <!-- ========================================== -->
     <script>
         document.addEventListener('alpine:init', () => {
+            
             Alpine.data('dashboard', () => ({
-                // State variables will go here
+                timelines: [],
                 
                 async init() {
-                    // Data loading logic will go here
-                    console.log("Dashboard initialized.");
+                    try {
+                        const response = await fetch('data.json');
+                        const data = await response.json();
+                        this.timelines = data.timelines || [];
+                        console.log("Dashboard initialized with timelines:", this.timelines.length);
+                    } catch (err) {
+                        console.error("Failed to load dashboard data", err);
+                    }
+                }
+            }));
+
+            Alpine.data('timelineComponent', (timeline) => ({
+                hoverIndex: null,
+                parsedData: [],
+                
+                init() {
+                    // Parse dates once
+                    this.parsedData = (timeline.data || []).map(d => ({
+                        ...d,
+                        parsedDate: new Date(d.recorded_at || d.time || d.date)
+                    })).sort((a, b) => a.parsedDate - b.parsedDate);
+                    
+                    // Give DOM a tick to un-hide the container before drawing
+                    this.$nextTick(() => {
+                        if (this.parsedData.length > 0 && this.$refs.chartZone) {
+                            drawD3Timeline(this.parsedData, this.$refs.chartZone, timeline.color);
+                        }
+                    });
+                },
+                
+                get displayedDetails() {
+                    if (this.parsedData.length === 0) return [];
+                    let startIndex = this.hoverIndex !== null ? this.hoverIndex : this.parsedData.length - 1;
+                    let details = [];
+                    for (let i = 0; i < 5; i++) {
+                        let idx = startIndex - i;
+                        if (idx >= 0 && idx < this.parsedData.length) {
+                            details.push({ item: this.parsedData[idx], isHovered: this.hoverIndex === idx });
+                        }
+                    }
+                    return details;
+                },
+                
+                getIcon(d) {
+                    if (d.type === 'backup' || (d.label && d.label.toLowerCase().includes('backup'))) return '💾';
+                    if (d.type === 'annotation' || (d.label && d.label.toLowerCase().includes('note'))) return '📝';
+                    return '⏺️';
+                },
+                
+                getTier(d) {
+                    if (d.type === 'backup' || (d.label && d.label.toLowerCase().includes('backup'))) return 'Archival';
+                    if (d.type === 'annotation' || (d.label && d.label.toLowerCase().includes('note'))) return 'Annotation';
+                    return 'Event';
                 }
             }));
         });
+        
+        // --- D3 Drawing Function ---
+        function drawD3Timeline(parsedData, container, color) {
+            d3.select(container).selectAll("*").remove();
+            
+            const width = container.clientWidth || 800;
+            const height = container.clientHeight || 120;
+            const margin = { top: 20, right: 30, bottom: 30, left: 30 };
+
+            const svg = d3.select(container).append("svg")
+                .attr("width", width).attr("height", height)
+                .style("overflow", "visible");
+
+            const x = d3.scaleTime()
+                .domain(d3.extent(parsedData, d => d.parsedDate))
+                .range([margin.left, width - margin.right]);
+
+            const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d, %H:%M"));
+            
+            svg.append("g")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(xAxis)
+                .attr("color", "#a0aec0")
+                .selectAll("text").style("font-family", "inherit");
+
+            svg.append("line")
+                .attr("x1", margin.left).attr("y1", (height - margin.bottom) / 2)
+                .attr("x2", width - margin.right).attr("y2", (height - margin.bottom) / 2)
+                .attr("stroke", "#e2e8f0").attr("stroke-width", 2);
+
+            svg.selectAll(".dot")
+                .data(parsedData).enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", d => x(d.parsedDate))
+                .attr("cy", (height - margin.bottom) / 2)
+                .attr("r", 6).attr("fill", color)
+                .attr("stroke", "#fff").attr("stroke-width", 2)
+                .style("cursor", "pointer")
+                .on("mouseover", function(event, d) {
+                    d3.select(this).transition().duration(100).attr("r", 10);
+                    const idx = parsedData.indexOf(d);
+                    container.dispatchEvent(new CustomEvent('timeline-hover', { detail: { index: idx } }));
+                })
+                .on("mouseout", function(event, d) {
+                    d3.select(this).transition().duration(200).attr("r", 6);
+                    container.dispatchEvent(new CustomEvent('timeline-hover', { detail: { index: null } }));
+                });
+        }
     </script>
 </body>
 </html>
