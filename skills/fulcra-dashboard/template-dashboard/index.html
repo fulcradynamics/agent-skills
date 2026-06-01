@@ -83,6 +83,15 @@
                 </section>
             </template>
         </div>
+
+        <!-- Records Processed Bar Chart -->
+        <section class="card bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-12" x-show="recordsProcessed && recordsProcessed.length > 0" x-data="barChartComponent()">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-100 pb-2 flex items-center gap-3 timeline-title">
+                <span class="timeline-icon">📊</span>
+                <span>Records Processed (Data Volume)</span>
+            </h2>
+            <div class="w-full relative" style="min-height: 300px;" x-ref="barChartZone"></div>
+        </section>
         
     </main>
 
@@ -94,13 +103,15 @@
             
             Alpine.data('dashboard', () => ({
                 timelines: [],
+                recordsProcessed: [],
                 
                 async init() {
                     try {
                         const response = await fetch('data.json');
                         const data = await response.json();
                         this.timelines = data.timelines || [];
-                        console.log("Dashboard initialized with timelines:", this.timelines.length);
+                        this.recordsProcessed = data.recordsProcessed || [];
+                        console.log("Dashboard initialized.");
                     } catch (err) {
                         console.error("Failed to load dashboard data", err);
                     }
@@ -151,9 +162,81 @@
                     return 'Event';
                 }
             }));
+
+            Alpine.data('barChartComponent', () => ({
+                init() {
+                    this.$nextTick(() => {
+                        // The dashboard component holds the recordsProcessed array
+                        const data = this.$data.recordsProcessed;
+                        if (data && data.length > 0 && this.$refs.barChartZone) {
+                            drawD3BarChart(data, this.$refs.barChartZone);
+                        }
+                    });
+                }
+            }));
         });
         
-        // --- D3 Drawing Function ---
+        // --- D3 Drawing Functions ---
+        function drawD3BarChart(data, container) {
+            d3.select(container).selectAll("*").remove();
+            
+            const margin = { top: 30, right: 30, bottom: 40, left: 150 };
+            const width = container.clientWidth - margin.left - margin.right || 600;
+            const height = Math.max(250, data.length * 40);
+
+            const svg = d3.select(container).append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Sort data largest to smallest
+            const sortedData = [...data].sort((a, b) => b.count - a.count);
+
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(sortedData, d => d.count)])
+                .range([0, width]);
+
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(5))
+                .attr("color", "#a0aec0")
+                .selectAll("text").style("font-family", "inherit").style("fill", "#718096");
+
+            const y = d3.scaleBand()
+                .range([0, height])
+                .domain(sortedData.map(d => d.type))
+                .padding(.1);
+
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .attr("color", "#a0aec0")
+                .selectAll("text").style("font-family", "inherit").style("fill", "#718096").style("font-size", "12px");
+
+            const colorScale = d3.scaleOrdinal()
+                .domain(sortedData.map(d => d.type))
+                .range(d3.quantize(t => d3.interpolateBlues(t * 0.8 + 0.2), sortedData.length).reverse());
+
+            svg.selectAll("myRect")
+                .data(sortedData).enter().append("rect")
+                .attr("x", x(0))
+                .attr("y", d => y(d.type))
+                .attr("width", d => x(d.count))
+                .attr("height", y.bandwidth())
+                .attr("fill", d => colorScale(d.type))
+                .attr("rx", 4)
+                .style("opacity", 0.8)
+                .on("mouseover", function() { d3.select(this).style("opacity", 1).attr("stroke", "#fff").attr("stroke-width", 1); })
+                .on("mouseout", function() { d3.select(this).style("opacity", 0.8).attr("stroke", "none"); });
+
+            svg.selectAll(".text")
+                .data(sortedData).enter().append("text")
+                .attr("y", d => y(d.type) + y.bandwidth() / 2 + 4)
+                .attr("x", d => x(d.count) + 5)
+                .text(d => d.count.toLocaleString())
+                .style("fill", "#2d3748").style("font-size", "12px").style("font-family", "inherit");
+        }
+
         function drawD3Timeline(parsedData, container, color) {
             d3.select(container).selectAll("*").remove();
             
