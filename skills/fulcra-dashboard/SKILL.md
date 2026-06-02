@@ -57,8 +57,8 @@ If no `<target-directory>` is provided, it defaults to creating a `fulcra-dashbo
 1. **Scaffold:** The script copies a clean, un-styled Alpine.js dashboard template (which includes the HTML, Python server, and external CSS) into the target directory.
 2. **Data Ingestion (Requires Consent):** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI. 
    - **Important:** Always ask the user for permission to query the Fulcra API to build the dashboard before fetching records.
-   - Run `uv tool run fulcra-api catalog` to check for user annotations.
-   - Fetch records (e.g., `uv tool run fulcra-api get-records RecordsProcessed "30 days" > records_processed.jsonl`). Keep the files as raw JSONL in the dashboard directory.
+   - Run `uv tool run fulcra-api catalog` to discover available data. **CRITICAL:** Prioritize user-configured data over passive metrics (like step count). Explicitly filter for items where `categories` includes `"user_configured"`, or where the `id` follows the format `*Annotation/<UUID>` (e.g., `ScaleAnnotation/1234-abcd...`).
+   - Fetch records for the user's custom annotations (e.g., `uv tool run fulcra-api get-records "ScaleAnnotation/<UUID>" "30 days" > timeline_name.jsonl`) as well as the `RecordsProcessed` metric. Keep the files as raw JSONL in the dashboard directory.
    - The `data.json` config file acts as a manifest. It should map your layout to the `.jsonl` files you downloaded, like this: `{"timelines": [{"id": "...", "title": "...", "icon": "...", "color": "...", "data": "timeline_name.jsonl"}], "recordsProcessed": "records_processed.jsonl"}`. 
    - You do not need to write an aggregation script; the dashboard will automatically parse `.jsonl` files and aggregate records for the charts natively on `init()`.
 3. **Theming & Visualization:**
