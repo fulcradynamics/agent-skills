@@ -59,7 +59,7 @@ If no `<target-directory>` is provided, it defaults to creating a `fulcra-dashbo
    - **Important:** Always ask the user for permission to query the Fulcra API to build the dashboard before fetching records.
    - Run `uv tool run fulcra-api catalog` to check for user annotations.
    - Fetch records (e.g., `uv tool run fulcra-api get-records RecordsProcessed "30 days"`). Remember that `fulcra-api get-records` outputs JSONL. You *must* convert this to a valid JSON structure that the dashboard expects. 
-   - The `data.json` file must match this schema: `{"timelines": [{"id": "...", "title": "...", "icon": "...", "color": "...", "data": [...] }], "recordsProcessed": [...]}`. Use a short Node.js or Python script to parse the JSONL files, group them into timelines, and write the final `data.json` file beside the `index.html`.
+   - The `data.json` file must match this schema: `{"timelines": [{"id": "...", "title": "...", "icon": "...", "color": "...", "data": [...] }], "recordsProcessed": [{"type": "...", "count": 123}, ...]}`. Use a short Node.js or Python script to parse the JSONL files, group them into timelines, and aggregate `recordsProcessed` by type so the D3 bar chart can render it correctly.
    - Have your Alpine.js component fetch it on `init()` (e.g., `fetch('data.json').then(...)`).
 3. **Theming & Visualization:**
    - **Theme Discovery:** Ask the user what "theme" or "vibe" they want (e.g., minimalist dark mode, cyberpunk, a retro diner, a space station). 
