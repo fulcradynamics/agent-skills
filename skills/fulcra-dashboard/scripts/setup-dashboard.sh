@@ -25,7 +25,10 @@ cp -R "$TEMPLATE_DIR/"* "$TARGET_DIR/"
 # 4. Create the empty data directory structure
 echo "📁 Preparing data structures..."
 mkdir -p "$TARGET_DIR/assets"
-touch "$TARGET_DIR/data.json" # Agents will overwrite this with real data
+echo '{
+  "timelines": [],
+  "recordsProcessed": []
+}' > "$TARGET_DIR/data.json" # Agents will overwrite this manifest to point to .jsonl files
 
 echo "✅ Dashboard scaffolded successfully in: $TARGET_DIR"
 echo ""

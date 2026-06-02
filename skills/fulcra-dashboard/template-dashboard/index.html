@@ -149,12 +149,52 @@ window.addEventListener('unhandledrejection', function(event) {
                     try {
                         // Use a cache-buster so local development always gets fresh data
                         const response = await fetch('data.json?t=' + Date.now());
-                        const data = await response.json();
-                        this.timelines = data.timelines || [];
-                        this.recordsProcessed = data.recordsProcessed || [];
+                        const config = await response.json();
+                        
+                        // Helper to fetch and parse JSONL
+                        const fetchJsonl = async (url) => {
+                            if (!url) return [];
+                            try {
+                                const res = await fetch(url + '?t=' + Date.now());
+                                if (!res.ok) return [];
+                                const text = await res.text();
+                                return text.trim().split('\n').filter(Boolean).map(JSON.parse);
+                            } catch (e) {
+                                console.error("Error fetching JSONL:", url, e);
+                                return [];
+                            }
+                        };
+
+                        // Process timelines (support both inline array and .jsonl file paths)
+                        if (config.timelines) {
+                            for (let tl of config.timelines) {
+                                if (typeof tl.data === 'string' && tl.data.endsWith('.jsonl')) {
+                                    tl.data = await fetchJsonl(tl.data);
+                                }
+                            }
+                            this.timelines = config.timelines;
+                        }
+
+                        // Process recordsProcessed
+                        let rawRecords = config.recordsProcessed || [];
+                        if (typeof rawRecords === 'string' && rawRecords.endsWith('.jsonl')) {
+                            rawRecords = await fetchJsonl(rawRecords);
+                            
+                            // Aggregate by type natively
+                            const aggregated = {};
+                            for (const r of rawRecords) {
+                                const type = r.fulcra_data_type || 'Unknown';
+                                const val = typeof r.value === 'number' ? r.value : 1;
+                                aggregated[type] = (aggregated[type] || 0) + val;
+                            }
+                            this.recordsProcessed = Object.entries(aggregated).map(([type, count]) => ({ type, count }));
+                        } else {
+                            this.recordsProcessed = rawRecords;
+                        }
+
                         console.log("Dashboard initialized with", this.timelines.length, "timelines.");
                     } catch (err) {
-                        console.error("Failed to load dashboard data", err);
+                        console.error("Failed to load dashboard config/data", err);
                     }
                 }
             }));
