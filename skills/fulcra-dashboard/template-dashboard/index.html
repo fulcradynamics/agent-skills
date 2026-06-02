@@ -112,7 +112,7 @@ window.addEventListener('unhandledrejection', function(event) {
                                     <div class="entry-content">
                                         <div class="entry-header">
                                             <strong class="entry-label" x-text="detail.item.label || detail.item.type"></strong>
-                                            <span class="entry-value" x-text="detail.item.value"></span>
+                                            <span class="entry-value" x-html="formatValue(detail.item)"></span>
                                         </div>
                                         <p class="entry-note" x-show="detail.item.note" x-text="detail.item.note"></p>
                                     </div>
@@ -221,6 +221,28 @@ window.addEventListener('unhandledrejection', function(event) {
                     if (d.type === 'backup' || (d.label && d.label.toLowerCase().includes('backup'))) return 'Archival';
                     if (d.type === 'annotation' || (d.label && d.label.toLowerCase().includes('note'))) return 'Annotation';
                     return 'Event';
+                },
+                
+                formatValue(d) {
+                    if (d.value === undefined || d.value === null) return '';
+                    
+                    // Special formatting for ScaleAnnotations
+                    if (d.metadata && d.measurement_spec && d.measurement_spec.measurement_type === 'scale') {
+                        const maxVal = d.measurement_spec.scale.max_allowed || 5;
+                        let textStr = `${d.value}/${maxVal}`;
+                        
+                        // Look for a custom label mapping
+                        if (d.metadata.spec && d.metadata.spec.scale && d.metadata.spec.scale.label_mapping && d.metadata.spec.scale.label_mapping.string && d.metadata.spec.scale.label_mapping.string.mapping) {
+                           const label = d.metadata.spec.scale.label_mapping.string.mapping[String(d.value)];
+                           if (label) {
+                               textStr += ` &mdash; <em>${label}</em>`;
+                           }
+                        }
+                        return textStr;
+                    }
+                    
+                    // Fallback for primitive values
+                    return d.value;
                 }
             }));
 
