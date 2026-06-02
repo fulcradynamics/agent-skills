@@ -4,13 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fulcra Dashboard</title>
-    <!-- Tailwind CSS (CDN is permitted for GitHub Pages/Static deployment) -->
-    <!-- We removed Tailwind in favor of vanilla CSS to simplify theming. -->
-    
-    <!-- External Theming CSS -->
     <link rel="stylesheet" href="theme.css">
-
-    <!-- Alpine.js & D3.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -25,114 +19,111 @@ window.addEventListener('unhandledrejection', function(event) {
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans min-h-screen relative" x-data="dashboard()">
     
-    <!-- ========================================== -->
-    <!-- 🏛️ PROVINCE: DASHBOARD LAYOUT & UI         -->
-    <!-- ========================================== -->
     <main class="layout-container">
-        
         <!-- Hero Header -->
-        <header class="hero-header">
-            <!-- Dynamic Hero Image Fallback/Background -->
+        <header class="hero-header glass-panel">
             <div class="hero-art-container">
-                <!-- Agents: Inject the generated image source here -->
                 <img id="hero-img" src="" alt="Theme Art" class="hero-img" style="display:none;" onload="this.style.display='block'" onerror="this.style.display='none'">
+                <div class="gradient-overlay"></div>
             </div>
             
             <div class="hero-content">
-                <!-- Agents: Inject custom CSS animations/elements into this layer -->
-                <div class="animation-layer"></div>
+                <div class="animation-layer">
+                    <div class="floating-particle p1"></div>
+                    <div class="floating-particle p2"></div>
+                    <div class="floating-particle p3"></div>
+                </div>
                 
                 <h1 class="dashboard-title">
-                    <span class="title-icon">📊</span>
-                    <span class="title-text">Fulcra Dashboard</span>
+                    <span class="title-text glow-text">FULCRA DASHBOARD</span>
                 </h1>
+                <div class="title-separator"></div>
                 <p class="subtitle">A canvas for your data.</p>
+                <div class="status-badge">
+                    <span class="pulse-dot"></span>
+                    SYNC ALIGNED
+                </div>
             </div>
         </header>
 
-        <!-- Dynamic Timelines -->
-        <div class="timelines-grid">
-            <template x-for="timeline in timelines" :key="timeline.id">
-                <section class="card timeline-card" x-data="timelineComponent(timeline)">
-                    <h2 class="timeline-title">
-                        <span x-text="timeline.icon" class="timeline-icon"></span>
-                        <span x-text="timeline.title"></span>
-                    </h2>
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-bento-grid">
+            
+            <!-- Left Column: Core Metrics -->
+            <div class="bento-col-left">
+                <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
+                    <div class="card-header">
+                        <div class="header-icon-box">📊</div>
+                        <h2 class="timeline-title">Data Velocity</h2>
+                    </div>
+                    <div class="chart-container bar-chart-zone" x-ref="barChartZone"></div>
+                </section>
+                
+                <!-- Chat Envoy block injected into bento -->
+                <section class="card glass-panel local-only chat-envoy-card" x-data="chatEnvoy()">
+                    <div class="card-header">
+                        <div class="header-icon-box">🛰️</div>
+                        <h2 class="timeline-title">Sub-Surface Relay</h2>
+                        <div class="status-indicator" :class="isTyping ? 'typing' : 'active'"></div>
+                    </div>
                     
-                    <div class="chart-container timeline-chart-zone" x-ref="chartZone" @timeline-hover="hoverIndex = $event.detail.index"></div>
-                    
-                    <!-- Logs List -->
-                    <div class="logs-container">
-                        <template x-for="detail in displayedDetails" :key="detail.item.recorded_at">
-                            <div class="log-entry"
-                                 :style="detail.isHovered ? `border-color: ${timeline.color}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.01);` : ''"
-                                 :class="detail.isHovered ? 'hovered' : ''">
-                                
-                                <div class="log-icon-wrapper"
-                                     :style="`border-color: ${detail.isHovered ? timeline.color : ''}; color: ${timeline.color};`">
-                                    <span class="log-icon-emoji" x-text="getIcon(detail.item)"></span>
-                                </div>
-                                
-                                <div class="log-content-wrapper">
-                                    <div class="log-header">
-                                        <h4 class="log-date" 
-                                            x-text="detail.item.parsedDate.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })">
-                                        </h4>
-                                        <span class="log-badge"
-                                              x-text="getTier(detail.item)">
-                                        </span>
-                                    </div>
-                                    <p class="log-body">
-                                        <strong class="log-label" x-text="detail.item.label || detail.item.type"></strong><br/>
-                                        <span class="log-details" x-text="detail.item.note || detail.item.details || detail.item.size || ''"></span>
-                                    </p>
-                                </div>
+                    <div class="chat-window sleek-scroll" x-ref="chatWindow">
+                        <template x-for="msg in messages" :key="Math.random()">
+                            <div class="message" :class="msg.role">
+                                <div class="bubble" x-text="msg.text"></div>
                             </div>
                         </template>
+                        <div class="message assistant typing-indicator" x-show="isTyping">
+                            <div class="bubble">...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <textarea x-model="input" @keydown="handleKeydown" placeholder="Transmit coordinates..." rows="1"></textarea>
+                        <button @click="sendMessage" :disabled="isTyping || !input.trim()">Send</button>
                     </div>
                 </section>
-            </template>
-        </div>
-
-        <!-- Records Processed Bar Chart -->
-        <section class="card bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
-            <h2 class="timeline-title">
-                <span class="timeline-icon">📊</span>
-                <span>Records Processed (Data Volume)</span>
-            </h2>
-            <div class="chart-container bar-chart-zone" x-ref="barChartZone"></div>
-        </section>
-        
-        <!-- Chat Envoy (Hidden by default unless in local dev mode) -->
-        <div class="chat-envoy-container local-only" x-data="chatEnvoy()">
-            <div class="chat-header">
-                <h3><span class="title-icon">🛰️</span> Sub-Surface Relay</h3>
-                <div class="status-indicator" :class="isTyping ? 'typing' : 'active'"></div>
             </div>
 
-            <div class="chat-window" x-ref="chatWindow">
-                <template x-for="msg in messages" :key="Math.random()">
-                    <div class="message" :class="msg.role">
-                        <div class="bubble" x-text="msg.text"></div>
-                    </div>
+            <!-- Right Column: Chronological Timelines -->
+            <div class="bento-col-right timelines-grid">
+                <template x-for="timeline in timelines" :key="timeline.id">
+                    <section class="card glass-panel timeline-card" x-data="timelineComponent(timeline)">
+                        <div class="card-header">
+                            <div class="header-icon-box" x-text="timeline.icon"></div>
+                            <h2 class="timeline-title" x-text="timeline.title"></h2>
+                            <div class="log-count-badge" x-text="displayedDetails.length + ' entries'"></div>
+                        </div>
+                        
+                        <div class="chart-container timeline-chart-zone" x-ref="chartZone" @timeline-hover="hoverIndex = $event.detail.index"></div>
+                        
+                        <!-- Minimalist Logs List -->
+                        <div class="logs-container sleek-scroll">
+                            <template x-for="detail in displayedDetails" :key="detail.item.recorded_at">
+                                <div class="log-entry modern-entry"
+                                     :class="detail.isHovered ? 'hovered active-glow' : ''"
+                                     :style="detail.isHovered ? `--entry-color: ${timeline.color};` : ''">
+                                    
+                                    <div class="entry-time">
+                                        <div class="time-dot" :style="`background-color: ${timeline.color};`"></div>
+                                        <span x-text="detail.item.parsedDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
+                                    </div>
+                                    
+                                    <div class="entry-content">
+                                        <div class="entry-header">
+                                            <strong class="entry-label" x-text="detail.item.label || detail.item.type"></strong>
+                                            <span class="entry-value" x-text="detail.item.value"></span>
+                                        </div>
+                                        <p class="entry-note" x-show="detail.item.note" x-text="detail.item.note"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
                 </template>
-                
-                <div class="message assistant typing-indicator" x-show="isTyping">
-                    <div class="bubble">...</div>
-                </div>
             </div>
-
-            <div class="chat-input-area">
-                <textarea 
-                    x-model="input" 
-                    @keydown="handleKeydown"
-                    placeholder="Transmit coordinates..."
-                    rows="2">
-                </textarea>
-                <button @click="sendMessage" :disabled="isTyping || !input.trim()">Send</button>
-            </div>
+            
         </div>
-
     </main>
 
     <!-- ========================================== -->
@@ -147,11 +138,9 @@ window.addEventListener('unhandledrejection', function(event) {
                 
                 async init() {
                     try {
-                        // Use a cache-buster so local development always gets fresh data
                         const response = await fetch('data.json?t=' + Date.now());
                         const config = await response.json();
                         
-                        // Helper to fetch and parse JSONL
                         const fetchJsonl = async (url) => {
                             if (!url) return [];
                             try {
@@ -160,12 +149,10 @@ window.addEventListener('unhandledrejection', function(event) {
                                 const text = await res.text();
                                 return text.trim().split('\n').filter(Boolean).map(JSON.parse);
                             } catch (e) {
-                                console.error("Error fetching JSONL:", url, e);
                                 return [];
                             }
                         };
 
-                        // Process timelines (support both inline array and .jsonl file paths)
                         if (config.timelines) {
                             for (let tl of config.timelines) {
                                 if (typeof tl.data === 'string' && tl.data.endsWith('.jsonl')) {
@@ -175,15 +162,12 @@ window.addEventListener('unhandledrejection', function(event) {
                             this.timelines = config.timelines;
                         }
 
-                        // Process recordsProcessed
                         let rawRecords = config.recordsProcessed || [];
                         if (typeof rawRecords === 'string' && rawRecords.endsWith('.jsonl')) {
                             rawRecords = await fetchJsonl(rawRecords);
-                            
-                            // Aggregate by type natively
                             const aggregated = {};
                             for (const r of rawRecords) {
-                                const type = r.fulcra_data_type || 'Unknown';
+                                const type = r.metadata?.name || r.metadata?.data_type || r.annotation_type || r.fulcra_data_type || 'Unknown';
                                 const val = typeof r.value === 'number' ? r.value : 1;
                                 aggregated[type] = (aggregated[type] || 0) + val;
                             }
@@ -191,8 +175,6 @@ window.addEventListener('unhandledrejection', function(event) {
                         } else {
                             this.recordsProcessed = rawRecords;
                         }
-
-                        console.log("Dashboard initialized with", this.timelines.length, "timelines.");
                     } catch (err) {
                         console.error("Failed to load dashboard config/data", err);
                     }
@@ -204,13 +186,11 @@ window.addEventListener('unhandledrejection', function(event) {
                 parsedData: [],
                 
                 init() {
-                    // Parse dates once
                     this.parsedData = (timeline.data || []).map(d => ({
                         ...d,
                         parsedDate: new Date(d.recorded_at || d.time || d.date)
                     })).sort((a, b) => a.parsedDate - b.parsedDate);
                     
-                    // Give DOM a tick to un-hide the container before drawing
                     this.$nextTick(() => {
                         if (this.parsedData.length > 0 && this.$refs.chartZone) {
                             drawD3Timeline(this.parsedData, this.$refs.chartZone, timeline.color);
@@ -245,25 +225,81 @@ window.addEventListener('unhandledrejection', function(event) {
             }));
 
             Alpine.data('barChartComponent', () => ({
-                init() {
-                    // Initialization can be empty; x-effect handles the drawing
-                },
-                
+                init() {},
                 updateChart(data) {
                     if (data && data.length > 0 && this.$refs.barChartZone) {
-                        // Small delay to ensure the div is fully un-hidden by x-show before drawing
                         setTimeout(() => {
                             drawD3BarChart(data, this.$refs.barChartZone);
                         }, 50);
                     }
                 }
             }));
+
+            Alpine.data('chatEnvoy', () => ({
+                messages: [],
+                input: '',
+                isTyping: false,
+
+                async init() {
+                    try {
+                        const res = await fetch('/api/chat');
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.messages = data.messages || [];
+                            this.scrollToBottom();
+                        }
+                    } catch(e) {}
+                },
+                
+                async sendMessage() {
+                    if (!this.input.trim()) return;
+                    
+                    const msgText = this.input.trim();
+                    this.input = '';
+                    this.messages.push({ role: 'user', text: msgText });
+                    this.scrollToBottom();
+                    
+                    this.isTyping = true;
+                    try {
+                        const res = await fetch('/api/chat', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: msgText })
+                        });
+                        
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.messages) {
+                                this.messages.push(...data.messages);
+                            }
+                        }
+                    } catch(e) {
+                        this.messages.push({ role: 'system', text: 'Relay error: Connection lost.' });
+                    } finally {
+                        this.isTyping = false;
+                        this.scrollToBottom();
+                    }
+                },
+                
+                handleKeydown(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                },
+                
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        if (this.$refs.chatWindow) {
+                            this.$refs.chatWindow.scrollTop = this.$refs.chatWindow.scrollHeight;
+                        }
+                    });
+                }
+            }));
         });
         
-        // --- D3 Drawing Functions ---
         function drawD3BarChart(data, container) {
             d3.select(container).selectAll("*").remove();
-            
             const margin = { top: 30, right: 30, bottom: 40, left: 150 };
             const width = container.clientWidth - margin.left - margin.right || 600;
             const height = Math.max(250, data.length * 40);
@@ -274,7 +310,6 @@ window.addEventListener('unhandledrejection', function(event) {
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            // Sort data largest to smallest
             const sortedData = [...data].sort((a, b) => b.count - a.count);
 
             const x = d3.scaleLinear()
@@ -318,7 +353,7 @@ window.addEventListener('unhandledrejection', function(event) {
                 .attr("y", d => y(d.type) + y.bandwidth() / 2 + 4)
                 .attr("x", d => x(d.count) + 5)
                 .text(d => d.count.toLocaleString())
-                .style("fill", "#2d3748").style("font-size", "12px").style("font-family", "inherit");
+                .style("fill", "#f0f0f0").style("font-size", "12px").style("font-family", "inherit");
         }
 
         function drawD3Timeline(parsedData, container, color) {
@@ -326,48 +361,85 @@ window.addEventListener('unhandledrejection', function(event) {
             
             const width = container.clientWidth || 800;
             const height = container.clientHeight || 120;
-            const margin = { top: 20, right: 30, bottom: 30, left: 30 };
+            const margin = {top: 20, right: 20, bottom: 30, left: 20};
+            const innerWidth = width - margin.left - margin.right;
+            const innerHeight = height - margin.top - margin.bottom;
 
             const svg = d3.select(container).append("svg")
-                .attr("width", width).attr("height", height)
-                .style("overflow", "visible");
+                .attr("width", width)
+                .attr("height", height);
+                
+            const g = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const tooltip = d3.select(container).append("div")
+                .attr("class", "d3-tooltip")
+                .style("opacity", 0);
+
+            if (!parsedData || parsedData.length === 0) return;
 
             const x = d3.scaleTime()
                 .domain(d3.extent(parsedData, d => d.parsedDate))
-                .range([margin.left, width - margin.right]);
+                .range([0, innerWidth]);
 
-            const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d, %H:%M"));
-            
-            svg.append("g")
-                .attr("transform", `translate(0,${height - margin.bottom})`)
-                .call(xAxis)
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(parsedData, d => typeof d.value === 'number' ? d.value : 1)])
+                .range([innerHeight, 0]);
+
+            // Add subtle grid lines
+            g.append("g")
+                .attr("class", "grid")
+                .attr("transform", `translate(0,${innerHeight})`)
+                .call(d3.axisBottom(x).tickSize(-innerHeight).tickFormat(""))
+                .attr("stroke-opacity", 0.1)
+                .attr("color", "#a0aec0");
+
+            const hasValues = parsedData.some(d => typeof d.value === 'number');
+
+            if (hasValues && parsedData.length > 1) {
+                const line = d3.line()
+                    .x(d => x(d.parsedDate))
+                    .y(d => y(d.value))
+                    .curve(d3.curveMonotoneX);
+
+                g.append("path")
+                    .datum(parsedData)
+                    .attr("fill", "none")
+                    .attr("stroke", color || "var(--chart-line-1)")
+                    .attr("stroke-width", 2)
+                    .attr("d", line);
+            }
+
+            g.selectAll("circle")
+                .data(parsedData)
+                .enter().append("circle")
+                .attr("cx", d => x(d.parsedDate))
+                .attr("cy", d => hasValues ? y(d.value) : innerHeight / 2)
+                .attr("r", 5)
+                .attr("fill", color || "var(--chart-line-1)")
+                .attr("stroke", "var(--card-bg)")
+                .attr("stroke-width", 2)
+                .on("mouseover", function(event, d) {
+                    const idx = parsedData.indexOf(d);
+                    d3.select(container).node().dispatchEvent(new CustomEvent('timeline-hover', { detail: { index: idx } }));
+                    
+                    d3.select(this).attr("r", 8);
+                    tooltip.transition().duration(200).style("opacity", .9);
+                    tooltip.html(`Value: ${d.value || 1}<br/>${d.parsedDate.toLocaleDateString()}`)
+                        .style("left", (event.pageX) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.select(this).attr("r", 5);
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+            g.append("g")
+                .attr("transform", `translate(0,${innerHeight})`)
+                .call(d3.axisBottom(x).ticks(5))
                 .attr("color", "#a0aec0")
                 .selectAll("text").style("font-family", "inherit");
-
-            svg.append("line")
-                .attr("x1", margin.left).attr("y1", (height - margin.bottom) / 2)
-                .attr("x2", width - margin.right).attr("y2", (height - margin.bottom) / 2)
-                .attr("stroke", "#e2e8f0").attr("stroke-width", 2);
-
-            svg.selectAll(".dot")
-                .data(parsedData).enter().append("circle")
-                .attr("class", "dot")
-                .attr("cx", d => x(d.parsedDate))
-                .attr("cy", (height - margin.bottom) / 2)
-                .attr("r", 6).attr("fill", color)
-                .attr("stroke", "#fff").attr("stroke-width", 2)
-                .style("cursor", "pointer")
-                .on("mouseover", function(event, d) {
-                    d3.select(this).transition().duration(100).attr("r", 10);
-                    const idx = parsedData.indexOf(d);
-                    container.dispatchEvent(new CustomEvent('timeline-hover', { detail: { index: idx } }));
-                })
-                .on("mouseout", function(event, d) {
-                    d3.select(this).transition().duration(200).attr("r", 6);
-                    container.dispatchEvent(new CustomEvent('timeline-hover', { detail: { index: null } }));
-                });
         }
     </script>
-    <script src="envoy.js"></script>
 </body>
 </html>
