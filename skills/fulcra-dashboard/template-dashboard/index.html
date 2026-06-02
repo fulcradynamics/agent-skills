@@ -39,6 +39,8 @@ window.addEventListener('unhandledrejection', function(event) {
                 </h1>
                 <div class="title-separator"></div>
                 <p class="subtitle">A canvas for your data.</p>
+                <p class="dashboard-summary" x-text="dashboardSummary"></p>
+                <p class="dashboard-date" x-text="'Last Synced: ' + syncDate"></p>
                 <div class="status-badge">
                     <span class="pulse-dot"></span>
                     SYNC ALIGNED
@@ -91,7 +93,10 @@ window.addEventListener('unhandledrejection', function(event) {
                     <section class="card glass-panel timeline-card" x-data="timelineComponent(timeline)">
                         <div class="card-header">
                             <div class="header-icon-box" x-text="timeline.icon"></div>
-                            <h2 class="timeline-title" x-text="timeline.title"></h2>
+                            <div class="header-text-group">
+                                <h2 class="timeline-title" x-text="timeline.title"></h2>
+                                <p class="timeline-description" x-show="timeline.description" x-text="timeline.description"></p>
+                            </div>
                             <div class="log-count-badge" x-text="displayedDetails.length + ' entries'"></div>
                         </div>
                         
@@ -135,11 +140,15 @@ window.addEventListener('unhandledrejection', function(event) {
             Alpine.data('dashboard', () => ({
                 timelines: [],
                 recordsProcessed: [],
+                dashboardSummary: '',
+                syncDate: new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
                 
                 async init() {
                     try {
                         const response = await fetch('data.json?t=' + Date.now());
                         const config = await response.json();
+                        
+                        this.dashboardSummary = config.summary || 'A high-altitude view of your tracked data.';
                         
                         const fetchJsonl = async (url) => {
                             if (!url) return [];

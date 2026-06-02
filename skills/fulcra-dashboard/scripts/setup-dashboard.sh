@@ -26,6 +26,7 @@ cp -R "$TEMPLATE_DIR/"* "$TARGET_DIR/"
 echo "📁 Preparing data structures..."
 mkdir -p "$TARGET_DIR/assets"
 echo '{
+  "summary": "Agent automatically generated summary of this dashboard.",
   "timelines": [],
   "recordsProcessed": "records_processed.jsonl"
 }' > "$TARGET_DIR/data.json" # Agents will overwrite this manifest to point to .jsonl files
