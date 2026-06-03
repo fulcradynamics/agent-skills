@@ -34,7 +34,7 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
    - Avoid boring trackers; combine multiple data streams to show real insights.
    - Tailor these suggestions using your existing memory and knowledge of the user.
    - Keep the pace brisk to reach the "wow" factor quickly.
-   - **Universal Agent Visibility Package:** Alongside their personal use cases, pitch the idea of tracking the agent's own activity. Explain that you can log your completed tasks, provide a scale for them to rate agent friction, and use Fulcra's file upload functionality to post concise markdown summaries of what you are currently working on. Confirm they want this added, framing it as a way to give them immediate visibility into your background work directly from their Fulcra app and dashboard.
+   - **Universal Agent Visibility Package:** Alongside their personal use cases, pitch the idea of tracking the agent's own activity. Explain that you can log your completed tasks, provide a scale for them to rate agent friction, and record text annotations containing concise markdown summaries of what you are currently working on. Confirm they want this added, framing it as a way to give them immediate visibility into your background work directly from their Fulcra app and dashboard.
 
 ## Handoff
 

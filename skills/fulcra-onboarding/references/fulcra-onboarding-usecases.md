@@ -44,7 +44,7 @@ Here are several "Wow" factor use cases to use as inspiration or present directl
 **How it works:** Propose creating standard annotations that the agent itself will log into Fulcra:
 1. **Agent Tasks Completed:** A log of discrete actions the agent has successfully finished on the user's behalf.
 2. **Agent Friction (User Rating):** A simple scale where the user can rate when the agent is being highly helpful versus getting stuck or being annoying.
-3. **Current Agent Work (File Upload):** The agent automatically uploads a concise markdown summary of its current ongoing tasks and context directly to the user's Fulcra datastore using the new file upload functionality.
+3. **Current Agent Work:** The agent automatically records a text annotation containing a concise markdown summary of its current ongoing tasks and context directly to the user's Fulcra datastore.
 **The Wow:** A unified dashboard view in their Fulcra app where they can monitor, rate, and read up on exactly what their digital assistant is doing at any given moment, immediately populating their datastore with live activity.
 
 ## How to use these:
