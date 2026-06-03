@@ -29,12 +29,12 @@ uv tool run fulcra-api file upload /tmp/memory.gz "agent/<agent_name>/memory/mem
 
 ## 2. Listing Memory History
 
-Because Fulcra versions files automatically, you can see all previous backups of the memory.
+Because Fulcra versions files automatically, you can see all previous backups of the memory using the `stat` command.
 
 ```bash
-uv tool run fulcra-api file history "agent/<agent_name>/memory/memory.gz"
+uv tool run fulcra-api file stat "agent/<agent_name>/memory/memory.gz"
 ```
-*(This command will output the versions and their IDs. Present these to the user so they can select a version to restore.)*
+*(This command will output information about the file, including all previously uploaded versions and their UUIDs. Present these to the user so they can select a version to restore.)*
 
 ## 3. Safe Restoration / Rollback
 
@@ -45,12 +45,12 @@ Once the pre-restore backup is complete, use the Fulcra CLI to set the active ve
 **Step A: Restore the version in Fulcra**
 ```bash
 # Instruct Fulcra to make the older version the active file
-uv tool run fulcra-api file restore "agent/<agent_name>/memory/memory.gz" --version <version_id>
+uv tool run fulcra-api file restore <version_id>
 ```
 
 **Step B: Download the restored file**
 ```bash
-uv tool run fulcra-api file download "agent/<agent_name>/memory/memory.gz" --output /tmp/restored_memory.gz
+uv tool run fulcra-api file download "agent/<agent_name>/memory/memory.gz" /tmp/restored_memory.gz
 ```
 
 **Step C: Extract and overwrite local memory**
@@ -66,7 +66,7 @@ To clone, skip the restore step and simply download the target agent's `memory.g
 
 ```bash
 # Download the target agent's memory
-uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.gz" --output /tmp/restored_memory.gz
+uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.gz" /tmp/restored_memory.gz
 
 # Extract locally (Overwrites current identity and memory)
 cd ~/.openclaw/workspace
