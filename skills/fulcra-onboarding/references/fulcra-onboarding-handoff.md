@@ -24,6 +24,8 @@ This skill handles the final step (Step 7) of the onboarding process, presenting
    - 💻 **Context Web:** Remind them they can instantly view their data on desktop by visiting [Context Web](https://context.fulcradynamics.com/). Note that while it doesn't collect/record data automatically like the mobile app, it's a great place to explore what they've built.
    
    - ➕ **Track More Data:** Remind them this is just the beginning. They can easily define new Annotations or start pulling in bulk data to expand their dashboard.
+   
+   - 🧠 **Automate Agent Memory & Teamwork:** We can use the `fulcra-memory` skill to set up a scheduled cron job (or heartbeat) so that my memory is automatically backed up. We can also set up shared Team namespaces so multiple agents can coordinate and drop files in each other's inboxes.
 
 3. **Closing:**
    - Ask them which path they want to take next (e.g., "Shall we build that live web app, or would you rather explore Context Web first?").
