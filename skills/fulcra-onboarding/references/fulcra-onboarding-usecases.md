@@ -5,9 +5,11 @@ description: "A reference file containing high-impact, 'wow' factor use cases fo
 
 # Fulcra High-Impact Use Cases ("Wow" Factor)
 
-When suggesting ideas to a user during the discovery phase, avoid humdrum trackers like "books read" or "coffee intake." We want to show them the true power of a universal data and memory backend. Suggest ideas that combine multiple data streams, use context, and provide actionable insights.
+When suggesting ideas to a user during the discovery phase, avoid humdrum trackers like "books read" or "coffee intake." We want to show them the true power of a universal data and memory backend by suggesting ideas that combine multiple data streams, use context, and provide actionable insights.
 
-Here are several "Wow" factor use cases to use as inspiration or present directly to the user:
+**Important:** This list is meant to be **directionally helpful inspiration**, not a static menu or limiting set. You are strongly encouraged to invent entirely new use cases tailored specifically to the user's unique interests, career, or daily workflow.
+
+Here are several "Wow" factor archetypes to use as a baseline for your own tailored suggestions:
 
 ## 1. The "Social Battery" Dashboard
 **The Idea:** Predict burnout before it happens.
@@ -48,6 +50,7 @@ Here are several "Wow" factor use cases to use as inspiration or present directl
 **The Wow:** A unified dashboard view in their Fulcra app where they can monitor, rate, and read up on exactly what their digital assistant is doing at any given moment, immediately populating their datastore with live activity.
 
 ## How to use these:
-- Don't dump the whole list on the user.
-- Pick 2-3 that align with what you already know about them (from `USER.md`, `MEMORY.md`, or previous chats).
+- **Do not limit yourself to this list.** Use these merely as structural templates to invent new, personalized ideas for the user.
+- Don't dump a whole list on the user.
+- Pitch 2-3 ideas that perfectly align with what you already know about them (from `USER.md`, `MEMORY.md`, or previous chats). For example, if they are a writer, invent a writing-focused tracker combining their calendar and typing cadence.
 - Frame them as exciting possibilities: *"Instead of just tracking habits, what if we built a Social Battery Dashboard that predicts your burnout based on your calendar and messaging volume?"*
