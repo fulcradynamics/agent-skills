@@ -28,17 +28,20 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 3. **User Intent Discovery:**
    - Read and execute the instructions in `references/fulcra-onboarding-discovery.md` to uncover their core tracking intent and suggest concrete "wow" factor use cases. Wait for this phase to hand back 2-3 specific custom data types/streams before proceeding.
 
-4. **Data Modeling:**
+4. **Data Modeling & Continuous Agent Tracking:**
    - Translate the user's intent into 2-3 specific custom data types/streams (Annotations).
    - Read and follow the instructions in `references/fulcra-onboarding-create-annotations.md` to define and create these schemas.
+   - **If the user agreed to the Agent Visibility Package in Step 2:** You must create those specific schemas (Tasks Completed, Agent Friction, Current Agent Work) right now alongside the user's personal schemas. **Crucially:** From this point forward through the end of the onboarding flow, you must actively record your own background actions into these agent-specific annotations so that the final dashboard is populated with a rich timeline of your work.
    - **Crucial Memory Step:** When you create these annotations, explicitly remember the returned `ANNOTATION_ID` and the exact `data_type` for each one. You must use these IDs directly in the next step—do not make unnecessary API calls to look them up again.
 
-4. **Record First Data:**
-   - Pick one of the newly created annotations and ask the user a direct question to get their first piece of data (e.g., if you created a "coffee consumed" annotation, ask "How many coffees have you had today?").
+   - **Continuous Agent Logging Check:** If you are tracking the Agent Visibility Package, ensure you are actively recording background data points (e.g., "Created user annotations", "Awaiting user input for first record") into your agent-specific annotations as the flow progresses.
+
+5. **Record First User Data:**
+   - Pick one of the user's newly created personal annotations and ask a direct question to get their first piece of data (e.g., if you created a "coffee consumed" annotation, ask "How many coffees have you had today?").
    - Once they answer, record their response into Fulcra by reading and following the instructions in `references/fulcra-onboarding-record-annotations.md`.
 
-5. **Time-to-Wow (The Demonstration):**
+6. **Time-to-Wow (The Demonstration):**
    - Read and execute the instructions in `references/fulcra-onboarding-demonstration.md` to retrieve the recorded data, ask the user for a preferred aesthetic, and generate a custom themed HTML dashboard to display directly in the chat.
 
-6. **Handoff & Next Steps:**
+7. **Handoff & Next Steps:**
    - Read and execute the instructions in `references/fulcra-onboarding-handoff.md` to cleanly present the final steps (downloading the app, iterating on the dashboard, tracking more data) without overwhelming the user.
