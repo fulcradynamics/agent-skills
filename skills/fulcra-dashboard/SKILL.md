@@ -43,7 +43,7 @@ When constructing this dashboard, you **MUST** follow these strict architectural
 
 ## Usage
 
-When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills", you should execute the setup script provided by this skill. 
+When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
 
 ```bash
 # Run the setup script to scaffold the Alpine dashboard
@@ -54,7 +54,12 @@ If no `<target-directory>` is provided, it defaults to creating a `fulcra-dashbo
 
 ## Workflow
 
-1. **Scaffold:** The script copies a clean, un-styled Alpine.js dashboard template (which includes the HTML, Python server, and external CSS) into the target directory.
+**Contextual Awareness (Standalone vs. Post-Onboarding):** 
+Do not assume this skill is always run immediately after `fulcra-onboarding`. 
+- **If transitioning from Onboarding:** The user has likely just seen a static HTML preview of their data. Acknowledge this transition and frame this step as *building out* and *upgrading* their existing preview into a live, interactive web app. Leverage the context of the annotations they just built, skip redundant discovery, and carry over their preferred theme.
+- **If running Standalone:** You must first discover what data the user wants to visualize (run `uv tool run fulcra-api catalog` to check for user annotations and discuss options before proceeding).
+
+1. **Scaffold:** The script copies a clean, un-styled Alpine.js dashboard template into the target directory.
 2. **Data Ingestion (Requires Consent):** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI. 
    - **Important:** Always ask the user for permission to query the Fulcra API to build the dashboard before fetching records.
    - Run `uv tool run fulcra-api catalog` to discover available data. **CRITICAL:** Prioritize user-configured data over passive metrics (like step count). Explicitly filter for items where `categories` includes `"user_configured"`, or where the `id` follows the format `*Annotation/<UUID>` (e.g., `ScaleAnnotation/1234-abcd...`).
