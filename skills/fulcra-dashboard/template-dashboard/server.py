@@ -42,7 +42,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 print(f"Received chat request: {data}")
                 
                 # Generate a simulated response
-                simulated_reply = {"role": "system", "text": "Chat Envoy backend is active but dormant."}
+                simulated_reply = {"role": "system", "text": "Error: Chat Envoy is active but dormant. To wire it up, return to your OpenClaw session and explicitly ask the agent to 'connect the chat envoy'."}
                 self.chat_history.append(simulated_reply)
                 
                 self.send_response(200)

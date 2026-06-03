@@ -93,6 +93,22 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
 7. **Handoff & Next Steps:**
    - Once the user has seen the live local dashboard, do not just stop. Outline possible next directions to keep the momentum going:
      - **Enrich the Data:** Pull in passive data from the Fulcra Context app (e.g., location, heart rate) or ingest data from other external sources to correlate with their custom annotations.
-     - **Connect the Chat Envoy:** Work on wiring up the Sub-Surface Relay so they can chat with you directly from within the dashboard itself.
+     - **Connect the Chat Envoy:** Work on wiring up the Chat Envoy so they can chat with you directly from within the dashboard itself.
      - **Advanced Visualizations:** Build more complex D3.js charts or specific data rollups.
      - **Python Data Analysis:** Set up scripts on the Python backend (`server.py`) to analyze their data before sending it to the frontend.
+
+## Advanced Modifications
+
+**Connecting the Chat Envoy:**
+If the user asks you to "connect the chat envoy" (as prompted by the default placeholder error message in the dashboard), you must edit `server.py` to route messages back to your main OpenClaw session.
+1. Modify `server.py` to use a persistent `chat.json` file rather than an in-memory `chat_history` list.
+2. In the `do_POST` handler for `/api/chat`, instead of appending a simulated reply, use Python's `subprocess` module to trigger an OpenClaw background command that targets the main session:
+   ```python
+   import subprocess
+   # ... inside do_POST after saving the user's message to chat.json ...
+   prompt = f'A new user message was posted in the Fulcra dashboard chat: "{user_msg}". Read the local chat.json file in this directory to get full context. Respond to the user\'s latest message, and append your response to the chat.json file as role \\\'assistant\\\' with a timestamp. Do not modify the history. Reply with a short summary when done.'
+   
+   # We use subprocess.Popen without shell=True to avoid bash quoting nightmares
+   subprocess.Popen(["openclaw", "agent", "--to", "main", "--message", prompt])
+   ```
+3. After the python server is restarted, the chat envoy will successfully pipe messages from the web dashboard directly into your OpenClaw session!
