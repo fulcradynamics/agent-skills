@@ -20,7 +20,7 @@ This skill handles Step 2 of the onboarding process. Immediately after establish
    - Once they agree to proceed with the backup and/or tracking (or even if they just want to move on to their own tracking), **ask for their permission** to check their Fulcra authentication state and initiate a login flow.
    - **How to verify:** After obtaining consent, run `uv tool run fulcra-api user-info`. If it returns valid JSON, the user is authenticated.
    - If not authenticated, explain that you will now generate a secure login link, and then run `uv tool run fulcra-api auth login` using the `exec` tool. 
-   - **CRITICAL EXECUTION NOTE:** Extract the login URL and device code from the stdout, present them to the user, and wait for them to complete the login. Remind them not to share the link or code. Do *not* combine the authentication instructions with further brainstorming.
+   - **CRITICAL EXECUTION NOTE:** You are likely running in a remote or headless environment where opening a browser automatically is impossible. The `auth login` command will output an authorization URL and a device code, and then hang in the background waiting for completion. You **MUST** extract the login URL and device code from the stdout, present them directly to the user in your chat message so they can click the link, and wait for them to confirm completion. Remind them not to share the link or code. Do *not* combine the authentication instructions with further brainstorming.
 
 3. **Execution:**
    - Once authenticated, execute what they agreed to:
