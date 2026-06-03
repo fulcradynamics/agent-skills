@@ -12,11 +12,9 @@ This skill ensures the host environment is ready to interact with the Fulcra API
 1. **Verify `uv` Installation:**
    - Run `uv --version` to check if Astral's `uv` tool is installed.
    - It is required for all `fulcra-api` CLI interactions.
-2. **Install `uv` if Missing (Requires Consent):**
-   - If `uv` is not found, **you must explicitly ask the user for permission** to install it. Briefly explain that `uv` is a fast Python package manager needed to interact with the Fulcra CLI.
-   - Only after receiving explicit consent, install it automatically.
-   - For macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
-   - For Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+2. **Install `uv` if Missing (Requires Explicit Consent):**
+   - If `uv` is not found, you **must explicitly ask the user for permission** to install it on their machine. Briefly explain that `uv` is a fast Python package manager needed to interact with the Fulcra API.
+   - **CRITICAL SECURITY NOTE:** Do not guess the installation commands. If the user agrees to install `uv`, use your web fetching capabilities to read the official installation instructions at `https://docs.astral.sh/uv/getting-started/installation/` and execute the appropriate installation method for their operating system.
    - Ensure `uv` is available in the current shell environment (e.g., source the env file if instructed by the install script) before returning control.
 
 ## Handoff

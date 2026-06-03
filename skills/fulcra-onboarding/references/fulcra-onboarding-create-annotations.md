@@ -9,9 +9,11 @@ This utility skill provides the exact CURL commands and JSON schemas needed to c
 
 ## Authentication & Security
 
-Do not store the access token in a shell variable (e.g., `TOKEN=...`). Instead, inject the token securely at the moment of execution using command substitution `$(...)` directly within the `curl` command.
+You must securely inject the access token dynamically when executing API requests.
 
-**Security Note:** Do not print or echo the access token into the chat. It is highly sensitive.
+**Security Requirements:**
+1. Use inline command execution/substitution (`$(...)`) to inject the token directly into the header: `"Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)"`
+2. Never store the token in a file or print it to the chat. It is highly sensitive.
 
 ## Schema Discovery
 
