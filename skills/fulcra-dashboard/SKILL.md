@@ -90,3 +90,9 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
 6. **Chat Envoy & GitHub Deployment:** 
    - The dashboard includes a "Sub-Surface Relay" chat envoy. Remind the user that this envoy only functions locally via the Python server.
    - If the user pushes the repository to GitHub Pages, the CSS is designed to automatically hide the envoy to prevent user confusion, as the chat interface cannot route messages to the local Python bridge from a remote host.
+7. **Handoff & Next Steps:**
+   - Once the user has seen the live local dashboard, do not just stop. Outline possible next directions to keep the momentum going:
+     - **Enrich the Data:** Pull in passive data from the Fulcra Context app (e.g., location, heart rate) or ingest data from other external sources to correlate with their custom annotations.
+     - **Connect the Chat Envoy:** Work on wiring up the Sub-Surface Relay so they can chat with you directly from within the dashboard itself.
+     - **Advanced Visualizations:** Build more complex D3.js charts or specific data rollups.
+     - **Python Data Analysis:** Set up scripts on the Python backend (`server.py`) to analyze their data before sending it to the frontend.
