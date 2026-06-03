@@ -51,14 +51,19 @@ window.addEventListener('unhandledrejection', function(event) {
         <!-- Main Dashboard Grid -->
         <div class="dashboard-bento-grid">
             
-            <!-- Left Column: Core Metrics -->
+            <!-- Left Column: Core Metrics & Agent Vault -->
             <div class="bento-col-left">
+
+                <!-- Agent Vault (Injected by Agent) -->
+                <!-- The agent will dynamically populate this block if backup files are detected -->
+                
+                <!-- Records Processed Chart -->
                 <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
                     <div class="card-header">
                         <div class="header-icon-box">📊</div>
                         <h2 class="timeline-title">Data Velocity</h2>
                     </div>
-                    <div class="chart-container bar-chart-zone" x-ref="barChartZone"></div>
+                    <div class="chart-container bar-chart-zone" x-ref="barChartZone" style="flex: 1; min-height: 140px;"></div>
                 </section>
                 
                 <!-- Chat Envoy block injected into bento -->

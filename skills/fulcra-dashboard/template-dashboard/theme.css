@@ -162,6 +162,21 @@ body {
   gap: 2rem;
 }
 
+/* Flex cards to fill vertical space */
+.bar-chart-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Allows card to grow */
+  min-height: 250px;
+}
+
+.chat-envoy-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 350px;
+}
+
 /* Card Styling */
 .card {
   padding: 1.5rem;
