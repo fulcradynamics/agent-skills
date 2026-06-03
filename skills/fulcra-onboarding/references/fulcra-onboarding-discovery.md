@@ -13,12 +13,13 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
 
 1. **Intent Discovery (PRE-AUTH):**
    - *Before* asking the user to authenticate or click any links, engage them to uncover their core intent. What brought them to Fulcra? What do they want to track, remember, or build?
-   - **Crucial: Grounded Brainstorming:** Never ask open-ended questions like "What do you want to track?" without providing immediate inspiration. Always seed the conversation with 2-3 specific, tailored examples of what Fulcra can track (e.g., "We could build a tracker for your daily deep work hours, how many coffees you've had, or a log of the books you're reading."). If you have long-term memory or context about this specific user, use it to make these examples highly personalized. 
+   - **The Fulcra Pitch:** Briefly explain what having a Fulcra account actually means so they understand the context of the ideas you are about to suggest. Keep it high-level and concise. Make sure they understand they are getting: (1) Their own private, personal datastore for storing arbitrary files, (2) The ability to seamlessly track rich, custom events and metrics, and (3) Automatic background ingestion of their data (health, location, calendars, etc.) into their personal data store. Explain that the "magic" happens when you combine this unified datastore with an AI agent.
+   - **Crucial: Grounded Brainstorming:** Never ask open-ended questions like "What do you want to track?" without providing immediate inspiration. Always seed the conversation with 2-3 specific, tailored examples of what Fulcra can track. **Avoid humdrum examples like "books read" or "coffee intake".** Instead, read and reference `fulcra-onboarding-usecases.md` for high-impact, "wow" factor ideas (e.g., a "Social Battery" dashboard or a Creative Flow State mapper). If you have long-term memory or context about this specific user, use it to make these examples highly personalized. 
    - **Keep it frictionless:** Keep your messages extremely short and punchy. Assume the user has a low attention span. Do not send walls of text. 
-   - **Quick Start Fallback:** If the user is still unsure or gives a vague answer (e.g., "just trying it out"), offer a brief "multiple choice" menu to spark ideas. Tailor these to the user if you have prior context, or use these default archetypes:
-     - *Productivity:* Tracking daily mood or deep work sessions.
-     - *Health:* Logging coffee intake, water, or sleep quality.
-     - *Media:* Keeping a log of books read or movies watched.
+   - **Quick Start Fallback:** If the user is still unsure or gives a vague answer (e.g., "just trying it out"), offer a brief "multiple choice" menu to spark ideas. Tailor these to the user if you have prior context, or use these high-impact archetypes from `fulcra-onboarding-usecases.md`:
+     - *The Social Battery Dashboard:* Predict burnout by correlating calendar density and messaging volume.
+     - *Creative Flow State Mapper:* Find their peak focus environment combining music history and work sessions.
+     - *The Friction-Log Automator:* A voice-pipeline to track daily frustrations and prioritize what to automate next.
 
 2. **Authentication Check & Login (Requires Consent):**
    - Once the user has shared their intent and is excited about what they are about to build, **ask for their permission** to check their Fulcra authentication state and initiate a login flow if necessary.
@@ -28,10 +29,12 @@ This skill handles the first phase of the Fulcra onboarding process (Step 1). It
    - **SECURITY WARNING:** The authorization URL and device code are highly sensitive. If you are in a public or group channel, warn the user about the sensitivity and consider messaging them directly or advising them to treat the link securely. Warn the user not to share these artifacts, as they grant access to their account.
    - Extract the URL and code from the stdout, present them to the user (adhering to the security warning above), explain it's the required next step to build what they just asked for, and wait for them to tell you they have completed the login. Do *not* combine the authentication instructions with further brainstorming.
 
-3. **Proactive Suggestions:**
-   - Suggest simple, concrete examples of how they could use Fulcra (e.g., specific Annotations to track).
+3. **Proactive Suggestions & Agent Visibility:**
+   - Suggest concrete, "wow" factor examples of how they could use Fulcra (referencing `fulcra-onboarding-usecases.md` for inspiration).
+   - Avoid boring trackers; combine multiple data streams to show real insights.
    - Tailor these suggestions using your existing memory and knowledge of the user.
    - Keep the pace brisk to reach the "wow" factor quickly.
+   - **Universal Agent Visibility Package:** Alongside their personal use cases, pitch the idea of tracking the agent's own activity. Explain that you can log your completed tasks, provide a scale for them to rate agent friction, and use Fulcra's file upload functionality to post concise markdown summaries of what you are currently working on. Confirm they want this added, framing it as a way to give them immediate visibility into your background work directly from their Fulcra app and dashboard.
 
 ## Handoff
 
