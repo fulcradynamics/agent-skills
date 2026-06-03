@@ -20,14 +20,13 @@ This skill handles Step 6 of the onboarding process. The goal is to immediately 
      - **Check for Agent Backups:** Because the user likely allowed an agent baseline backup in Step 2, run `uv tool run fulcra-api file list "agent/<lowercase-agent-name>/memory/"` to check if `memory.gz` or `top_of_mind.md` files exist in their datastore.
      - This is the most reliable method for accessing raw recorded data. Do *not* use external skills for this step.
 
-2. **Theme Selection (REQUIRED):**
-   - You must ask the user how they would like their dashboard themed. Do not skip this step or auto-generate a theme without their input.
-   - Suggest 2-3 creative, distinct options based on your sense of their personality and the data they are tracking (e.g., if tracking coffee, suggest a "retro diner receipt" or a "cyberpunk neon HUD").
-   - Even if you have a perfect theme in mind, always present it as an option and ask the user to confirm or choose their own. 
-   - Keep this interaction brief and engaging.
+2. **Theme Selection (MANDATORY BLOCKER):**
+   - **CRITICAL:** You must explicitly pause the conversation and wait for the user to choose a theme before generating the HTML. Do **not** generate the dashboard in the same turn that you retrieve the data.
+   - Suggest 2-3 creative, distinct thematic options based on your sense of their personality and the data they are tracking (e.g., if tracking coffee, suggest a "retro diner receipt" or a "cyberpunk neon HUD").
+   - Wait for their reply. Only proceed to generation once they have confirmed a theme.
 
-3. **Generate HTML Dashboard:**
-   - Once a theme is chosen, generate a custom HTML file visualizing the data.
+3. **Generate HTML Dashboard (Post-Theme Selection):**
+   - Once a theme has been explicitly chosen by the user, generate a custom HTML file visualizing the data.
    - **Crucial: The "Wow" Factor:** Because the user has likely only recorded a single piece of data, the design must carry the experience. Do not generate a boring standard chart. 
    - **Design Directives:**
      - **Metaphorical UI:** Design a UI that fits the data type and theme (e.g., a retro receipt for coffee, a glowing HUD for fitness, a vintage polaroid for a mood check-in).
