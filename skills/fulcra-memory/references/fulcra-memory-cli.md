@@ -9,22 +9,31 @@ This reference dictates the exact shell commands required to execute the `fulcra
 
 ## 1. Creating a Backup and Uploading
 
-To back up the agent's memory, compress the core identity files into a tarball and upload it using the Fulcra CLI.
+To back up the agent's memory, you must generate a `top_of_mind.md` summary, compress the core identity files, and upload both to Fulcra.
 
-**Step A: Compress the files**
+**Step A: Create Top of Mind**
+Generate a concise markdown file summarizing your current tasks, thoughts, and context.
 ```bash
 # Ensure you are in the workspace
 cd ~/.openclaw/workspace
+mkdir -p memory
+echo "# Current Agent State..." > memory/top_of_mind.md
+# (Write your actual summary content to this file)
+```
+
+**Step B: Compress the files**
+```bash
 # Create a gzip tarball containing the essential memory files (ignore if some are missing)
 tar -czvf /tmp/memory.gz SOUL.md IDENTITY.md MEMORY.md memory/ 2>/dev/null || true
 ```
 
-**Step B: Upload to Fulcra**
-Upload the file using the standardized agent memory path. Determine the agent's name (lowercase) to use in the path.
+**Step C: Upload to Fulcra**
+Upload the files using the standardized agent path convention. Determine the agent's name (lowercase) to use in the path.
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
 uv tool run fulcra-api file upload /tmp/memory.gz "agent/<agent_name>/memory/memory.gz"
+uv tool run fulcra-api file upload memory/top_of_mind.md "agent/<agent_name>/memory/top_of_mind.md"
 ```
 
 ## 2. Listing Memory History
@@ -71,4 +80,13 @@ uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.gz"
 # Extract locally (Overwrites current identity and memory)
 cd ~/.openclaw/workspace
 tar -xzvf /tmp/restored_memory.gz
+```
+
+## 5. Uploading User Artifacts
+
+When an agent generates a file (like an HTML dashboard, an image, or a report), and the user explicitly approves saving it to their Fulcra account, upload it to the `artifacts/` subdirectory.
+
+```bash
+# Replace <agent_name> with the agent's name, and <artifact_name> with the file's name
+uv tool run fulcra-api file upload /path/to/local/file "agent/<agent_name>/artifacts/<artifact_name>"
 ```
