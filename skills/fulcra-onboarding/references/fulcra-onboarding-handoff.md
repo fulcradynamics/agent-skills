@@ -7,7 +7,7 @@ description: "Handles the final handoff phase of Fulcra onboarding, presenting n
 
 **Tone Reminder:** Keep the energy high and celebratory! 🎉 Use emojis to break up text and make the options highly scannable. Do NOT send a massive wall of text.
 
-This skill handles the final step (Step 6) of the onboarding process, presenting the user with clear, exciting paths forward now that they've seen the "Time-to-Wow" demonstration.
+This skill handles the final step (Step 7) of the onboarding process, presenting the user with clear, exciting paths forward now that they've seen the "Time-to-Wow" demonstration.
 
 ## Workflow
 

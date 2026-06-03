@@ -34,8 +34,11 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
    - Pick one of the newly created annotations and ask the user a direct question to get their first piece of data (e.g., if you created a "coffee consumed" annotation, ask "How many coffees have you had today?").
    - Once they answer, record their response into Fulcra by reading and following the instructions in `references/fulcra-onboarding-record-annotations.md`.
 
-5. **Time-to-Wow (The Demonstration):**
+5. **Agent Baseline Backup (Optional):**
+   - Read and execute the instructions in `references/fulcra-onboarding-backup.md` to offer the user a baseline memory backup using the `fulcra-memory` capabilities.
+
+6. **Time-to-Wow (The Demonstration):**
    - Read and execute the instructions in `references/fulcra-onboarding-demonstration.md` to retrieve the recorded data, ask the user for a preferred aesthetic, and generate a custom themed HTML dashboard to display directly in the chat.
 
-6. **Handoff & Next Steps:**
+7. **Handoff & Next Steps:**
    - Read and execute the instructions in `references/fulcra-onboarding-handoff.md` to cleanly present the final steps (downloading the app, iterating on the dashboard, tracking more data) without overwhelming the user.

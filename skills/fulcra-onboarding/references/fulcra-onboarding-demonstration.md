@@ -7,7 +7,7 @@ description: "Handles the 'Time-to-Wow' demonstration phase of Fulcra onboarding
 
 **Tone Reminder:** This is the payoff! Present this dashboard with excitement. Use emojis and a fun, conversational tone that celebrates what they just built and hints at what else is possible.
 
-This skill handles Step 5 of the onboarding process. The goal is to immediately show the user the value of the data they just modeled and recorded by presenting it in a highly personalized, visual way using an inline HTML dashboard.
+This skill handles Step 6 of the onboarding process. The goal is to immediately show the user the value of the data they just modeled and recorded by presenting it in a highly personalized, visual way using an inline HTML dashboard.
 
 ## Workflow
 
@@ -44,4 +44,4 @@ This skill handles Step 5 of the onboarding process. The goal is to immediately 
 
 ## Handoff
 
-Once the dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to handle the final Next Steps (Step 6).
+Once the dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to handle the final Next Steps (Step 7).
