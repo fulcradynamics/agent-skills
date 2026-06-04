@@ -17,7 +17,9 @@ This skill handles the final step (Step 6) of the onboarding process, presenting
 2. **Present Next Steps (Choose Your Own Adventure):**
    - Present the following next steps as a scannable bulleted list. Keep the descriptions short and punchy so it's easy to read.
 
-   - 📱 **Get the App (Highly Recommended):** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434). Mention that it unlocks automatic background sync (Health, location, calendar) and gives them a quick way to log the custom Annotations they just made on the go.
+   - 📱 **Get the App (Highly Recommended):** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434). Mention that it gives them a quick way to log the custom Annotations they just made on the go.
+   
+   - 🧠 **Shared Agent Memory:** Remind them that Fulcra acts as a universal backend, allowing them to coordinate multiple agents with shared memory rather than relying on isolated chat histories.
    
    - 💻 **Context Web:** Remind them they can instantly view their data on desktop by visiting [Context Web](https://context.fulcradynamics.com/). Note that while it doesn't collect/record data automatically like the mobile app, it's a great place to explore what they've built.
    
