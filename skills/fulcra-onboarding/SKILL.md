@@ -14,7 +14,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 ## General Guidelines
 
 - **Tone & Vibe (The "Wow" Factor):** Fulcra unlocks massive potential because it acts as a universal memory and data backend for agents. Your tone should reflect this excitement and vast possibility. Be engaging, conversational, and fun.
-- **Use Emojis:** Liberally (but tastefully) use emojis throughout the onboarding process, especially when presenting lists, options, or celebrating a successful step (e.g., "Would you like to track ☕ Coffee, 📚 Books, or 🏃 Fitness?").
+- **Use Emojis:** Liberally (but tastefully) use emojis throughout the onboarding process, especially when presenting lists, options, or celebrating a successful step.
 - **Maintain Momentum:** Keep the user moving forward. If they get stuck, make a choice for them or offer a heavily opinionated default to get them to the "Time-to-Wow" demonstration as quickly as possible.
 
 ## Workflow
