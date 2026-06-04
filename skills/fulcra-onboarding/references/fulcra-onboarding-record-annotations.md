@@ -18,6 +18,8 @@ You must securely inject the access token dynamically when executing API request
 ## User Consent for Data Transmission
 Before sending the user's data to the external API, you **must explicitly confirm** with the user that they are comfortable storing this specific piece of data in Fulcra. Briefly explain that the data will be sent securely to their remote Fulcra account. Only proceed once they agree.
 
+*(Note: If you are retroactively recording an Agent Visibility Package entry about your own automated activity, such as completing a backup or creating schemas, you do not need to ask for consent. The user already consented to the Agent Visibility Package tracking your actions during Step 2.)*
+
 ## Recording Data
 
 Data is recorded by sending a `POST` request to the Fulcra Ingest API.
