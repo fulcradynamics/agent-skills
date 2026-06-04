@@ -38,6 +38,12 @@ document.addEventListener('alpine:init', () => {
             const userMessage = this.input;
             this.messages.push({ role: 'user', text: userMessage });
             this.input = '';
+            
+            // Reset textarea height
+            if (this.$refs.chatInput) {
+                this.$refs.chatInput.style.height = 'auto';
+            }
+            
             this.isTyping = true;
             this.scrollToBottom();
 

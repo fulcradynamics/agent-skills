@@ -55,8 +55,35 @@ window.addEventListener('unhandledrejection', function(event) {
             <!-- Left Column: Core Metrics & Agent Vault -->
             <div class="bento-col-left">
 
-                <!-- Agent Vault (Injected by Agent) -->
-                <!-- The agent will dynamically populate this block if backup files are detected -->
+                <!-- Agent Vault -->
+                <section class="card glass-panel local-only">
+                    <div class="card-header">
+                        <div class="header-icon-box">💾</div>
+                        <h2 class="timeline-title">Agent Vault</h2>
+                    </div>
+                    <div class="logs-container">
+                        <a href="/api/download?file=agent/treecle/memory/memory.gz" class="log-entry modern-entry" style="text-decoration: none;">
+                            <div class="entry-time"><div class="time-dot" style="background-color: var(--chart-line-1);"></div></div>
+                            <div class="entry-content">
+                                <div class="entry-header">
+                                    <strong class="entry-label">memory.gz</strong>
+                                    <span class="entry-value" style="font-size: 0.8rem; color: var(--text-muted);">Archive</span>
+                                </div>
+                                <p class="entry-note">Click to download</p>
+                            </div>
+                        </a>
+                        <a href="/api/download?file=agent/treecle/memory/top_of_mind.md" class="log-entry modern-entry" style="text-decoration: none;">
+                            <div class="entry-time"><div class="time-dot" style="background-color: var(--chart-line-1);"></div></div>
+                            <div class="entry-content">
+                                <div class="entry-header">
+                                    <strong class="entry-label">top_of_mind.md</strong>
+                                    <span class="entry-value" style="font-size: 0.8rem; color: var(--text-muted);">Current State</span>
+                                </div>
+                                <p class="entry-note">Click to download</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
                 
                 <!-- Records Processed Chart -->
                 <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
@@ -88,7 +115,7 @@ window.addEventListener('unhandledrejection', function(event) {
                     </div>
                     
                     <div class="chat-input-area">
-                        <textarea x-model="input" @keydown="handleKeydown" placeholder="Transmit coordinates..." rows="1"></textarea>
+                        <textarea x-model="input" x-ref="chatInput" @input="$el.style.height = 'auto'; $el.style.height = ($el.scrollHeight) + 'px'" @keydown="handleKeydown" placeholder="Transmit coordinates..." rows="1" style="overflow-y: hidden;"></textarea>
                         <button @click="sendMessage" :disabled="isTyping || !input.trim()">Send</button>
                     </div>
                 </section>
@@ -136,6 +163,14 @@ window.addEventListener('unhandledrejection', function(event) {
             </div>
             
         </div>
+        
+        <!-- Fun Footer -->
+        <footer class="glass-panel text-center" style="margin-top: 2rem; padding: 2rem;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                <span style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;">✨ 🦕 ✨</span>
+                Powered by Fulcra and OpenClaw. Let's build something awesome.
+            </p>
+        </footer>
     </main>
 
     <!-- ========================================== -->
@@ -406,6 +441,8 @@ window.addEventListener('unhandledrejection', function(event) {
                         .style("top", (event.pageY - 28) + "px");
                 })
                 .on("mouseout", function() {
+                    d3.select(container).node().dispatchEvent(new CustomEvent('timeline-hover', { detail: { index: null } }));
+                    
                     d3.select(this).attr("r", 5);
                     tooltip.transition().duration(500).style("opacity", 0);
                 });
