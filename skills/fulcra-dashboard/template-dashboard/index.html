@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="theme.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="envoy.js"></script>
 
 <script>
 window.onerror = function(msg, url, lineNo, columnNo, error) {
@@ -269,68 +270,6 @@ window.addEventListener('unhandledrejection', function(event) {
                             drawD3BarChart(data, this.$refs.barChartZone);
                         }, 50);
                     }
-                }
-            }));
-
-            Alpine.data('chatEnvoy', () => ({
-                messages: [],
-                input: '',
-                isTyping: false,
-
-                async init() {
-                    try {
-                        const res = await fetch('/api/chat');
-                        if (res.ok) {
-                            const data = await res.json();
-                            this.messages = data.messages || [];
-                            this.scrollToBottom();
-                        }
-                    } catch(e) {}
-                },
-                
-                async sendMessage() {
-                    if (!this.input.trim()) return;
-                    
-                    const msgText = this.input.trim();
-                    this.input = '';
-                    this.messages.push({ role: 'user', text: msgText });
-                    this.scrollToBottom();
-                    
-                    this.isTyping = true;
-                    try {
-                        const res = await fetch('/api/chat', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ message: msgText })
-                        });
-                        
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.messages) {
-                                this.messages.push(...data.messages);
-                            }
-                        }
-                    } catch(e) {
-                        this.messages.push({ role: 'system', text: 'Relay error: Connection lost.' });
-                    } finally {
-                        this.isTyping = false;
-                        this.scrollToBottom();
-                    }
-                },
-                
-                handleKeydown(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                },
-                
-                scrollToBottom() {
-                    this.$nextTick(() => {
-                        if (this.$refs.chatWindow) {
-                            this.$refs.chatWindow.scrollTop = this.$refs.chatWindow.scrollHeight;
-                        }
-                    });
                 }
             }));
         });
