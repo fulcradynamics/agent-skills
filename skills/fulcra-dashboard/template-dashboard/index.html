@@ -393,7 +393,7 @@ window.addEventListener('unhandledrejection', function(event) {
                 .attr("cy", d => hasValues ? y(d.value) : innerHeight / 2)
                 .attr("r", 5)
                 .attr("fill", color || "var(--chart-line-1)")
-                .attr("stroke", "var(--card-bg)")
+                .attr("stroke", "var(--bg-dark)")
                 .attr("stroke-width", 2)
                 .on("mouseover", function(event, d) {
                     const idx = parsedData.indexOf(d);

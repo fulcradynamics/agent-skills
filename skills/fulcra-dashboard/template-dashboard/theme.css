@@ -254,6 +254,18 @@ body {
   background: rgba(255,255,255,0.02);
   border-left: 2px solid transparent;
   transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.log-entry.modern-entry:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.log-entry.modern-entry a,
+a.log-entry.modern-entry {
+  text-decoration: none;
+  color: var(--text-main);
 }
 
 .log-entry.active-glow {
