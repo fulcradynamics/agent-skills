@@ -21,6 +21,50 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"messages": self.chat_history}).encode())
             return
             
+        # Download memory files via backend API
+        if self.path.startswith('/api/download?file='):
+            import urllib.parse
+            import subprocess
+            query = urllib.parse.urlparse(self.path).query
+            params = urllib.parse.parse_qs(query)
+            filename = params.get('file', [''])[0]
+            
+            if not filename:
+                self.send_error(400, "Missing file parameter")
+                return
+                
+            # Attempt to download the file using fulcra-api
+            try:
+                # the filename should be like "agent/treecle/memory/top_of_mind.md"
+                # so we download it to a temp path then read and serve it
+                tmp_path = f"/tmp/{os.path.basename(filename)}"
+                subprocess.run(["uv", "tool", "run", "fulcra-api", "file", "download", filename, tmp_path], check=True, capture_output=True)
+                
+                with open(tmp_path, 'rb') as f:
+                    content = f.read()
+                
+                self.send_response(200)
+                # Guess mimetype based on extension
+                if filename.endswith('.md'):
+                    self.send_header('Content-Type', 'text/markdown; charset=utf-8')
+                elif filename.endswith('.gz'):
+                    self.send_header('Content-Type', 'application/gzip')
+                else:
+                    self.send_header('Content-Type', 'application/octet-stream')
+                self.send_header('Content-Disposition', f'attachment; filename="{os.path.basename(filename)}"')
+                self.end_headers()
+                self.wfile.write(content)
+                
+                # Cleanup temp file
+                os.remove(tmp_path)
+                return
+            except subprocess.CalledProcessError as e:
+                self.send_error(500, f"Error downloading file: {e.stderr.decode('utf-8')}")
+                return
+            except Exception as e:
+                self.send_error(500, str(e))
+                return
+            
         # Serve the static HTML/CSS/JS files
         super().do_GET()
 

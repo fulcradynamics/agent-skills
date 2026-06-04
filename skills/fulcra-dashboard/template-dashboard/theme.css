@@ -33,6 +33,10 @@ body {
 }
 
 /* Glassmorphism Panel Base */
+.local-only {
+  display: none !important;
+}
+
 .glass-panel {
   background: var(--panel-bg);
   backdrop-filter: blur(16px);
