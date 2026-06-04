@@ -9,7 +9,7 @@ PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", 808
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     # Simulated chat history kept in memory while the server runs
     chat_history = [
-        {"role": "assistant", "text": "Telemetry link established. Local relay online. Awaiting parameters."}
+        {"role": "assistant", "text": "Telemetry link established. Local relay online. Awaiting parameters. Note: if you have not explicitly asked the agent to connect the envoy, messages sent here will not reach them."}
     ]
 
     def do_GET(self):
@@ -86,7 +86,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 print(f"Received chat request: {data}")
                 
                 # Generate a simulated response
-                simulated_reply = {"role": "system", "text": "Error: Chat Envoy is active but dormant. To wire it up, return to your OpenClaw session and explicitly ask the agent to 'connect the chat envoy'."}
+                simulated_reply = {"role": "system", "text": "Notice: The Relay is currently dormant. To complete setup, return to your OpenClaw session and explicitly instruct the agent to 'connect the chat envoy', then wait for them to confirm before trying again."}
                 self.chat_history.append(simulated_reply)
                 
                 self.send_response(200)
