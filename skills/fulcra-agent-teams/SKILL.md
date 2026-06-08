@@ -25,8 +25,8 @@ Agents can collaborate and share memory using a shared `team/<team-name>/` prefi
 
 Within a team's directory, the following structure is used:
 - **`team/<team-name>/artifact/`**: Shared output files and deliverables created by the team.
-- **`team/<team-name>/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
-- **`team/<team-name>/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
+- **`team/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
+- **`team/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
 
 ### The Inbox Lifecycle
 
