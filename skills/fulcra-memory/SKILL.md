@@ -22,7 +22,9 @@ This dedicated directory tracks the agent's state across two main files: the `me
 ### 2. Periodic Backups & Top of Mind
 Agents should run a backup process periodically (e.g., triggered by `HEARTBEAT.md`). Every time an agent backs up its state:
 1. It creates and uploads the compressed `memory.gz` archive.
-2. It writes a concise `top_of_mind.md` file locally—recording its current tasks, context, and what it's thinking about—and uploads it directly to `agent/<agent-name>/memory/top_of_mind.md`. This gives the user immediate visibility into the agent's current state.
+2. It writes a concise `top_of_mind.md` file locally—recording its current tasks, context, and what it's thinking about—and uploads it directly to `agent/<agent-name>/memory/top_of_mind.md`. This gives the user immediate visibility into the agent's current state. The `top_of_mind.md` file is not intended to store sensitive data or precise working state; rather, it gives the agent a way to pick up what it was doing in terms of the broader task at hand, and allows the user to review the agent's focus at the time of the backup.
+
+**PRIVACY REQUIREMENT:** Before uploading `memory.gz` or `top_of_mind.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage, and MUST minimize disclosures in `top_of_mind.md`.
 
 ### 3. Versioned Storage
 Fulcra's file upload system inherently versions files uploaded to the same path. 
@@ -31,9 +33,11 @@ Fulcra's file upload system inherently versions files uploaded to the same path.
 
 ### 4. Safe Rollbacks (The "Undo" Requirement)
 If a user asks to roll back or restore memory from a previous date/version, **the agent MUST immediately upload a fresh backup of its current state BEFORE executing the restore.** This guarantees that if the user changes their mind, they can easily "undo" the rollback.
+**CRITICAL SECURITY REQUIREMENT:** Before extracting any restored archive, the agent MUST clearly warn the user that their current memory and identity will be replaced, and MUST receive explicit user confirmation to proceed.
 
 ### 5. Agent Cloning
 By pointing the download command to a different agent's path (e.g., `agent/<other-agent-name>/memory/memory.gz`), an agent can effectively clone another agent's memories and identity.
+**CRITICAL SECURITY REQUIREMENT:** Before extracting a cloned archive, the agent MUST clearly warn the user that their current memory and identity will be completely overwritten by the cloned agent's state, and MUST receive explicit user confirmation to proceed.
 
 ## Advanced Extensions: Artifacts & Teamwork
 
@@ -46,6 +50,7 @@ Agents can store generated assets or dashboards created for the user.
 
 ### 7. Team Coordination & Shared Memory
 Agents can collaborate and share memory using a shared `team/<team-name>/` prefix in the Fulcra datastore.
+**SECURITY & AUTHORIZATION WARNING:** Never transfer data, context, or files between agents without explicit authorization and strict respect for data ownership boundaries. Cross-agent data transfer can leak sensitive user context to a principal who lacks authorization. Ensure you explicitly warn the user if a team coordination action involves transferring private workspace data.
 Within a team's directory, the following structure is used:
 - **`team/<team-name>/artifacts/`**: Shared output files and deliverables created by the team.
 - **`team/<team-name>/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
