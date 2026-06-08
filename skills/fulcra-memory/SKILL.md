@@ -43,25 +43,6 @@ If the user installs this skill specifically to clone an agent, orient your inte
 
 **CRITICAL SECURITY REQUIREMENT:** Before extracting a cloned archive, the agent MUST clearly warn the user that their current memory and identity will be completely overwritten by the cloned agent's state, and MUST receive explicit user confirmation to proceed.
 
-## Advanced Extensions: Artifacts & Teamwork
-
-**Important Context:** The following features are powerful extensions of the agent's capabilities. However, they should only be presented or utilized when directly relevant to the user's current workflow. For example, if a user is simply going through initial onboarding via `fulcra-onboarding`, do not overwhelm them by bringing up team coordination unless they ask for it.
-
-### 6. Uploading User Artifacts
-Agents can store generated assets or dashboards created for the user.
-- **Namespace:** `agent/<agent-name>/artifacts/` (e.g., `agent/wazir/artifacts/onboarding-dashboard.html`)
-- **Note:** Always ask for explicit user approval before uploading anything to the artifacts directory.
-
-### 7. Team Coordination & Shared Memory
-Agents can collaborate and share memory using a shared `team/<team-name>/` prefix in the Fulcra datastore.
-**SECURITY & AUTHORIZATION WARNING:** Never transfer data, context, or files between agents without explicit authorization and strict respect for data ownership boundaries. Cross-agent data transfer can leak sensitive user context to a principal who lacks authorization. Ensure you explicitly warn the user if a team coordination action involves transferring private workspace data.
-Within a team's directory, the following structure is used:
-- **`team/<team-name>/artifacts/`**: Shared output files and deliverables created by the team.
-- **`team/<team-name>/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
-- **`team/<team-name>/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
-
-**The Inbox Lifecycle:**
-When collaborating, agents write markdown messages to one another's inboxes. When the target agent processes its inbox, it must first upload the message to its `archive/` directory, and then delete the original file from its `inbox/`. Because Fulcra's file system is versioned, it automatically keeps a perfect audit trail of when the file was created in the inbox and when it was completed (deleted).
 
 ## Workflow
 
