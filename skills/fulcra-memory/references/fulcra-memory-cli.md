@@ -9,15 +9,15 @@ This reference dictates the exact shell commands required to execute the `fulcra
 
 ## 1. Creating a Backup and Uploading
 
-To back up the agent's memory, you must generate a `top_of_mind.md` summary, compress the core identity files, and upload both to Fulcra.
+To back up the agent's memory, you must generate a `progress.md` summary, compress the core identity files, and upload both to Fulcra.
 
-**Step A: Create Top of Mind**
-Generate a concise markdown file summarizing your current tasks, thoughts, and context.
+**Step A: Create Progress Report**
+Generate a concise markdown file summarizing the work you have recently completed and what you plan to do next, for the user to evaluate. Do not include internal state or chain-of-thought.
 ```bash
 # Ensure you are in the workspace
 cd ~/.openclaw/workspace
 mkdir -p memory
-echo "# Current Agent State..." > memory/top_of_mind.md
+echo "# Progress Report..." > memory/progress.md
 # (Write your actual summary content to this file)
 ```
 
@@ -50,7 +50,7 @@ Upload the files using the standardized agent path convention. Determine the age
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
 uv tool run fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/memory/memory.tar.gz"
-uv tool run fulcra-api file upload memory/top_of_mind.md "agent/<agent_name>/memory/top_of_mind.md"
+uv tool run fulcra-api file upload memory/progress.md "agent/<agent_name>/memory/progress.md"
 ```
 
 ## 2. Listing Memory History

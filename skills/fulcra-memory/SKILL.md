@@ -9,7 +9,7 @@ metadata: { "openclaw": { "emoji": "🧠" } }
 
 # Fulcra Agent Memory Management
 
-The **primary role** of this skill is to enable an agent to securely back up its memory so it can be rolled back, cloned, or monitored (via "top of mind") using Fulcra's versioned file storage.
+The **primary role** of this skill is to enable an agent to securely back up its memory so it can be rolled back, cloned, or monitored (via a progress report) using Fulcra's versioned file storage.
 
 Because an agent's memory (e.g., `MEMORY.md`, `IDENTITY.md`, `SOUL.md`, and the `memory/` logs) evolves dynamically, periodically saving this state ensures that no context is lost and allows the user to safely rewind the agent if a task goes off track.
 
@@ -17,14 +17,14 @@ Because an agent's memory (e.g., `MEMORY.md`, `IDENTITY.md`, `SOUL.md`, and the 
 
 ### 1. The Memory Namespace
 For core memory operations, agents use the standardized prefix: `agent/<lowercase-agent-name>/memory/`.
-This dedicated directory tracks the agent's state across two main files: the `memory.tar.gz` backup archive and a `top_of_mind.md` status file.
+This dedicated directory tracks the agent's state across two main files: the `memory.tar.gz` backup archive and a `progress.md` status report.
 
-### 2. Periodic Backups & Top of Mind
+### 2. Periodic Backups & Progress Reports
 Agents should run a backup process periodically (e.g., triggered by `HEARTBEAT.md`). Every time an agent backs up its state:
 1. It creates and uploads the compressed `memory.tar.gz` archive.
-2. It writes a concise `top_of_mind.md` file locally—recording its current tasks, context, and what it's thinking about—and uploads it directly to `agent/<agent-name>/memory/top_of_mind.md`. The `top_of_mind.md` file is not intended to store sensitive data or precise working state; rather, it gives the agent a way to pick up what it was doing in terms of the broader task at hand, and allows the user to review the agent's focus at the time of the backup.
+2. It writes a concise `progress.md` report locally—summarizing the work it has recently done, and what it is planning to do next—and uploads it directly to `agent/<agent-name>/memory/progress.md`. This `progress.md` file is a report specifically designed to let the user review the agent's recent accomplishments and intended next steps. It is **not** intended to dump internal agent state, chain-of-thought, or precise working memory.
 
-**PRIVACY REQUIREMENT:** Before uploading `memory.tar.gz` or `top_of_mind.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage, and MUST minimize disclosures in `top_of_mind.md`.
+**PRIVACY REQUIREMENT:** Before uploading `memory.tar.gz` or `progress.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage, and MUST minimize disclosures in `progress.md`.
 
 ### 3. Versioned Storage
 Fulcra's file upload system inherently versions files uploaded to the same path. 
