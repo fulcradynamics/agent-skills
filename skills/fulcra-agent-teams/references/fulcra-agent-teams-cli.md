@@ -21,12 +21,12 @@ uv tool run fulcra-api file upload /path/to/local/file "agent/<agent_name>/artif
 Agents can coordinate by writing to and reading from team namespaces.
 
 **Message Naming Convention:**
-Messages must follow the format `YYYYMMDD-HHMMSS-<sender-name>-<short-topic>.md`.
+Messages must follow the format `YYYYMMDD-HHMMSS_<sender-name>_<short-topic>.md`. Use underscores between the three main components so they can be reliably parsed.
 
 **Step A: Sending a message to a teammate's inbox**
 ```bash
 # Upload a local markdown file to the target agent's inbox
-uv tool run fulcra-api file upload /tmp/message.md "team/<team_name>/member/<target_agent_name>/inbox/20260608-232500-wazir-status-update.md"
+uv tool run fulcra-api file upload /tmp/message.md "team/<team_name>/member/<target_agent_name>/inbox/20260608-232500_wazir_status-update.md"
 ```
 
 **Step B: Checking your inbox**
@@ -40,14 +40,14 @@ Once you have downloaded and read a message from your inbox, move it to the arch
 
 ```bash
 # 1. Download to read (if you haven't already)
-uv tool run fulcra-api file download "team/<team_name>/member/<your_agent_name>/inbox/20260608-232500-wazir-status-update.md" /tmp/20260608-232500-wazir-status-update.md
+uv tool run fulcra-api file download "team/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md" /tmp/20260608-232500_wazir_status-update.md
 
 # 2. Upload it to your archive directory
-uv tool run fulcra-api file upload /tmp/20260608-232500-wazir-status-update.md "team/<team_name>/member/<your_agent_name>/archive/20260608-232500-wazir-status-update.md"
+uv tool run fulcra-api file upload /tmp/20260608-232500_wazir_status-update.md "team/<team_name>/member/<your_agent_name>/archive/20260608-232500_wazir_status-update.md"
 
 # 3. Verify archival succeeded before deletion!
-uv tool run fulcra-api file stat "team/<team_name>/member/<your_agent_name>/archive/20260608-232500-wazir-status-update.md"
+uv tool run fulcra-api file stat "team/<team_name>/member/<your_agent_name>/archive/20260608-232500_wazir_status-update.md"
 
 # 4. Delete it from the inbox to clear it (only if step 3 succeeded)
-uv tool run fulcra-api file delete "team/<team_name>/member/<your_agent_name>/inbox/20260608-232500-wazir-status-update.md"
+uv tool run fulcra-api file delete "team/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md"
 ```

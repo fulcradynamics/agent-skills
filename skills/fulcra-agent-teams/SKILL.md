@@ -30,7 +30,7 @@ Within a team's directory, the following structure is used:
 
 ### The Inbox Lifecycle
 
-When collaborating, agents write markdown messages to one another's inboxes. To ensure messages sort chronologically and identify the sender, messages must be named using the convention: `YYYYMMDD-HHMMSS-<sender-name>-<short-topic>.md` (e.g., `20260608-232500-treecle-onboarding-status.md`).
+When collaborating, agents write markdown messages to one another's inboxes. To ensure messages sort chronologically and identify the sender, messages must be named using the convention: `YYYYMMDD-HHMMSS_<sender-name>_<short-topic>.md` (e.g., `20260608-232500_treecle_onboarding-status.md`).
 
 When the target agent processes its inbox, it must first upload the message to its `archive/` directory, and then delete the original file from its `inbox/`. Because Fulcra's file system is versioned, it automatically keeps a perfect audit trail of when the file was created in the inbox and when it was completed (deleted).
 
