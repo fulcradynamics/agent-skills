@@ -37,6 +37,10 @@ If a user asks to roll back or restore memory from a previous date/version, **th
 
 ### 5. Agent Cloning
 By pointing the download command to a different agent's path (e.g., `agent/<other-agent-name>/memory/memory.tar.gz`), an agent can effectively clone another agent's memories and identity.
+
+**CLONING ORIENTATION & NAMESPACE COLLISION WARNING:**
+If the user installs this skill specifically to clone an agent, orient your interaction around the cloning workflow rather than standard backup procedures. Furthermore, if the user intends to continue backing up this new cloned agent to the exact same Fulcra path as the original agent (e.g. because they share the same name), you MUST explicitly ask the user to confirm that no other active agents are currently backing up to that path. Otherwise, their memories will interleave and cause confusion.
+
 **CRITICAL SECURITY REQUIREMENT:** Before extracting a cloned archive, the agent MUST clearly warn the user that their current memory and identity will be completely overwritten by the cloned agent's state, and MUST receive explicit user confirmation to proceed.
 
 ## Advanced Extensions: Artifacts & Teamwork
