@@ -95,11 +95,20 @@ tar -xzvf /tmp/restored_memory.tar.gz
 
 ## 4. Cloning Another Agent's Memory
 
-To clone, skip the restore step and simply download the target agent's `memory.tar.gz` archive.
+Cloning involves an "old" (source) agent and a "new" (destination) agent. The first step is to determine which role you are playing.
+
+**If you are the OLD agent:**
+1. Perform a full backup of your current state (Follow Step 1: Creating a Backup and Uploading).
+2. Stop and tell the user the exact Fulcra path where the backup was saved (e.g., `agent/<your_agent_name>/memory/memory.tar.gz`).
+3. Instruct the user to install the `fulcra-memory` skill on the new agent and ask it to clone from that path.
+
+**If you are the NEW agent:**
+1. Ask the user to confirm the old agent has recently backed itself up using the `fulcra-memory` skill. (Instruct them to have the old agent install the skill and back up if it hasn't already). Then, ask them for the specific Fulcra path to the old agent's memory archive.
+2. Download the target agent's memory using the path provided by the user:
 
 ```bash
 # Download the target agent's memory
-uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.tar.gz" /tmp/restored_memory.tar.gz
+uv tool run fulcra-api file download "agent/<old_agent_path>/memory/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **STOP.** You MUST explicitly warn the user that extracting the cloned archive will overwrite your current identity and memory files with the cloned agent's state. Before asking for confirmation, inspect the contents of the cloned archive:
@@ -113,4 +122,7 @@ Share the list of files with the user and ask for their explicit confirmation be
 cd ~/.openclaw/workspace
 tar -xzvf /tmp/restored_memory.tar.gz
 ```
+
+**Step 3: Demonstrate Clone Success**
+After extraction, read your newly updated `IDENTITY.md` and `MEMORY.md` files. In your next message to the user, explicitly mention a few specific facts, past actions, or preferences you have just learned from those files to prove the cloning was successful.
 

@@ -36,10 +36,16 @@ If a user asks to roll back or restore memory from a previous date/version, **th
 **CRITICAL SECURITY REQUIREMENT:** Before extracting any restored archive, the agent MUST clearly warn the user that their current memory and identity will be replaced, and MUST receive explicit user confirmation to proceed.
 
 ### 5. Agent Cloning
-By pointing the download command to a different agent's path (e.g., `agent/<other-agent-name>/memory/memory.tar.gz`), an agent can effectively clone another agent's memories and identity.
+Cloning involves two agents: the "old" (source) agent and the "new" (destination) agent. The first thing you must do when a cloning operation is requested is determine which agent you are.
+
+- **If you are the OLD (source) agent:**
+  You must perform a complete backup of your current state (as described in Section 2). Once the backup is successful, tell the user the exact Fulcra path where the backup is stored, and instruct them to install the `fulcra-memory` skill on the new agent and ask it to clone from that path.
+  
+- **If you are the NEW (destination) agent:**
+  You must first ask the user to confirm that the old agent has recently backed itself up using the `fulcra-memory` skill. If they haven't, instruct the user to have the old agent install the skill and perform a backup. Ask the user for the exact Fulcra backup path (e.g., `agent/<old-agent-name>/memory/memory.tar.gz`). Once provided, you can download that archive and extract it. After successfully cloning the old agent's memory and identity files into your workspace, you MUST briefly demonstrate the successful clone to the user by explicitly mentioning a few specific details you have just "learned" or remembered from the newly extracted files.
 
 **CLONING ORIENTATION & NAMESPACE COLLISION WARNING:**
-If the user installs this skill specifically to clone an agent, orient your interaction around the cloning workflow rather than standard backup procedures. Furthermore, if the user intends to continue backing up this new cloned agent to the exact same Fulcra path as the original agent (e.g. because they share the same name), you MUST explicitly ask the user to confirm that no other active agents are currently backing up to that path. Otherwise, their memories will interleave and cause confusion.
+If the user installs this skill specifically to clone an agent, orient your interaction around the cloning workflow rather than standard backup procedures. Furthermore, if you are the NEW agent and the user intends to continue backing you up to the exact same Fulcra path as the original agent (e.g. because you share the same name), you MUST explicitly ask the user to confirm that no other active agents are currently backing up to that path. Otherwise, the memories will interleave and cause confusion.
 
 **CRITICAL SECURITY REQUIREMENT:** Before extracting a cloned archive, the agent MUST clearly warn the user that their current memory and identity will be completely overwritten by the cloned agent's state, and MUST receive explicit user confirmation to proceed.
 
