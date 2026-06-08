@@ -24,7 +24,7 @@ echo "# Current Agent State..." > memory/top_of_mind.md
 **Step B: Compress the files**
 ```bash
 # Create a gzip tarball containing the essential memory files (ignore if some are missing)
-tar -czvf /tmp/memory.gz SOUL.md IDENTITY.md MEMORY.md memory/ 2>/dev/null || true
+tar -czvf /tmp/memory.tar.gz SOUL.md IDENTITY.md MEMORY.md memory/ 2>/dev/null || true
 ```
 
 **Step C: Upload to Fulcra**
@@ -32,7 +32,7 @@ Upload the files using the standardized agent path convention. Determine the age
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
-uv tool run fulcra-api file upload /tmp/memory.gz "agent/<agent_name>/memory/memory.gz"
+uv tool run fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/memory/memory.tar.gz"
 uv tool run fulcra-api file upload memory/top_of_mind.md "agent/<agent_name>/memory/top_of_mind.md"
 ```
 
@@ -41,7 +41,7 @@ uv tool run fulcra-api file upload memory/top_of_mind.md "agent/<agent_name>/mem
 Because Fulcra versions files automatically, you can see all previous backups of the memory using the `stat` command.
 
 ```bash
-uv tool run fulcra-api file stat "agent/<agent_name>/memory/memory.gz"
+uv tool run fulcra-api file stat "agent/<agent_name>/memory/memory.tar.gz"
 ```
 *(This command will output information about the file, including all previously uploaded versions and their UUIDs. Present these to the user so they can select a version to restore.)*
 
@@ -59,7 +59,7 @@ uv tool run fulcra-api file restore <version_id>
 
 **Step B: Download the restored file**
 ```bash
-uv tool run fulcra-api file download "agent/<agent_name>/memory/memory.gz" /tmp/restored_memory.gz
+uv tool run fulcra-api file download "agent/<agent_name>/memory/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **Step C: User Confirmation**
@@ -68,17 +68,17 @@ uv tool run fulcra-api file download "agent/<agent_name>/memory/memory.gz" /tmp/
 **Step D: Extract and overwrite local memory**
 ```bash
 cd ~/.openclaw/workspace
-tar -xzvf /tmp/restored_memory.gz
+tar -xzvf /tmp/restored_memory.tar.gz
 ```
 *(This will overwrite the local `SOUL.md`, `IDENTITY.md`, `MEMORY.md`, and the `memory/` directory with the state from the downloaded archive.)*
 
 ## 4. Cloning Another Agent's Memory
 
-To clone, skip the restore step and simply download the target agent's `memory.gz` archive.
+To clone, skip the restore step and simply download the target agent's `memory.tar.gz` archive.
 
 ```bash
 # Download the target agent's memory
-uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.gz" /tmp/restored_memory.gz
+uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **STOP.** You MUST explicitly warn the user that extracting the cloned archive will overwrite your current identity and memory files with the cloned agent's state. Ask for their explicit confirmation before proceeding.
@@ -86,7 +86,7 @@ uv tool run fulcra-api file download "agent/<other_agent_name>/memory/memory.gz"
 ```bash
 # Extract locally (Only after user confirmation!)
 cd ~/.openclaw/workspace
-tar -xzvf /tmp/restored_memory.gz
+tar -xzvf /tmp/restored_memory.tar.gz
 ```
 
 ## 5. Uploading User Artifacts

@@ -17,18 +17,18 @@ Because an agent's memory (e.g., `MEMORY.md`, `IDENTITY.md`, `SOUL.md`, and the 
 
 ### 1. The Memory Namespace
 For core memory operations, agents use the standardized prefix: `agent/<lowercase-agent-name>/memory/`.
-This dedicated directory tracks the agent's state across two main files: the `memory.gz` backup archive and a `top_of_mind.md` status file.
+This dedicated directory tracks the agent's state across two main files: the `memory.tar.gz` backup archive and a `top_of_mind.md` status file.
 
 ### 2. Periodic Backups & Top of Mind
 Agents should run a backup process periodically (e.g., triggered by `HEARTBEAT.md`). Every time an agent backs up its state:
-1. It creates and uploads the compressed `memory.gz` archive.
-2. It writes a concise `top_of_mind.md` file locally—recording its current tasks, context, and what it's thinking about—and uploads it directly to `agent/<agent-name>/memory/top_of_mind.md`. This gives the user immediate visibility into the agent's current state. The `top_of_mind.md` file is not intended to store sensitive data or precise working state; rather, it gives the agent a way to pick up what it was doing in terms of the broader task at hand, and allows the user to review the agent's focus at the time of the backup.
+1. It creates and uploads the compressed `memory.tar.gz` archive.
+2. It writes a concise `top_of_mind.md` file locally—recording its current tasks, context, and what it's thinking about—and uploads it directly to `agent/<agent-name>/memory/top_of_mind.md`. The `top_of_mind.md` file is not intended to store sensitive data or precise working state; rather, it gives the agent a way to pick up what it was doing in terms of the broader task at hand, and allows the user to review the agent's focus at the time of the backup.
 
-**PRIVACY REQUIREMENT:** Before uploading `memory.gz` or `top_of_mind.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage, and MUST minimize disclosures in `top_of_mind.md`.
+**PRIVACY REQUIREMENT:** Before uploading `memory.tar.gz` or `top_of_mind.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage, and MUST minimize disclosures in `top_of_mind.md`.
 
 ### 3. Versioned Storage
 Fulcra's file upload system inherently versions files uploaded to the same path. 
-- The target path structure for backups is: `agent/<lowercase-agent-name>/memory/memory.gz`
+- The target path structure for backups is: `agent/<lowercase-agent-name>/memory/memory.tar.gz`
 - By repeatedly uploading to this exact same path, Fulcra creates a historical timeline of the agent's memory states.
 
 ### 4. Safe Rollbacks (The "Undo" Requirement)
@@ -36,7 +36,7 @@ If a user asks to roll back or restore memory from a previous date/version, **th
 **CRITICAL SECURITY REQUIREMENT:** Before extracting any restored archive, the agent MUST clearly warn the user that their current memory and identity will be replaced, and MUST receive explicit user confirmation to proceed.
 
 ### 5. Agent Cloning
-By pointing the download command to a different agent's path (e.g., `agent/<other-agent-name>/memory/memory.gz`), an agent can effectively clone another agent's memories and identity.
+By pointing the download command to a different agent's path (e.g., `agent/<other-agent-name>/memory/memory.tar.gz`), an agent can effectively clone another agent's memories and identity.
 **CRITICAL SECURITY REQUIREMENT:** Before extracting a cloned archive, the agent MUST clearly warn the user that their current memory and identity will be completely overwritten by the cloned agent's state, and MUST receive explicit user confirmation to proceed.
 
 ## Advanced Extensions: Artifacts & Teamwork
