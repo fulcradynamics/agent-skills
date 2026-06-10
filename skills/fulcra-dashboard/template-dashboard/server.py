@@ -108,8 +108,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(404)
 
 if __name__ == "__main__":
-    with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
-        print(f"🌲 Primordial Python Server active at http://localhost:{PORT}")
+    with socketserver.TCPServer(("127.0.0.1", PORT), DashboardHandler) as httpd:
+        print(f"🌲 Primordial Python Server active at http://127.0.0.1:{PORT}")
         print("Serving static files and monitoring /api/chat...")
         try:
             httpd.serve_forever()
