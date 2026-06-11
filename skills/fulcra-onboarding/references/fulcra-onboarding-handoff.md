@@ -27,5 +27,7 @@ This skill handles the final step (Step 7) of the onboarding process, presenting
    
    - 🧠 **Agent Memory & Teamwork:** Remind them that Fulcra acts as a universal backend, allowing them to coordinate multiple agents with shared memory rather than relying on isolated chat histories. We can set up shared Team namespaces so agents can coordinate and drop files in each other's inboxes.
 
+   - ⚙️ **Cross-Platform Preferences:** Set up the `fulcra-prefs` skill so every agent — Claude Code, ChatGPT, custom bots — loads your preferences at session start and captures new ones the moment you express them. One preference, everywhere.
+
 3. **Closing:**
    - Ask them which path they want to take next (e.g., "Shall we build that live web app, or would you rather explore Context Web first?").
