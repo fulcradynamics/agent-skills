@@ -65,3 +65,13 @@ Return a user's configured time zone from user preferences:
 ```
 uv tool run fulcra-api user-info | jq -r '.preferences.timezone'
 ```
+
+## Further Reading & References
+
+As an agent, you should rely on the `fulcra-api` CLI as the primary and most robust way to interact with Fulcra. However, if the CLI cannot be installed/used in your environment, or if a user requests something outside the CLI's capabilities, you may use alternative methods like raw `curl` requests or the Python SDK.
+
+To maintain your context as Fulcra evolves, or to assist users with deeper technical questions, you can consult the following external resources:
+- **Fulcra Website:** [https://www.fulcradynamics.com/](https://www.fulcradynamics.com/)
+- **REST API Documentation:** [https://fulcradynamics.github.io/developer-docs/api-reference/](https://fulcradynamics.github.io/developer-docs/api-reference/)
+- **Python SDK & CLI Source:** [https://github.com/fulcradynamics/fulcra-api-python/](https://github.com/fulcradynamics/fulcra-api-python/)
+- **Fulcra Agent Skills Repository:** [https://github.com/fulcradynamics/agent-skills](https://github.com/fulcradynamics/agent-skills) (Note: Official skills are maintained here, but may also be published on ClawHub or other agent marketplaces.)
