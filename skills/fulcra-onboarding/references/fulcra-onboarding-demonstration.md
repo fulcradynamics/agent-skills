@@ -41,6 +41,12 @@ This skill handles the final demonstration phase of the "Agent Visibility & Dash
         - Attach the file directly to your message in the chat thread so the user can easily download/view it. **Crucial Formatting:** Ensure you write a short introductory sentence and a line break *before* the file attachment directive in your message. If the media attachment is the very first thing in your final reply, the chat UI parsing may break and display raw formatting tags.
         - Output the absolute path and tell the user they can open it directly in their web browser (e.g., `open /absolute/path/to/fulcra-dashboard.html`) to view the final rendered result. Do not output the raw HTML source code in the chat, as this clutters the experience.
 
+4. **Offer Interactive Dashboard Transition:**
+   - When presenting the simple HTML dashboard, explicitly offer to make the dashboard live and interactive.
+   - Clarify that this concludes the onboarding demonstration. Explain that if they choose to proceed, they will be transitioning out of onboarding to build a "real," fully functional web app using the `fulcra-dashboard` skill.
+
 ## Handoff
 
-Once the dashboard has been successfully generated and presented, wait for the user's reaction. After acknowledging their response, return control to the main `fulcra-onboarding` flow to present the Next Steps menu again (omitting the Agent Visibility path since they just completed it).
+Wait for the user's reaction to the generated dashboard and your offer to build a real interactive app.
+- **If they want to build the interactive dashboard:** Transition them directly to the `fulcra-dashboard` skill.
+- **If they decline or just want to see other options:** Return control to the main `fulcra-onboarding` flow to present the Next Steps menu again (omitting the Agent Visibility path since they just completed it).
