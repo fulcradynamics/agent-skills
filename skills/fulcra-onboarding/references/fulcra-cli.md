@@ -19,9 +19,9 @@ Use the `auth login` subcommand to authenticate to Fulcra on behalf of a user.
 uv tool run fulcra-api auth login
 ```
 
-This will return a URL that you should direct the user to load in their browser, and a unique code that they should ensure matches the code displayed in their browser.
+This will return a URL that you should direct the user to load in their browser, and a unique code that they should ensure matches the code displayed in their browser. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
 
-The command will poll for a valid token and complete once the user finishes the authorization flow with a two minute timeout.
+The command will poll for a valid token and complete once the user finishes the authorization flow with a two minute timeout. Because it polls, you must run it as a background process or allow it to yield.
 
 Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials.json` and the tool will refresh access tokens as neccessary.
 
