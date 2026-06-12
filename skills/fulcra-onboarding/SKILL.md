@@ -57,7 +57,8 @@ This path runs an interactive demonstration of Fulcra's data capabilities.
 2. If they consent, transition them to the `fulcra-memory` skill to perform the backup.
 
 #### Path 3: Agent Coordination
-1. Read and execute `references/fulcra-onboarding-coordination.md` to introduce the concept of shared memory spaces and offer to install the `fulcra-agent-teams` skill.
+1. Explain that Fulcra isn't just for dashboards—it acts as a universal backend that allows multiple agents to coordinate their work using shared Team namespaces.
+2. If they consent and are interested, transition them to the `fulcra-agent-teams` skill so they can get set up.
 
 #### Path 4: Get the App
 1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
