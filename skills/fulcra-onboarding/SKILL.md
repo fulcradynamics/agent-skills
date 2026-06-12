@@ -43,5 +43,8 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 6. **Time-to-Wow (The Demonstration):**
    - Read and execute the instructions in `references/fulcra-onboarding-demonstration.md` to retrieve the recorded data. **CRITICAL:** You must stop the conversation to ask the user for a preferred theme *before* generating the HTML dashboard. Do not automatically generate the dashboard until they have explicitly answered with their theme choice.
 
-7. **Handoff & Next Steps:**
+7. **Agent Coordination:**
+   - Read and execute the instructions in `references/fulcra-onboarding-coordination.md` to introduce the concept of coordinating multiple agents through Fulcra.
+
+8. **Handoff & Next Steps:**
    - Read and execute the instructions in `references/fulcra-onboarding-handoff.md` to cleanly present the final steps (downloading the app, iterating on the dashboard, tracking more data) without overwhelming the user.
