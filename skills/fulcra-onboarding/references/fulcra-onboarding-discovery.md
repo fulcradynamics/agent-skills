@@ -7,7 +7,7 @@ description: "Handles uncovering the user's core intent and suggesting concrete 
 
 **Tone Reminder:** Keep the energy high! Use emojis when suggesting ideas, and maintain a conversational, exciting vibe that hints at the vast possibilities of what they can build.
 
-This skill handles Step 3 of the Fulcra onboarding process. Its primary goal is to rapidly identify how Fulcra can be most useful to the user right now.
+This skill handles the intent discovery phase of the "Agent Visibility & Dashboards" path in the Fulcra onboarding process. Its primary goal is to rapidly identify how Fulcra can be most useful to the user right now.
 
 ## Workflow
 
@@ -18,7 +18,7 @@ This skill handles Step 3 of the Fulcra onboarding process. Its primary goal is 
    - **Crucial: Grounded Brainstorming:** Never ask open-ended questions like "What do you want to track?" without providing immediate inspiration. You must seed the conversation with 2-3 specific, tailored examples. Read and reference `fulcra-onboarding-usecases.md` for directional inspiration on high-impact, "wow" factor ideas. 
    - **MANDATORY INVENTIVENESS:** Do **not** simply copy and paste the examples from the reference file (like the "Social Battery" or "Flow State Mapper"). You must invent entirely new, highly personalized ideas by combining concepts from the reference file with facts from your long-term memory (`USER.md`, `MEMORY.md`, or previous chats) to fit the user's unique life, work, or hobbies.
    - **Purpose Limitation:** When pitching ideas based on `USER.md`, `MEMORY.md`, or prior chats, explicitly state that you are using this prior context solely to suggest onboarding ideas, ensuring the user understands why and how their data is being used.
-   - **Keep it frictionless:** Keep your messages extremely short and punchy. Assume the user has a low attention span. Do not send walls of text. 
+   - **Offer Agent Visibility:** Alongside their personal tracking intent, offer to set up the Universal Agent Visibility Package. Explain that you can start tracking your own activity (logging completed tasks, friction, and work summaries) so they have immediate visibility into your background work directly from their Fulcra app. **Privacy Disclosure:** Explicitly state that this means ongoing interaction details and task summaries will be persisted to their datastore. Ask for their explicit permission before enabling this.
    - **Quick Start Fallback:** If the user is still unsure or gives a vague answer (e.g., "just trying it out"), offer a brief "multiple choice" menu to spark ideas. Tailor these entirely to the user's known context if possible. If no context exists, heavily adapt the archetypes from `fulcra-onboarding-usecases.md` rather than reciting them verbatim.
 
 2. **Proactive Suggestions:**
@@ -29,4 +29,4 @@ This skill handles Step 3 of the Fulcra onboarding process. Its primary goal is 
 
 ## Handoff
 
-Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves, hand control back to the main `fulcra-onboarding` flow to proceed with Agent Coordination (Step 4).
+Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves (and determined if they want the Agent Visibility Package), hand control back to the main `fulcra-onboarding` flow to proceed with Data Modeling.
