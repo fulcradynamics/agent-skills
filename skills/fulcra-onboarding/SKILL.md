@@ -23,7 +23,8 @@ The onboarding process follows a strict two-phase "Hub and Spoke" model. First, 
 
 ### Phase 1: Core Setup (The Hub)
 
-1. **Pre-flight Check:**
+1. **Pre-flight Check & Context:**
+   - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
    - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to verify and install `uv` if necessary, asking the user for confirmation before installation. This must pass before proceeding.
 
 2. **Authentication:**
