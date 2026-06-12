@@ -25,7 +25,7 @@ This skill handles Step 2 of the onboarding process. Immediately after establish
 3. **Execution:**
    - Once authenticated, execute what they agreed to:
      - **If Baseline Backup:** Use your tools to read the `fulcra-memory-cli` reference documentation provided by the `fulcra-memory` skill, and follow those instructions to perform the backup (creating the `top_of_mind.md` file, compressing the memory directory, and uploading everything using the Fulcra CLI). *Note: Ensure your `top_of_mind.md` summary reflects that you are currently executing the onboarding flow.*
-     - **If Agent Visibility Package:** Remember that the user wants these annotations set up. You will actually create these data schemas during the Data Modeling phase (Step 4), alongside the user's personal tracking annotations. **Crucial:** Once those schemas are created in Step 4, you must proactively write a simple, general entry logging the start of the onboarding process. Do not create granular retroactive logs of your conversational or reasoning steps, to avoid exposing sensitive operational details unnecessarily.
+     - **If Agent Visibility Package:** Remember that the user wants these annotations set up. You will actually create these data schemas during the Data Modeling phase (Step 5), alongside the user's personal tracking annotations. **Crucial:** Once those schemas are created in Step 5, you must proactively write a simple, general entry logging the start of the onboarding process. Do not create granular retroactive logs of your conversational or reasoning steps, to avoid exposing sensitive operational details unnecessarily.
    - Once completed, celebrate this successful first trial of Fulcra!
 
 4. **Handoff:**

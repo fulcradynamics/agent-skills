@@ -29,4 +29,4 @@ This skill handles Step 3 of the Fulcra onboarding process. Its primary goal is 
 
 ## Handoff
 
-Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves, hand control back to the main `fulcra-onboarding` flow to proceed with Data Modeling (Step 4).
+Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves, hand control back to the main `fulcra-onboarding` flow to proceed with Agent Coordination (Step 4).

@@ -1,13 +1,13 @@
 ---
 name: fulcra-onboarding-coordination
-description: "Handles the agent coordination step (Step 7) of Fulcra onboarding, asking about multiple agents and suggesting the fulcra-agent-teams skill."
+description: "Handles the agent coordination step (Step 4) of Fulcra onboarding, asking about multiple agents and suggesting the fulcra-agent-teams skill."
 ---
 
 # Fulcra Onboarding: Agent Coordination
 
 **Tone Reminder:** Conversational, helpful, and focused on unlocking more capability.
 
-This skill handles Step 7 of the onboarding process, introducing the user to the concept of coordinating multiple agents through Fulcra's shared memory backend.
+This skill handles Step 4 of the onboarding process, introducing the user to the concept of coordinating multiple agents through Fulcra's shared memory backend.
 
 ## Workflow
 
@@ -20,5 +20,5 @@ This skill handles Step 7 of the onboarding process, introducing the user to the
    - Ask for their explicit permission to install the `fulcra-agent-teams` skill.
    - If you have the necessary capabilities (e.g., through an execution tool), install it for them upon confirmation. If you cannot install it yourself, politely provide them with the instructions to install it.
 
-3. **Proceed to Handoff:**
-   - Once this coordination conversation is concluded (whether they install the skill, decline, or aren't using multiple agents), seamlessly transition to the final "Handoff & Next Steps" (Step 8).
+3. **Proceed to Data Modeling:**
+   - Once this coordination conversation is concluded (whether they install the skill, decline, or aren't using multiple agents), seamlessly transition to Data Modeling & Continuous Agent Tracking (Step 5).
