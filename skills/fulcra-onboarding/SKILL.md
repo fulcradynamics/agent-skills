@@ -17,34 +17,54 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 - **Use Emojis:** Liberally (but tastefully) use emojis throughout the onboarding process, especially when presenting lists, options, or celebrating a successful step.
 - **Maintain Momentum:** Keep the user moving forward. If they get stuck, make a choice for them or offer a heavily opinionated default to get them to the "Time-to-Wow" demonstration as quickly as possible.
 
-## Workflow
+## Workflow: Hub and Spoke Model
+
+The onboarding process follows a strict two-phase "Hub and Spoke" model. First, you get the user connected. Then, you present a menu of options and let the user choose what to do next.
+
+### Phase 1: Core Setup (The Hub)
 
 1. **Pre-flight Check:**
    - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to verify and install `uv` if necessary, asking the user for confirmation before installation. This must pass before proceeding.
 
-2. **Memory Baseline & Agent Visibility:**
-   - Read and execute the instructions in `references/fulcra-onboarding-backup.md`. This step handles authentication, introduces the power of Fulcra by pitching a baseline agent memory backup, and offers to set up the Universal Agent Visibility Package. This serves as their very first trial of Fulcra's capabilities.
+2. **Authentication:**
+   - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
+   - Once authenticated, declare that the core onboarding is complete! Celebrate this milestone.
 
-3. **User Intent Discovery:**
-   - Read and execute the instructions in `references/fulcra-onboarding-discovery.md` to uncover their core tracking intent and suggest concrete "wow" factor use cases. Wait for this phase to hand back 2-3 specific custom data types/streams before proceeding.
+### Phase 2: Next Steps (The Spokes)
 
-4. **Agent Coordination:**
-   - Read and execute the instructions in `references/fulcra-onboarding-coordination.md` to introduce the concept of coordinating multiple agents through Fulcra.
+Immediately after declaring the core onboarding complete, present the following menu of next steps to the user. Do not force them down any path automatically.
 
-5. **Data Modeling & Continuous Agent Tracking:**
-   - Translate the user's intent into 2-3 specific custom data types/streams (Annotations).
-   - Read and follow the instructions in `references/fulcra-onboarding-create-annotations.md` to define and create these schemas.
-   - **If the user agreed to the Agent Visibility Package in Step 2:** You must create those specific schemas (Tasks Completed, Agent Friction, Current Agent Work) right now alongside the user's personal schemas. **Crucially:** From this point forward through the end of the onboarding flow, you must actively record your own high-level milestones into these agent-specific annotations so that the final dashboard is populated with a timeline of your work. Ensure you do not log sensitive reasoning or user prompts without explicit need.
-   - **Crucial Memory Step:** When you create these annotations, explicitly remember the returned `ANNOTATION_ID` and the exact `data_type` for each one. You must use these IDs directly in the next step—do not make unnecessary API calls to look them up again.
+**Present this exact scannable menu to the user:**
 
-   - **Continuous Agent Logging Check:** If you are tracking the Agent Visibility Package, ensure you are actively recording basic background data points (e.g., "Created user annotations", "Awaiting user input for first record") into your agent-specific annotations as the flow progresses.
+*   📊 **Agent Visibility & Dashboards:** Discover how to track custom data, and let me demonstrate by generating a custom dashboard for you.
+*   🧠 **Agent Memory Backup:** Snapshot my current memory and context directly to your Fulcra datastore.
+*   🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
+*   📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
+*   💻 **Context Web:** Explore your data on the desktop portal.
+*   ⚙️ **Cross-Platform Preferences:** Set up universal preferences across all your agents.
 
-6. **Record First User Data:**
-   - Pick one of the user's newly created personal annotations and ask a direct question to get their first piece of data (e.g., if you created a "coffee consumed" annotation, ask "How many coffees have you had today?").
-   - Once they answer, record their response into Fulcra by reading and following the instructions in `references/fulcra-onboarding-record-annotations.md`.
+**When the user makes a choice, follow the corresponding path below:**
 
-7. **Time-to-Wow (The Demonstration):**
-   - Read and execute the instructions in `references/fulcra-onboarding-demonstration.md` to retrieve the recorded data. **CRITICAL:** You must stop the conversation to ask the user for a preferred theme *before* generating the HTML dashboard. Do not automatically generate the dashboard until they have explicitly answered with their theme choice.
+#### Path 1: Agent Visibility & Dashboards
+This path runs an interactive demonstration of Fulcra's data capabilities.
+1.  **User Intent Discovery:** Read and execute `references/fulcra-onboarding-discovery.md` to uncover what they want to track and pitch the Universal Agent Visibility Package.
+2.  **Data Modeling:** Read `references/fulcra-onboarding-create-annotations.md` to create the custom schemas. **Crucial:** If they opted into the Agent Visibility Package, create those schemas (Tasks Completed, Agent Friction, Current Agent Work) alongside their personal schemas and actively record your high-level milestones into them from this point forward. Remember the `ANNOTATION_ID`s returned.
+3.  **Record First User Data:** Ask a direct question to get their first piece of data for one of their new schemas, then record it using `references/fulcra-onboarding-record-annotations.md`.
+4.  **Time-to-Wow (The Demonstration):** Read and execute `references/fulcra-onboarding-demonstration.md` to fetch the data and generate a custom HTML dashboard. Stop and ask for a theme *before* generating.
 
-8. **Handoff & Next Steps:**
-   - Read and execute the instructions in `references/fulcra-onboarding-handoff.md` to cleanly present the final steps (downloading the app, iterating on the dashboard, tracking more data) without overwhelming the user.
+#### Path 2: Agent Memory Backup
+1. Explain that you can snapshot your current memory (which may include prior conversation context and preferences) directly to their datastore. 
+2. If they consent, transition them to the `fulcra-memory` skill to perform the backup.
+
+#### Path 3: Agent Coordination
+1. Read and execute `references/fulcra-onboarding-coordination.md` to introduce the concept of shared memory spaces and offer to install the `fulcra-agent-teams` skill.
+
+#### Path 4: Get the App
+1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
+2. Mention it unlocks automatic background sync (Health, location, calendar). **PRIVACY WARNING:** Explicitly inform the user these are highly sensitive data types requiring explicit iOS permissions, and they have full control to decline.
+
+#### Path 5: Context Web
+1. Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
+
+#### Path 6: Cross-Platform Preferences
+1. Transition them to the `fulcra-prefs` skill so they can load and capture preferences universally across all their agents.
