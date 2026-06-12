@@ -89,9 +89,11 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
      ```
    - Provide the user with the localhost link.
 6. **Chat Envoy & GitHub Deployment:** 
-   - The dashboard includes a chat envoy component (default title "Relay"). Remind the user that this envoy only functions locally via the Python server.
-   - If the user pushes the repository to GitHub Pages, the CSS is designed to automatically hide the envoy to prevent user confusion, as the chat interface cannot route messages to the local Python bridge from a remote host.
-   - **GitHub Pages Offer:** Explicitly ask if they would like to publish this dashboard live to the internet using GitHub Pages so they can view it anywhere.
+   - The dashboard includes a chat envoy component (default title "Relay") and an Agent Vault memory component.
+   - **SECURITY CLARIFICATION FOR AGENT AND USER:** It is safe to publish the local chat and memory widgets to GitHub Pages because they rely entirely on the local Python backend (`server.py`) as a bridge. No chat history or memory files (`memory.gz`, `top_of_mind.md`) are copied into the repository or published to the public web by those widgets.
+   - Publishing the dashboard still publishes the generated static dashboard files, including `data.json`, `.jsonl` timeline exports, images, and theme assets. Before creating or pushing a public GitHub Pages repository, explicitly confirm that the user is comfortable making the selected dashboard data and summary text public.
+   - When the dashboard is deployed remotely (like on GitHub Pages), the layout natively detects that it is not running on localhost and safely hides the chat and memory components to prevent broken links or user confusion.
+   - **GitHub Pages Offer:** Explicitly ask if they would like to publish this dashboard live to the internet using GitHub Pages so they can view it anywhere. Remind them that private chat and memory files are excluded, but any chosen dashboard timelines and generated summaries will be public unless removed or redacted first.
    - If they agree, ensure the `gh` (GitHub CLI) is installed and authenticated (`gh auth status`). If it is not, provide instructions or execute the installation (`brew install gh` or equivalent) and wait for the user to complete `gh auth login`.
    - Once authenticated, create the repository and push the code (`gh repo create <name> --public --source=. --remote=origin --push`).
    - *Crucially*, after pushing, execute the command to enable GitHub pages for the repository from the main branch: `gh api repos/{owner}/{repo}/pages -X POST -f "source[branch]=main" -f "source[path]=/"`.
