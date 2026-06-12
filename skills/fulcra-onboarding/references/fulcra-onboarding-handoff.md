@@ -7,7 +7,7 @@ description: "Handles the final handoff phase of Fulcra onboarding, presenting n
 
 **Tone Reminder:** Keep the energy high and celebratory! 🎉 Use emojis to break up text and make the options highly scannable. Do NOT send a massive wall of text.
 
-This skill handles the final step (Step 7) of the onboarding process, presenting the user with clear, exciting paths forward now that they've seen the "Time-to-Wow" demonstration.
+This skill handles the final step (Step 8) of the onboarding process, presenting the user with clear, exciting paths forward now that they've seen the "Time-to-Wow" demonstration.
 
 ## Workflow
 
@@ -24,8 +24,6 @@ This skill handles the final step (Step 7) of the onboarding process, presenting
    - 💻 **Context Web:** Remind them they can instantly view their data on desktop by visiting [Context Web](https://context.fulcradynamics.com/). Note that while it doesn't collect/record data automatically like the mobile app, it's a great place to explore what they've built.
    
    - ➕ **Track More Data:** Remind them this is just the beginning. They can easily define new Annotations or start pulling in bulk data to expand their dashboard.
-   
-   - 🧠 **Agent Memory & Teamwork:** Remind them that Fulcra acts as a universal backend, allowing them to coordinate multiple agents with shared memory rather than relying on isolated chat histories. We can set up shared Team namespaces so agents can coordinate and drop files in each other's inboxes.
 
    - ⚙️ **Cross-Platform Preferences:** Set up the `fulcra-prefs` skill so every agent — Claude Code, ChatGPT, custom bots — loads your preferences at session start and captures new ones the moment you express them. One preference, everywhere.
 
