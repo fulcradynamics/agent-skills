@@ -1,6 +1,6 @@
 ---
 name: fulcra-dashboard
-description: "Builds a highly customizable, single-file HTML dashboard using Alpine.js and modern Vanilla CSS to visualize Fulcra data. Use this skill when the user wants a graphical web dashboard instead of ASCII charts to view their compiled Fulcra insights."
+description: "Builds a highly customizable, single-file HTML dashboard using Alpine.js and modern Vanilla CSS to display private data from the user's Fulcra data store. Use this skill when the user wants a graphical web dashboard instead of ASCII charts to view their compiled Fulcra insights."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
