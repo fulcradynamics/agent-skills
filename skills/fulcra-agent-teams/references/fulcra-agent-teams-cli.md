@@ -53,9 +53,9 @@ uv tool run fulcra-api file stat "team/<team_name>/member/<your_agent_name>/arch
 uv tool run fulcra-api file delete "team/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md"
 ```
 
-## 3. Team Activity Tracking
+## 3. Team Activity Tracking (OKF Compliant)
 
-Agents can update shared files to track the team's high-level progress and completed objectives.
+Agents can update shared files to track the team's high-level progress and completed objectives. Ensure all markdown files contain OKF YAML frontmatter, and that `log.md` and `index.md` are updated when appropriate.
 
 **Step A: Updating Team Progress**
 To update the `progress.md` file (which stores what the team members have recently done and what they plan to do next):
@@ -63,10 +63,21 @@ To update the `progress.md` file (which stores what the team members have recent
 # 1. Download the current progress file
 uv tool run fulcra-api file download "team/<team_name>/progress.md" /tmp/team_progress.md || touch /tmp/team_progress.md
 
-# 2. Edit /tmp/team_progress.md locally to reflect the latest plans and recent work.
+# 2. Edit /tmp/team_progress.md locally to reflect the latest plans and recent work. 
+# Make sure it has OKF frontmatter:
+# ---
+# type: Progress Report
+# title: Team Progress
+# ---
 
 # 3. Upload the updated file back to Fulcra
 uv tool run fulcra-api file upload /tmp/team_progress.md "team/<team_name>/progress.md"
+
+# 4. Also append an update entry to log.md
+DATE=$(date -u +"%Y-%m-%d")
+echo "## $DATE" > /tmp/log_update.md
+echo "* **Update**: <agent_name> updated team progress." >> /tmp/log_update.md
+# (In practice, download log.md, append the update under the correct date, and re-upload)
 ```
 
 **Step B: Recording Completed Objectives**
@@ -75,9 +86,11 @@ To add a newly completed high-level objective to `completed.md` (which should ge
 # 1. Download the current completed file
 uv tool run fulcra-api file download "team/<team_name>/completed.md" /tmp/team_completed.md || touch /tmp/team_completed.md
 
-# 2. Append the new objective
+# 2. Append the new objective (ensure OKF frontmatter exists at the top of the file)
 echo "- [$(date +%Y-%m-%d)] <Objective summary>" >> /tmp/team_completed.md
 
 # 3. Upload the updated file back to Fulcra
 uv tool run fulcra-api file upload /tmp/team_completed.md "team/<team_name>/completed.md"
+
+# 4. Also update the team log.md with the completion event.
 ```

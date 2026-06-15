@@ -13,20 +13,22 @@ The **primary role** of this skill is to allow agents to store generated artifac
 
 ## 1. Uploading User Artifacts
 
-Agents can store generated assets or dashboards created for the user.
+Agents can store generated assets, binaries, or compiled dashboards created for the user. Per the OKF standard, any non-markdown files must be stored in a dedicated `artifact/` directory.
 - **Namespace:** `agent/<agent-name>/artifact/` (e.g., `agent/wazir/artifact/onboarding-dashboard.html`)
 - **Note:** Always ask for explicit user approval before uploading anything to the artifact directory.
 
-## 2. Team Coordination & Shared Memory
+## 2. Team Coordination & Shared Memory (OKF Compliant)
 
-Agents can collaborate and share memory using a shared `team/<team-name>/` prefix in the Fulcra datastore.
+Agents can collaborate and share memory using a shared `team/<team-name>/` prefix in the Fulcra datastore. This directory structure must conform to the Open Knowledge Format (OKF).
 
 **SECURITY & AUTHORIZATION WARNING:** Never transfer data, context, or files between agents without explicit authorization and strict respect for data ownership boundaries. Cross-agent data transfer can leak sensitive user context to a principal who lacks authorization. Ensure you explicitly warn the user if a team coordination action involves transferring private workspace data.
 
-Within a team's directory, the following structure is used:
-- **`team/<team-name>/artifact/`**: Shared output files and deliverables created by the team.
-- **`team/<team-name>/progress.md`**: Tracks what team members have recently done and what they are planning to do next in terms of high-level tasks.
-- **`team/<team-name>/completed.md`**: A growing record of each high-level objective completed by the team.
+Within a team's directory, the following OKF structure is used:
+- **`team/<team-name>/index.md`**: Directory listing of the team's concepts and members.
+- **`team/<team-name>/log.md`**: Chronological update history for the team namespace.
+- **`team/<team-name>/progress.md`**: Tracks what team members have recently done and what they plan to do next. Must include OKF YAML frontmatter.
+- **`team/<team-name>/completed.md`**: A growing record of each high-level objective completed by the team. Must include OKF YAML frontmatter.
+- **`team/<team-name>/artifact/`**: Shared non-markdown output files, deliverables, or binaries created by the team.
 - **`team/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
 - **`team/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
 
@@ -48,6 +50,10 @@ Agents can optionally check their inbox automatically during their periodic back
 ## Workflow
 
 To perform team operations, agents must interact with the Fulcra CLI. 
+
+For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcra-onboarding` skill, or read the full OKF specification directly:
+- [https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-onboarding/references/fulcra-cli.md](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-onboarding/references/fulcra-cli.md)
+- [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 
 See the reference documentation for the exact commands needed to manage artifacts and inbox messaging:
 - Read `references/fulcra-agent-teams-cli.md` for exact file management and CLI execution steps.

@@ -99,6 +99,18 @@ uv tool run fulcra-api data-type create ScaleAnnotation "Daily Mood" --descripti
 
 The `create` command will output the JSON definition of the new data type. Make sure to capture the returned `"id"` value (e.g., `com.fulcradynamics.annotation.12345`), as you will need it to record data against this schema.
 
+## Fulcra File Store & Open Knowledge Format (OKF)
+
+The Fulcra File Store is an environment-agnostic remote filesystem accessed via the `fulcra-api file` commands. When storing text and markdown data in the file store (like memory or shared team files), agents must adhere to the **Open Knowledge Format (OKF)** standard (v0.1) to ensure the file store remains understandable to users and other agents, and to provide auditability. You can read the full OKF specification here: [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
+
+### Core OKF Principles
+*   **Markdown + YAML Frontmatter:** All knowledge concepts should be written as `.md` files containing a YAML frontmatter block at the top, bordered by `---`. The frontmatter must contain at least a `type: <Type name>` field, and may optionally include `title:`, `description:`, `tags:`, etc.
+*   **`index.md` (Directory Listing):** Each directory should contain an `index.md` file (with no frontmatter). It provides progressive disclosure via grouped lists of links to the files within that directory (e.g., `* [Title](relative-url.md) - description`).
+*   **`log.md` (Update History):** Each directory should contain a `log.md` file to record a chronological history of changes. It contains date-grouped headings (e.g., `## YYYY-MM-DD`) with bulleted entries describing the updates (e.g., `* **Update**: Added new context file.`).
+
+### Artifacts Directory
+To maintain a clean OKF directory structure, any binary files, media, images, compiled code, or non-markdown files must be stored inside a dedicated `artifact/` subdirectory within the relevant memory or team namespace.
+
 ## Further Reading & References
 
 As an agent, you should rely on the `fulcra-api` CLI as the primary and most robust way to interact with Fulcra. However, if the CLI cannot be installed/used in your environment, or if a user requests something outside the CLI's capabilities, you may use alternative methods like raw `curl` requests or the Python SDK.

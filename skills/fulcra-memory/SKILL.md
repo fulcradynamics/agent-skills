@@ -15,20 +15,21 @@ Because an agent's memory (e.g., `MEMORY.md`, `IDENTITY.md`, `SOUL.md`, and the 
 
 ## Primary Role: Memory & State Management
 
-### 1. The Memory Namespace
+### 1. The Memory Namespace (OKF Compliant)
 For core memory operations, agents use the standardized prefix: `agent/<lowercase-agent-name>/memory/`.
-This dedicated directory tracks the agent's state across two main files: the `memory.tar.gz` backup archive and a `progress.md` status report.
+This dedicated directory tracks the agent's state. It must conform to the Open Knowledge Format (OKF), meaning it contains an `index.md`, a `log.md`, and markdown concept files like `progress.md`. Any binary files (like the backup archive) must be stored in an `artifact/` subdirectory.
 
 ### 2. Periodic Backups & Progress Reports
 Agents should run a backup process periodically (e.g., triggered by `HEARTBEAT.md`). Every time an agent backs up its state:
-1. It creates and uploads the compressed `memory.tar.gz` archive.
-2. It writes a concise `progress.md` report locally—summarizing the work it has recently done, and what it is planning to do next—and uploads it directly to `agent/<agent-name>/memory/progress.md`. This `progress.md` file is a report specifically designed to let the user review the agent's recent accomplishments and intended next steps. It is **not** intended to dump internal agent state, chain-of-thought, or precise working memory.
+1. It creates and uploads the compressed `memory.tar.gz` archive to `agent/<agent-name>/memory/artifact/memory.tar.gz`.
+2. It writes a concise `progress.md` report locally—summarizing the work it has recently done, and what it is planning to do next—and uploads it directly to `agent/<agent-name>/memory/progress.md`. The `progress.md` file must include proper OKF YAML frontmatter (with `type: Progress Report`). This file is a report specifically designed to let the user review the agent's recent accomplishments and intended next steps. It is **not** intended to dump internal agent state, chain-of-thought, or precise working memory.
+3. It updates the `log.md` (Update History) and ensures the `index.md` directory listing is accurate.
 
 **PRIVACY REQUIREMENT:** Before uploading `memory.tar.gz` or `progress.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage, and MUST minimize disclosures in `progress.md`.
 
 ### 3. Versioned Storage
 Fulcra's file upload system inherently versions files uploaded to the same path. 
-- The target path structure for backups is: `agent/<lowercase-agent-name>/memory/memory.tar.gz`
+- The target path structure for backups is: `agent/<lowercase-agent-name>/memory/artifact/memory.tar.gz`
 - By repeatedly uploading to this exact same path, Fulcra creates a historical timeline of the agent's memory states.
 
 ### 4. Safe Rollbacks (The "Undo" Requirement)
@@ -42,7 +43,7 @@ Cloning involves two agents: the "old" (source) agent and the "new" (destination
   You must perform a complete backup of your current state (as described in Section 2). Once the backup is successful, tell the user the exact Fulcra path where the backup is stored, and instruct them to install the `fulcra-memory` skill on the new agent and ask it to clone from that path.
   
 - **If you are the NEW (destination) agent:**
-  You must first ask the user to confirm that the old agent has recently backed itself up using the `fulcra-memory` skill. If they haven't, instruct the user to have the old agent install the skill and perform a backup. Ask the user for the exact Fulcra backup path (e.g., `agent/<old-agent-name>/memory/memory.tar.gz`). Once provided, you can download that archive and extract it. After successfully cloning the old agent's memory and identity files into your workspace, you MUST briefly demonstrate the successful clone to the user by explicitly mentioning a few specific details you have just "learned" or remembered from the newly extracted files.
+  You must first ask the user to confirm that the old agent has recently backed itself up using the `fulcra-memory` skill. If they haven't, instruct the user to have the old agent install the skill and perform a backup. Ask the user for the exact Fulcra backup path (e.g., `agent/<old-agent-name>/memory/artifact/memory.tar.gz`). Once provided, you can download that archive and extract it. After successfully cloning the old agent's memory and identity files into your workspace, you MUST briefly demonstrate the successful clone to the user by explicitly mentioning a few specific details you have just "learned" or remembered from the newly extracted files.
 
 **CLONING ORIENTATION & NAMESPACE COLLISION WARNING:**
 If the user installs this skill specifically to clone an agent, orient your interaction around the cloning workflow rather than standard backup procedures. Furthermore, if you are the NEW agent and the user intends to continue backing you up to the exact same Fulcra path as the original agent (e.g. because you share the same name), you MUST explicitly ask the user to confirm that no other active agents are currently backing up to that path. Otherwise, the memories will interleave and cause confusion.
@@ -53,6 +54,10 @@ If the user installs this skill specifically to clone an agent, orient your inte
 ## Workflow
 
 To perform memory operations, agents must interact with the Fulcra CLI. 
+
+For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcra-onboarding` skill, or read the full OKF specification directly:
+- [https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-onboarding/references/fulcra-cli.md](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-onboarding/references/fulcra-cli.md)
+- [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 
 See the reference documentation for the exact commands needed to compress files, upload to Fulcra, and trigger restorations:
 - Read `references/fulcra-memory-cli.md` for exact file management and CLI execution steps.
