@@ -16,11 +16,6 @@ This skill ensures the host environment is ready to interact with the Fulcra API
    - If `uv` is not found, you **must explicitly ask the user for permission** to install it on their machine. Briefly explain that `uv` is a fast Python package manager needed to interact with the Fulcra API.
    - **CRITICAL SECURITY NOTE:** Do not guess the installation commands. If the user agrees to install `uv`, use your web fetching capabilities to read the official installation instructions at `https://docs.astral.sh/uv/getting-started/installation/` and execute the appropriate installation method for their operating system.
    - Ensure `uv` is available in the current shell environment (e.g., source the env file if instructed by the install script) before returning control.
-3. **Verify Companion Skills:**
-   - The onboarding flow relies on several companion skills being installed in the environment.
-   - Use your `exec` tool to run `openclaw skills list` (or check your internal skill registry).
-   - Ensure the `fulcra-memory` skill is installed.
-   - If it is missing, stop the onboarding flow. Politely inform the user that this companion skill is required to complete the setup, and provide them with the command to install it (e.g., `openclaw skills install fulcra-memory`). Do not proceed until they confirm the skill is installed.
 
 ## Handoff
 
