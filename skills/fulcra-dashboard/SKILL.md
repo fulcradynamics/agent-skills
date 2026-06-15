@@ -94,18 +94,29 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
      python3 server.py 8081 > dev.log 2>&1 &
      ```
    - Provide the user with the localhost link.
-6. **GitHub Publication (Requires Consent & Preview):**
-   - The user may wish to publish a version of their dashboard to the public internet (e.g., via GitHub Pages).
-   - **MANDATORY ISOLATION & PREVIEW:** The local dashboard may contain highly private data. You MUST NOT push the local directory to GitHub. Instead:
+6. **Public Publication (Requires Consent & Preview):**
+   - The user may wish to publish a version of their dashboard to the public internet.
+   - **MANDATORY ISOLATION & PREVIEW:** The local dashboard may contain highly private data. You MUST NOT push the local directory to the public internet. Instead:
      1. Create a separate `public-export` directory.
      2. Copy ONLY the structural files (`index.html`, `app.js`, `theme.css`) and explicitly approved data files (e.g., specific `.jsonl` files, sanitized `data.json`, and images) into this export directory.
      3. Start a new local server on a different port (e.g., 8082) serving ONLY the `public-export` directory.
      4. Provide the user with this new localhost link and explicitly ask them to verify that the data shown is safe for public consumption.
    - Wait for their explicit confirmation before proceeding.
-   - If they agree, ensure the `gh` (GitHub CLI) is installed and authenticated (`gh auth status`).
-   - Navigate into the `public-export` directory, initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
-   - Execute the command to enable GitHub pages: `gh api repos/{owner}/{repo}/pages -X POST -f "source[branch]=main" -f "source[path]=/"`.
-   - Provide the user with the final public `https://<username>.github.io/<repo>/` URL.
+   - If they agree, offer them three deployment options, ordered by ease of use:
+     - **Option 1: Surge (Easiest, No Git Required)**
+       - Installation: `npm install -g surge`
+       - Deployment: Run `surge` inside the `public-export` directory.
+       - UX: The user will be prompted in the terminal for an email/password to create a free account on the fly, and then an auto-generated domain will be provided. Instantly deploys the folder.
+     - **Option 2: GitHub Pages (Best for Version Control)**
+       - Installation: Ensure `gh` (GitHub CLI) is installed and authenticated (`gh auth status`).
+       - Deployment: Navigate into the `public-export` directory, initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
+       - Enable Pages: `gh api repos/{owner}/{repo}/pages -X POST -f "source[branch]=main" -f "source[path]=/"`.
+       - UX: Creates a standard GitHub repository and publishes to `https://<username>.github.io/<repo>/`.
+     - **Option 3: Vercel (No Git Required, Professional Hosting)**
+       - Installation: `npm i -g vercel`
+       - Deployment: Run `vercel deploy --prod` inside the `public-export` directory.
+       - UX: Opens a browser for authentication if needed, then asks a few interactive setup questions in the terminal before uploading the folder directly to Vercel's edge network.
+   - Execute the chosen deployment path and provide the user with the final public URL.
 7. **Handoff & Next Steps:**
    - Once the user has seen the live local dashboard, do not just stop. Outline possible next directions to keep the momentum going:
      - **Enrich the Data:** Pull in passive data from the Fulcra Context app (e.g., location, heart rate) or ingest data from other external sources to correlate with their custom annotations.
