@@ -41,7 +41,7 @@ Immediately after declaring the core onboarding complete, present the following 
 
 **Present this exact scannable menu to the user:**
 
-*   📊 **Agent Visibility & Dashboards:** Discover how to track custom data, and let me demonstrate by generating a custom dashboard for you.
+*   📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
 *   🧠 **Agent Memory Backup:** Snapshot my current memory and context directly to your Fulcra datastore.
 *   🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
 *   📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
@@ -50,12 +50,9 @@ Immediately after declaring the core onboarding complete, present the following 
 
 **When the user makes a choice, follow the corresponding path below:**
 
-#### Path 1: Agent Visibility & Dashboards
-This path runs an interactive demonstration of Fulcra's data capabilities.
-1.  **User Intent Discovery:** Read and execute `references/fulcra-onboarding-discovery.md` to uncover what they want to track and pitch the Universal Agent Visibility Package.
-2.  **Data Modeling:** Use the `fulcra-api data-type create` command to create the custom schemas based on the user's intent. **Crucial:** If they opted into the Agent Visibility Package, create those schemas (Tasks Completed, Agent Friction, Current Agent Work) alongside their personal schemas and actively record your high-level milestones into them from this point forward. Remember the `id`s returned by the create command.
-3.  **Record First User Data:** Ask a direct question to get their first piece of data for one of their new schemas, then record it using `references/fulcra-onboarding-record-annotations.md`. Do not use `curl` for this. Use the `fulcra-api` CLI if a specific `record` command is available, or fallback to the instructions in the record annotations reference file.
-4.  **Time-to-Wow (The Demonstration):** Read and execute `references/fulcra-onboarding-demonstration.md` to fetch the data and generate a custom HTML dashboard. Stop and ask for a theme *before* generating.
+#### Path 1: Agent Visibility & Custom Tracking
+1. Explain that you can set up data schemas to track their custom data, as well as an "Agent Visibility Package" to record agent activities, and visualize it all on a custom HTML dashboard.
+2. If they consent and are interested, transition them to the `fulcra-tracking` skill.
 
 #### Path 2: Agent Memory Backup
 1. Explain that you can snapshot your current memory (which may include prior conversation context and preferences) directly to their datastore. 

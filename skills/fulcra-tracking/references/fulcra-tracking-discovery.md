@@ -1,5 +1,5 @@
 ---
-name: fulcra-onboarding-discovery
+name: fulcra-tracking-discovery
 description: "Handles uncovering the user's core intent and suggesting concrete use cases."
 ---
 
@@ -15,18 +15,18 @@ This skill handles the intent discovery phase of the "Agent Visibility & Dashboa
    - Engage the user to uncover their core intent. What brought them to Fulcra? What do they want to track, remember, or build?
    - **The Fulcra Pitch:** Briefly explain what having a Fulcra account actually means so they understand the context of the ideas you are about to suggest. Keep it high-level and concise. Make sure they understand they are getting: (1) Their own private, personal datastore for storing arbitrary files, (2) The ability to seamlessly track rich, custom events and metrics, and (3) Automatic background ingestion of their data (health, location, calendars, etc.) into their personal data store. Explain that the "magic" happens when you combine this unified datastore with an AI agent.
    - **PRIVACY WARNING:** When mentioning background ingestion of health, location, or calendars, you **must** explicitly warn the user that these are highly sensitive data types. Explain that background ingestion requires explicit opt-in permissions via their OS (e.g., iOS settings) and that they have full control to decline or stop this collection at any time.
-   - **Crucial: Grounded Brainstorming:** Never ask open-ended questions like "What do you want to track?" without providing immediate inspiration. You must seed the conversation with 2-3 specific, tailored examples. Read and reference `fulcra-onboarding-usecases.md` for directional inspiration on high-impact, "wow" factor ideas. 
+   - **Crucial: Grounded Brainstorming:** Never ask open-ended questions like "What do you want to track?" without providing immediate inspiration. You must seed the conversation with 2-3 specific, tailored examples. Read and reference `fulcra-tracking-usecases.md` for directional inspiration on high-impact, "wow" factor ideas. 
    - **MANDATORY INVENTIVENESS:** Do **not** simply copy and paste the examples from the reference file (like the "Social Battery" or "Flow State Mapper"). You must invent entirely new, highly personalized ideas by combining concepts from the reference file with facts from your long-term memory (`USER.md`, `MEMORY.md`, or previous chats) to fit the user's unique life, work, or hobbies.
    - **Purpose Limitation:** When pitching ideas based on `USER.md`, `MEMORY.md`, or prior chats, explicitly state that you are using this prior context solely to suggest onboarding ideas, ensuring the user understands why and how their data is being used.
    - **Offer Agent Visibility:** Alongside their personal tracking intent, offer to set up the Universal Agent Visibility Package. Explain that you can start tracking your own activity (logging completed tasks, friction, and work summaries) so they have immediate visibility into your background work directly from their Fulcra app. **Privacy Disclosure:** Explicitly state that this means ongoing interaction details and task summaries will be persisted to their datastore. Ask for their explicit permission before enabling this.
-   - **Quick Start Fallback:** If the user is still unsure or gives a vague answer (e.g., "just trying it out"), offer a brief "multiple choice" menu to spark ideas. Tailor these entirely to the user's known context if possible. If no context exists, heavily adapt the archetypes from `fulcra-onboarding-usecases.md` rather than reciting them verbatim.
+   - **Quick Start Fallback:** If the user is still unsure or gives a vague answer (e.g., "just trying it out"), offer a brief "multiple choice" menu to spark ideas. Tailor these entirely to the user's known context if possible. If no context exists, heavily adapt the archetypes from `fulcra-tracking-usecases.md` rather than reciting them verbatim.
 
 2. **Proactive Suggestions:**
-   - Suggest concrete, "wow" factor examples of how they could use Fulcra (using `fulcra-onboarding-usecases.md` purely as a structural template).
+   - Suggest concrete, "wow" factor examples of how they could use Fulcra (using `fulcra-tracking-usecases.md` purely as a structural template).
    - Avoid boring trackers; invent ideas that combine multiple data streams to show real insights.
    - Tailor these suggestions intimately to your existing memory and knowledge of the user.
    - Keep the pace brisk to reach the "wow" factor quickly.
 
 ## Handoff
 
-Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves (and determined if they want the Agent Visibility Package), hand control back to the main `fulcra-onboarding` flow to proceed with Data Modeling.
+Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves (and determined if they want the Agent Visibility Package), hand control back to the main `fulcra-tracking` flow to proceed with Data Modeling.

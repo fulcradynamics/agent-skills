@@ -1,5 +1,5 @@
 ---
-name: fulcra-onboarding-usecases
+name: fulcra-tracking-usecases
 description: "A reference file containing high-impact, 'wow' factor use cases for Fulcra to suggest during onboarding."
 ---
 

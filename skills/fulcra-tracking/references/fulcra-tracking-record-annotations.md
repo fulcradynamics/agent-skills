@@ -1,5 +1,5 @@
 ---
-name: fulcra-onboarding-record-annotations
+name: fulcra-tracking-record-annotations
 description: "Record data for custom Annotations within the Fulcra environment during user onboarding."
 ---
 

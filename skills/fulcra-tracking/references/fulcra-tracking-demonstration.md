@@ -1,5 +1,5 @@
 ---
-name: fulcra-onboarding-demonstration
+name: fulcra-tracking-demonstration
 description: "Handles the 'Time-to-Wow' demonstration phase of Fulcra onboarding by generating a custom themed HTML dashboard visualizing the user's recorded data."
 ---
 
@@ -49,4 +49,4 @@ This skill handles the final demonstration phase of the "Agent Visibility & Dash
 
 Wait for the user's reaction to the generated dashboard and your offer to build a real interactive app.
 - **If they want to build the interactive dashboard:** Transition them directly to the `fulcra-dashboard` skill.
-- **If they decline or just want to see other options:** Return control to the main `fulcra-onboarding` flow to present the Next Steps menu again (omitting the Agent Visibility path since they just completed it).
+- **If they decline or just want to see other options:** Return control to the main `fulcra-tracking` flow to present the Next Steps menu again (omitting the Agent Visibility path since they just completed it).
