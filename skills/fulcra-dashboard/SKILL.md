@@ -96,11 +96,13 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
    - Provide the user with the localhost link.
 6. **Public Publication (Requires Consent & Preview):**
    - The user may wish to publish a version of their dashboard to the public internet.
-   - **MANDATORY ISOLATION & PREVIEW:** The local dashboard may contain highly private data. You MUST NOT push the local directory to the public internet. Instead:
-     1. Create a separate `public-export` directory.
-     2. Copy ONLY the structural files (`index.html`, `app.js`, `theme.css`) and explicitly approved data files (e.g., specific `.jsonl` files, sanitized `data.json`, and images) into this export directory.
-     3. Start a new local server on a different port (e.g., 8082) serving ONLY the `public-export` directory.
-     4. Provide the user with this new localhost link and explicitly ask them to verify that the data shown is safe for public consumption.
+   - **MANDATORY ISOLATION & SCRATCH BUILD:** The local dashboard is private. You MUST NOT copy the local dashboard files to the public internet. Instead, you must build the public dashboard from scratch as a separate entity:
+     1. Ask the user explicitly which specific data timelines and metrics they want to make public.
+     2. Create a separate `public-export` directory.
+     3. Scaffold a fresh HTML structure into `public-export` by copying the necessary components from the `template-dashboard` directory. **CRITICAL:** Do NOT include the Chat Envoy or the Agent Vault components in the public HTML structure. The public dashboard must be strictly read-only.
+     4. Copy ONLY the explicitly approved data files (e.g., specific `.jsonl` files) into `public-export`, and create a new, sanitized `data.json` referencing only those files. Copy over the `app.js`, `theme.css`, and required images, ensuring they do not contain sensitive local state.
+     5. Start a new local server on a different port (e.g., 8082) serving ONLY the `public-export` directory.
+     6. Provide the user with this new localhost link and explicitly ask them to verify that the data shown is safe for public consumption.
    - Wait for their explicit confirmation before proceeding.
    - If they agree, offer them three deployment options, ordered by ease of use:
      - **Option 1: Surge (Easiest, No Git Required)**
@@ -128,6 +130,12 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
 
 **Connecting the Chat Envoy:**
 If the user asks you to "connect the chat envoy" (as prompted by the default placeholder error message in the dashboard), you must edit `server.py` to route messages back to your main OpenClaw session.
+
+**🚨 SEVERE SECURITY WARNING:** Wiring up the Chat Envoy creates a direct bridge between the web dashboard and your agent capabilities. This allows the dashboard to issue commands that you (the agent) will execute on the local machine. 
+*   This must **ONLY** be done for users running the dashboard securely and privately on `localhost`. 
+*   You must verify the user explicitly wants to enable local agent interaction via the web interface.
+*   **NEVER** attempt to connect or publish the Chat Envoy on a public dashboard or expose the Python backend to the internet. Doing so would grant remote code execution capabilities to anyone on the web.
+
 1. Modify `server.py` to use a persistent `chat.json` file rather than an in-memory `chat_history` list.
 2. In the `do_POST` handler for `/api/chat`, instead of appending a simulated reply, use Python's `subprocess` module to trigger an OpenClaw background command that targets the main session:
    ```python
