@@ -21,6 +21,62 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"messages": self.chat_history}).encode())
             return
             
+        # File Browser backend
+        if self.path.startswith('/api/files'):
+            import urllib.parse
+            import subprocess
+            query = urllib.parse.urlparse(self.path).query
+            params = urllib.parse.parse_qs(query)
+            # Default to root if no path provided
+            target_path = params.get('path', [''])[0]
+            
+            try:
+                # Use fulcra-api to list the files
+                list_output = subprocess.check_output(["uv", "tool", "run", "fulcra-api", "file", "list", target_path], text=True)
+                lines = [line.strip() for line in list_output.strip().split('\n') if line.strip()]
+                
+                folders = []
+                files = []
+                
+                # We skip the first line if it looks like the upload logging, but `list` output is usually clean
+                for line in lines:
+                    if line.startswith('⬆️'):
+                        continue
+                    if line.endswith('/'):
+                        folders.append({"name": line[:-1]})
+                    else:
+                        parts = line.split(maxsplit=4)
+                        if len(parts) >= 4:
+                            size = parts[0]
+                            # Example output: 5B 2026-06-15 11:33PM UTC test.txt
+                            date = f"{parts[1]} {parts[2]} {parts[3]}"
+                            name = parts[-1]
+                            
+                            # Fetch stat to get version count
+                            full_path = f"{target_path}{name}" if target_path.endswith('/') or not target_path else f"{target_path}/{name}"
+                            try:
+                                stat_out = subprocess.check_output(["uv", "tool", "run", "fulcra-api", "file", "stat", full_path], text=True, stderr=subprocess.DEVNULL)
+                                versions = 0
+                                for s_line in stat_out.split('\n'):
+                                    if s_line.startswith('Previous Versions:'):
+                                        versions = int(s_line.split(':')[1].strip())
+                                        break
+                                files.append({"name": name, "size": size, "date": date, "versions": versions})
+                            except subprocess.CalledProcessError:
+                                files.append({"name": name, "size": size, "date": date, "versions": "unknown"})
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"folders": folders, "files": files, "currentPath": target_path}).encode())
+                return
+            except subprocess.CalledProcessError as e:
+                self.send_error(500, f"Error listing files: {str(e)}")
+                return
+            except Exception as e:
+                self.send_error(500, str(e))
+                return
+            
         # Serve the static HTML/CSS/JS files
         super().do_GET()
 
