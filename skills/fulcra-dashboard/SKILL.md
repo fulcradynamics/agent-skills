@@ -13,7 +13,7 @@ This skill provides the automated setup for a lightweight, build-less web dashbo
 
 ## Local First & Secure Exports
 
-This dashboard is designed fundamentally as a **local, private interface**. By default, it runs on localhost using a Python server, granting it safe access to the user's private data, local agent memory (`memory.gz`), and enabling interactive features like a Chat Envoy that triggers local agent shell commands.
+This dashboard is designed fundamentally as a **local, private interface**. By default, it runs on localhost using a Python server, granting it safe access to the user's private data, local agent memory (`memory.gz`), and enabling interactive features like a Chat Envoy that triggers local agent shell commands, as well as a local-only File Browser for exploring the Fulcra file store.
 
 **Crucially:** The local application and its sensitive capabilities must NEVER be published to the public internet directly. If the user wishes to share a dashboard, you must generate a separate, sanitized **export** that strips out the Python backend, interactive agent features, and unapproved private data.
 
@@ -98,7 +98,7 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
    - **MANDATORY ISOLATION & SCRATCH BUILD:** The local dashboard is private. You MUST NOT copy the local dashboard files to the public internet. Instead, you must build the public dashboard from scratch as a separate entity:
      1. Ask the user explicitly which specific data timelines and metrics they want to make public.
      2. Create a separate `public-export` directory.
-     3. Scaffold a fresh HTML structure into `public-export` by copying the necessary components from the `template-dashboard` directory. **CRITICAL:** Do NOT include the Chat Envoy in the public HTML structure. The public dashboard must be strictly read-only.
+     3. Scaffold a fresh HTML structure into `public-export` by copying the necessary components from the `template-dashboard` directory. **CRITICAL:** Do NOT include the Chat Envoy or the File Browser in the public HTML structure. The public dashboard must be strictly read-only.
      4. Copy ONLY the explicitly approved data files (e.g., specific `.jsonl` files) into `public-export`, and create a new, sanitized `data.json` referencing only those files. Copy over the `app.js`, `theme.css`, and required images, ensuring they do not contain sensitive local state.
      5. Start a new local server on a different port (e.g., 8082) serving ONLY the `public-export` directory.
      6. Provide the user with this new localhost link and explicitly ask them to verify that the data shown is safe for public consumption.

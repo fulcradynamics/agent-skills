@@ -9,6 +9,55 @@ document.addEventListener('alpine:init', () => {
         });
     }
 
+    Alpine.data('fileBrowser', () => ({
+        currentPath: '',
+        folders: [],
+        files: [],
+        loading: false,
+        error: '',
+
+        get breadcrumbs() {
+            if (!this.currentPath) return [];
+            const parts = this.currentPath.split('/').filter(p => p);
+            let pathAcc = '';
+            return parts.map(part => {
+                pathAcc += part + '/';
+                return { name: part, path: pathAcc };
+            });
+        },
+
+        async init() {
+            if (!isLocal) return;
+            await this.loadDirectory('');
+        },
+
+        async navigate(path) {
+            await this.loadDirectory(path);
+        },
+
+        async loadDirectory(path) {
+            this.loading = true;
+            this.error = '';
+            this.folders = [];
+            this.files = [];
+            this.currentPath = path;
+
+            try {
+                const response = await fetch('/api/files?path=' + encodeURIComponent(path));
+                if (!response.ok) throw new Error('Failed to fetch directory');
+                const result = await response.json();
+                this.folders = result.folders || [];
+                this.files = result.files || [];
+                this.currentPath = result.currentPath || '';
+            } catch (err) {
+                this.error = 'Unable to scan directory.';
+                console.error(err);
+            } finally {
+                this.loading = false;
+            }
+        }
+    }));
+
     Alpine.data('chatEnvoy', () => ({
         messages: [],
         input: '',
