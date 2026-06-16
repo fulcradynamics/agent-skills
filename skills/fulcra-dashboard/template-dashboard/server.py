@@ -7,17 +7,24 @@ import sys
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", 8081))
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
-    # If chat.json exists, we'll load it, otherwise use a default
+    # If chat.json exists, we'll load it, otherwise use a default dict structure
     def get_chat_history(self):
         if os.path.exists('chat.json'):
             try:
                 with open('chat.json', 'r') as f:
-                    return json.load(f)
+                    data = json.load(f)
+                    # Migrate old list format to dict format if necessary
+                    if isinstance(data, list):
+                        return {"agent_connected": False, "messages": data}
+                    return data
             except:
                 pass
-        return [
-            {"role": "assistant", "text": "Telemetry link established. Local relay online. Awaiting parameters. Note: if you have not explicitly asked the agent to connect the envoy, messages sent here will not reach them."}
-        ]
+        return {
+            "agent_connected": False,
+            "messages": [
+                {"role": "assistant", "text": "Telemetry link established. Local relay online. Awaiting parameters. Note: if you have not explicitly asked the agent to connect the envoy, messages sent here will not reach them."}
+            ]
+        }
 
     def save_chat_history(self, history):
         with open('chat.json', 'w') as f:
@@ -26,24 +33,43 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         # Serve the chat history for local-only components
         if self.path == '/api/chat':
+            history = self.get_chat_history()
+            
+            # Determine if the agent is processing a message.
+            # It's processing if the agent has connected, the last message is from the user, and it has been marked as read.
+            messages = history.get("messages", [])
+            agent_processing = False
+            if messages:
+                last_msg = messages[-1]
+                if last_msg.get("role") == "user" and last_msg.get("read") is True:
+                    agent_processing = True
+
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({"messages": self.get_chat_history()}).encode())
+            self.wfile.write(json.dumps({
+                "messages": messages,
+                "agent_processing": agent_processing
+            }).encode())
             return
             
         # Agent endpoint to retrieve unread messages and mark as read
         if self.path == '/api/chat/unread':
             history = self.get_chat_history()
-            unread = [msg for msg in history if msg.get("role") == "user" and not msg.get("read")]
+            
+            # Mark that the agent successfully connected to fetch messages
+            history["agent_connected"] = True
+            
+            messages = history.get("messages", [])
+            unread = [msg for msg in messages if msg.get("role") == "user" and not msg.get("read")]
             
             # Mark them as read
-            for msg in history:
+            for msg in messages:
                 if msg.get("role") == "user":
                     msg["read"] = True
             
-            if unread:
-                self.save_chat_history(history)
+            # Always save to update the agent_connected status even if no unread messages
+            self.save_chat_history(history)
                 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -121,21 +147,31 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 user_msg = data.get('message', '')
                 
                 history = self.get_chat_history()
+                messages = history.get("messages", [])
                 
-                # Append user message to history and mark unread
+                new_messages_to_return = []
+                
                 if user_msg:
-                    history.append({"role": "user", "text": user_msg, "read": False})
+                    # Append user message to history and mark unread
+                    messages.append({"role": "user", "text": user_msg, "read": False})
+                    history["messages"] = messages
+                    
+                    # If the agent has never connected to poll, append an error immediately
+                    if not history.get("agent_connected"):
+                        error_msg = {"role": "system", "text": "Notice: The agent has not been connected to this dashboard. Please return to your OpenClaw session and ask the agent to 'connect the chat envoy using the fulcra-dashboard skill'."}
+                        messages.append(error_msg)
+                        new_messages_to_return.append(error_msg)
+                    
                     self.save_chat_history(history)
                 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 
-                # Check if agent is connected (if there's a recent assistant reply, or if we assume it's polling)
-                # For now, we just acknowledge receipt.
+                # The frontend will append any immediate system replies
                 response = {
                     "status": "success", 
-                    "messages": []  # The frontend will poll or agent will reply later
+                    "messages": new_messages_to_return
                 }
                 self.wfile.write(json.dumps(response).encode())
                 

@@ -82,9 +82,12 @@ document.addEventListener('alpine:init', () => {
                         this.messages = result.messages;
                         this.scrollToBottom();
                     }
+                    // Show typing dots only if the agent is actively processing
+                    this.isTyping = result.agent_processing || false;
                 }
             } catch (err) {
                 console.warn('Could not establish connection to local relay.');
+                this.isTyping = false;
             }
         },
 
@@ -101,7 +104,6 @@ document.addEventListener('alpine:init', () => {
                 this.$refs.chatInput.style.height = 'auto';
             }
             
-            this.isTyping = true;
             this.scrollToBottom();
 
             try {
@@ -117,7 +119,7 @@ document.addEventListener('alpine:init', () => {
                     if (result.messages && result.messages.length > 0) {
                         this.messages.push(...result.messages);
                     }
-                    // Fetch all messages to ensure consistency
+                    // Fetch all messages to ensure consistency and update typing status
                     await this.fetchMessages();
                 } else {
                     this.messages.push({ role: 'system', text: 'Error: The local relay failed to respond.' });
@@ -125,7 +127,6 @@ document.addEventListener('alpine:init', () => {
             } catch (err) {
                 this.messages.push({ role: 'system', text: 'Error: Cannot reach the local relay. Ensure the Python server is running.' });
             } finally {
-                this.isTyping = false;
                 this.scrollToBottom();
             }
         },
