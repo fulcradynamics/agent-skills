@@ -108,6 +108,11 @@ The Fulcra File Store is an environment-agnostic remote filesystem accessed via 
 *   **`index.md` (Directory Listing):** Each directory should contain an `index.md` file (with no frontmatter). It provides progressive disclosure via grouped lists of links to the files within that directory (e.g., `* [Title](relative-url.md) - description`).
 *   **`log.md` (Update History):** Each directory should contain a `log.md` file to record a chronological history of changes. It contains date-grouped headings (e.g., `## YYYY-MM-DD`) with bulleted entries describing the updates (e.g., `* **Update**: Added new context file.`).
 
+**IMPORTANT OKF EFFICIENCY DIRECTIVE:** While OKF compliance is mandatory, it must not become cumbersome.
+- **DO NOT** attempt to index every individual file, especially not transient or highly repetitive files like individual messages inside an `inbox/` subdirectory. 
+- For directories that contain many small or transient items, simply list the directory itself in the `index.md` with a high-level description of its purpose.
+- Keep the `index.md` and `log.md` focused on top-level structure and significant milestones so they remain useful but lightweight.
+
 ### Artifacts Directory
 To maintain a clean OKF directory structure, any binary files, media, images, compiled code, or non-markdown files must be stored inside a dedicated `artifact/` subdirectory within the relevant memory or team namespace.
 
