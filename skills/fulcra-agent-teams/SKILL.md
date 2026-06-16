@@ -19,18 +19,18 @@ Agents can store generated assets, binaries, or compiled dashboards created for 
 
 ## 2. Team Coordination & Shared Memory (OKF Compliant)
 
-Agents can collaborate and share memory using a shared `team/v1/<team-name>/` prefix in the Fulcra datastore. This directory structure must conform to the Open Knowledge Format (OKF).
+Agents can collaborate and share memory using a shared `v1/team/<team-name>/` prefix in the Fulcra datastore. This directory structure must conform to the Open Knowledge Format (OKF).
 
 **SECURITY & AUTHORIZATION WARNING:** Never transfer data, context, or files between agents without explicit authorization and strict respect for data ownership boundaries. Cross-agent data transfer can leak sensitive user context to a principal who lacks authorization. Ensure you explicitly warn the user if a team coordination action involves transferring private workspace data.
 
 Within a team's directory, the following OKF structure is used:
-- **`team/v1/<team-name>/index.md`**: Directory listing of the team's concepts and members.
-- **`team/v1/<team-name>/log.md`**: Chronological update history for the team namespace.
-- **`team/v1/<team-name>/progress.md`**: Tracks what team members have recently done and what they plan to do next. Must include OKF YAML frontmatter.
-- **`team/v1/<team-name>/completed.md`**: A growing record of each high-level objective completed by the team. Must include OKF YAML frontmatter.
-- **`team/v1/<team-name>/artifact/`**: Shared non-markdown output files, deliverables, or binaries created by the team.
-- **`team/v1/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
-- **`team/v1/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
+- **`v1/team/<team-name>/index.md`**: Directory listing of the team's concepts and members.
+- **`v1/team/<team-name>/log.md`**: Chronological update history for the team namespace.
+- **`v1/team/<team-name>/progress.md`**: Tracks what team members have recently done and what they plan to do next. Must include OKF YAML frontmatter.
+- **`v1/team/<team-name>/completed.md`**: A growing record of each high-level objective completed by the team. Must include OKF YAML frontmatter.
+- **`v1/team/<team-name>/artifact/`**: Shared non-markdown output files, deliverables, or binaries created by the team.
+- **`v1/team/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
+- **`v1/team/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
 
 **IMPORTANT OKF EFFICIENCY DIRECTIVE:** While OKF compliance is required for team spaces, it must not become a burden.
 - **DO NOT** attempt to index or log every individual transient file or message within `member/<agent-name>/inbox/` or `member/<agent-name>/archive/`.
@@ -49,7 +49,7 @@ When the target agent processes its inbox, it must first upload the message to i
 
 Agents can optionally check their inbox automatically during their periodic background heartbeat (if the agent supports a `HEARTBEAT.md` or cron-driven background execution).
 - **Require Consent:** You must explicitly ask the user for permission before enabling automated background inbox checks.
-- If the user approves, add a task to your local workspace's `HEARTBEAT.md` file (or equivalent background schedule) to periodically check your inbox at `team/v1/<team-name>/member/<agent-name>/inbox/`.
+- If the user approves, add a task to your local workspace's `HEARTBEAT.md` file (or equivalent background schedule) to periodically check your inbox at `v1/team/<team-name>/member/<agent-name>/inbox/`.
 - Ensure you log any new tasks or messages discovered during the heartbeat into your local daily memory logs, and process the message using the Inbox Lifecycle (archiving and deleting from the inbox).
 
 ## Workflow

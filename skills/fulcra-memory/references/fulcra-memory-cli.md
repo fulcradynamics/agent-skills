@@ -70,10 +70,10 @@ Upload the files using the standardized agent path convention. Determine the age
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
-uv tool run fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/memory/v1/artifact/memory.tar.gz"
-uv tool run fulcra-api file upload memory/progress.md "agent/<agent_name>/memory/v1/progress.md"
-uv tool run fulcra-api file upload memory/log.md "agent/<agent_name>/memory/v1/log.md"
-uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/memory/v1/index.md"
+uv tool run fulcra-api file upload /tmp/memory.tar.gz "v1/agent/<agent_name>/memory/artifact/memory.tar.gz"
+uv tool run fulcra-api file upload memory/progress.md "v1/agent/<agent_name>/memory/progress.md"
+uv tool run fulcra-api file upload memory/log.md "v1/agent/<agent_name>/memory/log.md"
+uv tool run fulcra-api file upload memory/index.md "v1/agent/<agent_name>/memory/index.md"
 ```
 
 ## 2. Listing Memory History
@@ -81,7 +81,7 @@ uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/memory/v1
 Because Fulcra versions files automatically, you can see all previous backups of the memory using the `stat` command.
 
 ```bash
-uv tool run fulcra-api file stat "agent/<agent_name>/memory/v1/artifact/memory.tar.gz"
+uv tool run fulcra-api file stat "v1/agent/<agent_name>/memory/artifact/memory.tar.gz"
 ```
 *(This command will output information about the file, including all previously uploaded versions and their UUIDs. Present these to the user so they can select a version to restore.)*
 
@@ -99,7 +99,7 @@ uv tool run fulcra-api file restore <version_id>
 
 **Step B: Download the restored file**
 ```bash
-uv tool run fulcra-api file download "agent/<agent_name>/memory/v1/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
+uv tool run fulcra-api file download "v1/agent/<agent_name>/memory/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **Step C: Inspect and Confirm**
@@ -122,7 +122,7 @@ Cloning involves an "old" (source) agent and a "new" (destination) agent. The fi
 
 **If you are the OLD agent:**
 1. Perform a full backup of your current state (Follow Step 1: Creating a Backup and Uploading).
-2. Stop and tell the user the exact Fulcra path where the backup was saved (e.g., `agent/<your_agent_name>/memory/v1/artifact/memory.tar.gz`).
+2. Stop and tell the user the exact Fulcra path where the backup was saved (e.g., `v1/agent/<your_agent_name>/memory/artifact/memory.tar.gz`).
 3. Instruct the user to install the `fulcra-memory` skill on the new agent and ask it to clone from that path.
 
 **If you are the NEW agent:**
@@ -131,7 +131,7 @@ Cloning involves an "old" (source) agent and a "new" (destination) agent. The fi
 
 ```bash
 # Download the target agent's memory
-uv tool run fulcra-api file download "agent/<old_agent_path>/memory/v1/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
+uv tool run fulcra-api file download "v1/agent/<old_agent_path>/memory/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **STOP.** You MUST explicitly warn the user that extracting the cloned archive will overwrite your current identity and memory files with the cloned agent's state. Before asking for confirmation, inspect the contents of the cloned archive:

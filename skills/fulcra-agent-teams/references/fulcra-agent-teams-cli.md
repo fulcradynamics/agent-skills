@@ -27,13 +27,13 @@ Messages must follow the format `YYYYMMDD-HHMMSS_<sender-name>_<short-topic>.md`
 **Step A: Sending a message to a teammate's inbox**
 ```bash
 # Upload a local markdown file to the target agent's inbox
-uv tool run fulcra-api file upload /tmp/message.md "team/v1/<team_name>/member/<target_agent_name>/inbox/20260608-232500_wazir_status-update.md"
+uv tool run fulcra-api file upload /tmp/message.md "v1/team/<team_name>/member/<target_agent_name>/inbox/20260608-232500_wazir_status-update.md"
 ```
 
 **Step B: Checking your inbox**
 ```bash
 # List files in your agent's inbox
-uv tool run fulcra-api file list "team/v1/<team_name>/member/<your_agent_name>/inbox/"
+uv tool run fulcra-api file list "v1/team/<team_name>/member/<your_agent_name>/inbox/"
 ```
 
 **Step C: Processing and Archiving a message**
@@ -41,16 +41,16 @@ Once you have downloaded and read a message from your inbox, move it to the arch
 
 ```bash
 # 1. Download to read (if you haven't already)
-uv tool run fulcra-api file download "team/v1/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md" /tmp/20260608-232500_wazir_status-update.md
+uv tool run fulcra-api file download "v1/team/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md" /tmp/20260608-232500_wazir_status-update.md
 
 # 2. Upload it to your archive directory
-uv tool run fulcra-api file upload /tmp/20260608-232500_wazir_status-update.md "team/v1/<team_name>/member/<your_agent_name>/archive/20260608-232500_wazir_status-update.md"
+uv tool run fulcra-api file upload /tmp/20260608-232500_wazir_status-update.md "v1/team/<team_name>/member/<your_agent_name>/archive/20260608-232500_wazir_status-update.md"
 
 # 3. Verify archival succeeded before deletion!
-uv tool run fulcra-api file stat "team/v1/<team_name>/member/<your_agent_name>/archive/20260608-232500_wazir_status-update.md"
+uv tool run fulcra-api file stat "v1/team/<team_name>/member/<your_agent_name>/archive/20260608-232500_wazir_status-update.md"
 
 # 4. Delete it from the inbox to clear it (only if step 3 succeeded)
-uv tool run fulcra-api file delete "team/v1/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md"
+uv tool run fulcra-api file delete "v1/team/<team_name>/member/<your_agent_name>/inbox/20260608-232500_wazir_status-update.md"
 ```
 
 ## 3. Team Activity Tracking (OKF Compliant)
@@ -61,7 +61,7 @@ Agents can update shared files to track the team's high-level progress and compl
 To update the `progress.md` file (which stores what the team members have recently done and what they plan to do next):
 ```bash
 # 1. Download the current progress file
-uv tool run fulcra-api file download "team/v1/<team_name>/progress.md" /tmp/team_progress.md || touch /tmp/team_progress.md
+uv tool run fulcra-api file download "v1/team/<team_name>/progress.md" /tmp/team_progress.md || touch /tmp/team_progress.md
 
 # 2. Edit /tmp/team_progress.md locally to reflect the latest plans and recent work. 
 # Make sure it has OKF frontmatter:
@@ -71,7 +71,7 @@ uv tool run fulcra-api file download "team/v1/<team_name>/progress.md" /tmp/team
 # ---
 
 # 3. Upload the updated file back to Fulcra
-uv tool run fulcra-api file upload /tmp/team_progress.md "team/v1/<team_name>/progress.md"
+uv tool run fulcra-api file upload /tmp/team_progress.md "v1/team/<team_name>/progress.md"
 
 # 4. Also append an update entry to log.md
 DATE=$(date -u +"%Y-%m-%d")
@@ -84,13 +84,13 @@ echo "* **Update**: <agent_name> updated team progress." >> /tmp/log_update.md
 To add a newly completed high-level objective to `completed.md` (which should generally only grow):
 ```bash
 # 1. Download the current completed file
-uv tool run fulcra-api file download "team/v1/<team_name>/completed.md" /tmp/team_completed.md || touch /tmp/team_completed.md
+uv tool run fulcra-api file download "v1/team/<team_name>/completed.md" /tmp/team_completed.md || touch /tmp/team_completed.md
 
 # 2. Append the new objective (ensure OKF frontmatter exists at the top of the file)
 echo "- [$(date +%Y-%m-%d)] <Objective summary>" >> /tmp/team_completed.md
 
 # 3. Upload the updated file back to Fulcra
-uv tool run fulcra-api file upload /tmp/team_completed.md "team/v1/<team_name>/completed.md"
+uv tool run fulcra-api file upload /tmp/team_completed.md "v1/team/<team_name>/completed.md"
 
 # 4. Also update the team log.md with the completion event.
 ```
