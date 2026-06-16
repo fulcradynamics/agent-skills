@@ -62,22 +62,32 @@ document.addEventListener('alpine:init', () => {
         messages: [],
         input: '',
         isTyping: false,
+        pollInterval: null,
 
         async init() {
             if (!isLocal) return; // Do not attempt to fetch on public static hosts
             
+            await this.fetchMessages();
+            // Start polling for new messages from the agent
+            this.pollInterval = setInterval(() => this.fetchMessages(), 5000);
+        },
+
+        async fetchMessages() {
             try {
-                // Fetch the initial greeting and any history from the Python server
+                // Fetch the chat history from the Python server
                 const response = await fetch('/api/chat');
                 if (response.ok) {
                     const result = await response.json();
-                    if (result.messages) {
+                    if (result.messages && result.messages.length > this.messages.length) {
                         this.messages = result.messages;
                         this.scrollToBottom();
                     }
+                    // Show typing dots only if the agent is actively processing
+                    this.isTyping = result.agent_processing || false;
                 }
             } catch (err) {
                 console.warn('Could not establish connection to local relay.');
+                this.isTyping = false;
             }
         },
 
@@ -85,6 +95,7 @@ document.addEventListener('alpine:init', () => {
             if (!this.input.trim()) return;
 
             const userMessage = this.input;
+            // Optimistically add to UI
             this.messages.push({ role: 'user', text: userMessage });
             this.input = '';
             
@@ -93,12 +104,10 @@ document.addEventListener('alpine:init', () => {
                 this.$refs.chatInput.style.height = 'auto';
             }
             
-            this.isTyping = true;
             this.scrollToBottom();
 
             try {
-                // We POST to our local Python server. 
-                // The server will either return a simulated response or route to OpenClaw.
+                // We POST to our local Python server to append to history
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -107,16 +116,17 @@ document.addEventListener('alpine:init', () => {
                 
                 if (response.ok) {
                     const result = await response.json();
-                    if (result.messages) {
+                    if (result.messages && result.messages.length > 0) {
                         this.messages.push(...result.messages);
                     }
+                    // Fetch all messages to ensure consistency and update typing status
+                    await this.fetchMessages();
                 } else {
                     this.messages.push({ role: 'system', text: 'Error: The local relay failed to respond.' });
                 }
             } catch (err) {
                 this.messages.push({ role: 'system', text: 'Error: Cannot reach the local relay. Ensure the Python server is running.' });
             } finally {
-                this.isTyping = false;
                 this.scrollToBottom();
             }
         },

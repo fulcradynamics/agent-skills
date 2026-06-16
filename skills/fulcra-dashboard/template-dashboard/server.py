@@ -3,22 +3,95 @@ import socketserver
 import json
 import os
 import sys
+import time
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", 8081))
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
-    # Simulated chat history kept in memory while the server runs
-    chat_history = [
-        {"role": "assistant", "text": "Telemetry link established. Local relay online. Awaiting parameters. Note: if you have not explicitly asked the agent to connect the envoy, messages sent here will not reach them."}
-    ]
+    # If chat.json exists, we'll load it, otherwise use a default dict structure
+    def get_chat_history(self):
+        if os.path.exists('chat.json'):
+            try:
+                with open('chat.json', 'r') as f:
+                    data = json.load(f)
+                    # Migrate old list format to dict format if necessary
+                    if isinstance(data, list):
+                        return {"agent_last_seen": 0, "messages": data}
+                    # Migrate old boolean format
+                    if "agent_connected" in data:
+                        data["agent_last_seen"] = time.time() if data.get("agent_connected") else 0
+                        del data["agent_connected"]
+                    return data
+            except:
+                pass
+        return {
+            "agent_last_seen": 0,
+            "messages": [
+                {"role": "assistant", "text": "Telemetry link established. Local relay online. Awaiting parameters. Note: if you have not explicitly asked the agent to connect the envoy, messages sent here will not reach them."}
+            ]
+        }
+
+    def save_chat_history(self, history):
+        with open('chat.json', 'w') as f:
+            json.dump(history, f, indent=2)
 
     def do_GET(self):
         # Serve the chat history for local-only components
         if self.path == '/api/chat':
+            history = self.get_chat_history()
+            messages = history.get("messages", [])
+            
+            # Check if agent is considered "offline" (hasn't polled in >60s)
+            now = time.time()
+            agent_last_seen = history.get("agent_last_seen", 0)
+            is_offline = (now - agent_last_seen) > 60
+            
+            # If the last message is from the user, and the agent is offline, inject an error message
+            if messages and messages[-1].get("role") == "user" and is_offline:
+                error_msg = {"role": "system", "text": "Notice: The agent has not checked messages recently. Please return to your agent session and ensure you have asked the agent to 'connect the chat envoy' and that the script is running."}
+                messages.append(error_msg)
+                history["messages"] = messages
+                self.save_chat_history(history)
+            
+            # Determine if the agent is processing a message.
+            # It's processing if the agent is online, the last message is from the user, and it has been marked as read.
+            agent_processing = False
+            if messages and not is_offline:
+                last_msg = messages[-1]
+                if last_msg.get("role") == "user" and last_msg.get("read") is True:
+                    agent_processing = True
+
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({"messages": self.chat_history}).encode())
+            self.wfile.write(json.dumps({
+                "messages": messages,
+                "agent_processing": agent_processing
+            }).encode())
+            return
+            
+        # Agent endpoint to retrieve unread messages and mark as read
+        if self.path == '/api/chat/unread':
+            history = self.get_chat_history()
+            
+            # Update last seen timestamp
+            history["agent_last_seen"] = time.time()
+            
+            messages = history.get("messages", [])
+            unread = [msg for msg in messages if msg.get("role") == "user" and not msg.get("read")]
+            
+            # Mark them as read
+            for msg in messages:
+                if msg.get("role") == "user":
+                    msg["read"] = True
+            
+            # Always save to update the agent_last_seen status even if no unread messages
+            self.save_chat_history(history)
+                
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({"unread_messages": unread}).encode())
             return
             
         # File Browser backend
@@ -90,25 +163,23 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 data = json.loads(post_data)
                 user_msg = data.get('message', '')
                 
-                # Append user message to history
+                history = self.get_chat_history()
+                messages = history.get("messages", [])
+                
                 if user_msg:
-                    self.chat_history.append({"role": "user", "text": user_msg})
-                
-                # Future: Route this via OpenClaw CLI
-                print(f"Received chat request: {data}")
-                
-                # Generate a simulated response
-                simulated_reply = {"role": "system", "text": "Notice: The Relay is currently dormant. To complete setup, return to your OpenClaw session and explicitly instruct the agent to 'connect the chat envoy', then wait for them to confirm before trying again."}
-                self.chat_history.append(simulated_reply)
+                    # Append user message to history and mark unread
+                    messages.append({"role": "user", "text": user_msg, "read": False})
+                    history["messages"] = messages
+                    self.save_chat_history(history)
                 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 
-                # Return only the new messages to append
+                # The frontend will poll immediately after this, which will catch the offline error if needed
                 response = {
                     "status": "success", 
-                    "messages": [simulated_reply]
+                    "messages": []
                 }
                 self.wfile.write(json.dumps(response).encode())
                 
