@@ -44,9 +44,9 @@ Immediately after declaring the core onboarding complete, present the following 
 1.  📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
 2.  🧠 **Agent Memory Backup:** Back up agent memory and high level context directly to your Fulcra datastore.
 3.  🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
-4.  📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
-5.  💻 **Context Web:** Explore your data on the desktop portal.
-6.  ⚙️ **Cross-Platform Preferences:** Set up universal preferences across all your agents.
+4.  ⚙️ **Cross-Platform Preferences:** Set up universal preferences across all your agents.
+5.  📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
+6.  💻 **Context Web:** Explore your data on the desktop portal.
 
 **When the user makes a choice, follow the corresponding path below:**
 
@@ -62,12 +62,12 @@ Immediately after declaring the core onboarding complete, present the following 
 1. Explain that Fulcra isn't just for dashboards—it acts as a universal backend that allows multiple agents to coordinate their work using shared Team namespaces.
 2. If they consent and are interested, transition them to the `fulcra-agent-teams` skill so they can get set up.
 
-#### Path 4: Get the App
+#### Path 4: Cross-Platform Preferences
+1. Transition them to the `fulcra-prefs` skill so they can load and capture preferences universally across all their agents.
+
+#### Path 5: Get the App
 1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
 2. Mention it unlocks automatic background sync (Health, location, calendar). **PRIVACY WARNING:** Explicitly inform the user these are highly sensitive data types requiring explicit iOS permissions, and they have full control to decline.
 
-#### Path 5: Context Web
+#### Path 6: Context Web
 1. Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
-
-#### Path 6: Cross-Platform Preferences
-1. Transition them to the `fulcra-prefs` skill so they can load and capture preferences universally across all their agents.
