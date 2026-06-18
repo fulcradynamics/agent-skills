@@ -21,7 +21,7 @@ uv tool run fulcra-api auth login
 
 This will return a URL that you should direct the user to load in their browser, and a unique code that they should ensure matches the code displayed in their browser. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
 
-The command will poll for a valid token and complete once the user finishes the authorization flow with a two minute timeout. Because it polls, you must run it as a background process or allow it to yield.
+**CRITICAL WARNING FOR AGENTS:** The `fulcra-api auth login` command is a blocking command. It will poll for a valid token and will *not* complete until the user finishes the authorization flow in their browser (or until it hits a two-minute timeout). Because it blocks, **you must run it as a background process or allow it to yield, then read its active output stream to extract the authentication URL and code.** Do not wait for the command to finish before sending the URL to the user, or the authentication will time out and fail.
 
 Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials.json` and the tool will refresh access tokens as neccessary.
 

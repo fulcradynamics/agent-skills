@@ -7,6 +7,13 @@ description: "Verifies and sets up the required environment for Fulcra, includin
 
 This skill ensures the host environment is ready to interact with the Fulcra API.
 
+## Environment Check: Command Line vs. Chat
+
+Before attempting to verify or install CLI tools, determine if you are running in an environment with command-line access.
+
+- **Command Line Access (Most Likely):** You are likely running as an autonomous agent or in an environment with terminal/shell access (e.g., OpenClaw, standard agent workspaces). If so, proceed with the CLI workflow below.
+- **Chat/MCP Environment (Fallback):** If you are running in a restricted chat environment without command-line access, you cannot use the `fulcra-api` CLI tool. Instead, advise the user that Fulcra provides an MCP (Model Context Protocol) connector. You should then fetch and read `https://fulcradynamics.com/AGENTS.md` for instructions appropriate to chat environments, and skip the CLI steps below.
+
 ## Workflow
 
 1. **Verify `uv` Installation:**

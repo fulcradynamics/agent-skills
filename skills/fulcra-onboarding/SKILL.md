@@ -42,7 +42,7 @@ Immediately after declaring the core onboarding complete, present the following 
 **Present this exact scannable menu to the user:**
 
 *   📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
-*   🧠 **Agent Memory Backup:** Snapshot my current memory and context directly to your Fulcra datastore.
+*   🧠 **Agent Memory Backup:** Back up agent memory and high level context directly to your Fulcra datastore.
 *   🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
 *   📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
 *   💻 **Context Web:** Explore your data on the desktop portal.
@@ -55,7 +55,7 @@ Immediately after declaring the core onboarding complete, present the following 
 2. If they consent and are interested, transition them to the `fulcra-tracking` skill.
 
 #### Path 2: Agent Memory Backup
-1. Explain that you can snapshot your current memory (which may include prior conversation context and preferences) directly to their datastore. 
+1. Explain that you can back up agent memory and high level context directly to their datastore. 
 2. If they consent, transition them to the `fulcra-memory` skill to perform the backup.
 
 #### Path 3: Agent Coordination
