@@ -12,7 +12,7 @@ This skill ensures the host environment is ready to interact with the Fulcra API
 The `fulcra-api` CLI tool is the primary and preferred interface for agents interacting with Fulcra. You should default to using the CLI workflow described below.
 
 **Fallback (Chat/MCP Environments):**
-If you are running in a restricted environment without command-line access, you will be unable to use the CLI. In this case, advise the user that Fulcra provides an MCP (Model Context Protocol) connector. You should then fetch and read `https://fulcradynamics.com/AGENTS.md` for instructions appropriate to chat environments, and skip the CLI steps below.
+If command-line access is not available, you will be unable to use the CLI. In this case, advise the user that Fulcra provides an MCP (Model Context Protocol) connector. You should then fetch and read `https://fulcradynamics.com/AGENTS.md` for instructions appropriate to chat environments, and skip the CLI steps below.
 
 ## Workflow
 
