@@ -16,18 +16,28 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 
 ## Skills
 
+```
+(˶ᵔ ᵕ ᵔ˶)  🤝  (˶ᵔ ᵕ ᵔ˶)  🤝  (˶ᵔ ᵕ ᵔ˶)
+      \            |            /
+       \           |           /
+      <<<<<<     fulcra     >>>>>>
+       /       /       \       \
+      /       /         \       \
+     📈       📊         🧠       ⚙️
+```
+
 | Skill | What it does |
 |---|---|
-| [fulcra-onboarding](#fulcra-onboarding) | Connect to Fulcra for the first time |
-| [fulcra-tracking](#fulcra-tracking) | Track custom data and visualize it in a dashboard |
-| [fulcra-dashboard](#fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
-| [fulcra-memory](#fulcra-memory) | Back up, restore, and clone your agent's memory |
-| [fulcra-agent-teams](#fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
-| [fulcra-prefs](#fulcra-prefs) | Remember your preferences across agents and sessions |
+| 🌱&nbsp;&nbsp;[fulcra-onboarding](#fulcra-onboarding) | Connect to Fulcra for the first time |
+| 📈&nbsp;&nbsp;[fulcra-tracking](#fulcra-tracking) | Track custom data and visualize it in a dashboard |
+| 📊&nbsp;&nbsp;[fulcra-dashboard](#fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
+| 🧠&nbsp;&nbsp;[fulcra-memory](#fulcra-memory) | Back up, restore, and clone your agent's memory |
+| 🤝&nbsp;&nbsp;[fulcra-agent-teams](#fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
+| ⚙️&nbsp;&nbsp;[fulcra-prefs](#fulcra-prefs) | Remember your preferences across agents and sessions |
 
 ---
 
-## fulcra-onboarding
+## 🌱 fulcra-onboarding
 
 `skills/fulcra-onboarding/`
 
@@ -45,7 +55,7 @@ Once you're connected, your agent will offer five directions to go:
 
 ---
 
-## fulcra-tracking
+## 📈 fulcra-tracking
 
 `skills/fulcra-tracking/`
 
@@ -61,7 +71,7 @@ Once you've seen the static dashboard preview, this skill hands off to `fulcra-d
 
 ---
 
-## fulcra-dashboard
+## 📊 fulcra-dashboard
 
 `skills/fulcra-dashboard/`
 
@@ -78,7 +88,7 @@ From there you can:
 
 ---
 
-## fulcra-memory
+## 🧠 fulcra-memory
 
 `skills/fulcra-memory/`
 
@@ -96,7 +106,7 @@ Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloud
 
 ---
 
-## fulcra-agent-teams
+## 🤝 fulcra-agent-teams
 
 `skills/fulcra-agent-teams/`
 
@@ -118,7 +128,7 @@ Agents can also check their inbox automatically in the background (you'll be ask
 
 ---
 
-## fulcra-prefs
+## ⚙️ fulcra-prefs
 
 `skills/fulcra-prefs/`
 
