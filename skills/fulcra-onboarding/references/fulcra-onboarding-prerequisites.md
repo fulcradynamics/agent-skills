@@ -7,12 +7,15 @@ description: "Verifies and sets up the required environment for Fulcra, includin
 
 This skill ensures the host environment is ready to interact with the Fulcra API.
 
-## Interface Preference
+## Connection Options
 
-The `fulcra-api` CLI tool is the primary and preferred interface for agents interacting with Fulcra. You should default to using the CLI workflow described below.
+There are two ways for agents to connect to Fulcra. You must determine the appropriate path before proceeding:
 
-**Fallback (Restricted Environments / MCP):**
-If command-line access is not available, **or if your shell has restricted network egress (preventing outbound connections to Fulcra's servers)**, you will be unable to use the CLI. If you suspect network isolation, perform a quick connectivity probe (e.g., `curl -I https://api.fulcra.ai`) before proceeding. If connectivity fails, advise the user that Fulcra provides an MCP (Model Context Protocol) connector. You should then fetch and read `https://fulcra.ai/AGENTS.md` for instructions appropriate to these environments, and skip the CLI steps below.
+1. **Option 1: Fulcra CLI (Preferred)**
+   The `fulcra-api` CLI is the primary interface and supports the widest range of Fulcra use cases. If you have full command-line access with outbound network connectivity, you should choose this option and proceed with the CLI workflow below.
+
+2. **Option 2: MCP Connector (Restricted Environments)**
+   If you are in a restricted chat environment without command-line access, or if your shell lacks outbound network access to Fulcra's servers, the CLI will not work. In this case, advise the user that Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for these environments. If they choose this option, fetch and read `https://fulcra.ai/AGENTS.md` for setup instructions, and skip the CLI steps below.
 
 ## Workflow
 

@@ -23,7 +23,7 @@ uv tool run fulcra-api auth login
 
 This will return a URL that you should direct the user to load in their browser, and a unique code that they should ensure matches the code displayed in their browser. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
 
-**Network Restrictions & Fallback:** If this command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network. Instead, immediately abort the CLI path, surface the connectivity issue to the user, and fall back to the MCP setup by fetching and reading `https://fulcra.ai/AGENTS.md`.
+**Network Restrictions:** If this command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and advise them on the MCP Connector option.
 
 Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials.json` and the tool will refresh access tokens as neccessary.
 
