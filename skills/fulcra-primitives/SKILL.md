@@ -160,7 +160,6 @@ To maintain a clean OKF directory structure, any binary files, media, images, co
 As an agent, you should rely on the `fulcra-api` CLI as the primary and most robust way to interact with Fulcra. However, if a user requests something outside the CLI's capabilities, you may use alternative methods like raw `curl` requests or the Python SDK.
 
 To maintain your context as Fulcra evolves, or to assist users with deeper technical questions, you can consult the following external resources:
-- **Fulcra AGENTS.md:** [https://www.fulcradynamics.com/AGENTS.md](https://www.fulcradynamics.com/AGENTS.md)
 - **Fulcra Website:** [https://www.fulcradynamics.com/](https://www.fulcradynamics.com/)
 - **REST API Documentation:** [https://fulcradynamics.github.io/developer-docs/api-reference/](https://fulcradynamics.github.io/developer-docs/api-reference/)
 - **Python SDK & CLI Source:** [https://github.com/fulcradynamics/fulcra-api-python/](https://github.com/fulcradynamics/fulcra-api-python/)
