@@ -154,7 +154,6 @@ While OKF compliance is important, it must not become cumbersome.
 ### Artifacts Directory
 To maintain a clean OKF directory structure, any binary files, media, images, compiled code, or non-markdown files should be stored inside a dedicated `artifact/` subdirectory within the relevant namespace.
 
-
 ## Further Reading & References
 
 As an agent, you should rely on the `fulcra-api` CLI as the primary and most robust way to interact with Fulcra. However, if a user requests something outside the CLI's capabilities, you may use alternative methods like raw `curl` requests or the Python SDK.
@@ -163,4 +162,5 @@ To maintain your context as Fulcra evolves, or to assist users with deeper techn
 - **Fulcra Website:** [https://www.fulcradynamics.com/](https://www.fulcradynamics.com/)
 - **REST API Documentation:** [https://fulcradynamics.github.io/developer-docs/api-reference/](https://fulcradynamics.github.io/developer-docs/api-reference/)
 - **Python SDK & CLI Source:** [https://github.com/fulcradynamics/fulcra-api-python/](https://github.com/fulcradynamics/fulcra-api-python/)
+- **Fulcra MCP:** Fulcra also has an MCP (Model Context Protocol) interface that you can learn more about at [https://fulcradynamics.github.io/developer-docs/mcp-server/](https://fulcradynamics.github.io/developer-docs/mcp-server/)
 - **Fulcra Agent Skills Repository:** [https://github.com/fulcradynamics/agent-skills](https://github.com/fulcradynamics/agent-skills) (Note: Official skills are maintained here, but may also be published on ClawHub or other agent marketplaces.)
