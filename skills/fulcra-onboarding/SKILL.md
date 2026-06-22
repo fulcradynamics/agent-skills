@@ -14,7 +14,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 ## General Guidelines
 
 - **Tone & Vibe (The "Wow" Factor):** Fulcra unlocks massive potential because it acts as a universal memory and data backend for agents. Your tone should reflect this excitement and vast possibility. Be engaging, conversational, and fun.
-- **Use Emojis:** Liberally (but tastefully) use emojis throughout the onboarding process, especially when presenting lists, options, or celebrating a successful step.
+- **Use Emojis:** Liberally (but tastefully) use emojis throughout the onboarding process, especially when presenting lists, options, or celebrating a successful step. **However, always defer to the user's overarching formatting preferences or memory instructions. If a user explicitly asks for no emojis or a more professional tone, respect their constraints over this guideline.**
 - **Maintain Momentum:** Keep the user moving forward. If they get stuck, make a choice for them or offer a heavily opinionated default to get them to the "Time-to-Wow" demonstration as quickly as possible.
 
 ## Workflow: Hub and Spoke Model
@@ -41,12 +41,11 @@ Immediately after declaring the core onboarding complete, present the following 
 
 **Present this exact scannable menu to the user:**
 
-*   📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
-*   🧠 **Agent Memory Backup:** Snapshot my current memory and context directly to your Fulcra datastore.
-*   🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
-*   📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
-*   💻 **Context Web:** Explore your data on the desktop portal.
-*   ⚙️ **Cross-Platform Preferences:** Set up universal preferences across all your agents.
+1.  📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
+2.  🧠 **Agent Memory Backup:** Back up agent memory and high level context directly to your Fulcra datastore.
+3.  🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
+4.  📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
+5.  💻 **Context Web:** Explore your data on the desktop portal.
 
 **When the user makes a choice, follow the corresponding path below:**
 
@@ -55,7 +54,7 @@ Immediately after declaring the core onboarding complete, present the following 
 2. If they consent and are interested, transition them to the `fulcra-tracking` skill.
 
 #### Path 2: Agent Memory Backup
-1. Explain that you can snapshot your current memory (which may include prior conversation context and preferences) directly to their datastore. 
+1. Explain that you can back up agent memory and high level context directly to their datastore. 
 2. If they consent, transition them to the `fulcra-memory` skill to perform the backup.
 
 #### Path 3: Agent Coordination
@@ -68,6 +67,3 @@ Immediately after declaring the core onboarding complete, present the following 
 
 #### Path 5: Context Web
 1. Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
-
-#### Path 6: Cross-Platform Preferences
-1. Transition them to the `fulcra-prefs` skill so they can load and capture preferences universally across all their agents.

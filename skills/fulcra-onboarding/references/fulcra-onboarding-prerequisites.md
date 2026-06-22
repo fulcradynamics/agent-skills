@@ -7,6 +7,16 @@ description: "Verifies and sets up the required environment for Fulcra, includin
 
 This skill ensures the host environment is ready to interact with the Fulcra API.
 
+## Connection Options
+
+There are two ways for agents to connect to Fulcra. You must determine the appropriate path before proceeding:
+
+1. **Option 1: Fulcra CLI (Preferred)**
+   The `fulcra-api` CLI is the primary interface and supports the widest range of Fulcra use cases. If you have full command-line access with outbound network connectivity, you should choose this option and proceed with the CLI workflow below.
+
+2. **Option 2: MCP Connector (Restricted Environments)**
+   Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcra.ai/AGENTS.md` for setup instructions, and skip the CLI steps below.
+
 ## Workflow
 
 1. **Verify `uv` Installation:**
