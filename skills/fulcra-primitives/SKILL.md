@@ -135,6 +135,9 @@ uv tool run fulcra-api file upload ./local-file.md /remote/path/file.md
 # List files in a remote directory
 uv tool run fulcra-api file list /remote/path/
 
+# Get information about a file, including previous versions
+uv tool run fulcra-api file stat /remote/path/file.md
+
 # Download a file from the remote path
 uv tool run fulcra-api file download /remote/path/file.md ./downloaded-file.md
 ```
