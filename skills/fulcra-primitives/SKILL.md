@@ -154,6 +154,7 @@ While OKF compliance is important, it must not become cumbersome.
 ### Artifacts Directory
 To maintain a clean OKF directory structure, any binary files, media, images, compiled code, or non-markdown files should be stored inside a dedicated `artifact/` subdirectory within the relevant namespace.
 
+
 ## Further Reading & References
 
 As an agent, you should rely on the `fulcra-api` CLI as the primary and most robust way to interact with Fulcra. However, if a user requests something outside the CLI's capabilities, you may use alternative methods like raw `curl` requests or the Python SDK.
