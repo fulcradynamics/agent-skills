@@ -124,6 +124,21 @@ The `create` command will output the JSON definition of the new data type. Make 
 
 The Fulcra File Store is an environment-agnostic remote filesystem accessed via the `fulcra-api file` commands. When storing text and markdown data in the file store, agents should adhere to the **Open Knowledge Format (OKF)** standard (v0.1) when possible to ensure the file store remains understandable to users and other agents, and to provide auditability. You can read the full OKF specification here: [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
 
+### File Uploads
+
+You can manage versioned files using the `fulcra-api file` commands. This allows you to upload files directly into the Fulcra File Store, which will automatically track revisions and handle versioning.
+
+```bash
+# Upload a file to a specific remote path
+uv tool run fulcra-api file upload ./local-file.md /remote/path/file.md
+
+# List files in a remote directory
+uv tool run fulcra-api file list /remote/path/
+
+# Download a file from the remote path
+uv tool run fulcra-api file download /remote/path/file.md ./downloaded-file.md
+```
+
 ### Core OKF Principles
 *   **Markdown + YAML Frontmatter:** All knowledge concepts should be written as `.md` files containing a YAML frontmatter block at the top, bordered by `---`. The frontmatter must contain at least a `type: <Type name>` field, and may optionally include `title:`, `description:`, `tags:`, etc.
 *   **`index.md` (Directory Listing):** Each directory should contain an `index.md` file (with no frontmatter). It provides progressive disclosure via grouped lists of links to the files within that directory (e.g., `* [Title](relative-url.md) - description`).
