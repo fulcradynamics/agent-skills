@@ -7,7 +7,7 @@ description: "CLI command references for executing memory sync and progress repo
 
 This reference dictates the exact shell commands required to execute the `fulcra-memory` skill's operations. Ensure all CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
 
-## Syncing Progress and OKF Files
+## 1. Syncing Progress and OKF Files
 
 To keep the agent's memory in sync, generate a `progress.md` summary, ensure OKF files are updated, and upload them to Fulcra.
 
@@ -51,4 +51,34 @@ Upload the files using the standardized agent path convention. Determine the age
 uv tool run fulcra-api file upload memory/progress.md "agent/<agent_name>/memory/progress.md"
 uv tool run fulcra-api file upload memory/log.md "agent/<agent_name>/memory/log.md"
 uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/memory/index.md"
+```
+
+## 2. Saving Session or Task Memory
+
+When completing a significant task or when asked to remember specific session context, generate a summary file in the `session/` directory and upload it.
+
+**Step A: Create the Session Summary**
+Generate a concise markdown file capturing the task's context, decisions, and outcomes. Make sure to use OKF YAML frontmatter.
+
+```bash
+cd ~/.openclaw/workspace
+mkdir -p memory/session
+
+# Create a descriptive filename based on the date and task
+cat << 'EOF' > memory/session/2026-06-23-setup-dashboard.md
+---
+type: Session Summary
+date: 2026-06-23
+task: Setup Dashboard
+---
+# Task Summary
+...
+EOF
+```
+
+**Step B: Upload to Fulcra**
+Upload the file to the `session/` namespace using the agent's name.
+
+```bash
+uv tool run fulcra-api file upload memory/session/2026-06-23-setup-dashboard.md "agent/<agent_name>/memory/session/2026-06-23-setup-dashboard.md"
 ```

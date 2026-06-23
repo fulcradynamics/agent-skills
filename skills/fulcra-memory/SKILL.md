@@ -33,6 +33,14 @@ Agents should run a progress sync periodically (e.g., triggered by `HEARTBEAT.md
 
 **PRIVACY REQUIREMENT:** Before uploading `progress.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. Minimize disclosures in `progress.md`.
 
+### 3. Session and Task Memory
+In addition to the rolling `progress.md` state, agents must keep a historical record of significant completed tasks, deep dives, or things the user explicitly asks them to "remember". This is stored in the `session/` subdirectory within the memory namespace.
+
+- When a task or session concludes, or when asked to remember context, the agent writes a high-level summary to a file inside `memory/session/` (e.g., `memory/session/YYYY-MM-DD-setup-dashboard.md`).
+- These files serve as targeted, easily-retrievable context. They should capture decisions made, important links, user preferences discovered, and the final state of the task.
+- Ensure the `session/` directory is listed in the top-level `index.md` with a high-level description. You do not need to index every individual session file in `index.md`.
+- Upload these session files directly to `agent/<agent-name>/memory/session/<filename>.md`.
+
 ## Workflow
 
 To perform memory tracking operations, agents must interact with the Fulcra CLI. 
