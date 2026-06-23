@@ -4,7 +4,7 @@ description: "A plain, no-nonsense introduction to the Fulcra CLI, covering core
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "fulcra": { "emoji": "🐙" } }
+metadata: { "openclaw": { "emoji": "🐙" } }
 ---
 
 # Fulcra Primitives
