@@ -33,6 +33,22 @@ Agents should run a progress sync periodically (e.g., triggered by `HEARTBEAT.md
 
 **PRIVACY REQUIREMENT:** Before uploading `progress.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. Minimize disclosures in `progress.md`.
 
+### 3. Session Summaries
+The `session/` subdirectory is used to record high-level summaries of what was accomplished during a specific spate of work or interaction.
+- When a work session concludes, or when asked to remember context, the agent writes a summary to a file in `memory/session/`.
+- Session files MUST be prefixed with a timestamp in the format `YYYYMMDD-HHMMSS` followed by an underscore and a short subject (e.g., `YYYYMMDD-HHMMSS_setup-dashboard.md`).
+- These files serve as targeted, easily-retrievable context. They should capture decisions made, important links, user preferences discovered, and the final state of the session.
+- Ensure the `session/` directory is listed in the top-level `index.md` with a high-level description. You do not need to index every individual session file in `index.md`.
+- Upload these session files directly to `agent/<agent-name>/memory/session/<filename>.md`.
+
+### 4. Long-Running Tasks
+The `task/` subdirectory is dedicated to longer-running tasks that span multiple sessions or interactions.
+- Create a file in `memory/task/` for any significant ongoing project or objective.
+- Task files must NOT be prefixed with a timestamp. They should simply be named for the task (e.g., `memory/task/setup-dashboard.md`).
+- These files track the overall purpose, current state, and result of the task. They should be updated periodically by the agent as work progresses.
+- Task files should contain references to any relevant artifacts and session files related to the task.
+- Unlike session files, task files MUST be included in the `memory/task/index.md` file, which should list all active and completed tasks in the directory.
+
 ## Workflow
 
 To perform memory tracking operations, agents must interact with the Fulcra CLI. 
