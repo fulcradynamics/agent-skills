@@ -29,4 +29,4 @@ This skill handles the intent discovery phase of the "Agent Visibility & Dashboa
 
 ## Handoff
 
-Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves (and determined if they want the Agent Visibility Package), hand control back to the main `fulcra-tracking` flow to proceed with Data Modeling.
+Once you have clearly identified 2-3 specific custom data types or streams (Annotations) they want to track for themselves (and determined if they want the Agent Visibility Package), hand control back to the main `fulcradynamics/agent-skills/fulcra-tracking` flow to proceed with Data Modeling.

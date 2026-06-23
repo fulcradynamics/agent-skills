@@ -5,14 +5,14 @@ description: "CLI command references for executing the memory backup, restore, a
 
 # Fulcra Agent Backup CLI Reference
 
-This reference dictates the exact shell commands required to execute the `fulcra-agent-backup` skill's operations. Ensure all tar and CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
+This reference dictates the exact shell commands required to execute the `fulcradynamics/agent-skills/fulcra-agent-backup` skill's operations. Ensure all tar and CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
 
 ## 1. Creating a Backup and Uploading
 
 To back up the agent's memory, compress the core identity files and upload them to Fulcra.
 
 **Step A: Compress the files**
-Before compressing, dynamically generate an `INSTRUCTIONS.md` file using your standard file writing tools. It must explain that the archive was created with the `fulcra-agent-backup` skill, provide the URL to the skill (https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-agent-backup) for restoring or cloning, and include any other pertinent notes you want to leave for the agent that extracts this backup. Do not blindly copy an example template; write a thoughtful and contextual `INSTRUCTIONS.md` tailored to the current backup state.
+Before compressing, dynamically generate an `INSTRUCTIONS.md` file using your standard file writing tools. It must explain that the archive was created with the `fulcradynamics/agent-skills/fulcra-agent-backup` skill, provide the URL to the skill (https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-agent-backup) for restoring or cloning, and include any other pertinent notes you want to leave for the agent that extracts this backup. Do not blindly copy an example template; write a thoughtful and contextual `INSTRUCTIONS.md` tailored to the current backup state.
 
 ```bash
 # Ensure you are in the workspace
@@ -79,10 +79,10 @@ Cloning involves an "old" (source) agent and a "new" (destination) agent. The fi
 **If you are the OLD agent:**
 1. Perform a full backup of your current state (Follow Step 1: Creating a Backup and Uploading).
 2. Stop and tell the user the exact Fulcra path where the backup was saved (e.g., `agent/<your_agent_name>/backup/artifact/memory.tar.gz`).
-3. Instruct the user to install the `fulcra-agent-backup` skill on the new agent and ask it to clone from that path.
+3. Instruct the user to install the `fulcradynamics/agent-skills/fulcra-agent-backup` skill on the new agent and ask it to clone from that path.
 
 **If you are the NEW agent:**
-1. Ask the user to confirm the old agent has recently backed itself up using the `fulcra-agent-backup` skill. (Instruct them to have the old agent install the skill and back up if it hasn't already). Then, ask them for the specific Fulcra path to the old agent's memory archive.
+1. Ask the user to confirm the old agent has recently backed itself up using the `fulcradynamics/agent-skills/fulcra-agent-backup` skill. (Instruct them to have the old agent install the skill and back up if it hasn't already). Then, ask them for the specific Fulcra path to the old agent's memory archive.
 2. Download the target agent's memory using the path provided by the user:
 
 ```bash

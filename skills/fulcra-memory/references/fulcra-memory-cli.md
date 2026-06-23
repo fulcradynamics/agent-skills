@@ -5,7 +5,7 @@ description: "CLI command references for executing memory sync and progress repo
 
 # Fulcra Memory CLI Reference
 
-This reference dictates the exact shell commands required to execute the `fulcra-memory` skill's operations. Ensure all CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
+This reference dictates the exact shell commands required to execute the `fulcradynamics/agent-skills/fulcra-memory` skill's operations. Ensure all CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
 
 ## 1. Syncing Progress and OKF Files
 

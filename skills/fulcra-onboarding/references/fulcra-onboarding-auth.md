@@ -18,4 +18,4 @@ This reference handles Step 2 of the onboarding process, securely establishing t
 
 2. **Completion:**
    - Once the user successfully authenticates (or if they were already authenticated), declare the core onboarding complete!
-   - Hand control back to the main `fulcra-onboarding` flow to present the Next Steps menu.
+   - Hand control back to the main `fulcradynamics/agent-skills/fulcra-onboarding` flow to present the Next Steps menu.

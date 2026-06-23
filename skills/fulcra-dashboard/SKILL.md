@@ -49,7 +49,7 @@ When constructing this dashboard, you **MUST** follow these strict architectural
 
 ## Usage
 
-When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
+When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcradynamics/agent-skills/fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
 
 ```bash
 # Run the setup script to scaffold the Alpine dashboard

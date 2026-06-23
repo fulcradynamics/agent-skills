@@ -29,4 +29,4 @@ There are two ways for agents to connect to Fulcra. You must determine the appro
 
 ## Handoff
 
-Once `uv` is confirmed to be installed and working, return control to the main `fulcra-onboarding` flow.
+Once `uv` is confirmed to be installed and working, return control to the main `fulcradynamics/agent-skills/fulcra-onboarding` flow.
