@@ -12,7 +12,7 @@ This reference dictates the exact shell commands required to execute the `fulcra
 To back up the agent's memory, compress the core identity files and upload them to Fulcra.
 
 **Step A: Compress the files**
-Before compressing, dynamically generate an `INSTRUCTIONS.md` file using your standard file writing tools. It must explain that the archive was created with the `fulcra-agent-backup` skill, provide the URL to the skill (https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-agent-backup) for restoring or cloning, and include any other pertinent notes you want to leave for the agent that extracts this backup. Do not blindly copy an example template; write a thoughtful and contextual `INSTRUCTIONS.md` tailored to the current backup state.
+Before compressing, dynamically generate an `INSTRUCTIONS.md` file using your standard file writing tools. It must explain that the archive was created with the `fulcra-agent-backup` skill, provide the URL to the skill (https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-agent-backup) for restoring or cloning, and include any other pertinent notes you want to leave for the agent that extracts this backup. Do not blindly copy an example template; write a thoughtful and contextual `INSTRUCTIONS.md` tailored to the current backup state. This file will be uploaded directly to Fulcra, not bundled inside the tarball.
 
 ```bash
 # Ensure you are in the workspace
@@ -21,15 +21,17 @@ cd ~/.openclaw/workspace
 # (Ensure INSTRUCTIONS.md was written successfully before proceeding)
 
 # Create a gzip tarball containing the essential memory files (ignore if some are missing)
-tar -czvf /tmp/memory.tar.gz INSTRUCTIONS.md SOUL.md IDENTITY.md MEMORY.md memory/ 2>/dev/null || true
+# Notice INSTRUCTIONS.md is INTENTIONALLY OMITTED from the tarball contents
+tar -czvf /tmp/memory.tar.gz SOUL.md IDENTITY.md MEMORY.md memory/ 2>/dev/null || true
 ```
 
 **Step B: Upload to Fulcra**
-Upload the files using the standardized agent path convention. Determine the agent's name (lowercase) to use in the path.
+Upload the files using the standardized agent path convention. Determine the agent's name (lowercase) to use in the path. You must upload both the artifact tarball and the `INSTRUCTIONS.md` file.
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
 uv tool run fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/backup/artifact/memory.tar.gz"
+uv tool run fulcra-api file upload INSTRUCTIONS.md "agent/<agent_name>/backup/INSTRUCTIONS.md"
 ```
 
 ## 2. Listing Memory History

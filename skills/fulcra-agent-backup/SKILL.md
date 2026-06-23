@@ -16,10 +16,10 @@ Because an agent's memory (e.g., `MEMORY.md`, `IDENTITY.md`, `SOUL.md`, and the 
 ## Primary Role: Memory & State Management
 
 ### 1. The Backup Format
-An agent must compress its core identity files (`SOUL.md`, `IDENTITY.md`, `MEMORY.md`, and the `memory/` directory) into a `memory.tar.gz` archive. This archive must also include an `INSTRUCTIONS.md` file that you dynamically generate. It must explain that the backup was generated with the `fulcra-agent-backup` skill, include the URL to the skill (https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-agent-backup) for use when restoring or cloning, and include any other pertinent details or context you want to pass along to the agent that restores the archive.
+An agent must compress its core identity files (`SOUL.md`, `IDENTITY.md`, `MEMORY.md`, and the `memory/` directory) into a `memory.tar.gz` archive. The agent must also dynamically generate an `INSTRUCTIONS.md` file. It must explain that the backup was generated with the `fulcra-agent-backup` skill, include the URL to the skill (https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-agent-backup) for use when restoring or cloning, and include any other pertinent details or context you want to pass along to the agent that restores the archive. The `INSTRUCTIONS.md` file is NOT included in the tarball; it is uploaded separately alongside the artifact.
 
 ### 2. Periodic Backups
-Agents should run a backup process periodically (e.g., triggered by `HEARTBEAT.md` or as part of the `fulcra-memory` OKF sync process). Every time an agent backs up its state, it creates and uploads the compressed `memory.tar.gz` archive to `agent/<agent-name>/backup/artifact/memory.tar.gz`.
+Agents should run a backup process periodically (e.g., triggered by `HEARTBEAT.md` or as part of the `fulcra-memory` OKF sync process). Every time an agent backs up its state, it creates and uploads the compressed `memory.tar.gz` archive to `agent/<agent-name>/backup/artifact/memory.tar.gz`, and uploads the `INSTRUCTIONS.md` file to `agent/<agent-name>/backup/INSTRUCTIONS.md`.
 
 **PRIVACY REQUIREMENT:** Before uploading `memory.tar.gz`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data or credentials. If any sensitive context was acquired during the session, the agent MUST ask the user for explicit consent before including it in persistent versioned storage.
 
