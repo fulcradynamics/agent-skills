@@ -17,7 +17,7 @@ This skill handles the final demonstration phase of the "Agent Visibility & Dash
    - **How to retrieve:** 
      - After consent is given, run `uv tool run fulcra-api catalog` to list available data types. Find the exact identifier (name or ID) for the annotation the user just created.
      - Then, use that identifier as the `DATA_TYPE` argument in the `uv tool run fulcra-api get-records <DATA_TYPE> <TIME_RANGE>` CLI command (e.g., `uv tool run fulcra-api get-records "MyCustomAnnotation" "1 day"`). Make sure to capture **all** returned records, not just the first one.
-     - This is the most reliable method for accessing raw recorded data. Do *not* use the `fulcra-dashboard` skill for this demonstration step. The dashboard generated in this step should be a single, standalone HTML file generated from scratch using the user's chosen theme.
+     - This is the most reliable method for accessing raw recorded data. Do *not* use the `fulcradynamics/agent-skills/fulcra-dashboard` skill for this demonstration step. The dashboard generated in this step should be a single, standalone HTML file generated from scratch using the user's chosen theme.
 
 2. **Theme Selection (MANDATORY BLOCKER):**
    - **CRITICAL:** You must explicitly pause the conversation and wait for the user to choose a theme before generating the HTML. Do **not** generate the dashboard in the same turn that you retrieve the data.
@@ -43,10 +43,10 @@ This skill handles the final demonstration phase of the "Agent Visibility & Dash
 
 4. **Offer Interactive Dashboard Transition:**
    - When presenting the simple HTML dashboard, explicitly offer to make the dashboard live and interactive.
-   - Clarify that this concludes the onboarding demonstration. Explain that if they choose to proceed, they will be transitioning out of onboarding to build a "real," fully functional web app using the `fulcra-dashboard` skill.
+   - Clarify that this concludes the onboarding demonstration. Explain that if they choose to proceed, they will be transitioning out of onboarding to build a "real," fully functional web app using the `fulcradynamics/agent-skills/fulcra-dashboard` skill.
 
 ## Handoff
 
 Wait for the user's reaction to the generated dashboard and your offer to build a real interactive app.
-- **If they want to build the interactive dashboard:** Transition them directly to the `fulcra-dashboard` skill.
+- **If they want to build the interactive dashboard:** Transition them directly to the `fulcradynamics/agent-skills/fulcra-dashboard` skill.
 - **If they decline or just want to see other options:** Return control to the main `fulcra-tracking` flow to present the Next Steps menu again (omitting the Agent Visibility path since they just completed it).

@@ -51,15 +51,15 @@ Immediately after declaring the core onboarding complete, present the following 
 
 #### Path 1: Agent Visibility & Custom Tracking
 1. Explain that you can set up data schemas to track their custom data, as well as an "Agent Visibility Package" to record agent activities, and visualize it all on a custom HTML dashboard.
-2. If they consent and are interested, transition them to the `fulcra-tracking` skill.
+2. If they consent and are interested, transition them to the `fulcradynamics/agent-skills/fulcra-tracking` skill.
 
 #### Path 2: Agent Memory & Knowledge
 1. Explain that you can record high-level knowledge, track tasks, and log ongoing progress directly to their Fulcra datastore in a structured, readable way.
-2. If they consent, transition them to the `fulcra-memory` skill to set up their memory tracking.
+2. If they consent, transition them to the `fulcradynamics/agent-skills/fulcra-memory` skill to set up their memory tracking.
 
 #### Path 3: Agent Coordination
 1. Explain that Fulcra isn't just for dashboards—it acts as a universal backend that allows multiple agents to coordinate their work using shared Team namespaces.
-2. If they consent and are interested, transition them to the `fulcra-agent-teams` skill so they can get set up.
+2. If they consent and are interested, transition them to the `fulcradynamics/agent-skills/fulcra-agent-teams` skill so they can get set up.
 
 #### Path 4: Get the App
 1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).

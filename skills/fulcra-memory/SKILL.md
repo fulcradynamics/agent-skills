@@ -13,7 +13,7 @@ The **primary role** of this skill is to help the agent keep track of what it is
 
 By periodically logging activities to `progress.md` and keeping the memory namespace structured, other agents and users can easily see what this agent has accomplished and what it is working on next.
 
-*(Note: For agent backup, rollback, and cloning, see the `fulcra-agent-backup` skill.)*
+*(Note: For agent backup, rollback, and cloning, see the `fulcradynamics/agent-skills/fulcra-agent-backup` skill.)*
 
 ## Primary Role: Progress & OKF Compliance
 
@@ -53,7 +53,7 @@ The `task/` subdirectory is dedicated to longer-running tasks that span multiple
 
 To perform memory tracking operations, agents must interact with the Fulcra CLI. 
 
-For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcra-onboarding` skill, or read the full OKF specification directly:
+For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcradynamics/agent-skills/fulcra-onboarding` skill, or read the full OKF specification directly:
 - [https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-onboarding/references/fulcra-cli.md](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-onboarding/references/fulcra-cli.md)
 - [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 
