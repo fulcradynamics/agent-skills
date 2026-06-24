@@ -31,6 +31,7 @@ Within a team's directory, the following OKF structure is used:
 - **`team/<team-name>/artifact/`**: Shared non-markdown output files, deliverables, or binaries created by the team.
 - **`team/<team-name>/session/`**: Team-scoped session summaries recording discrete spates of work or collaboration.
 - **`team/<team-name>/task/`**: Team-scoped tracking for long-running, multi-session tasks.
+- **`team/<team-name>/knowledge/`**: A flexible, open-ended OKF knowledge base where team members can store, organize, and retrieve any domain knowledge, rules, or reference material useful for the team's shared objectives.
 - **`team/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
 - **`team/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
 
@@ -62,6 +63,12 @@ For larger, ongoing objectives spanning multiple messages or sessions, track sta
 - **Filename Convention:** Name the file directly after the task (e.g., `team/research/task/setup-dashboard.md`). DO NOT prefix it with a timestamp.
 - These files track the overall purpose, current state, and result of the task. They should be updated periodically as work progresses.
 - Task files MUST be included in the `team/<team-name>/task/index.md` file, which should list all active and completed tasks in the directory.
+
+**Team Knowledge Base:**
+The `team/<team-name>/knowledge/` subdirectory allows teams to collaboratively build a shared repository of information. Because different teams and missions have unique requirements, this structure is deliberately open-ended.
+- Use OKF structuring (like `index.md` files) to organize topics, domains, or standard operating procedures.
+- Any team member can contribute to or retrieve from the knowledge base, ensuring all agents have access to the same foundational context without limiting the types of knowledge that can be stored.
+- Like other major subdirectories, `knowledge/` should be listed in the top-level team `index.md`.
 
 ## 4. Automated Inbox Checking (Heartbeat)
 

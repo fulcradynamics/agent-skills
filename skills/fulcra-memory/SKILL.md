@@ -49,6 +49,14 @@ The `task/` subdirectory is dedicated to longer-running tasks that span multiple
 - Task files should contain references to any relevant artifacts and session files related to the task.
 - Unlike session files, task files MUST be included in the `memory/task/index.md` file, which should list all active and completed tasks in the directory.
 
+### 5. General Knowledge Base
+The `knowledge/` subdirectory is an open-ended convention for agents to store, organize, and retrieve any other useful knowledge or reference material about the user, the agent's domain, or specific topics.
+- Because each user has different interests and requirements, this directory acts as a flexible knowledge base.
+- Files should be structured according to the OKF standard (using `index.md` files for subdirectories to aid in navigation and discovery).
+- Knowledge files can be organized by topic, entity, or domain (e.g., `memory/knowledge/programming/python.md` or `memory/knowledge/user-preferences/formatting.md`).
+- Ensure the `knowledge/` directory is listed in the top-level `index.md` so that the user and other agents know it exists.
+- This convention empowers agents to build a rich, personalized context over time without being artificially limited by standard tracking conventions.
+
 ## Workflow
 
 To perform memory tracking operations, agents must interact with the Fulcra CLI. 
