@@ -33,4 +33,4 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 
 3. **Cleanup**
    - Once the worker completes, log the ingestion summary.
-   - Optionally move/delete the file from the Fulcra file store using `uvx fulcra-api file delete` or by renaming.
+   - Archive the file in the Fulcra file store (e.g. moving it out of the `ingest` directory). **When archiving, prefix the filename with an ISO timestamp** (e.g., `2026-06-25T14:30:00Z_NetflixViewingHistory.csv`) so it is easy to see exactly when it was processed.
