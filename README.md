@@ -17,13 +17,13 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 ## Skills
 
 ```
-(˶ᵔ ᵕ ᵔ˶)  🤝  (˶ᵔ ᵕ ᵔ˶)  🤝  (˶ᵔ ᵕ ᵔ˶)
-      \            |            /
-       \           |           /
-      <<<<<<     fulcra     >>>>>>
-       /       /       \       \
-      /       /         \       \
-     🌱      📈          🧠       ⚙️
+ (˶ᵔ ᵕ ᵔ˶)   🤝   (˶ᵔ ᵕ ᵔ˶)   🤝   (˶ᵔ ᵕ ᵔ˶)
+      \               |              /
+       \              |             /
+      <<<<<<<<<<<  fulcra  >>>>>>>>>>>
+       /      /       |       \      \
+      /      /        |        \      \
+     🌱     📈        🧠        ⚙️     📥
 ```
 
 | Skill | What it does |
@@ -34,10 +34,10 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
 | 🤝&nbsp;&nbsp;[fulcra-agent-teams](#-fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
+| 📥&nbsp;&nbsp;[Ingest](#-ingest) | Import third-party data exports into Fulcra Annotations |
 
 ---
 
-<a id="fulcra-onboarding"></a>
 ## 🌱 fulcra-onboarding
 
 `skills/fulcra-onboarding/`
@@ -148,6 +148,33 @@ Works with CLI-capable agents, HTTP-only agents, and MCP agents (read-only).
 > Alpha: the schema may change in early versions.
 
 **Contains:** `SKILL.md`, `references/` (HTTP tier docs, capture heuristics and consent rules)
+
+---
+
+## 📥 Ingest (beta)
+
+`skills/fulcra-ingest-beta/`
+
+```
+        🌱
+      .-'''-.
+    .'       '.
+   /    O      \       ___
+  :           .-'     |   \
+  |        .-'        |csv|
+  :        '-.        |___|
+   \          '-.
+    '.         .'
+      '-...-'`
+
+```
+Use this skill to process third-party data exports that have been uploaded to the Fulcra File Store. It profiles raw ZIP, JSON, and CSV files in `ingest/`, maps them to the right Fulcra Annotation schemas, and records the resulting data points without creating duplicate schemas or records.
+
+- Worker agents profile individual exports, resolve or create the matching Annotation schema, and ingest records
+- Processed files are archived under `ingest/_meta/archive/artifact/`
+- `ingest/_meta/source_map.md` tracks source lineage, schema IDs, deterministic ID fields, and archived locations
+
+**Contains:** `SKILL.md`, `references/` (CLI commands, record ingestion, source mapping), `scripts/` (deterministic ID generation)
 
 ---
 
