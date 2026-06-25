@@ -33,7 +33,7 @@ curl -i -X POST \
 
 ### Payload Structure Rules
 1. **`metadata.id`**: Must be a deterministic UUID generated from the raw row data to ensure idempotency and prevent duplicate records.
-2. **`metadata.source`**: Must be an array representing the lineage of the data (the "source chain"), ordered from origin to destination. The chain should be: 1) The original 3rd-party service identifier (e.g., `"com.netflix"`), 2) The file path in the Fulcra file store (e.g., `"fulcra.file.store:ingest/NetflixViewingHistory.csv"`), 3) Your own agent identifier (e.g., `"agent.hermes"`), and finally 4) The annotation's specific schema identifier (`"com.fulcradynamics.annotation.<ANNOTATION_ID>"`).
+2. **`metadata.source`**: Must be an array representing the lineage of the data (the "source chain"), ordered from origin to destination. The chain should be: 1) The original 3rd-party service identifier (e.g., `"com.netflix"`), 2) The file path in the Fulcra file store (e.g., `"com.fulcradynamics.file/ingest/NetflixViewingHistory.csv"`), 3) Your own agent identifier (e.g., `"agent.hermes"`), and finally 4) The annotation's specific schema identifier (`"com.fulcradynamics.annotation.<ANNOTATION_ID>"`).
 3. **`metadata.data_type`**: Must match the annotation type in CamelCase (e.g., `ScaleAnnotation`, `MomentAnnotation`, `NumericAnnotation`, etc.).
 4. **`metadata.recorded_at`**: Must be a valid ISO 8601 timestamp in UTC (e.g., `2026-05-22T20:15:57Z`).
 5. **`data`**: Must be a **stringified JSON string** containing the `value` (if the annotation type requires one) and an optional `note`.
@@ -52,7 +52,7 @@ Used for logging an event that has a length of time. The `value` often represent
     "content_type": "application/json",
     "source": [
       "com.spotify",
-      "fulcra.file.store:ingest/spotify_history.json",
+      "com.fulcradynamics.file/ingest/spotify_history.json",
       "agent.hermes",
       "com.fulcradynamics.annotation.<SPOTIFY_ANNOTATION_ID>"
     ]
@@ -73,7 +73,7 @@ Used for logging the occurrence of an event without a specific value or duration
     "content_type": "application/json",
     "source": [
       "com.netflix",
-      "fulcra.file.store:ingest/NetflixViewingHistory.csv",
+      "com.fulcradynamics.file/ingest/NetflixViewingHistory.csv",
       "agent.hermes",
       "com.fulcradynamics.annotation.<NETFLIX_ANNOTATION_ID>"
     ]
@@ -94,7 +94,7 @@ Used for logging a specific quantity or number, such as an amount spent. The `va
     "content_type": "application/json",
     "source": [
       "com.amazon",
-      "fulcra.file.store:ingest/amazon_purchases.csv",
+      "com.fulcradynamics.file/ingest/amazon_purchases.csv",
       "agent.hermes",
       "com.fulcradynamics.annotation.<AMAZON_ANNOTATION_ID>"
     ]
@@ -115,7 +115,7 @@ Used for logging a value on a bounded scale (strictly 1-5 currently).
     "content_type": "application/json",
     "source": [
       "com.letterboxd",
-      "fulcra.file.store:ingest/diary.csv",
+      "com.fulcradynamics.file/ingest/diary.csv",
       "agent.hermes",
       "com.fulcradynamics.annotation.<LETTERBOXD_ANNOTATION_ID>"
     ]
@@ -136,7 +136,7 @@ Used for logging a Yes/No or True/False state. The `value` must be a boolean (`t
     "content_type": "application/json",
     "source": [
       "com.habitify",
-      "fulcra.file.store:ingest/habits.csv",
+      "com.fulcradynamics.file/ingest/habits.csv",
       "agent.hermes",
       "com.fulcradynamics.annotation.<HABIT_ANNOTATION_ID>"
     ]
