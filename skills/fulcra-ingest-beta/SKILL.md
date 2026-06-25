@@ -18,6 +18,11 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 - **Idempotency:** Never create duplicate schemas. Always use the annotation's `description` field to store the specific namespace (e.g., `com.fulcradynamics.annotation.ingest.spotify`) and check the `catalog` first.
 - **Coordination:** Use `delegate_task` to dispatch specific files to a Worker subagent so the primary thread isn't blocked.
 
+
+## References
+- **`references/fulcra-ingest-cli.md`**: Contains the necessary `fulcra-api` CLI commands for checking the catalog, listing files, and creating new data types.
+- **`references/fulcra-ingest-record-annotations.md`**: Provides the exact POST endpoint, authentication headers, and JSON schemas required for ingesting records to Fulcra Annotations.
+
 ## The Pipeline
 
 1. **The Librarian (Triage)**
