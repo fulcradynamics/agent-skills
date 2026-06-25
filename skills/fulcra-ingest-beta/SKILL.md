@@ -23,6 +23,8 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 - **`references/fulcra-ingest-cli.md`**: Contains the necessary `fulcra-api` CLI commands for checking the catalog, listing files, and creating new data types.
 - **`references/fulcra-ingest-record-annotations.md`**: Provides the exact POST endpoint, authentication headers, and JSON schemas required for ingesting records to Fulcra Annotations.
 
+- **`references/fulcra-ingest-source-mapping.md`**: Outlines the structure and workflow for maintaining the `ingest/_meta/source_map.json` file, which tracks data lineage, prevents duplicate schemas, and logs archived files.
+
 ## The Pipeline
 
 1. **The Librarian (Triage)**
@@ -32,11 +34,12 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 2. **The Worker (Profiling & Ingestion)**
    - **Download:** Execute `uvx fulcra-api file download <file_id> ./<filename>`.
    - **Profile Schema:** Read the first few lines/objects to determine the data shape. Pick the most appropriate Fulcra Annotation primitive (`DurationAnnotation`, `NumericAnnotation`, `MomentAnnotation`, etc.).
-   - **Idempotency Check:** Run `uvx fulcra-api catalog`. Check if any existing user-configured annotation contains the target namespace (e.g., `com.fulcradynamics.annotation.ingest.spotify`) in its `description` field.
-   - **Schema Registration:** If not found, run `uvx fulcra-api data-type create <Primitive> "<Service Name> Export" -d "<namespace>"`. Save the resulting `fulcra_source_id`.
+   - **Source Map Lookup:** Download and read `ingest/_meta/source_map.json` (initialize if missing). Look up the detected source (e.g., `com.netflix`). If found, extract the mapped Annotation ID and verify the type matches. If not found, fall back to checking `uvx fulcra-api catalog`.
+   - **Schema Registration:** If no schema exists in the map or catalog, run `uvx fulcra-api data-type create <Primitive> "<Service Name> Export" -d "<namespace>"`. Save the resulting `fulcra_source_id`.
    - **Data Ingestion:** Write and execute a Python script to iterate through the data. For each record, map the fields into the Fulcra schema payload. **Crucial:** Generate a deterministic UUID (e.g., based on an MD5 hash of the raw record) and assign it to the `metadata.id` field of the payload to prevent duplicates.
    - **Post Data:** Use `POST https://api.fulcradynamics.com/ingest/v1/record` with the user's auth token.
 
 3. **Cleanup**
    - Once the worker completes, log the ingestion summary.
-   - Archive the file by moving it from the `ingest/` directory to the `ingest/_meta/archive/artifact/` directory in the Fulcra file store. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`** (e.g., `ingest/_meta/archive/artifact/20260625-143000_NetflixViewingHistory.csv`) so it is easy to see exactly when it was processed.
+   - Archive the file by moving it from the `ingest/` directory to the `ingest/_meta/archive/artifact/` directory in the Fulcra file store. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`** (e.g., `ingest/_meta/archive/artifact/20260625-143000_NetflixViewingHistory.csv`).
+   - **Update Source Map:** Update `source_map.json` with the new `archived_locations` path and annotation details, then upload it back to `ingest/_meta/source_map.json`.
