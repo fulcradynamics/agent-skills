@@ -33,4 +33,4 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 
 3. **Cleanup**
    - Once the worker completes, log the ingestion summary.
-   - Archive the file in the Fulcra file store (e.g. moving it out of the `ingest` directory). **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`** (e.g., `20260625-143000_NetflixViewingHistory.csv`) so it is easy to see exactly when it was processed, matching the memory skill conventions.
+   - Archive the file by moving it from the `ingest` directory to the `archive` directory in the Fulcra file store. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`** (e.g., `archive/20260625-143000_NetflixViewingHistory.csv`) so it is easy to see exactly when it was processed, matching the memory skill conventions.
