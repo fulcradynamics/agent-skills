@@ -34,6 +34,7 @@ Within a team's directory, the following OKF structure is used:
 - **`team/<team-name>/task/`**: Team-scoped tracking for long-running, multi-session tasks.
 - **`team/<team-name>/knowledge/`**: A flexible, open-ended OKF knowledge base where team members can store, organize, and retrieve any domain knowledge, rules, or reference material useful for the team's shared objectives.
 - **`team/<team-name>/member/<agent-name>/role.md`**: The specific role, duties, and identity of the member within the team (e.g., manager delegating tasks vs. worker receiving tasks). Created when an agent joins a team.
+- **`team/<team-name>/member/<agent-name>/progress.md`**: A progress report for the specific team member. This is vital for maintaining context across isolated cron runs or background threads. It tracks what this specific agent is currently doing for the team, how to handle incoming tasks, and their immediate next steps. Must include OKF YAML frontmatter.
 - **`team/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
 - **`team/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
 

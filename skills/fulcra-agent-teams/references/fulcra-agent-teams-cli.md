@@ -93,14 +93,17 @@ echo "- [$(date +%Y-%m-%d)] <Objective summary>" >> /tmp/team_completed.md
 uv tool run fulcra-api file upload /tmp/team_completed.md "team/<team_name>/completed.md"
 ```
 
-**Step C: Syncing Team and Member Roles**
-To ensure the team and its members understand their purpose and duties, maintain `role.md` files (with `type: Role` frontmatter).
+**Step C: Syncing Team and Member Roles & Progress**
+To ensure the team and its members understand their purpose and current context, maintain `role.md` and member `progress.md` files (with proper OKF frontmatter).
 ```bash
 # Update the overall team role
 uv tool run fulcra-api file upload /tmp/team-role.md "team/<team_name>/role.md"
 
 # Update your specific agent's role within the team
 uv tool run fulcra-api file upload /tmp/member-role.md "team/<team_name>/member/<your_agent_name>/role.md"
+
+# Update your specific agent's progress (critical for isolated background jobs)
+uv tool run fulcra-api file upload /tmp/member-progress.md "team/<team_name>/member/<your_agent_name>/progress.md"
 ```
 
 ## 4. Team Session and Task Tracking
