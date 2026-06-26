@@ -36,7 +36,8 @@ curl -i -X POST \
 2. **`metadata.source`**: Must be an array representing the lineage of the data (the "source chain"), ordered from origin to destination. The chain should be: 1) The original 3rd-party service identifier (e.g., `"com.netflix"`), 2) The file path in the Fulcra file store (e.g., `"com.fulcradynamics.file./ingest/NetflixViewingHistory.csv"`), 3) Your own agent identifier (e.g., `"agent.hermes"`), and finally 4) The annotation's specific schema identifier (`"com.fulcradynamics.annotation.<ANNOTATION_ID>"`).
 3. **`metadata.data_type`**: Must match the annotation type in CamelCase (e.g., `ScaleAnnotation`, `MomentAnnotation`, `NumericAnnotation`, etc.).
 4. **`metadata.recorded_at`**: Must be a valid ISO 8601 timestamp in UTC (e.g., `2026-05-22T20:15:57Z`).
-5. **`data`**: Must be a **stringified JSON string** containing the `value` (if the annotation type requires one) and an optional `note`.
+5. **`metadata.tags`**: Add string tags to records for categorization, filtering, and cross-source aggregation. Think of tags like keywords (e.g., `"work"`, `"entertainment"`, `"travel"`, `"media"`). When ingesting data, you should map properties of the incoming data to relevant tags where possible.
+6. **`data`**: Must be a **stringified JSON string** containing the `value` (if the annotation type requires one) and an optional `note`.
 
 ### Examples
 
@@ -47,7 +48,7 @@ Used for logging an event that has a length of time. The `value` often represent
   "metadata": {
     "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
     "data_type": "DurationAnnotation",
-    "tags": [],
+    "tags": ["music", "audio", "entertainment"],
     "recorded_at": "2023-10-25T18:32:00Z",
     "content_type": "application/json",
     "source": [
@@ -68,7 +69,7 @@ Used for logging the occurrence of an event without a specific value or duration
   "metadata": {
     "id": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
     "data_type": "MomentAnnotation",
-    "tags": [],
+    "tags": ["video", "movies", "entertainment"],
     "recorded_at": "2024-01-15T21:10:00Z",
     "content_type": "application/json",
     "source": [
@@ -89,7 +90,7 @@ Used for logging a specific quantity or number, such as an amount spent. The `va
   "metadata": {
     "id": "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f",
     "data_type": "NumericAnnotation",
-    "tags": [],
+    "tags": ["shopping", "finance", "expense"],
     "recorded_at": "2023-11-20T14:45:00Z",
     "content_type": "application/json",
     "source": [
