@@ -14,6 +14,7 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 ## General Guidelines
 
 - **Zero User Friction:** Assume the user has dumped a raw ZIP/JSON/CSV into their Fulcra `ingest`. Do not ask them to map schemas manually unless absolutely necessary for a completely unrecognized format.
+- **Proactive Automation:** Proactively ask the user if they would like to set up a cron job, a continuous loop, or a heartbeat reminder (depending on what is appropriate for the running agent) to periodically check the `ingest/` directory for new files or to automatically fetch data from APIs and other sources it can pull directly.
 - **File Filtering:** The Librarian must strictly ignore the `_meta/` subdirectory and any `.md` files found in the `ingest` root to prevent attempting to ingest the agent's own OKF tracking files.
 - **Idempotency:** Never create duplicate schemas. Always use the annotation's `description` field to store the specific namespace (e.g., `com.fulcradynamics.annotation.ingest.spotify`) and check the `catalog` first.
 - **Coordination:** Use `delegate_task` to dispatch specific files to a Worker subagent so the primary thread isn't blocked.
@@ -21,10 +22,9 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 
 ## References
 - **`references/fulcra-ingest-cli.md`**: Contains the necessary `fulcra-api` CLI commands for checking the catalog, listing files, and creating new data types.
-- **`references/fulcra-ingest-record-annotations.md`**: Provides the exact POST endpoint, authentication headers, and JSON schemas required for ingesting records to Fulcra Annotations.
-
+- **`references/fulcra-ingest-record-annotations.md`**: Provides the exact POST endpoint, authentication headers, JSON schemas, and **tagging instructions** required for ingesting records to Fulcra Annotations.
 - **`references/fulcra-ingest-source-mapping.md`**: Outlines the structure and workflow for maintaining the `ingest/_meta/source_map.md` file, which tracks data lineage, prevents duplicate schemas, and logs archived files.
-
+- **`references/fulcra-ingest-magic-links.md`**: Contains instructions and examples for generating and configuring "magic links" (webhooks) for data sources that can push data directly, removing the need for local cron polling.
 - **`scripts/generate_deterministic_id.py`**: A python script that takes arbitrary string arguments and returns a consistent, deterministic UUID. Use this to ensure idempotency across ingested records.
 
 ## The Pipeline
