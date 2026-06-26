@@ -68,6 +68,7 @@ When an agent completes a discrete block of work related to the team (e.g., reso
 For larger, ongoing objectives spanning multiple messages or sessions, track state in the `team/<team-name>/task/` directory.
 - **Filename Convention:** Name the file directly after the task (e.g., `team/research/task/setup-dashboard.md`). DO NOT prefix it with a timestamp.
 - These files track the overall purpose, current state, and result of the task. They should be updated periodically as work progresses.
+- **Task Updates:** When updating a task file, agents MUST append an entry documenting what was done, explicitly including the name of the agent doing the work, the date/time it was done, and relative links to any task-related files (such as newly generated artifacts or session summaries).
 - Task files MUST be included in the `team/<team-name>/task/index.md` file, which should list all active and completed tasks in the directory.
 
 **Team Knowledge Base:**
