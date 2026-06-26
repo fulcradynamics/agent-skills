@@ -66,9 +66,9 @@ When an agent completes a discrete block of work related to the team (e.g., reso
 
 **Long-Running Tasks:**
 For larger, ongoing objectives spanning multiple messages or sessions, track state in the `team/<team-name>/task/` directory.
-- **Filename Convention:** Name the file directly after the task (e.g., `team/research/task/setup-dashboard.md`). DO NOT prefix it with a timestamp.
-- These files track the overall purpose, current state, and result of the task. They should be updated periodically as work progresses.
-- Task files MUST be included in the `team/<team-name>/task/index.md` file, which should list all active and completed tasks in the directory.
+- **Directory Convention:** Create a subdirectory named for the task (e.g., `team/research/task/setup-dashboard/`). DO NOT prefix it with a timestamp.
+- **Task Role:** Inside the task subdirectory, create a `role.md` file (e.g., `team/research/task/setup-dashboard/role.md`). This file defines the purpose and description of the task, tracks its current state, and records the result. It should be updated periodically as work progresses. Must include OKF YAML frontmatter (`type: Role`).
+- Task directories MUST be included in the `team/<team-name>/task/index.md` file, which should list all active and completed tasks in the directory.
 
 **Team Knowledge Base:**
 The `team/<team-name>/knowledge/` subdirectory allows teams to collaboratively build a shared repository of information. Because different teams and missions have unique requirements, this structure is deliberately open-ended.

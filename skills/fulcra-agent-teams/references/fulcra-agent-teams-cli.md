@@ -115,9 +115,9 @@ uv tool run fulcra-api file upload /tmp/session-summary.md "team/<team_name>/ses
 ```
 
 **Step B: Updating a Task Tracker**
-For ongoing team objectives, update a task tracker (with `type: Task` frontmatter) and its index.
+For ongoing team objectives, track them within a task subdirectory and maintain a `role.md` file (with `type: Role` frontmatter) defining the task's purpose and state.
 ```bash
-# Filename convention: <task-name>.md (No timestamp)
-uv tool run fulcra-api file upload /tmp/task-status.md "team/<team_name>/task/setup-dashboard.md"
+# Directory convention: <task-name>/role.md (No timestamp)
+uv tool run fulcra-api file upload /tmp/task-role.md "team/<team_name>/task/setup-dashboard/role.md"
 uv tool run fulcra-api file upload /tmp/task-index.md "team/<team_name>/task/index.md"
 ```
