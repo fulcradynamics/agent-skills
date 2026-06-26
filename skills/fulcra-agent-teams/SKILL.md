@@ -50,7 +50,7 @@ However, to accommodate users easily dropping manual tasks or context into an in
 
 When the target agent processes its inbox, it must first upload the message to its `archive/` directory, and then delete the original file from its `inbox/`. Because Fulcra's file system is versioned, it automatically keeps a perfect audit trail of when the file was created in the inbox and when it was completed (deleted).
 
-**CRITICAL ARCHIVAL RULE:** If the original file name in the inbox does not already start with a timestamp, the processing agent MUST prepend a timestamp (`YYYYMMDD-HHMMSS_`) to the filename when saving it to the `archive/` directory. This ensures the archive remains chronologically sortable even for files manually dropped by users.
+If the original file name in the inbox does not already start with a timestamp, the processing agent MUST prepend a timestamp (`YYYYMMDD-HHMMSS_`) to the filename when saving it to the `archive/` directory. This ensures the archive remains chronologically sortable even for files manually dropped by users.
 
 ### 3. Team Session and Task Tracking
 
