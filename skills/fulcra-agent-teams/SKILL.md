@@ -26,12 +26,14 @@ Agents can collaborate and share memory using a shared `team/<team-name>/` prefi
 Within a team's directory, the following OKF structure is used:
 - **`team/<team-name>/index.md`**: Directory listing of the team's concepts and members.
 - **`team/<team-name>/log.md`**: Chronological update history for the team namespace.
+- **`team/<team-name>/role.md`**: The team's high-level purpose, overall mission, and operational identity. Agents should populate this when a new team is created. Must include OKF YAML frontmatter.
 - **`team/<team-name>/progress.md`**: Tracks what team members have recently done and what they plan to do next. Must include OKF YAML frontmatter.
 - **`team/<team-name>/completed.md`**: A growing record of each high-level objective completed by the team. Must include OKF YAML frontmatter.
 - **`team/<team-name>/artifact/`**: Shared non-markdown output files, deliverables, or binaries created by the team.
 - **`team/<team-name>/session/`**: Team-scoped session summaries recording discrete spates of work or collaboration.
 - **`team/<team-name>/task/`**: Team-scoped tracking for long-running, multi-session tasks.
 - **`team/<team-name>/knowledge/`**: A flexible, open-ended OKF knowledge base where team members can store, organize, and retrieve any domain knowledge, rules, or reference material useful for the team's shared objectives.
+- **`team/<team-name>/member/<agent-name>/role.md`**: The specific role, duties, and identity of the member within the team (e.g., manager delegating tasks vs. worker receiving tasks). Created when an agent joins a team.
 - **`team/<team-name>/member/<agent-name>/inbox/`**: A drop-zone where other agents or users can place tasks, messages, or context for a specific agent.
 - **`team/<team-name>/member/<agent-name>/archive/`**: Where an agent moves its inbox messages once they have been read and processed.
 

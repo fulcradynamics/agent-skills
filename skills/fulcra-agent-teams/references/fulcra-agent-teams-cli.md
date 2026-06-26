@@ -37,7 +37,7 @@ uv tool run fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbo
 ```
 
 **Step C: Processing and Archiving a message**
-Once you have downloaded and read a message from your inbox, move it to the archive.
+Once you have downloaded and read a message from your inbox, move it to the archive. If the file was manually dropped and lacks a timestamp, **you must prepend one** (`YYYYMMDD-HHMMSS_`) when saving it to `archive/`.
 
 ```bash
 # 1. Download to read (if you haven't already)
@@ -91,6 +91,17 @@ echo "- [$(date +%Y-%m-%d)] <Objective summary>" >> /tmp/team_completed.md
 
 # 3. Upload the updated file back to Fulcra
 uv tool run fulcra-api file upload /tmp/team_completed.md "team/<team_name>/completed.md"
+```
+
+**Step C: Syncing Team and Member Roles**
+To ensure the team and its members understand their purpose and duties, maintain `role.md` files (with `type: Role` frontmatter).
+```bash
+# Update the overall team role
+uv tool run fulcra-api file upload /tmp/team-role.md "team/<team_name>/role.md"
+
+# Update your specific agent's role within the team
+uv tool run fulcra-api file upload /tmp/member-role.md "team/<team_name>/member/<your_agent_name>/role.md"
+```
 
 ## 4. Team Session and Task Tracking
 

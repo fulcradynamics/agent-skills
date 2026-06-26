@@ -33,7 +33,14 @@ Agents should run a progress sync periodically (e.g., triggered by `HEARTBEAT.md
 
 **PRIVACY REQUIREMENT:** Before uploading `progress.md`, the agent MUST ensure it is not inadvertently uploading new sensitive personal user data, credentials, or private internal reasoning. Minimize disclosures in `progress.md`.
 
-### 3. Session Summaries
+### 3. Agent Identity & Role
+The `role.md` file defines the agent's high-level purpose, duties, identity, and standard operating procedures.
+- It resides at `agent/<agent-name>/role.md`.
+- The agent is responsible for keeping this file up to date so that the user and other agents understand what this agent does and how it operates.
+- It must include OKF YAML frontmatter (`type: Role`).
+- Upload this directly to `agent/<agent-name>/role.md`.
+
+### 4. Session Summaries
 The `session/` subdirectory is used to record high-level summaries of what was accomplished during a specific spate of work or interaction.
 - When a work session concludes, or when asked to remember context, the agent writes a summary to a file in `memory/session/`.
 - Session files MUST be prefixed with a timestamp in the format `YYYYMMDD-HHMMSS` followed by an underscore and a short subject (e.g., `YYYYMMDD-HHMMSS_setup-dashboard.md`).
@@ -41,7 +48,7 @@ The `session/` subdirectory is used to record high-level summaries of what was a
 - Ensure the `session/` directory is listed in the top-level `index.md` with a high-level description. You do not need to index every individual session file in `index.md`.
 - Upload these session files directly to `agent/<agent-name>/session/<filename>.md`.
 
-### 4. Long-Running Tasks
+### 5. Long-Running Tasks
 The `task/` subdirectory is dedicated to longer-running tasks that span multiple sessions or interactions.
 - Create a file in `memory/task/` for any significant ongoing project or objective.
 - Task files must NOT be prefixed with a timestamp. They should simply be named for the task (e.g., `memory/task/setup-dashboard.md`).
@@ -49,7 +56,7 @@ The `task/` subdirectory is dedicated to longer-running tasks that span multiple
 - Task files should contain references to any relevant artifacts and session files related to the task.
 - Unlike session files, task files MUST be included in the `memory/task/index.md` file, which should list all active and completed tasks in the directory.
 
-### 5. General Knowledge Base
+### 6. General Knowledge Base
 The `knowledge/` subdirectory is an open-ended convention for agents to store, organize, and retrieve any other useful knowledge or reference material about the user, the agent's domain, or specific topics.
 - Because each user has different interests and requirements, this directory acts as a flexible knowledge base.
 - Files should be structured according to the OKF standard (using `index.md` files for subdirectories to aid in navigation and discovery).
@@ -57,7 +64,7 @@ The `knowledge/` subdirectory is an open-ended convention for agents to store, o
 - Ensure the `knowledge/` directory is listed in the top-level `index.md` so that the user and other agents know it exists.
 - This convention empowers agents to build a rich, personalized context over time without being artificially limited by standard tracking conventions.
 
-### 6. Personal Inbox
+### 7. Personal Inbox
 
 The `inbox/` subdirectory (`agent/<agent-name>/inbox/`) is used for asynchronous communication directed specifically to the agent (from users or other automated, non-team sources). 
 - To make it easy for users to manually drop files into the inbox, files placed here DO NOT need to adhere to a strict timestamp or subject naming convention (e.g., a user might just drop a file named `todo.md`).

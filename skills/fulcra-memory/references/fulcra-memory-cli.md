@@ -53,6 +53,13 @@ uv tool run fulcra-api file upload memory/log.md "agent/<agent_name>/log.md"
 uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/index.md"
 ```
 
+**Step C: Sync Identity & Role**
+If the agent's identity, duties, or standard operating procedures change, update the `role.md` file and upload it. Include OKF YAML frontmatter (`type: Role`).
+
+```bash
+uv tool run fulcra-api file upload memory/role.md "agent/<agent_name>/role.md"
+```
+
 ## 2. Saving Session Summaries
 
 When completing a spate of work or when asked to remember specific session context, generate a summary file in the `session/` directory and upload it.
