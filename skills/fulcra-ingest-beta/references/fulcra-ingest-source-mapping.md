@@ -22,7 +22,7 @@ The `source_map.md` file uses Markdown headings to separate detected sources. Un
 **Type**: `MomentAnnotation`
 **Original Annotation Name**: `Netflix Export`
 **Deterministic ID Fields**: `["Title", "Date"]`
-**Tagging Strategy**: Extract the base show title (before the colon) and apply it as a tag alongside `"video"` and `"entertainment"`. If genre metadata is present, apply those as tags as well.
+**Tagging Strategy**: Extract the base show title (before the colon) and apply it as a tag. If genre metadata is present, apply those as tags as well.
 
 ### Archived Locations
 - `ingest/_meta/archive/artifact/20260625-143000_NetflixViewingHistory.csv`
@@ -37,7 +37,7 @@ The `source_map.md` file uses Markdown headings to separate detected sources. Un
 **Type**: `DurationAnnotation`
 **Original Annotation Name**: `Spotify Export`
 **Deterministic ID Fields**: `["ts", "ms_played", "master_metadata_track_name"]`
-**Tagging Strategy**: Tag with `"music"`, `"audio"`, and `"entertainment"`. Include artist name as a tag if it can be reliably extracted.
+**Tagging Strategy**: Include artist name and genre as tags if they can be reliably extracted.
 
 ### Archived Locations
 - `ingest/_meta/archive/artifact/20260510-091500_spotify_history.json`
