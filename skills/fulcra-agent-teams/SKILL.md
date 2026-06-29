@@ -100,8 +100,9 @@ Agents can optionally check their inbox or perform team tasks automatically usin
 
 **Isolated Cron Jobs:**
 - **Require Consent:** You must explicitly ask the user for permission before creating any cron jobs for team tasks.
-- When setting up an isolated cron job for a team task, the `payload.message` (or `payload.text`) MUST explicitly instruct the agent to read the necessary context. 
-- **Rule:** The cron payload must say something like: "You are waking up to do X. Before starting, you MUST read `team/<team-name>/progress.md`, `team/<team-name>/role.md`, your specific `team/<team-name>/member/<agent-name>/role.md`, and your specific `team/<team-name>/member/<agent-name>/progress.md` to establish context."
+- When setting up an isolated cron job for a team task (such as periodically checking your inbox), the `payload.message` (or `payload.text`) MUST explicitly instruct the agent to read the necessary context. 
+- **Rule:** The cron payload must say something like: "You are waking up to check your inbox at `team/<team-name>/member/<agent-name>/inbox/` and process new tasks. Before starting, you MUST read `team/<team-name>/progress.md`, `team/<team-name>/role.md`, your specific `team/<team-name>/member/<agent-name>/role.md`, and your specific `team/<team-name>/member/<agent-name>/progress.md` to establish context."
+- Ensure any new tasks or messages discovered during the cron run are processed using the Inbox Lifecycle (archiving and deleting from the inbox).
 - This prevents agents from attempting to work in isolated sessions without knowing current team states or priorities.
 
 ## 6. Agent Local Memory Integration (MEMORY.md)
