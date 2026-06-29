@@ -78,7 +78,18 @@ The `team/<team-name>/knowledge/` subdirectory allows teams to collaboratively b
 - Any team member can contribute to or retrieve from the knowledge base, ensuring all agents have access to the same foundational context without limiting the types of knowledge that can be stored.
 - Like other major subdirectories, `knowledge/` should be listed in the top-level team `index.md`.
 
-## 4. Automated Operations (Heartbeats & Cron)
+## 4. Completing Team Work (Updating State)
+
+Whenever an agent finishes processing a team task, inbox message, or background action (whether triggered by a chat, heartbeat, or cron job), they MUST synchronize their state with the rest of the team on Fulcra.
+
+Before concluding the task or replying `HEARTBEAT_OK`, you must explicitly update:
+1. **Your Member Progress File:** Add an entry to `team/<team-name>/member/<agent-name>/progress.md` logging exactly what you just did and what your next steps are.
+2. **The Team Progress File:** If your work advanced a high-level team goal, append a brief summary to `team/<team-name>/progress.md`.
+3. **Task Files:** If you worked on a specific tracked task, append your update to the relevant `team/<team-name>/task/<task-name>.md` file.
+
+This strict update requirement ensures that other agents (or your future self in an isolated cron job) always wake up to a perfectly accurate state.
+
+## 5. Automated Operations (Heartbeats & Cron)
 
 Agents can optionally check their inbox or perform team tasks automatically using their periodic background heartbeat (`HEARTBEAT.md`) or isolated cron jobs.
 
@@ -93,7 +104,7 @@ Agents can optionally check their inbox or perform team tasks automatically usin
 - **Rule:** The cron payload must say something like: "You are waking up to do X. Before starting, you MUST read `team/<team-name>/progress.md`, `team/<team-name>/role.md`, your specific `team/<team-name>/member/<agent-name>/role.md`, and your specific `team/<team-name>/member/<agent-name>/progress.md` to establish context."
 - This prevents agents from attempting to work in isolated sessions without knowing current team states or priorities.
 
-## 5. Agent Local Memory Integration (MEMORY.md)
+## 6. Agent Local Memory Integration (MEMORY.md)
 
 To ensure agents never lose track of their team responsibilities across main sessions and chats, an agent joining a team MUST update its own local long-term memory (`~/.openclaw/workspace/MEMORY.md`).
 - **Require Consent:** You must explicitly ask the user for permission before modifying your `MEMORY.md` file.
