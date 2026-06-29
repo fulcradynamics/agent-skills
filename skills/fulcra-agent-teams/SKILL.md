@@ -82,7 +82,7 @@ The `team/<team-name>/knowledge/` subdirectory allows teams to collaboratively b
 
 Whenever an agent finishes processing a team task, inbox message, or background action (whether triggered by a chat, heartbeat, or cron job), they MUST synchronize their state with the rest of the team on Fulcra.
 
-Before concluding the task or replying `HEARTBEAT_OK`, you must explicitly update:
+Before concluding the task or replying `HEARTBEAT_OK`, in addition to following other fulcra-agent-teams processes you must explicitly update:
 1. **Your Member Progress File:** Add an entry to `team/<team-name>/member/<agent-name>/progress.md` logging exactly what you just did and what your next steps are.
 2. **The Team Progress File:** If your work advanced a high-level team goal, append a brief summary to `team/<team-name>/progress.md`.
 3. **Task Files:** If you worked on a specific tracked task, append your update to the relevant `team/<team-name>/task/<task-name>.md` file.
