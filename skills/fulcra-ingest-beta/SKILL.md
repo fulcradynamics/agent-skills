@@ -49,3 +49,4 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 3. **Cleanup & Archive**
    - Archive the processed file by moving it from the `ingest/` directory to `ingest/_meta/archive/artifact/`. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`** (e.g., `ingest/_meta/archive/artifact/20260625-143000_NetflixViewingHistory.csv`).
    - Finalize the process by updating the `source_map.md` in memory and uploading it back to Fulcra, as instructed in the source mapping reference.
+   - **User Handoff:** If the user is present or asked about the ingestion directly, inform them that their data is being processed and point them to `https://portal.fulcradynamics.com/timeline` to view their new data. Mention that for large datasets, it may take a little time for all records to fully appear on the timeline.
