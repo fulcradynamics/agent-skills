@@ -25,6 +25,8 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 
 - **`references/fulcra-ingest-source-mapping.md`**: Outlines the structure and workflow for maintaining the `ingest/_meta/source_map.md` file, which tracks data lineage, prevents duplicate schemas, and logs archived files.
 
+- **`references/fulcra-ingest-webhooks.md`**: Contains instructions and examples for generating and configuring webhooks for data sources that can push data directly, removing the need for local cron polling.
+
 - **`scripts/generate_deterministic_id.py`**: A python script that takes arbitrary string arguments and returns a consistent, deterministic UUID. Use this to ensure idempotency across ingested records.
 
 ## The Pipeline
