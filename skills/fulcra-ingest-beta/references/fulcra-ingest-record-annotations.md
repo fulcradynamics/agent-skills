@@ -39,6 +39,35 @@ curl -i -X POST \
 5. **`metadata.tags`**: Add tags to records to distinguish data *within* the annotation. **CRITICAL:** The API expects tags to be passed as their unique UUID strings, not as raw text (e.g., `["a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]`). Use the CLI (`uv tool run fulcra-api tag create "Tag Name"`) to create tags or get their existing UUIDs before recording. Do not use broad source-category tags (like "entertainment" or "shopping") because the annotation itself already provides that high-level grouping. Instead, use tags for a category division within the data source. For example, for Netflix or Spotify, you could tag by genre. For Amazon, tag by the item's product category (e.g., "Electronics", "Books"). The most specific data (like the actual song title or episode name) should be stored in the `"note"` field, not as a tag. This allows the user to quickly scan the categorical breakdown of the data within that specific schema. To ensure tags are applied consistently across future ingestions of the same source, the specific tagging method must be documented in the `source_map.md`.
 6. **`data`**: Must be a **stringified JSON string**. If the annotation is a **Metric** (like Numeric, Scale, or Boolean), it must contain a `"value"`. If the annotation is an **Event** (like Moment or Duration), it has no value, so this should just be an empty object `"{}"` or optionally contain a `"note"` (e.g., `"{\"note\":\"My custom note\"}"`).
 
+## Deleting Records & Data Correction
+
+If a user requests a correction to their data (e.g., they want to change the tagging scheme or the source data was mutated), you must delete the old records before re-ingesting them with new IDs, since the Fulcra backend does not currently support overwriting an existing record ID directly in this pipeline.
+
+Data is deleted by sending a `POST` request to the Fulcra Ingest API using the `DeletedRecord` data type.
+
+```json
+{
+  "metadata": {
+    "id": "<NEW_DETERMINISTIC_UUID_FOR_THIS_DELETION>",
+    "data_type": "DeletedRecord",
+    "tags": [],
+    "recorded_at": "2026-06-30T19:15:00Z",
+    "content_type": "application/json",
+    "source": [
+      "agent.hermes"
+    ]
+  },
+  "data": "{\"deleted_id\":\"<UUID_OF_RECORD_TO_DELETE>\",\"deleted_type\":\"<BASE_DATA_TYPE>\"}"
+}
+```
+
+**Deletion Rules:**
+1.  **`deleted_id`**: The exact UUID of the record you want to delete.
+2.  **`deleted_type`**: The base type of the record being deleted (e.g., `"MomentAnnotation"`, `"DurationAnnotation"`, `"NumericAnnotation"`). **Crucially:** Do NOT include the specific schema ID here. It must just be the base type.
+3.  **`metadata.id`**: Every deletion request is itself a record and needs its own unique `metadata.id`.
+
+*(Note: After deleting records, if you are re-ingesting the data to correct it, you MUST generate new deterministic UUIDs for the replacement records by incrementing the `Ingest Version` in the `source_map.md` and including it in your hashing function. See the source mapping reference for details.)*
+
 ### Examples
 
 #### 1. Duration Annotation (Spotify Stream)
