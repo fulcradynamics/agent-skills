@@ -19,7 +19,7 @@ Primary onboarding flow for new users connecting to the Fulcra environment. Fulc
 
 ## Workflow: Hub and Spoke Model
 
-The onboarding process follows a strict two-phase "Hub and Spoke" model. First, you get the user connected. Then, you present a menu of options and let the user choose what to do next.
+The onboarding process follows a strict three-phase model. First, you get the user connected. Second, you demonstrate immediate value ("Time-to-Wow") by modeling custom data and generating an embedded Canvas dashboard. Third, you present a menu of options and let the user choose what to do next.
 
 ### Phase 1: Core Setup (The Hub)
 
@@ -35,13 +35,30 @@ The onboarding process follows a strict two-phase "Hub and Spoke" model. First, 
    - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
    - Once authenticated, declare that the core onboarding is complete! Celebrate this milestone.
 
-### Phase 2: Next Steps (The Spokes)
+### Phase 2: The Time-to-Wow (Custom Tracking & Canvas Dashboard)
 
-Immediately after declaring the core onboarding complete, present the following menu of next steps to the user. Do not force them down any path automatically.
+Immediately after authentication, do not just give them a menu. Show them the power of Fulcra by building a custom data tracker and dashboard right inside the chat.
+
+1. **User Intent Discovery:** 
+   - Ask the user for one simple thing they'd like to track in their daily life (e.g., mood, cups of coffee, energy level, tasks completed).
+   - If they are unsure, suggest "Energy Level" (1-10) as a default.
+2. **Data Modeling:** 
+   - Use the `uv tool run fulcra-api data-type create` command to create the custom schema based on their choice (e.g. `uv tool run fulcra-api data-type create "EnergyLevel" "Number from 1-10 representing daily energy"`).
+3. **Record First Data:** 
+   - Ask for their current value for that metric and record it using a `curl` POST to the Ingest API (using `$(uv tool run fulcra-api auth print-access-token)` for auth).
+4. **The Canvas Demonstration:** 
+   - Generate a single-file HTML dashboard ("Single-Scroll Artifact") using Alpine.js and Vanilla CSS (and optionally D3.js) to visualize this new data concept. Make it beautiful and on-theme.
+   - **Crucial:** Save this file to the active Canvas profile root: `~/.openclaw/canvas/documents/fulcra-demo/index.html` (create the directory if it doesn't exist).
+   - Present the dashboard inline in the chat using the OpenClaw Canvas Embed tag: `[embed url="/__openclaw__/canvas/documents/fulcra-demo/index.html" title="Fulcra Data Demo" height="400" /]`
+   - Tell the user this is just a quick taste, and a fully interactive local web app can be built later.
+
+### Phase 3: Next Steps (The Spokes)
+
+After they experience the Canvas demonstration, present the following menu of next steps to the user. Do not force them down any path automatically.
 
 **Present this exact scannable menu to the user:**
 
-1.  📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
+1.  📊 **Advanced Dashboards & Agent Visibility:** Discover how to track complex data, agent visibility metrics, and build a permanent live dashboard web app.
 2.  📡 **Situational Awareness:** Enable your agent to proactively scan for recent updates, team messages, and new data.
 3.  🧠 **Agent Memory & Knowledge:** Record high-level knowledge, tasks, and progress directly to your Fulcra datastore.
 4.  🤝 **Agent Coordination:** Set up shared team namespaces so your different agents can coordinate tasks.
@@ -50,9 +67,9 @@ Immediately after declaring the core onboarding complete, present the following 
 
 **When the user makes a choice, follow the corresponding path below:**
 
-#### Path 1: Agent Visibility & Custom Tracking
-1. Explain that you can set up data schemas to track their custom data, as well as an "Agent Visibility Package" to record agent activities, and visualize it all on a custom HTML dashboard.
-2. If they consent and are interested, transition them to the `fulcradynamics/agent-skills/fulcra-tracking` skill.
+#### Path 1: Advanced Dashboards & Agent Visibility
+1. Explain that what they just saw was a quick preview. You can set up much more complex data schemas (including an "Agent Visibility Package" to track your own agent work) and generate a permanent, interactive React-based or Alpine-based web dashboard.
+2. If they consent and are interested, transition them to the `fulcradynamics/agent-skills/fulcra-dashboard` skill.
 
 #### Path 2: Situational Awareness
 1. Explain that you can set up a proactive habit where the agent checks Fulcra for new files, team messages, and recently ingested data at the start of new conversations, keeping it highly context-aware.
