@@ -67,7 +67,7 @@ Check if this source exists as a heading (`## com.netflix`) in the `source_map.m
 
 **If the source DOES NOT exist in the map:**
 - Fall back to the standard Idempotency Check (run `uvx fulcra-api catalog` to see if a schema was created manually by the user).
-- If still not found, create the new schema via `uvx fulcra-api data-type create`.
+- If still not found, create the new schema via `uvx fulcra-api data-type create` (always use `--add-to-timeline`).
 
 ### 3. Update & Upload
 After the records are successfully ingested and the raw file is moved to the archive:

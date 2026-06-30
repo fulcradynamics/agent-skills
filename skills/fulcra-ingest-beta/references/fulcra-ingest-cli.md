@@ -22,7 +22,7 @@ All command output, except for `auth`, is in JSON format and can be piped into t
 Fulcra supports creating custom schemas based on specific root "base types." You can create new schemas easily via the CLI.
 
 ```bash
-uv tool run fulcra-api data-type create <BASE_DATA_TYPE> "<NAME>" --description "<DESCRIPTION>"
+uv tool run fulcra-api data-type create <BASE_DATA_TYPE> "<NAME>" --description "<DESCRIPTION>" --add-to-timeline
 ```
 
 ### Base Data Types
@@ -37,16 +37,16 @@ The most common base types for 3rd-party data ingestion are:
 ### Creation Examples
 ```bash
 # Create a moment annotation for Netflix viewing history
-uv tool run fulcra-api data-type create MomentAnnotation "Netflix Export" --description "com.fulcradynamics.annotation.ingest.netflix"
+uv tool run fulcra-api data-type create MomentAnnotation "Netflix Export" --description "com.fulcradynamics.annotation.ingest.netflix" --add-to-timeline
 
 # Create a duration annotation for Spotify streams
-uv tool run fulcra-api data-type create DurationAnnotation "Spotify Export" --description "com.fulcradynamics.annotation.ingest.spotify"
+uv tool run fulcra-api data-type create DurationAnnotation "Spotify Export" --description "com.fulcradynamics.annotation.ingest.spotify" --add-to-timeline
 
 # Create a numeric annotation for Amazon purchases
-uv tool run fulcra-api data-type create NumericAnnotation "Amazon Purchase Export" --description "com.fulcradynamics.annotation.ingest.amazon"
+uv tool run fulcra-api data-type create NumericAnnotation "Amazon Purchase Export" --description "com.fulcradynamics.annotation.ingest.amazon" --add-to-timeline
 
 # Create a scale annotation for Letterboxd ratings
-uv tool run fulcra-api data-type create ScaleAnnotation "Letterboxd Export" --description "com.fulcradynamics.annotation.ingest.letterboxd"
+uv tool run fulcra-api data-type create ScaleAnnotation "Letterboxd Export" --description "com.fulcradynamics.annotation.ingest.letterboxd" --add-to-timeline
 ```
 
 The `create` command will output the JSON definition of the new data type. Make sure to capture the returned `"id"` value (e.g., `com.fulcradynamics.annotation.12345`), as you will need it to record data against this schema.
