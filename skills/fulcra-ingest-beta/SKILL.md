@@ -30,7 +30,7 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 ## The Pipeline
 
 0. **The Fetcher (API/CLI Extraction)** *(If applicable)*
-   - **Proactive Notification:** When interacting with a new user or if no file has been uploaded yet, politely inform them of this capability: let them know you can process manual file uploads OR automatically extract data from accessible APIs, local services, and CLI tools (like GitHub) on their behalf.
+   - **Proactive Notification:** When interacting with a new user or if no file has been uploaded yet, politely inform them of this capability: let them know you can process manual file uploads OR automatically extract data from accessible APIs, local services, and CLI tools (like GitHub) on their behalf. You can also provide them with the direct link to the `ingest` directory in the Fulcra web dashboard (https://context.fulcradynamics.com/library/files/ingest) so they can easily drop files there if it's more convenient.
    - If the user requests to ingest data from an API, CLI tool, or local service rather than pointing to a pre-uploaded file, first fetch the data programmatically.
    - Save the fetched data to a structured file (e.g., CSV or JSON) in the local workspace.
    - Upload the file to the Fulcra File Store drop-zone using `uvx fulcra-api file upload <local_file> ingest/<filename>`.
@@ -50,4 +50,4 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
 3. **Cleanup & Archive**
    - Archive the processed file by moving it from the `ingest/` directory to `ingest/_meta/archive/artifact/`. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`** (e.g., `ingest/_meta/archive/artifact/20260625-143000_NetflixViewingHistory.csv`).
    - Finalize the process by updating the `source_map.md` in memory and uploading it back to Fulcra, as instructed in the source mapping reference.
-   - **User Handoff:** Remind the user that if they ever want to change the tagging scheme or fix a mistake, they can simply ask you to correct the data and you will automatically handle the deletion and re-ingestion.
+   - **User Handoff:** If the user is present or asked about the ingestion directly, inform them that their data is being processed and point them to `https://context.fulcradynamics.com/timeline?mode=week&date=YYYY-MM-DD` to view their new data, where `YYYY-MM-DD` is calculated as six days *before* the latest `recorded_at` value in the ingested dataset (this ensures the week view includes the newest data point). Mention that for large datasets, it may take a little time for all records to fully appear on the timeline. Remind the user that if they ever want to change the tagging scheme or fix a mistake, they can simply ask you to correct the data and you will automatically handle the deletion and re-ingestion.
