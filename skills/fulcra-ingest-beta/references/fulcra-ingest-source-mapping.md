@@ -22,6 +22,7 @@ The `source_map.md` file uses Markdown headings to separate detected sources. Un
 **Type**: `MomentAnnotation`
 **Original Annotation Name**: `Netflix Export`
 **Deterministic ID Fields**: `["Title", "Date"]`
+**Tagging Strategy**: Extract the genre if available and apply it as a tag. (The specific show title is stored in the note, not as a tag).
 
 ### Archived Locations
 - `ingest/_meta/archive/artifact/20260625-143000_NetflixViewingHistory.csv`
@@ -36,6 +37,7 @@ The `source_map.md` file uses Markdown headings to separate detected sources. Un
 **Type**: `DurationAnnotation`
 **Original Annotation Name**: `Spotify Export`
 **Deterministic ID Fields**: `["ts", "ms_played", "master_metadata_track_name"]`
+**Tagging Strategy**: Extract the genre if it can be reliably extracted and apply it as a tag. (The specific artist name and song title are stored in the note, not as a tag).
 
 ### Archived Locations
 - `ingest/_meta/archive/artifact/20260510-091500_spotify_history.json`
@@ -70,7 +72,7 @@ Check if this source exists as a heading (`## com.netflix`) in the `source_map.m
 ### 3. Update & Upload
 After the records are successfully ingested and the raw file is moved to the archive:
 - Update the `source_map.md` in memory.
-  - If it was a new source, append a new `## <source>` section with the required properties, including the `**Deterministic ID Fields**` (the specific columns/keys you used alongside the source identifier to calculate the UUIDs), and an empty Notes section.
+  - If it was a new source, append a new `## <source>` section with the required properties, including the `**Deterministic ID Fields**` (the specific columns/keys you used alongside the source identifier to calculate the UUIDs), the `**Tagging Strategy**` used, and an empty Notes section.
   - Always append the new archive path as a list item under `### Archived Locations` for that source.
   - Add any helpful insights about the file format to the `### Notes` section.
 - Save the Markdown file locally and upload it back to Fulcra using `uvx fulcra-api file upload ./source_map.md ingest/_meta/source_map.md`, overwriting the previous version.

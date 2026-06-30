@@ -59,6 +59,20 @@ uv tool run fulcra-api catalog --user-only
 ```
 This is useful when discovering if a schema already exists for a requested metric before trying to create a new one.
 
+## Creating and Managing Tags
+
+Fulcra supports adding tags to records to distinguish data within an annotation. The API expects tags to be passed as their unique UUID strings, not as raw text. Therefore, you must create or retrieve tags before using them in record payloads.
+
+```bash
+# Create one or more case-insensitive tags
+uv tool run fulcra-api tag create "Tag Name 1" "Tag Name 2"
+
+# List existing user-defined tags (to find their UUIDs)
+uv tool run fulcra-api tag list
+```
+
+The `create` command will output the JSON definitions of the created tags, including their UUID `"id"`. If a tag already exists, the command will safely return the existing tag's UUID. Make sure to capture the returned UUIDs to include them in the `"tags"` array when recording data.
+
 ## Recording Data
 
 Once you have the `"id"` of a custom data type (e.g., `com.fulcradynamics.annotation.xyz`), you can record data to it by following the instructions in the `fulcra-ingest-record-annotations.md` reference file.
