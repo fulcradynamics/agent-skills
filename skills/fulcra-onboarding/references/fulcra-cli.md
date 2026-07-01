@@ -17,15 +17,22 @@ uv tool run fulcra-api
 
 Use the `auth login` subcommand to authenticate to Fulcra on behalf of a user.
 
-The `fulcra-api auth login` command is a blocking command. It will poll for a valid token and will *not* complete until the user finishes the authorization flow in their browser (or until it hits a two-minute timeout). Because it blocks, **you must run it as a background process or allow it to yield, then read its active output stream to extract the authentication URL and code.** Do not wait for the command to finish before sending the URL to the user, or the authentication will time out and fail.
+The `fulcra-api auth login` command should be run in a two-step process to avoid hanging and timing out while waiting for the user. 
 
+**Step 1: Get the Auth URL**
+Run the command with the `--get-auth-url` flag. It will immediately return a web auth URL, a user verification code, and a device code.
 ```
-uv tool run fulcra-api auth login
+uv tool run fulcra-api auth login --get-auth-url
+```
+You must extract the URL and user code and present them to the user so they can complete the flow in their browser. Keep the device code for the next step. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
+
+**Step 2: Complete Authentication**
+After the user confirms they have completed the flow in their browser, finish the login process by passing the device code. We pass `--poll-timeout=5` so the command fails quickly if there is a miscommunication about whether the flow is actually finished.
+```
+uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
 
-While running and polling, this will print a URL that you should direct the user to load in their browser, and a unique code that they should ensure matches the code displayed in their browser. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
-
-**Network Restrictions:** If this command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and advise them on the MCP Connector option.
+**Network Restrictions:** If the login command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and advise them on the MCP Connector option.
 
 Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials.json` and the tool will refresh access tokens as neccessary.
 
@@ -47,7 +54,9 @@ All date/time fields are returned in ISO 8601 format, time zone aware, and in UT
 
 Authenticate to the API:
 ```
-uv tool run fulcra-api auth login
+uv tool run fulcra-api auth login --get-auth-url
+# ... present url/code to user, then ...
+uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
 
 Get list of Fulcra data type identifiers:
