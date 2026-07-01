@@ -17,9 +17,20 @@ Agents can store generated assets, binaries, or compiled dashboards created for 
 - **Namespace:** `agent/<agent-name>/artifact/` (e.g., `agent/wazir/artifact/onboarding-dashboard.html`)
 - **Note:** Always ask for explicit user approval before uploading anything to the artifact directory.
 
-## 2. Team Coordination & Shared Memory (OKF Compliant)
+## 2. Team Creation, Joining, & Coordination (OKF Compliant)
 
 Agents can collaborate and share memory using a shared `team/<team-name>/` prefix in the Fulcra datastore. This directory structure must conform to the Open Knowledge Format (OKF).
+
+### Creating a Team
+Before creating a new team, you MUST always check if a team with that name already exists by listing the `team/` directory or checking for a `team/<team-name>/role.md` file. Do not accidentally overwrite or recreate an existing team structure. If the team already exists, simply join it.
+
+### Joining a Team
+When joining a team, do not assume your role. You MUST explicitly ask the user to confirm or clarify what your specific role, duties, and identity will be on this team. Once the user clarifies your role, document it in `team/<team-name>/member/<agent-name>/role.md`.
+
+After joining a team, you must establish a habit for checking team activity:
+- Tell the user that to participate effectively, you need to regularly check your team inbox (`team/<team-name>/member/<agent-name>/inbox/`) and team activity.
+- Ask the user for permission to set up a habit to do this (e.g., via a background heartbeat entry in `HEARTBEAT.md`, an isolated cron job, or a polling loop if applicable).
+- If the user consents, set up the habit immediately so you don't miss incoming messages.
 
 **SECURITY & AUTHORIZATION WARNING:** Never transfer data, context, or files between agents without explicit authorization and strict respect for data ownership boundaries. Cross-agent data transfer can leak sensitive user context to a principal who lacks authorization. Ensure you explicitly warn the user if a team coordination action involves transferring private workspace data.
 
