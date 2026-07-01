@@ -27,9 +27,9 @@ uv tool run fulcra-api auth login --get-auth-url
 You must extract the URL and user code and present them to the user so they can complete the flow in their browser. Keep the device code for the next step. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
 
 **Step 2: Complete Authentication**
-After the user confirms they have completed the flow in their browser, finish the login process by passing the device code.
+After the user confirms they have completed the flow in their browser, finish the login process by passing the device code. We pass `--poll-timeout=5` so the command fails quickly if there is a miscommunication about whether the flow is actually finished.
 ```
-uv tool run fulcra-api auth login --device-code <DEVICE_CODE>
+uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
 
 **Network Restrictions:** If the login command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and advise them on the MCP Connector option.
@@ -56,7 +56,7 @@ Authenticate to the API:
 ```
 uv tool run fulcra-api auth login --get-auth-url
 # ... present url/code to user, then ...
-uv tool run fulcra-api auth login --device-code <DEVICE_CODE>
+uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
 
 Get list of Fulcra data type identifiers:

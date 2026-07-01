@@ -19,7 +19,7 @@ This reference handles Step 2 of the onboarding process, securely establishing t
    - You **MUST** present the URL and the user code directly to the user in your chat message as a clickable markdown link where the URL itself is the text (e.g., `[https://...](https://...)`), tell them the user code, and tell them to complete the flow in their browser.
    - **Important:** Keep the device code secret/safe; you will need it for the next step. Do *not* combine the authentication instructions with further brainstorming.
    - Wait for the user to confirm they have completed the flow in their browser.
-   - Once they confirm, run `uv tool run fulcra-api auth login --device-code <DEVICE CODE>` to complete the authentication process.
+   - Once they confirm, run `uv tool run fulcra-api auth login --device-code <DEVICE CODE> --poll-timeout=5` to complete the authentication process. The timeout ensures the command fails quickly if they haven't actually completed the flow.
 
 2. **Completion:**
    - Once the device code login succeeds (or if they were already authenticated), declare the core onboarding complete!
