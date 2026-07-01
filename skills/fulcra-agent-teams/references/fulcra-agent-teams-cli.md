@@ -7,6 +7,11 @@ description: "CLI command references for executing artifact uploads and team inb
 
 This reference dictates the exact shell commands required to execute the `fulcra-agent-teams` skill's operations. Ensure all CLI operations run in the agent's workspace.
 
+## Authentication Note
+If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
+1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+
 ## 1. Checking Recent Team File Changes
 
 To quickly check for recent updates across a team's namespaces without listing individual directories:

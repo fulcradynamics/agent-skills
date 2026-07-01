@@ -7,6 +7,11 @@ description: "CLI command references for executing situational awareness scans o
 
 This reference dictates the exact shell commands required to execute the `fulcra-situational-awareness` skill's operations. Ensure all CLI operations run in the agent's workspace.
 
+## Authentication Note
+If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
+1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+
 ## 1. Checking Recent File Updates and Processed Data
 
 Fulcra can summarize all recent data ingestion and file changes across the datastore in a single command. This is the fastest way to gain situational awareness.
