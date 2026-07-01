@@ -68,7 +68,7 @@ Once you're connected, your agent will offer five directions to go:
 
 `skills/fulcra-tracking/`
 
-Use this skill to tell your agent what you want to track — mood, workouts, habits, anything — and it will create the data schema, record your first entry, and generate a visual dashboard to show you the results.
+Use this skill to tell your agent what you want to track — market data, mood, workouts, habits, anything — and it will create the data schema, record your first entry, and generate a visual dashboard to show you the results.
 
 Also includes the Universal Agent Visibility Package: a set of schemas so you can see what your agent has been working on alongside your personal data.
 
