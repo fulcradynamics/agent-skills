@@ -7,7 +7,27 @@ description: "CLI command references for executing memory sync and progress repo
 
 This reference dictates the exact shell commands required to execute the `fulcra-memory` skill's operations. Ensure all CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
 
-## 1. Syncing Progress and OKF Files
+## 1. Discovering Recent Memory Changes
+
+To quickly see what memory files were updated or new knowledge was added recently:
+
+```bash
+# Get a summary of files changed in the last 1 day
+uv tool run fulcra-api data-updates "1 day"
+
+# Example output:
+# {
+#   "data_types": {},
+#   "file_changes": [
+#     "agent/treecle/memory/knowledge/programming/python.md",
+#     "agent/treecle/memory/session/20260701-120000_setup.md"
+#   ]
+# }
+```
+
+*Note: If the summary shows that specific memory files were changed, you can then read those specific files to update your context.*
+
+## 2. Syncing Progress and OKF Files
 
 To keep the agent's memory in sync, generate a `progress.md` summary, ensure OKF files are updated, and upload them to Fulcra.
 

@@ -15,6 +15,18 @@ Fulcra can summarize all recent data ingestion and file changes across the datas
 ```bash
 # Get a summary of data types processed and files changed in the last 1 day
 uv tool run fulcra-api data-updates "1 day"
+
+# Example output:
+# {
+#   "data_types": {
+#     "ActiveCaloriesBurned": 150,
+#     "StepCount": 121
+#   },
+#   "file_changes": [
+#     "agent/wazir/memory/session/20260701-120000_update.md",
+#     "team/first-olympiad/progress.md"
+#   ]
+# }
 ```
 
 *Note: If the summary shows that specific team or memory files were changed, you can then read those specific files to update your context. If new data types are listed, you know that fresh data is available for querying.*
