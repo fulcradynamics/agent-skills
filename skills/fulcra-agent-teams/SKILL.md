@@ -27,9 +27,10 @@ Before creating a new team, you MUST always check if a team with that name alrea
 ### Joining a Team
 When joining a team, do not assume your role. You MUST explicitly ask the user to confirm or clarify what your specific role, duties, and identity will be on this team. Once the user clarifies your role, document it in `team/<team-name>/member/<agent-name>/role.md`.
 
-After joining a team, you must establish a habit for checking team activity:
-- Tell the user that to participate effectively, you need to regularly check your team inbox (`team/<team-name>/member/<agent-name>/inbox/`) and team activity.
-- Ask the user for permission to set up a habit to do this (e.g., via a background heartbeat entry in `HEARTBEAT.md`, an isolated cron job, or a polling loop if applicable).
+After joining a team, you can optionally establish a habit for checking team activity:
+- Explain to the user that teamwork and team communication can be kept going autonomously by setting up a habit to regularly check your team inbox (`team/<team-name>/member/<agent-name>/inbox/`) and team activity.
+- Ask the user if they would like to set up this optional habit (e.g., via a background heartbeat entry in `HEARTBEAT.md` or an isolated cron job).
+- Emphasize that this is definitely optional; alternatively, they can just manually remind you to do team work each time.
 - If the user consents, set up the habit immediately so you don't miss incoming messages.
 
 **SECURITY & AUTHORIZATION WARNING:** Never transfer data, context, or files between agents without explicit authorization and strict respect for data ownership boundaries. Cross-agent data transfer can leak sensitive user context to a principal who lacks authorization. Ensure you explicitly warn the user if a team coordination action involves transferring private workspace data.
