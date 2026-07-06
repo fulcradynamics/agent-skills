@@ -37,6 +37,7 @@ Data methods:
 
 - `catalog(base_types_only=False)`
 - `user_info()`
+- `data_updates(period)`
 - `get_records(data_type, time_range)`
 - `get_records_dataframe(data_type, time_range)`
 - `metric_time_series(data_type, time_range)`
@@ -48,15 +49,17 @@ File Store helpers:
 - `file_stat(path)`
 - `file_download(remote_path, local_path)`
 - `file_upload(local_path, remote_path)`
+- `file_delete(remote_path)`
 
 ## Error handling
 
 `FulcraClientError` is raised when:
 
 - the CLI exits with a non-zero status,
+- the CLI subprocess exceeds the configured timeout,
 - JSON parsing fails for a method expected to return JSON.
 
-Error messages include the command and stderr/stdout snippet to aid debugging without hiding the underlying Fulcra CLI failure.
+Error messages include the command and stderr/stdout snippet (or timeout value) to aid debugging without hiding the underlying Fulcra CLI failure.
 
 ## DataFrame integration
 
