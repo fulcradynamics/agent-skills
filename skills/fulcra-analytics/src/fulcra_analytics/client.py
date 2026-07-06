@@ -51,19 +51,25 @@ class FulcraClient:
         """Run a Fulcra CLI command and return the completed process.
 
         Raises:
-            FulcraClientError: if the command exits non-zero.
+            FulcraClientError: if the command exits non-zero or times out.
         """
 
         cmd = self.command(args)
-        result = subprocess.run(
-            cmd,
-            text=True,
-            capture_output=True,
-            timeout=self.timeout if timeout is None else timeout,
-            check=False,
-            env=None if self.env is None else dict(self.env),
-            cwd=None if self.cwd is None else str(self.cwd),
-        )
+        effective_timeout = self.timeout if timeout is None else timeout
+        try:
+            result = subprocess.run(
+                cmd,
+                text=True,
+                capture_output=True,
+                timeout=effective_timeout,
+                check=False,
+                env=None if self.env is None else dict(self.env),
+                cwd=None if self.cwd is None else str(self.cwd),
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise FulcraClientError(
+                f"fulcra-api command timed out after {effective_timeout} seconds: {' '.join(cmd)}"
+            ) from exc
         if result.returncode != 0:
             detail = (result.stderr or result.stdout).strip()
             raise FulcraClientError(
@@ -108,6 +114,11 @@ class FulcraClient:
 
         return self.json(["user-info"])
 
+    def data_updates(self, period: str) -> Any:
+        """Return Fulcra data and file updates for a natural-language period."""
+
+        return self.json(["data-updates", period])
+
     def get_records(self, data_type: str, time_range: str) -> Any:
         """Return raw JSON records for a Fulcra data type over a time range."""
 
@@ -150,6 +161,11 @@ class FulcraClient:
         """Upload a local file to Fulcra File Store and return CLI stdout."""
 
         return self.text(["file", "upload", str(local_path), remote_path])
+
+    def file_delete(self, remote_path: str) -> str:
+        """Delete a Fulcra File Store object and return CLI stdout."""
+
+        return self.text(["file", "delete", remote_path])
 
 
 def default_client() -> FulcraClient:

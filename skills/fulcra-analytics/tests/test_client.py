@@ -1,6 +1,5 @@
 import json
 import subprocess
-from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -104,3 +103,33 @@ def test_file_upload_invokes_cli(monkeypatch, tmp_path):
     monkeypatch.setattr(subprocess, "run", fake_run)
 
     assert FulcraClient().file_upload(source, "analytics/report.md") == "uploaded"
+
+
+def test_file_delete_invokes_cli(monkeypatch):
+    def fake_run(cmd, **kwargs):
+        assert cmd[-3:] == ["file", "delete", "team/example/inbox/message.md"]
+        return completed("deleted")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    assert FulcraClient().file_delete("team/example/inbox/message.md") == "deleted"
+
+
+def test_data_updates_invokes_cli_with_period(monkeypatch):
+    def fake_run(cmd, **kwargs):
+        assert cmd[-2:] == ["data-updates", "1 day"]
+        return completed(json.dumps([{"path": "team/example/progress.md"}]))
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    assert FulcraClient().data_updates("1 day") == [{"path": "team/example/progress.md"}]
+
+
+def test_timeout_is_wrapped_as_client_error(monkeypatch):
+    def fake_run(cmd, **kwargs):
+        raise subprocess.TimeoutExpired(cmd=cmd, timeout=kwargs["timeout"])
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    with pytest.raises(FulcraClientError, match="timed out after 120 seconds"):
+        FulcraClient().json(["catalog"])
