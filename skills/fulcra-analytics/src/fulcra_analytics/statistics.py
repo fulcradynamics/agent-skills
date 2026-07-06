@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from typing import Any
 import warnings
@@ -299,20 +299,20 @@ def summarize_records(records: list[dict[str, Any]]) -> SummaryResult:
     numeric_values: dict[str, list[float]] = {field: [] for field in fields}
 
     for record in records:
-        for field in fields:
-            value = record.get(field)
+        for field_name in fields:
+            value = record.get(field_name)
             if _is_missing(value):
-                missing[field] += 1
+                missing[field_name] += 1
             numeric = _as_float(value)
             if numeric is not None:
-                numeric_values[field].append(numeric)
+                numeric_values[field_name].append(numeric)
 
     numeric: dict[str, dict[str, float]] = {}
-    for field, values in numeric_values.items():
+    for field_name, values in numeric_values.items():
         if not values:
             continue
         array = np.array(values, dtype=float)
-        numeric[field] = {
+        numeric[field_name] = {
             "count": float(len(values)),
             "min": float(array.min()),
             "max": float(array.max()),
@@ -320,3 +320,176 @@ def summarize_records(records: list[dict[str, Any]]) -> SummaryResult:
         }
 
     return SummaryResult(row_count=len(records), fields=fields, numeric=numeric, missing=missing)
+
+
+def _numeric_series(df: pd.DataFrame, column: str) -> pd.Series:
+    if column not in df.columns:
+        raise KeyError(f"column not found: {column}")
+    values = pd.to_numeric(df[column], errors="coerce").dropna()
+    if values.empty:
+        raise ValueError(f"column has no numeric values: {column}")
+    return values.astype(float)
+
+
+def central_tendency(df: pd.DataFrame, column: str) -> dict[str, Any]:
+    """Return central tendency statistics for a numeric DataFrame column."""
+
+    values = _numeric_series(df, column)
+    return {
+        "column": column,
+        "count": int(values.count()),
+        "mean": float(values.mean()),
+        "median": float(values.median()),
+        "mode": [float(value) for value in values.mode().tolist()],
+        "min": float(values.min()),
+        "max": float(values.max()),
+    }
+
+
+def variance_summary(df: pd.DataFrame, column: str) -> dict[str, Any]:
+    """Return variance and spread statistics for a numeric DataFrame column."""
+
+    values = _numeric_series(df, column)
+    q1 = float(values.quantile(0.25))
+    q3 = float(values.quantile(0.75))
+    return {
+        "column": column,
+        "count": int(values.count()),
+        "variance": None if len(values) < 2 else float(values.var(ddof=1)),
+        "std": None if len(values) < 2 else float(values.std(ddof=1)),
+        "population_variance": float(values.var(ddof=0)),
+        "population_std": float(values.std(ddof=0)),
+        "range": float(values.max() - values.min()),
+        "iqr": q3 - q1,
+    }
+
+
+def _model_frame(df: pd.DataFrame, *, target: str, features: Sequence[str]) -> pd.DataFrame:
+    columns = [*features, target]
+    missing = [column for column in columns if column not in df.columns]
+    if missing:
+        raise KeyError(f"column(s) not found: {missing}")
+    model_df = df[columns].apply(pd.to_numeric, errors="coerce").dropna()
+    if model_df.empty:
+        raise ValueError("no complete numeric rows available for model fitting")
+    return model_df
+
+
+def period_trend(
+    df: pd.DataFrame,
+    *,
+    value_column: str,
+    time_column: str,
+) -> dict[str, Any]:
+    """Fit a simple linear trend for a value over time.
+
+    The returned slope is expressed in value units per day.
+    """
+
+    if time_column not in df.columns:
+        raise KeyError(f"column not found: {time_column}")
+    if value_column not in df.columns:
+        raise KeyError(f"column not found: {value_column}")
+
+    model_df = pd.DataFrame(
+        {
+            time_column: pd.to_datetime(df[time_column], errors="coerce", utc=True),
+            value_column: pd.to_numeric(df[value_column], errors="coerce"),
+        }
+    ).dropna()
+    if len(model_df) < 2:
+        raise ValueError("period_trend requires at least two complete observations")
+
+    elapsed_days = (
+        (model_df[time_column] - model_df[time_column].min()).dt.total_seconds() / 86400.0
+    ).to_numpy().reshape(-1, 1)
+    y = model_df[value_column].to_numpy(dtype=float)
+
+    from sklearn.linear_model import LinearRegression
+
+    regressor = LinearRegression().fit(elapsed_days, y)
+    predictions = regressor.predict(elapsed_days)
+    return {
+        "time_column": time_column,
+        "value_column": value_column,
+        "count": int(len(model_df)),
+        "slope_per_day": float(regressor.coef_[0]),
+        "intercept": float(regressor.intercept_),
+        "r2": float(regressor.score(elapsed_days, y)),
+        "start": float(predictions[0]),
+        "end": float(predictions[-1]),
+        "start_time": model_df[time_column].iloc[0].isoformat(),
+        "end_time": model_df[time_column].iloc[-1].isoformat(),
+    }
+
+
+def linear_regression(
+    df: pd.DataFrame,
+    *,
+    target: str,
+    features: Sequence[str],
+) -> dict[str, Any]:
+    """Fit a scikit-learn LinearRegression model and return JSON-safe diagnostics."""
+
+    if not features:
+        raise ValueError("linear_regression requires at least one feature")
+    model_df = _model_frame(df, target=target, features=features)
+    x = model_df[list(features)].to_numpy(dtype=float)
+    y = model_df[target].to_numpy(dtype=float)
+
+    from sklearn.linear_model import LinearRegression
+
+    regressor = LinearRegression().fit(x, y)
+    predictions = regressor.predict(x)
+    return {
+        "target": target,
+        "features": list(features),
+        "count": int(len(model_df)),
+        "intercept": float(regressor.intercept_),
+        "coefficients": {
+            feature: float(coefficient) for feature, coefficient in zip(features, regressor.coef_)
+        },
+        "r2": float(regressor.score(x, y)),
+        "predictions": [float(value) for value in predictions.tolist()],
+    }
+
+
+def lasso_feature_selection(
+    df: pd.DataFrame,
+    *,
+    target: str,
+    features: Sequence[str],
+    alpha: float = 1.0,
+    max_iter: int = 10000,
+) -> dict[str, Any]:
+    """Fit a scikit-learn Lasso model and report non-zero selected features."""
+
+    if not features:
+        raise ValueError("lasso_feature_selection requires at least one feature")
+    model_df = _model_frame(df, target=target, features=features)
+    x = model_df[list(features)].to_numpy(dtype=float)
+    y = model_df[target].to_numpy(dtype=float)
+
+    from sklearn.linear_model import Lasso
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    pipeline = make_pipeline(StandardScaler(), Lasso(alpha=alpha, max_iter=max_iter))
+    pipeline.fit(x, y)
+    regressor = pipeline.named_steps["lasso"]
+    coefficients = {
+        feature: float(coefficient) for feature, coefficient in zip(features, regressor.coef_)
+    }
+    predictions = pipeline.predict(x)
+    selected = [feature for feature, coefficient in coefficients.items() if abs(coefficient) > 1e-9]
+    return {
+        "target": target,
+        "features": list(features),
+        "count": int(len(model_df)),
+        "alpha": float(alpha),
+        "intercept": float(regressor.intercept_),
+        "coefficients": coefficients,
+        "selected_features": selected,
+        "r2": float(pipeline.score(x, y)),
+        "predictions": [float(value) for value in predictions.tolist()],
+    }

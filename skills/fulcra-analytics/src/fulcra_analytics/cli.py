@@ -15,7 +15,7 @@ from typing import Annotated, Any
 import typer
 from rich.console import Console
 
-from .client import FulcraClient, FulcraClientError, default_client
+from .client import FulcraClientError, default_client
 from .loader import load_dataframe
 from .statistics import summarize_dataframe
 

@@ -1,0 +1,694 @@
+{
+  "source": "com.fulcradynamics.synthetic.first_olympiad.ml_stats.v1",
+  "schemas": {
+    "sleep_hours": {
+      "source_id": "com.fulcradynamics.annotation.d13366e5-0822-45ef-b793-3ef2fc37b56c",
+      "label": "Synthetic Sleep Hours"
+    },
+    "focus_minutes": {
+      "source_id": "com.fulcradynamics.annotation.67ef1611-d29e-4539-9a47-007e7f82f239",
+      "label": "Synthetic Focus Minutes"
+    },
+    "daily_steps": {
+      "source_id": "com.fulcradynamics.annotation.166dc7ae-b9c1-48d8-a95d-8de60dc4e39a",
+      "label": "Synthetic Daily Steps"
+    }
+  },
+  "rows": [
+    {
+      "date": "2026-05-01",
+      "timestamp": "2026-05-01T08:00:00Z",
+      "sleep_hours": 7.06,
+      "daily_steps": 7234,
+      "focus_minutes": 377.0,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-02",
+      "timestamp": "2026-05-02T08:00:00Z",
+      "sleep_hours": 7.79,
+      "daily_steps": 9833,
+      "focus_minutes": 394.0,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-03",
+      "timestamp": "2026-05-03T08:00:00Z",
+      "sleep_hours": 7.85,
+      "daily_steps": 10582,
+      "focus_minutes": 417.7,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-04",
+      "timestamp": "2026-05-04T08:00:00Z",
+      "sleep_hours": 7.14,
+      "daily_steps": 7747,
+      "focus_minutes": 386.6,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-05",
+      "timestamp": "2026-05-05T08:00:00Z",
+      "sleep_hours": 6.74,
+      "daily_steps": 6895,
+      "focus_minutes": 384.6,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-06",
+      "timestamp": "2026-05-06T08:00:00Z",
+      "sleep_hours": 6.56,
+      "daily_steps": 6178,
+      "focus_minutes": 365.8,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-07",
+      "timestamp": "2026-05-07T08:00:00Z",
+      "sleep_hours": 6.77,
+      "daily_steps": 6055,
+      "focus_minutes": 365.4,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-08",
+      "timestamp": "2026-05-08T08:00:00Z",
+      "sleep_hours": 6.45,
+      "daily_steps": 7799,
+      "focus_minutes": 355.6,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-09",
+      "timestamp": "2026-05-09T08:00:00Z",
+      "sleep_hours": 7.49,
+      "daily_steps": 10012,
+      "focus_minutes": 362.7,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-10",
+      "timestamp": "2026-05-10T08:00:00Z",
+      "sleep_hours": 8.56,
+      "daily_steps": 10301,
+      "focus_minutes": 402.4,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-11",
+      "timestamp": "2026-05-11T08:00:00Z",
+      "sleep_hours": 7.11,
+      "daily_steps": 8013,
+      "focus_minutes": 385.8,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-12",
+      "timestamp": "2026-05-12T08:00:00Z",
+      "sleep_hours": 6.66,
+      "daily_steps": 6707,
+      "focus_minutes": 335.3,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-13",
+      "timestamp": "2026-05-13T08:00:00Z",
+      "sleep_hours": 6.37,
+      "daily_steps": 6506,
+      "focus_minutes": 333.2,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-14",
+      "timestamp": "2026-05-14T08:00:00Z",
+      "sleep_hours": 6.62,
+      "daily_steps": 6616,
+      "focus_minutes": 364.9,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-15",
+      "timestamp": "2026-05-15T08:00:00Z",
+      "sleep_hours": 6.55,
+      "daily_steps": 7022,
+      "focus_minutes": 369.2,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-16",
+      "timestamp": "2026-05-16T08:00:00Z",
+      "sleep_hours": 7.52,
+      "daily_steps": 9588,
+      "focus_minutes": 381.3,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-17",
+      "timestamp": "2026-05-17T08:00:00Z",
+      "sleep_hours": 7.7,
+      "daily_steps": 9766,
+      "focus_minutes": 380.9,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-18",
+      "timestamp": "2026-05-18T08:00:00Z",
+      "sleep_hours": 6.9,
+      "daily_steps": 8078,
+      "focus_minutes": 367.8,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-19",
+      "timestamp": "2026-05-19T08:00:00Z",
+      "sleep_hours": 6.74,
+      "daily_steps": 6188,
+      "focus_minutes": 315.4,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-20",
+      "timestamp": "2026-05-20T08:00:00Z",
+      "sleep_hours": 6.33,
+      "daily_steps": 6312,
+      "focus_minutes": 347.4,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-21",
+      "timestamp": "2026-05-21T08:00:00Z",
+      "sleep_hours": 6.47,
+      "daily_steps": 6272,
+      "focus_minutes": 342.6,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-22",
+      "timestamp": "2026-05-22T08:00:00Z",
+      "sleep_hours": 7.57,
+      "daily_steps": 7615,
+      "focus_minutes": 369.8,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-23",
+      "timestamp": "2026-05-23T08:00:00Z",
+      "sleep_hours": 7.65,
+      "daily_steps": 10395,
+      "focus_minutes": 395.7,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-24",
+      "timestamp": "2026-05-24T08:00:00Z",
+      "sleep_hours": 7.68,
+      "daily_steps": 10438,
+      "focus_minutes": 422.5,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-25",
+      "timestamp": "2026-05-25T08:00:00Z",
+      "sleep_hours": 7.06,
+      "daily_steps": 7047,
+      "focus_minutes": 364.3,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-26",
+      "timestamp": "2026-05-26T08:00:00Z",
+      "sleep_hours": 6.4,
+      "daily_steps": 6929,
+      "focus_minutes": 348.8,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-27",
+      "timestamp": "2026-05-27T08:00:00Z",
+      "sleep_hours": 6.3,
+      "daily_steps": 5604,
+      "focus_minutes": 334.5,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-28",
+      "timestamp": "2026-05-28T08:00:00Z",
+      "sleep_hours": 6.36,
+      "daily_steps": 6984,
+      "focus_minutes": 377.8,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-29",
+      "timestamp": "2026-05-29T08:00:00Z",
+      "sleep_hours": 7.1,
+      "daily_steps": 7073,
+      "focus_minutes": 391.8,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-05-30",
+      "timestamp": "2026-05-30T08:00:00Z",
+      "sleep_hours": 7.87,
+      "daily_steps": 9542,
+      "focus_minutes": 357.4,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-05-31",
+      "timestamp": "2026-05-31T08:00:00Z",
+      "sleep_hours": 8.54,
+      "daily_steps": 9996,
+      "focus_minutes": 413.4,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-01",
+      "timestamp": "2026-06-01T08:00:00Z",
+      "sleep_hours": 6.78,
+      "daily_steps": 7388,
+      "focus_minutes": 353.4,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-02",
+      "timestamp": "2026-06-02T08:00:00Z",
+      "sleep_hours": 6.89,
+      "daily_steps": 6626,
+      "focus_minutes": 342.2,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-03",
+      "timestamp": "2026-06-03T08:00:00Z",
+      "sleep_hours": 6.59,
+      "daily_steps": 6674,
+      "focus_minutes": 347.8,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-04",
+      "timestamp": "2026-06-04T08:00:00Z",
+      "sleep_hours": 6.27,
+      "daily_steps": 6617,
+      "focus_minutes": 382.9,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-05",
+      "timestamp": "2026-06-05T08:00:00Z",
+      "sleep_hours": 6.66,
+      "daily_steps": 7329,
+      "focus_minutes": 362.1,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-06",
+      "timestamp": "2026-06-06T08:00:00Z",
+      "sleep_hours": 7.82,
+      "daily_steps": 10560,
+      "focus_minutes": 371.8,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-07",
+      "timestamp": "2026-06-07T08:00:00Z",
+      "sleep_hours": 7.84,
+      "daily_steps": 9649,
+      "focus_minutes": 398.0,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-08",
+      "timestamp": "2026-06-08T08:00:00Z",
+      "sleep_hours": 7.26,
+      "daily_steps": 7301,
+      "focus_minutes": 349.7,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-09",
+      "timestamp": "2026-06-09T08:00:00Z",
+      "sleep_hours": 6.59,
+      "daily_steps": 6977,
+      "focus_minutes": 363.6,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-10",
+      "timestamp": "2026-06-10T08:00:00Z",
+      "sleep_hours": 6.33,
+      "daily_steps": 6433,
+      "focus_minutes": 352.2,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-11",
+      "timestamp": "2026-06-11T08:00:00Z",
+      "sleep_hours": 6.75,
+      "daily_steps": 5328,
+      "focus_minutes": 336.3,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-12",
+      "timestamp": "2026-06-12T08:00:00Z",
+      "sleep_hours": 7.05,
+      "daily_steps": 7343,
+      "focus_minutes": 355.4,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-13",
+      "timestamp": "2026-06-13T08:00:00Z",
+      "sleep_hours": 7.51,
+      "daily_steps": 9840,
+      "focus_minutes": 375.5,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-14",
+      "timestamp": "2026-06-14T08:00:00Z",
+      "sleep_hours": 7.88,
+      "daily_steps": 10147,
+      "focus_minutes": 391.8,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-15",
+      "timestamp": "2026-06-15T08:00:00Z",
+      "sleep_hours": 7.02,
+      "daily_steps": 7566,
+      "focus_minutes": 388.5,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-16",
+      "timestamp": "2026-06-16T08:00:00Z",
+      "sleep_hours": 6.86,
+      "daily_steps": 7189,
+      "focus_minutes": 391.9,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-17",
+      "timestamp": "2026-06-17T08:00:00Z",
+      "sleep_hours": 6.72,
+      "daily_steps": 6387,
+      "focus_minutes": 359.8,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-18",
+      "timestamp": "2026-06-18T08:00:00Z",
+      "sleep_hours": 6.56,
+      "daily_steps": 6879,
+      "focus_minutes": 366.2,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-19",
+      "timestamp": "2026-06-19T08:00:00Z",
+      "sleep_hours": 6.85,
+      "daily_steps": 7714,
+      "focus_minutes": 325.4,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-20",
+      "timestamp": "2026-06-20T08:00:00Z",
+      "sleep_hours": 7.89,
+      "daily_steps": 9644,
+      "focus_minutes": 371.7,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-21",
+      "timestamp": "2026-06-21T08:00:00Z",
+      "sleep_hours": 8.11,
+      "daily_steps": 10047,
+      "focus_minutes": 424.9,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T08:00:00Z",
+      "sleep_hours": 7.37,
+      "daily_steps": 6797,
+      "focus_minutes": 333.6,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-23",
+      "timestamp": "2026-06-23T08:00:00Z",
+      "sleep_hours": 6.64,
+      "daily_steps": 7126,
+      "focus_minutes": 360.6,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T08:00:00Z",
+      "sleep_hours": 6.13,
+      "daily_steps": 6721,
+      "focus_minutes": 379.2,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-25",
+      "timestamp": "2026-06-25T08:00:00Z",
+      "sleep_hours": 6.35,
+      "daily_steps": 6349,
+      "focus_minutes": 388.3,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-26",
+      "timestamp": "2026-06-26T08:00:00Z",
+      "sleep_hours": 7.09,
+      "daily_steps": 6970,
+      "focus_minutes": 375.7,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-27",
+      "timestamp": "2026-06-27T08:00:00Z",
+      "sleep_hours": 8.03,
+      "daily_steps": 9354,
+      "focus_minutes": 396.0,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-28",
+      "timestamp": "2026-06-28T08:00:00Z",
+      "sleep_hours": 8.11,
+      "daily_steps": 9862,
+      "focus_minutes": 401.9,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-06-29",
+      "timestamp": "2026-06-29T08:00:00Z",
+      "sleep_hours": 7.26,
+      "daily_steps": 8017,
+      "focus_minutes": 389.2,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-06-30",
+      "timestamp": "2026-06-30T08:00:00Z",
+      "sleep_hours": 6.9,
+      "daily_steps": 7481,
+      "focus_minutes": 371.8,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-01",
+      "timestamp": "2026-07-01T08:00:00Z",
+      "sleep_hours": 6.44,
+      "daily_steps": 5963,
+      "focus_minutes": 354.6,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-02",
+      "timestamp": "2026-07-02T08:00:00Z",
+      "sleep_hours": 6.29,
+      "daily_steps": 6427,
+      "focus_minutes": 350.0,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-03",
+      "timestamp": "2026-07-03T08:00:00Z",
+      "sleep_hours": 6.88,
+      "daily_steps": 7144,
+      "focus_minutes": 370.2,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-04",
+      "timestamp": "2026-07-04T08:00:00Z",
+      "sleep_hours": 7.73,
+      "daily_steps": 9678,
+      "focus_minutes": 368.5,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-07-05",
+      "timestamp": "2026-07-05T08:00:00Z",
+      "sleep_hours": 8.05,
+      "daily_steps": 9446,
+      "focus_minutes": 404.5,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T08:00:00Z",
+      "sleep_hours": 7.09,
+      "daily_steps": 7179,
+      "focus_minutes": 347.3,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-07",
+      "timestamp": "2026-07-07T08:00:00Z",
+      "sleep_hours": 6.52,
+      "daily_steps": 7199,
+      "focus_minutes": 381.6,
+      "weekday": 1,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-08",
+      "timestamp": "2026-07-08T08:00:00Z",
+      "sleep_hours": 6.36,
+      "daily_steps": 6258,
+      "focus_minutes": 332.1,
+      "weekday": 2,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-09",
+      "timestamp": "2026-07-09T08:00:00Z",
+      "sleep_hours": 6.97,
+      "daily_steps": 7407,
+      "focus_minutes": 356.3,
+      "weekday": 3,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-10",
+      "timestamp": "2026-07-10T08:00:00Z",
+      "sleep_hours": 6.89,
+      "daily_steps": 7823,
+      "focus_minutes": 371.6,
+      "weekday": 4,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-11",
+      "timestamp": "2026-07-11T08:00:00Z",
+      "sleep_hours": 7.99,
+      "daily_steps": 10005,
+      "focus_minutes": 393.5,
+      "weekday": 5,
+      "weekend": 1
+    },
+    {
+      "date": "2026-07-12",
+      "timestamp": "2026-07-12T08:00:00Z",
+      "sleep_hours": 7.99,
+      "daily_steps": 10085,
+      "focus_minutes": 388.2,
+      "weekday": 6,
+      "weekend": 1
+    },
+    {
+      "date": "2026-07-13",
+      "timestamp": "2026-07-13T08:00:00Z",
+      "sleep_hours": 7.43,
+      "daily_steps": 7246,
+      "focus_minutes": 381.5,
+      "weekday": 0,
+      "weekend": 0
+    },
+    {
+      "date": "2026-07-14",
+      "timestamp": "2026-07-14T08:00:00Z",
+      "sleep_hours": 6.23,
+      "daily_steps": 6441,
+      "focus_minutes": 327.5,
+      "weekday": 1,
+      "weekend": 0
+    }
+  ]
+}

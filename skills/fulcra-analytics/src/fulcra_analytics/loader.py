@@ -22,7 +22,7 @@ from typing import Any
 
 import pandas as pd
 
-_RECORD_KEYS = ("records", "data", "items", "results", "samples", "values")
+_RECORD_KEYS = ("records", "data", "items", "results", "samples", "values", "rows")
 _METADATA_KEYS = ("metadata", "meta", "pagination", "links")
 
 
