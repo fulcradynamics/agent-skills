@@ -65,6 +65,31 @@ uv tool run fulcra-api catalog --user-only
 ```
 This is useful when discovering if a schema already exists for a requested metric before trying to create a new one.
 
+## Managing Files in the File Store
+
+The CLI can manage files in the Fulcra File Store, which is used for staging 3rd-party exports before ingestion and archiving them afterward.
+
+```bash
+# List files in the root or a specific directory (returns sizes, timestamps, and filenames)
+uv tool run fulcra-api file list [directory_path]
+
+# Get information about a specific file
+uv tool run fulcra-api file stat <remote_path>
+
+# Download a file to the local environment
+uv tool run fulcra-api file download <remote_path> <local_path>
+
+# Upload a local file to the Fulcra File Store
+uv tool run fulcra-api file upload <local_path> <remote_path>
+
+# Delete a file from the Fulcra File Store
+uv tool run fulcra-api file delete <remote_path>
+```
+
+**Important Notes for File Management:**
+- The CLI does not have a `move` or `copy` command. To "move" a file, you must download it, upload it to the new destination, and then delete the original.
+- The `list` and `stat` commands are useful for verifying a file exists before attempting to operate on it.
+
 ## Creating and Managing Tags
 
 Fulcra supports adding tags to records to distinguish data within an annotation. The API expects tags to be passed as their unique UUID strings, not as raw text. Therefore, you must create or retrieve tags before using them in record payloads.
