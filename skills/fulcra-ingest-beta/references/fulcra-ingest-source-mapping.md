@@ -21,7 +21,6 @@ The `source_map.md` file uses Markdown headings to separate detected sources. Un
 **Fulcra Source ID**: `com.fulcradynamics.annotation.12345678-abcd-efgh-ijkl-9876543210ab`
 **Type**: `MomentAnnotation`
 **Original Annotation Name**: `Netflix Export`
-**Ingest Version**: `1`
 **Deterministic ID Fields**: `["Title", "Date"]`
 **Tagging Strategy**: Extract the genre if available and apply it as a tag. (The specific show title is stored in the note, not as a tag).
 
@@ -37,7 +36,6 @@ The `source_map.md` file uses Markdown headings to separate detected sources. Un
 **Fulcra Source ID**: `com.fulcradynamics.annotation.abcdef12-3456-7890-abcd-ef1234567890`
 **Type**: `DurationAnnotation`
 **Original Annotation Name**: `Spotify Export`
-**Ingest Version**: `2`
 **Deterministic ID Fields**: `["ts", "ms_played", "master_metadata_track_name"]`
 **Tagging Strategy**: Extract the genre if it can be reliably extracted and apply it as a tag. (The specific artist name and song title are stored in the note, not as a tag).
 
@@ -74,7 +72,7 @@ Check if this source exists as a heading (`## com.netflix`) in the `source_map.m
 ### 3. Update & Upload
 After the records are successfully ingested and the raw file is moved to the archive:
 - Update the `source_map.md` in memory.
-  - If it was a new source, append a new `## <source>` section with the required properties, including the `**Ingest Version**` (default to `1`), the `**Deterministic ID Fields**` (the specific columns/keys you used alongside the source identifier to calculate the UUIDs), the `**Tagging Strategy**` used, and an empty Notes section.
+  - If it was a new source, append a new `## <source>` section with the required properties, including the `**Deterministic ID Fields**` (the specific columns/keys you used alongside the source identifier to calculate the UUIDs), the `**Tagging Strategy**` used, and an empty Notes section.
   - Always append the new archive path as a list item under `### Archived Locations` for that source.
   - Add any helpful insights about the file format to the `### Notes` section.
 
@@ -82,7 +80,6 @@ After the records are successfully ingested and the raw file is moved to the arc
 If the user requests to correct ingested data (e.g., they don't like the tagging scheme, or the source data is mutable and needs an update):
 - Fetch all existing records for the source ID using the Fulcra API.
 - Delete the existing records using the `DeletedRecord` data type (see `fulcra-ingest-record-annotations.md`).
-- Increment the `**Ingest Version**` for that source in the `source_map.md` (e.g., from `1` to `2`).
-- When generating the new deterministic UUIDs for the replacement records, include this new `Ingest Version` as a field in the hash. This guarantees the new records will have fresh UUIDs that won't conflict with the deleted ones.
+- Because the API allows ID reuse, you can use the exact same deterministic UUID generation logic as before without causing collisions.
 - Re-ingest the data and upload the updated `source_map.md`.
 - Save the Markdown file locally and upload it back to Fulcra using `uvx fulcra-api file upload ./source_map.md ingest/_meta/source_map.md`, overwriting the previous version.
