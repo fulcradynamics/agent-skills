@@ -34,6 +34,10 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
 | 🤝&nbsp;&nbsp;[fulcra-agent-teams](#-fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
+| 💾&nbsp;&nbsp;[fulcra-agent-backup](#-fulcra-agent-backup) | Back up, roll back, and clone an agent's memory |
+| 📥&nbsp;&nbsp;[fulcra-ingest-beta](#-fulcra-ingest-beta) | Ingest third-party data exports into your Fulcra timeline |
+| 📡&nbsp;&nbsp;[fulcra-situational-awareness](#-fulcra-situational-awareness) | Scan Fulcra for recent memory, messages, and new data |
+| 🐙&nbsp;&nbsp;[fulcra-primitives](#-fulcra-primitives) | Work directly with the Fulcra CLI's core primitives |
 
 ---
 
@@ -148,6 +152,54 @@ Works with CLI-capable agents, HTTP-only agents, and MCP agents (read-only).
 > Alpha: the schema may change in early versions.
 
 **Contains:** `SKILL.md`, `references/` (HTTP tier docs, capture heuristics and consent rules)
+
+---
+
+## 💾 fulcra-agent-backup
+
+`skills/fulcra-agent-backup/`
+
+Use this skill to snapshot an agent's identity and memory files into a versioned `memory.tar.gz` in your Fulcra file store. Because every upload lands at the same path, Fulcra keeps a history you can roll back to — and before any restore, the skill saves a fresh backup first, so the rollback itself is undoable.
+
+Cloning uses the same machinery: back one agent up, then restore its archive into a new one.
+
+This is the memory engine behind `fulcra-memory`'s save/restore; reach for it directly when you want backup, rollback, or cloning without the surrounding OKF sync.
+
+**Contains:** `SKILL.md`, `references/` (CLI commands for compression, upload, and restore)
+
+---
+
+## 📥 fulcra-ingest-beta
+
+`skills/fulcra-ingest-beta/`
+
+Drop a raw export — a Spotify or Netflix ZIP, a CSV, a JSON dump — into your Fulcra `ingest/` folder and this skill takes it from there. A Librarian agent triages new files and dispatches a Worker to profile each schema, map it to a Fulcra annotation type, and ingest the records with deterministic IDs so re-runs never duplicate.
+
+It can also fetch directly from APIs and local tools, and set up a loop to keep watching the drop zone.
+
+**Contains:** `SKILL.md`, `references/` (CLI docs, record-annotation ingest, source mapping), `scripts/` (deterministic ID generator)
+
+---
+
+## 📡 fulcra-situational-awareness
+
+`skills/fulcra-situational-awareness/`
+
+Use this skill so an agent notices what changed without being told to look. At the start of a session — or on a heartbeat — it scans Fulcra for recently processed data, updated memory files, and pending team-inbox messages, then knows what's fresh so it can pull the details when a task needs them.
+
+Awareness scanning is opt-in: the skill asks for consent and records the preference before it starts checking in the background.
+
+**Contains:** `SKILL.md`, `references/` (CLI commands for the awareness scan)
+
+---
+
+## 🐙 fulcra-primitives
+
+`skills/fulcra-primitives/`
+
+Use this skill when you want the raw platform, not a guided flow. It's a compact introduction to the `fulcra-api` CLI and Fulcra's three primitives — events, metrics, and versioned files — plus how to authenticate. From there you have everything you need to build anything the other skills do.
+
+**Contains:** `SKILL.md`
 
 ---
 
