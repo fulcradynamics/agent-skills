@@ -54,14 +54,16 @@ These are different things and behave differently.
     "data": "<string payload>",
     "metadata": {
       "data_type": "MomentAnnotation",
-      "recorded_at": "<iso8601 | {start_time, end_time} range>",  // (spec-deprecated)
+      "recorded_at": "<iso8601 | {start_time, end_time} range>",
       "source": ["<source id>"],
       "tags": ["<tag uuid>"]
     },
     "specversion": 1
   }
   ```
-  `metadata.data_type` is required; `source` and `tags` default to empty. To write against a custom definition, POST to the **base** type and reference the definition in `source` as `com.fulcradynamics.annotation.<definition-uuid>` — it then reads back under `get-records <BaseType>Annotation/<definition-uuid>`.
+  `metadata.data_type` is required; `source` and `tags` default to empty. `recorded_at`
+  is marked deprecated in the spec — it still works; its replacement lives on a newer
+  ingest surface not covered here. To write against a custom definition, POST to the **base** type and reference the definition in `source` as `com.fulcradynamics.annotation.<definition-uuid>` — it then reads back under `get-records <BaseType>Annotation/<definition-uuid>`.
 - There is **no record-level delete or replace.** Model a correction as a new, superseding record, not an edit.
 
 ## Tags (tiers 1 & 2)
