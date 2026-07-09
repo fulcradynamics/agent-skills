@@ -33,11 +33,11 @@ metadata: { "openclaw": { "emoji": "🌱" } }
 - **homepage** — the repo, `https://github.com/fulcradynamics/agent-skills`. A skill may point at its own subpath (`…/tree/main/skills/fulcra-prefs`) when that's the better landing page.
 - **license** — `MIT`, matching the repo.
 - **user-invocable** — `true` for every skill shipped here.
-- **metadata** — carries the OpenClaw emoji, `{ "openclaw": { "emoji": "🧠" } }`. One emoji, and it's the same one the README catalog uses for the skill. Pick something distinct from the skills already in the table.
+- **metadata** — carries the OpenClaw emoji, `{ "openclaw": { "emoji": "🧠" } }`. One emoji; it should match the one the README catalog shows for the skill (a couple currently drift — `fulcra-tracking` is 📊 in frontmatter but 📈 in the catalog). Pick something distinct from the skills already in the table.
 
 ## Body conventions
 
-**Defer detail to `references/`.** The reference file holding a skill's command surface is named `<skill-name>-cli.md` — `fulcra-memory/references/fulcra-memory-cli.md`, `fulcra-tracking/references/fulcra-tracking-cli.md`. Other reference files are named by the concern they cover (`-auth`, `-prerequisites`, `-source-mapping`, `-discovery`). SKILL.md names the file and tells the agent to read it (`Read references/fulcra-agent-backup-cli.md for the exact commands`) rather than inlining a wall of shell.
+**Defer detail to `references/`.** The reference file holding a skill's command surface is conventionally named `<skill-name>-cli.md` — `fulcra-memory/references/fulcra-memory-cli.md`, `fulcra-tracking/references/fulcra-tracking-cli.md` — the shape to follow for a new skill (two legacy files predate the convention: onboarding's `fulcra-cli.md` and ingest-beta's `fulcra-ingest-cli.md`). Other reference files are named by the concern they cover (`-auth`, `-prerequisites`, `-source-mapping`, `-discovery`). SKILL.md names the file and tells the agent to read it (`Read references/fulcra-agent-backup-cli.md for the exact commands`) rather than inlining a wall of shell.
 
 **Cross-link skills fully qualified.** When one skill hands off to another, name it as `fulcradynamics/agent-skills/<skill-name>` — e.g. onboarding's recommended flow points at `fulcradynamics/agent-skills/fulcra-ingest-beta` and `fulcradynamics/agent-skills/fulcra-situational-awareness`. The slug resolves the same whether the agent has the repo checked out, installed under a skills directory, or is reading it cold off GitHub. Don't use bare names or relative paths.
 
@@ -60,9 +60,9 @@ Worked example, for `fulcra-onboarding`'s connect-a-user flow:
 |---|---|---|---|
 | Runtime ready | `uv --version` | exits 0 | `references/fulcra-onboarding-prerequisites.md` (install `uv`) |
 | Authenticated | `uv tool run fulcra-api user-info` | prints JSON with a user id | `references/fulcra-onboarding-auth.md` (device-flow login) |
-| Account has data | `uv tool run fulcra-api catalog` | returns a non-empty type list | Phase 2 — connect a data source (`fulcradynamics/agent-skills/fulcra-ingest-beta`) |
+| Account has data | `uv tool run fulcra-api data-updates "30 days"` | lists at least one processed data type | Phase 2 — connect a data source (`fulcradynamics/agent-skills/fulcra-ingest-beta`) |
 
-An agent dropped into this cold runs three commands and knows exactly where it stands: no `uv` means start at prerequisites; `uv` but a failing `user-info` means start at auth; both good but an empty catalog means the user is connected and it's time to bring data in. No prose to interpret.
+An agent dropped into this cold runs three commands and knows exactly where it stands: no `uv` means start at prerequisites; `uv` but a failing `user-info` means start at auth; both good but no data over the window means the user is connected and it's time to bring data in. No prose to interpret.
 
 Two rules make the grid trustworthy:
 

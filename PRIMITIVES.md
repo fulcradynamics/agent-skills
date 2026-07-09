@@ -32,7 +32,7 @@ Your `fulcra_userid` is the `fulcradynamics.com/userid` claim on the JWT. A few 
 
 - **What's there:** `fulcra-api catalog` / `GET /data/v1/catalog` lists the data types you can query. `GET /data/v1alpha1/data_types` is the alpha equivalent; `GET /data/v0/metrics_catalog` covers metrics.
 - **What exists for a window:** `GET /data/v1alpha1/data_available` (which types have data over a time range) and `GET /data/v1alpha1/data_sources` (which sources are connected).
-- **Events:** `fulcra-api get-records <DataType> "<range>"` / `GET /data/v1alpha1/event/{data_type}` (required `start_time`, `end_time`; `/agg/{resolution}` for rollups). A user-defined type reads as `MomentAnnotation/<definition-uuid>`.
+- **Events:** `fulcra-api get-records <DataType> "<range>"` / `GET /data/v1alpha1/event/{data_type}` (required `start_time`, `end_time`; `/agg/{resolution}` for rollups). A user-defined type reads back under its base type as `<BaseType>Annotation/<definition-uuid>` (e.g. `ScaleAnnotation/<definition-uuid>`).
 - **Metrics / time series:** `GET /data/v1alpha1/metric/{data_type}` (with `/agg/{resolution}`) for one metric; `GET /data/v0/time_series_grouped` for arbitrary metrics against a shared time axis at a chosen resolution.
 
 Every timestamp comes back ISO 8601, UTC, timezone-aware. Convert to the user's local zone before showing it.
@@ -54,14 +54,14 @@ These are different things and behave differently.
     "data": "<string payload>",
     "metadata": {
       "data_type": "MomentAnnotation",
-      "recorded_at": "<iso8601 | {start, end} range>",
+      "recorded_at": "<iso8601 | {start_time, end_time} range>",  // (spec-deprecated)
       "source": ["<source id>"],
       "tags": ["<tag uuid>"]
     },
     "specversion": 1
   }
   ```
-  `metadata.data_type` is required; `source` and `tags` default to empty. To write against a custom definition, POST to the **base** type and reference the definition in `source` as `com.fulcradynamics.annotation.<definition-uuid>` — it then reads back under `get-records MomentAnnotation/<definition-uuid>`.
+  `metadata.data_type` is required; `source` and `tags` default to empty. To write against a custom definition, POST to the **base** type and reference the definition in `source` as `com.fulcradynamics.annotation.<definition-uuid>` — it then reads back under `get-records <BaseType>Annotation/<definition-uuid>`.
 - There is **no record-level delete or replace.** Model a correction as a new, superseding record, not an edit.
 
 ## Tags (tiers 1 & 2)
@@ -75,7 +75,7 @@ Group and label annotations.
 
 A versioned, path-addressed file store. Upload to the same path twice and Fulcra keeps both versions, which is what makes memory backup and rollback possible.
 
-- Tier 1: `fulcra-api file list|stat|download|upload|delete <path>` (`stat` shows version history).
+- Tier 1: `fulcra-api file list|stat|download|upload|delete <path>`, plus `file restore <version_id>` to roll back to a prior version (`stat` shows the version history `restore` draws from).
 - Tier 2, all on `https://api.fulcradynamics.com` — the prefix is `/input/v1/file` (`/input/v1/file_upload` is an accepted alias):
   - List: `GET /input/v1/file?path=<dir>&state=uploaded`
   - Stat / versions: `GET /input/v1/file/{input_id}`

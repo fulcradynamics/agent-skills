@@ -34,7 +34,7 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
 | 🤝&nbsp;&nbsp;[fulcra-agent-teams](#-fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
-| 💾&nbsp;&nbsp;[fulcra-agent-backup](#-fulcra-agent-backup) | Back up, roll back, and clone an agent's memory |
+| 💾&nbsp;&nbsp;[fulcra-agent-backup](#-fulcra-agent-backup) | The versioned backup engine behind fulcra-memory — rollback and cloning, without the OKF sync |
 | 📥&nbsp;&nbsp;[fulcra-ingest-beta](#-fulcra-ingest-beta) | Ingest third-party data exports into your Fulcra timeline |
 | 📡&nbsp;&nbsp;[fulcra-situational-awareness](#-fulcra-situational-awareness) | Scan Fulcra for recent memory, messages, and new data |
 | 🐙&nbsp;&nbsp;[fulcra-primitives](#-fulcra-primitives) | Work directly with the Fulcra CLI's core primitives |
