@@ -47,10 +47,11 @@ Do not infer one intent from another. For example, permission to build a dashboa
 
 ### New connection
 
-1. Run `fulcra-onboarding` to verify prerequisites and complete authentication.
-2. If the user wants to bring in external data, hand off to `fulcra-ingest-beta`.
-3. If the user opts into recurring checks, configure `fulcra-situational-awareness`.
-4. Add `fulcra-agent-teams` only when multiple agents need shared context or coordination.
+1. If `fulcra-onboarding` is not already available, install it with `npx skills add fulcradynamics/agent-skills --skill fulcra-onboarding`.
+2. Run `fulcra-onboarding` to verify prerequisites and complete authentication.
+3. If the user wants to bring in external data, hand off to `fulcra-ingest-beta`.
+4. If the user opts into recurring checks, configure `fulcra-situational-awareness`.
+5. Add `fulcra-agent-teams` only when multiple agents need shared context or coordination.
 
 The onboarding skill contains the current recommended sequence and the menu of other starting points. Follow its handoff instructions instead of recreating that conversation independently.
 
