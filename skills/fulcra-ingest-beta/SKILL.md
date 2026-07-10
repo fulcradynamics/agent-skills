@@ -1,5 +1,5 @@
 ---
-name: fulcra-ingest-beta
+name: fulcra-ingest
 description: "Autonomously orchestrate the ingestion of 3rd-party data exports (e.g., Spotify, Netflix) from the Fulcra File Store into properly mapped Fulcra Annotations."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"

@@ -39,7 +39,7 @@ The onboarding process follows a guided three-phase model. First, you get the us
 
 Immediately after declaring the core onboarding complete, recommend a specific post-onboarding path to the user. Ask them if they'd like to be guided through this sequence, explaining that it is the most truly useful way to get started with Fulcra:
 
-1.  **Connect a Data Source:** Bring real-world data into the datastore (using the `fulcradynamics/agent-skills/fulcra-ingest-beta` skill).
+1.  **Connect a Data Source:** Bring real-world data into the datastore (using the `fulcradynamics/agent-skills/fulcra-ingest` skill).
 2.  **Know What's New:** Set up an automated loop so the agent knows what is new every loop (using the `fulcradynamics/agent-skills/fulcra-situational-awareness` skill).
 3.  **Set Up Agent Teams:** Set up an agent team for one or more agents to build knowledge and complete tasks (using the `fulcradynamics/agent-skills/fulcra-agent-teams` skill).
 
