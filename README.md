@@ -1,6 +1,6 @@
 # agent-skills
 
-These skills give your AI agent the ability to work with Fulcra — backing up memory, tracking personal data, coordinating with other agents, and more.
+These skills give your AI agent the ability to work with Fulcra — backing up memory, importing and tracking personal data, coordinating with other agents, and more.
 
 Install them once, and your agent will know what to do when you ask.
 
@@ -29,9 +29,13 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | Skill | What it does |
 |---|---|
 | 🌱&nbsp;&nbsp;[fulcra-onboarding](#-fulcra-onboarding) | Connect to Fulcra for the first time |
+| 🐙&nbsp;&nbsp;[fulcra-primitives](#-fulcra-primitives) | Learn Fulcra's core primitives and work directly with the CLI |
+| 📥&nbsp;&nbsp;[fulcra-ingest-beta](#-fulcra-ingest-beta) | Import third-party data exports (Spotify, Netflix, …) into your timeline |
+| 📡&nbsp;&nbsp;[fulcra-situational-awareness](#-fulcra-situational-awareness) | Let your agent notice new data, files, and messages on its own |
 | 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking) | Track custom data and visualize it in a dashboard |
 | 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
-| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
+| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory and other knowledge |
+| 💾&nbsp;&nbsp;[fulcra-agent-backup](#-fulcra-agent-backup) | Back up, restore, roll back, and clone your agent's memory |
 | 🤝&nbsp;&nbsp;[fulcra-agent-teams](#-fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
 
@@ -52,7 +56,7 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 
 **Start here.** This skill walks you through connecting to Fulcra for the first time — installing the CLI, logging in, and choosing what to set up next.
 
-Once you're connected, your agent will offer five directions to go:
+Once you're connected, your agent will recommend a golden path — import a data source, set up situational awareness, and create an agent team — then offer a menu of more directions:
 
 1. Set up custom data tracking and a personal dashboard
 2. Back up your agent's memory to Fulcra
@@ -61,6 +65,42 @@ Once you're connected, your agent will offer five directions to go:
 5. Explore your data on the Context Web portal
 
 **Contains:** `SKILL.md`, `references/` (CLI docs, auth steps, prerequisites)
+
+---
+
+## 🐙 fulcra-primitives
+
+`skills/fulcra-primitives/`
+
+A plain, no-nonsense introduction to the Fulcra CLI and the two primitives everything else is built on: typed timeline records (events, metrics, annotations) and versioned file storage.
+
+Use this skill when no specialized skill fits — it gives your agent enough grounding to do general work with your Fulcra data directly.
+
+**Contains:** `SKILL.md`
+
+---
+
+## 📥 fulcra-ingest-beta
+
+`skills/fulcra-ingest-beta/`
+
+Drop a raw export from another service — Spotify, Netflix, or most anything else — into your Fulcra file store, and this skill has your agent profile the schema, map it to Fulcra data types, and ingest the records into your timeline. No manual schema mapping required.
+
+Ingestion is idempotent and tracked with lineage metadata, so re-runs don't create duplicates and mistakes can be corrected or rolled back.
+
+> Beta: workflows and record formats may change.
+
+**Contains:** `SKILL.md`, `references/` (CLI docs, source mapping, record annotations), `scripts/` (deterministic ID generation)
+
+---
+
+## 📡 fulcra-situational-awareness
+
+`skills/fulcra-situational-awareness/`
+
+Use this skill so your agent stays up to date without being told — scanning Fulcra at the start of a session (or periodically, with your approval) for new memory files, team inbox messages, and freshly ingested data.
+
+**Contains:** `SKILL.md`, `references/` (CLI commands for the awareness scan)
 
 ---
 
@@ -93,7 +133,7 @@ From there you can:
 
 **Architecture:** Single-file `index.html` or a Static Triad (`index.html`, `app.js`, `styles.css`). No framework, no build step.
 
-**Contains:** `SKILL.md`, `scripts/` (setup script for scaffolding the dashboard)
+**Contains:** `SKILL.md`, `scripts/` (setup script for scaffolding the dashboard), `template-dashboard/` (starter server, page, and theme)
 
 ---
 
@@ -103,13 +143,25 @@ From there you can:
 
 Use this skill to back up your agent's memory — its notes, identity, daily logs — to your Fulcra file store. Because each upload is versioned, you can roll back to an earlier state if something goes wrong.
 
+Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
+
+For full-state backup, rollback, and cloning, see `fulcra-agent-backup`.
+
+**Contains:** `SKILL.md`, `references/` (CLI commands for the memory namespace)
+
+---
+
+## 💾 fulcra-agent-backup
+
+`skills/fulcra-agent-backup/`
+
+Use this skill to back up your agent's memory and identity files — `MEMORY.md`, `IDENTITY.md`, daily logs — to your Fulcra file store. Because each upload is versioned, you can roll back to an earlier state if something goes wrong.
+
 You can also use this skill to clone an agent: back up one agent's memory, then restore it into a new one.
 
 - **Back up** your agent's current state on demand or on a schedule
 - **Roll back** to a previous version (the skill always saves a fresh backup before restoring)
 - **Clone** memory from one agent to another
-
-Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
 
 **Contains:** `SKILL.md`, `references/` (CLI commands for compression, upload, and restore)
 
@@ -147,7 +199,7 @@ Works with CLI-capable agents, HTTP-only agents, and MCP agents (read-only).
 
 > Alpha: the schema may change in early versions.
 
-**Contains:** `SKILL.md`, `references/` (HTTP tier docs, capture heuristics and consent rules)
+**Contains:** `SKILL.md`
 
 ---
 
