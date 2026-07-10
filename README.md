@@ -151,9 +151,9 @@ Works with CLI-capable agents, HTTP-only agents, and MCP agents (read-only).
 
 ---
 
-## 📥 Ingest (beta)
+## 📥 Ingest
 
-`skills/fulcra-ingest-beta/`
+`skills/fulcra-ingest/`
 
 ```
         🌱
