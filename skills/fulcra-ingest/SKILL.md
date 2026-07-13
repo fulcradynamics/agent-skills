@@ -44,7 +44,7 @@ This skill establishes a Librarian-Worker agent pattern to asynchronously proces
    - **Retrieval:** Execute `uvx fulcra-api file download <file_id> ./<filename>`.
    - **Source Mapping & Schema Resolution:** **Crucial:** You must strictly follow the agent workflow outlined in `references/fulcra-ingest-source-mapping.md`. Rely on the `source_map.md` registry to resolve the target schema ID. If you need to create a new schema for an unseen source, consult `references/fulcra-ingest-cli.md` for the correct CLI commands and base types.
    - **Data Ingestion:** Write and execute a Python script to parse the file. 
-     - Generate deterministic UUIDs for `metadata.id` using `scripts/generate_deterministic_id.py` (ensure you pass the source identifier followed by the specific ID fields to prevent cross-service collisions).
+     - Generate deterministic UUIDs for `id` using `scripts/generate_deterministic_id.py` (ensure you pass the source identifier followed by the specific ID fields to prevent cross-service collisions).
      - Construct the payload and push the records via POST to `/ingest/v1/record` exactly as specified in `references/fulcra-ingest-record-annotations.md`.
 
 3. **Cleanup & Archive**
