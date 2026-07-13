@@ -40,11 +40,13 @@ derived state — code, not eyeballing.
   ---
   Review requested: <artifact>
   ```
-- **`review/<slug>/verdicts/<reviewer>.md`** — one verdict per reviewer. OKF `type: Verdict`:
+- **`review/<slug>/verdicts/<required-token>.md`** — one verdict per requirement. The **filename stem is
+  the tally key** and must equal a `required` token (the role, or the direct agent name), not the holder's
+  own name. OKF `type: Verdict`:
   ```yaml
   ---
   type: Verdict
-  reviewer: alice
+  reviewer: alice             # who signed off (informational — the FILENAME drives the tally)
   verdict: approve            # approve | changes
   ---
   Notes / requested changes.
@@ -64,11 +66,18 @@ derived state — code, not eyeballing.
    recovery** (it re-delivers any reviewer notice a prior partial failure dropped and converges), while a
    request that changes `--of` or the reviewer set is refused (exit 1) — a changed review is a **new
    slug**, never an overwrite of the old one.
-2. **Verdict** (reviewer): write `review/<slug>/verdicts/<you>.md` (named after **you** — the filename
-   is the identity the tally uses) with `verdict: approve|changes` and notes, then drop a message into the
-   author's inbox. To change your mind, re-upload your verdict file (overwrites; the File Store keeps the
-   history). **Fail-closed:** a `changes` verdict keeps blocking until *that reviewer* re-uploads
-   `approve` — pushing a fix does **not** clear it; the reviewer must re-affirm.
+2. **Verdict** (reviewer): write the verdict file at the **exact path `review request` echoed** for you,
+   with `verdict: approve|changes` and notes, then drop a message into the author's inbox. The **filename
+   stem is what the tally matches against the `required` token** — not the frontmatter `reviewer:` field —
+   so name the file after the requirement, not after yourself:
+   - **role requirement** (`required: reviewer`) → `review/<slug>/verdicts/reviewer.md`, whoever you are.
+     Writing `verdicts/alice.md` records an approval the tally can't credit: `reviewer` stays in
+     `pending_required` and the review can never reach APPROVED.
+   - **direct requirement** (`required: alice`) → `review/<slug>/verdicts/alice.md`.
+
+   To change your mind, re-upload the same file (overwrites; the File Store keeps the history).
+   **Fail-closed:** a `changes` verdict keeps blocking until that same file is re-uploaded as `approve` —
+   pushing a fix does **not** clear it; the requirement must be re-affirmed.
 3. **Check state** (anyone) — deterministic fold, do not tally by hand:
    ```bash
    coord-engine review status <team> <slug> --json

@@ -21,11 +21,16 @@ request is idempotent recovery (re-delivers a dropped notice and converges); cha
 reviewer set is refused (exit 1) — re-open under a new slug instead.
 
 ## Leave a verdict (reviewer)
+The verdict FILENAME STEM must equal the `required` token the request named — that stem is what the tally
+matches, NOT the frontmatter `reviewer:` field. Write it at the exact path `review request` echoed:
+- **role requirement** (`required: reviewer`) → `verdicts/reviewer.md`, whoever holds the role
+  (`verdicts/alice.md` records an approval the tally can't credit — `reviewer` stays pending forever).
+- **direct requirement** (`required: alice`) → `verdicts/alice.md`.
 ```bash
-# type: Verdict, reviewer: <you>, verdict: approve|changes
+# type: Verdict, verdict: approve|changes  (filename = the required token, e.g. reviewer.md)
 uv tool run fulcra-api file upload /tmp/verdict.md \
-  "team/<team>/review/pr-42/verdicts/<you>.md"
-# then notify the author's inbox (same lifecycle). Re-upload to change your verdict (last wins).
+  "team/<team>/review/pr-42/verdicts/reviewer.md"
+# then notify the author's inbox (same lifecycle). Re-upload the same file to change your verdict (last wins).
 ```
 
 ## Check state (deterministic — do not tally by hand)
