@@ -14,7 +14,7 @@ metadata: { "openclaw": { "emoji": "📨" } }
 This skill uses the `coord-engine` CLI — a small, stdlib-only tool that runs the deterministic folds. Install it once:
 
 ```bash
-uv tool install "git+https://github.com/ashfulcra/fulcra-tools@coord-engine-v1.3.0#subdirectory=packages/coord-engine"
+uv tool install "git+https://github.com/ashfulcra/fulcra-tools@coord-engine-v1.6.3#subdirectory=packages/coord-engine"
 ```
 
 After installation, `coord-engine <command>` is on your PATH.
@@ -25,7 +25,10 @@ drop-zone of markdown files; this skill adds **structured directed work**: a dir
 deterministic per-agent **inbox** with **acks** (acking hides an item for you and stops re-notify) —
 without replacing the teams inbox for freeform messages.
 
-## Verbs (all `coord-engine …`)
+## Verbs
+
+All verbs below run as `coord-engine <verb> …`:
+
 ```bash
 tell      <team> <assignee> <title> [-p P0..P3] [-s summary] [-n next] [--from me]   # direct work
 broadcast <team> <title> …                        # assignee '*' — reaches every non-stale agent

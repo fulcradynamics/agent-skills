@@ -14,7 +14,7 @@ metadata: { "openclaw": { "emoji": "📡" } }
 This skill uses the `coord-engine` CLI — a small, stdlib-only tool that runs the deterministic folds. Install it once:
 
 ```bash
-uv tool install "git+https://github.com/ashfulcra/fulcra-tools@coord-engine-v1.3.0#subdirectory=packages/coord-engine"
+uv tool install "git+https://github.com/ashfulcra/fulcra-tools@coord-engine-v1.6.3#subdirectory=packages/coord-engine"
 ```
 
 After installation, `coord-engine <command>` is on your PATH.

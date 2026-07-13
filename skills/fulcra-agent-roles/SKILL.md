@@ -14,7 +14,7 @@ metadata: { "openclaw": { "emoji": "🎓" } }
 This skill uses the `coord-engine` CLI — a small, stdlib-only tool that runs the deterministic folds. Install it once:
 
 ```bash
-uv tool install "git+https://github.com/ashfulcra/fulcra-tools@coord-engine-v1.3.0#subdirectory=packages/coord-engine"
+uv tool install "git+https://github.com/ashfulcra/fulcra-tools@coord-engine-v1.6.3#subdirectory=packages/coord-engine"
 ```
 
 After installation, `coord-engine <command>` is on your PATH.
@@ -68,7 +68,8 @@ standard).
 ## Lifecycle
 
 ### Establish a role (once)
-Write `roles/<name>.md` with `type: Role` + policy/SLA/maintainer, and list it in the team `roles/index.md`.
+Write `roles/<name>.md` with `type: Role` + policy/SLA/maintainer. The engine folds role status from the
+`roles/` directory listing, so a `roles/index.md` is optional human courtesy, not a requirement.
 
 ### Claim / hold
 `coord-engine roles claim <team> <name>` writes your lease shard (engine-named `<slug>-<hash6>.md`;
@@ -89,8 +90,8 @@ exists to prevent), so this is a deterministic **`coord-engine`** command, not a
 coord-engine roles status <team> <role> --json
 ```
 It reads the role's `policy`/`sla_hours`, folds the leases, and returns:
-- `status` — **HELD** (≥1 fresh lease) / **VACANT** (none) / **CONTESTED** (`exclusive` + ≥2 fresh) / **UNKNOWN** (unreadable),
-- `fresh_holders`, and `escalation_due` (true iff vacant past SLA and today's marker isn't present).
+- `status` — **HELD** (≥1 fresh lease) / **VACANT** (none) / **DORMANT** (vacant but deliberately parked — see [Park a role](#park-a-role-dormancy)) / **CONTESTED** (`exclusive` + ≥2 fresh) / **UNKNOWN** (unreadable),
+- `fresh_holders`, and `escalation_due` (true iff vacant past SLA, not parked, and today's marker isn't present).
 
 For **CONTESTED**, resolve by having all but one holder release.
 
@@ -131,13 +132,23 @@ The engine already computed `escalation_due` above. When it is **true**, perform
    (`team/<team>/member/<maintainer>/inbox/<YYYYMMDD-HHMMSS>_<you>_role-vacant-<name>.md`) per the
    `fulcra-agent-teams` inbox lifecycle, stating which role is vacant and for how long.
 
+### Park a role (dormancy)
+To deliberately leave a role unattended without alarming — a reviewer on leave, a seasonal on-call — set
+`dormant_until: <ISO-8601>` in the role doc's frontmatter (e.g. `dormant_until: 2026-08-05T09:00:00Z`).
+While that timestamp is in the future the engine treats the role as **DORMANT**: `roles status` prints
+`DORMANT (until <ts>)` instead of VACANT and the vacancy escalation is suppressed — no agent-side
+convention required. Escalation resumes automatically once the date passes (past-or-absent `dormant_until`
+= normal behavior), and a live lease outranks the park (a held-and-dormant role still shows HELD). An
+unparseable `dormant_until` fails **open** — it is treated as absent, a note is printed, and escalation
+still fires — so a typo can never silently mute a role. Unpark early by deleting the field.
+
 ## When to use
 - Establishing "someone owns X" in a team without pinning it to one session.
 - Routing work by role ("the reviewer") instead of by name.
 - Making sure a critical function (on-call, maintainer) is never silently unattended.
 
 ## Efficiency (per the teams OKF directive)
-List roles in `roles/index.md`, but do **not** index every lease or escalation marker — describe the
+If you keep an optional `roles/index.md`, do **not** index every lease or escalation marker — describe the
 `leases/` and `escalations/` directories as a whole. Keep the team `log.md` for role *creation* and
 *handoff* milestones, not every lease refresh.
 
