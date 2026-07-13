@@ -30,7 +30,6 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 |---|---|
 | 🌱&nbsp;&nbsp;[fulcra-onboarding](#-fulcra-onboarding) | Connect to Fulcra for the first time |
 | 🐙&nbsp;&nbsp;[fulcra-primitives](#-fulcra-primitives) | Learn Fulcra's core primitives and work directly with the CLI |
-| 📥&nbsp;&nbsp;[fulcra-ingest-beta](#-fulcra-ingest-beta) | Import third-party data exports (Spotify, Netflix, …) into your timeline |
 | 📡&nbsp;&nbsp;[fulcra-situational-awareness](#-fulcra-situational-awareness) | Let your agent notice new data, files, and messages on its own |
 | 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking) | Track custom data and visualize it in a dashboard |
 | 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
@@ -79,9 +78,9 @@ Use this skill when no specialized skill fits — it gives your agent enough gro
 
 ---
 
-## 📥 fulcra-ingest-beta
+## 📥 fulcra-ingest
 
-`skills/fulcra-ingest-beta/`
+`skills/fulcra-ingest/`
 
 Drop a raw export from another service — Spotify, Netflix, or most anything else — into your Fulcra file store, and this skill has your agent profile the schema, map it to Fulcra data types, and ingest the records into your timeline. No manual schema mapping required.
 
