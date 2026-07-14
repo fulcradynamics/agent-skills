@@ -41,7 +41,7 @@ Immediately after declaring the core onboarding complete, recommend a specific p
 
 1.  **Connect a Data Source:** Bring real-world data into the datastore (using the `fulcradynamics/agent-skills/fulcra-ingest` skill).
 2.  **Know What's New:** Set up an automated loop so the agent knows what is new every loop (using the `fulcradynamics/agent-skills/fulcra-situational-awareness` skill).
-3.  **Set Up Agent Teams:** Set up an agent team for one or more agents to build knowledge and complete tasks (using the `fulcradynamics/agent-skills/fulcra-agent-teams` skill).
+3.  **Set Up Workspaces:** Create an agent workspace that gives your agent an inbox, a place to save things it creates, and a way to coordinate and work with other agents and people (using the `fulcradynamics/agent-skills/fulcra-agent-teams` skill).
 
 If they agree, transition them sequentially through these skills.
 
