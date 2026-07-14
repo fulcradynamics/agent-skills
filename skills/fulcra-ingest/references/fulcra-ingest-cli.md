@@ -65,6 +65,16 @@ uv tool run fulcra-api catalog --user-only
 ```
 This is useful when discovering if a schema already exists for a requested metric before trying to create a new one.
 
+### Retrieving Data Type Schemas
+
+If you need to programmatically inspect the exact JSON schema and accepted fields for a specific data type (such as custom base types or specific annotations), you can fetch it directly from the Fulcra API using `curl`:
+
+```bash
+curl -s -H "Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)" \
+  "https://api.fulcradynamics.com/data/v1/catalog/<DATA_TYPE>/<API_VERSION>/schema"
+```
+*Note: Replace `<DATA_TYPE>` with the data type ID and `<API_VERSION>` with the correct version (e.g., `v1alpha1`). You can find the available `api_version` for a type in the `catalog` output.*
+
 ## Managing Files in the File Store
 
 The CLI can manage files in the Fulcra File Store, which is used for staging 3rd-party exports before ingestion and archiving them afterward.
