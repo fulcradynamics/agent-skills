@@ -79,7 +79,7 @@ After the records are successfully ingested and the raw file is moved to the arc
 ### 4. Data Correction and Re-ingestion
 If the user requests to correct ingested data (e.g., they don't like the tagging scheme, or the source data is mutable and needs an update):
 - Fetch all existing records for the source ID using the Fulcra API.
-- Delete the existing records using the `DeletedRecord` data type (see `fulcra-ingest-record-annotations.md`).
+- Delete the existing records using the `fulcra-api delete` CLI command (see `fulcra-ingest-record-annotations.md`).
 - Because the API allows ID reuse, you can use the exact same deterministic UUID generation logic as before without causing collisions.
 - Re-ingest the data and upload the updated `source_map.md`.
 - Save the Markdown file locally and upload it back to Fulcra using `uvx fulcra-api file upload ./source_map.md ingest/_meta/source_map.md`, overwriting the previous version.

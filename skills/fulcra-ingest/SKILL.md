@@ -26,8 +26,7 @@ Beyond straightforward 1:1 data transfer, you can perform advanced transformatio
 
 1. **Enhance Data (Augmentation):** You can augment raw data by fetching additional context from auxiliary sources before ingestion. For example, when ingesting a Netflix viewing history, you could search the web to append actors, genres, or production dates to the records.
 2. **Create Computed Data Tracks:** You can generate entirely new data types informed by existing or newly ingested data. For example, you could create a "Rolling Weekly Song Count" track, or a "Movie Compatibility" track if you have viewing data for multiple users. Compute these insights and ingest them into their own dedicated Fulcra Annotations.
-3. **Adjust Existing Data:** You can adjust the tag scheme, values, or anything about existing data. To do this, delete the old records via `DeletedRecord` payloads, update the schema (creating a new data type if necessary), and re-ingest the data. You can re-import previously archived files from `ingest/_meta/archive/artifact/` to process the new tags. See the references for instructions.
-
+3. **Adjust Existing Data:** You can adjust the tag scheme, values, or anything about existing data. To do this, delete the old records via the `fulcra-api delete` command, update the schema (creating a new data type if necessary), and re-ingest the data. You can re-import previously archived files from `ingest/_meta/archive/artifact/` to process the new tags. See the references for instructions.
 
 ## References
 - **`references/fulcra-ingest-cli.md`**: Contains the necessary `fulcra-api` CLI commands for checking the catalog, listing files, and creating new data types.
@@ -53,7 +52,7 @@ Beyond straightforward 1:1 data transfer, you can perform advanced transformatio
    - **Source Mapping & Schema Resolution:** **Crucial:** You must strictly follow the agent workflow outlined in `references/fulcra-ingest-source-mapping.md`. Rely on the `source_map.md` registry to resolve the target schema ID. If you need to create a new schema for an unseen source, consult `references/fulcra-ingest-cli.md` for the correct CLI commands and base types.
    - **Data Ingestion:** Write and execute a Python script to parse the file. 
      - Generate deterministic UUIDs for `id` using `scripts/generate_deterministic_id.py` (ensure you pass the source identifier followed by the specific ID fields to prevent cross-service collisions).
-     - Construct the payload and push the records via POST to `/ingest/v1/record` exactly as specified in `references/fulcra-ingest-record-annotations.md`.
+     - Construct the payload and push the records using the `fulcra-api record` command exactly as specified in `references/fulcra-ingest-record-annotations.md`.
 
 3. **Cleanup & Archive**
    - Archive the processed file by explicitly downloading it from `ingest/` and re-uploading it to `ingest/_meta/archive/artifact/`. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`**.
