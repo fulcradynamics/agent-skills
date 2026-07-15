@@ -141,7 +141,7 @@ The file or piped data must be formatted as **JSONL** (one JSON object per line)
 
 ## Deleting Records & Data Correction
 
-If a user requests a correction to their data (e.g., they want to change the tagging scheme or the source data was mutated), you must delete the old records before re-ingesting them with new IDs. 
+If a user requests a correction to their data (e.g., they want to change the tagging scheme or the source data was mutated), you must delete the old records before re-ingesting them. 
 
 Data is deleted using the `fulcra-api delete` CLI command. You can pass a file containing JSONL with `{"record_id": "<UUID>"}` on each line.
 
