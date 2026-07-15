@@ -25,8 +25,7 @@ This skill guides the user through discovering data they want to track in Fulcra
     - Use the `fulcra-api data-type create` command to create the custom schemas based on the user's intent. 
     - **Crucial:** If they opted into the Agent Visibility Package, create those schemas (e.g., Tasks Completed, Agent Friction, Current Agent Work) alongside their personal schemas and actively record your high-level milestones into them from this point forward. Remember the `id`s returned by the create command.
 3.  **Record First User Data:** 
-    - Ask a direct question to get their first piece of data for one of their new schemas, then record it using `references/fulcra-tracking-record-annotations.md`. 
-    - Do not use `curl` for this. Use the `fulcra-api record` CLI command (see the record annotations reference file).
+    - Ask a direct question to get their first piece of data for one of their new schemas, then record it using the CLI commands detailed in `references/fulcra-tracking-cli.md`.
 4.  **Time-to-Wow (The Demonstration):** 
     - Read and execute `references/fulcra-tracking-demonstration.md` to fetch the data and generate a custom HTML dashboard. 
     - **Architectural Rules:** Follow the "Static Triad" (index.html, app.js, theme.css) or single-scroll artifact paradigm using Alpine.js, D3.js, and pure Vanilla CSS. **Do not use Tailwind via CDN** due to CSP conflicts. 

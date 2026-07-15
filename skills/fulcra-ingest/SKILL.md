@@ -30,7 +30,7 @@ Beyond straightforward 1:1 data transfer, you can perform advanced transformatio
 
 ## References
 - **`references/fulcra-ingest-cli.md`**: Contains the necessary `fulcra-api` CLI commands for checking the catalog, listing files, and creating new data types.
-- **`references/fulcra-ingest-record-annotations.md`**: Provides the exact POST endpoint, authentication headers, JSON schemas, and **tagging instructions** required for ingesting records to Fulcra Annotations.
+- **`references/fulcra-ingest-cli.md`**: Provides the exact POST endpoint, authentication headers, JSON schemas, and **tagging instructions** required for ingesting records to Fulcra Annotations.
 - **`references/fulcra-ingest-source-mapping.md`**: Outlines the structure and workflow for maintaining the `ingest/_meta/source_map.md` file, which tracks data lineage, prevents duplicate schemas, handles ingest versioning, and logs archived files.
 - **`scripts/generate_deterministic_id.py`**: A python script that takes arbitrary string arguments and returns a consistent, deterministic UUID. Use this to ensure idempotency across ingested records.
 
@@ -52,7 +52,7 @@ Beyond straightforward 1:1 data transfer, you can perform advanced transformatio
    - **Source Mapping & Schema Resolution:** **Crucial:** You must strictly follow the agent workflow outlined in `references/fulcra-ingest-source-mapping.md`. Rely on the `source_map.md` registry to resolve the target schema ID. If you need to create a new schema for an unseen source, consult `references/fulcra-ingest-cli.md` for the correct CLI commands and base types.
    - **Data Ingestion:** Write and execute a Python script to parse the file. 
      - Generate deterministic UUIDs for `id` using `scripts/generate_deterministic_id.py` (ensure you pass the source identifier followed by the specific ID fields to prevent cross-service collisions).
-     - Construct the payload and push the records using the `fulcra-api record` command exactly as specified in `references/fulcra-ingest-record-annotations.md`.
+     - Construct the payload and push the records using the `fulcra-api record` command exactly as specified in `references/fulcra-ingest-cli.md`.
 
 3. **Cleanup & Archive**
    - Archive the processed file by explicitly downloading it from `ingest/` and re-uploading it to `ingest/_meta/archive/artifact/`. **When archiving, prefix the filename with a timestamp in the format `YYYYMMDD-HHMMSS`**.
