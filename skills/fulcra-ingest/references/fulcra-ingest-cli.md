@@ -115,7 +115,7 @@ The `create` command will output the JSON definitions of the created tags, inclu
 
 ## Batch Processing & Idempotency
 Because 3rd-party data exports often contain thousands of records and may overlap with previous exports (e.g. downloading Netflix history in Jan, and again in June), you must ensure your ingestion script handles deduplication. 
-Do this by generating a deterministic UUID for each record (e.g., an MD5 hash of the raw row data converted to a UUID) and including it in the payload. The Fulcra backend will safely ignore duplicate IDs.
+Do this by generating a deterministic UUID for each record. You must follow the UUID generation logic exactly as defined in `fulcra-ingest-source-mapping.md` using the provided python script, so that UUIDs map reliably to the source and specific unique fields. The Fulcra backend will safely ignore duplicate IDs.
 
 ## Recording Data (Batch CLI)
 
@@ -132,7 +132,7 @@ cat records.jsonl | uv tool run fulcra-api record <DATA_TYPE>
 ### Payload Structure Rules
 The file or piped data must be formatted as **JSONL** (one JSON object per line). Do NOT wrap the objects in a JSON array `[...]`. Each line is a single, flattened record object.
 
-1. **`id`**: Must be a deterministic UUID generated from the raw row data to ensure idempotency and prevent duplicate records.
+1. **`id`**: Must be a deterministic UUID generated according to the source mapping strategy to ensure idempotency and prevent duplicate records.
 2. **`sources`**: Must be an array representing the lineage of the data (the "source chain"), ordered from origin to destination. The chain should be: 1) The original 3rd-party service identifier (e.g., `"com.netflix"`), 2) The file path in the Fulcra file store (e.g., `"com.fulcradynamics.file./ingest/NetflixViewingHistory.csv"`), and 3) Your own agent identifier (e.g., `"agent.hermes"`). *(Note: The CLI will automatically append the annotation's specific schema identifier).*
 3. **`recorded_at`**: For moment-based annotations (events happening at a specific time) and metrics, this must be a valid ISO 8601 timestamp in UTC string (e.g., `"2026-05-22T20:15:57Z"`). For duration-based annotations (like `DurationAnnotation`), this must be an object containing `"start_time"` and `"end_time"` (e.g., `{"start_time": "2026-06-29T18:53:42Z", "end_time": "2026-06-29T18:53:47Z"}`).
 4. **`tags`**: Add tags to records to distinguish data *within* the annotation. **CRITICAL:** The API expects tags to be passed as their unique UUID strings, not as raw text (e.g., `["a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"]`). Use the CLI (`uv tool run fulcra-api tag create "Tag Name"`) to create tags or get their existing UUIDs before recording. Do not use broad source-category tags (like "entertainment" or "shopping") because the annotation itself already provides that high-level grouping. Instead, use tags for a category division within the data source. For example, for Netflix or Spotify, you could tag by genre. For Amazon, tag by the item's product category (e.g., "Electronics", "Books"). The most specific data (like the actual song title or episode name) should be stored in the `"note"` field, not as a tag. This allows the user to quickly scan the categorical breakdown of the data within that specific schema. To ensure tags are applied consistently across future ingestions of the same source, the specific tagging method must be documented in the `source_map.md`.
