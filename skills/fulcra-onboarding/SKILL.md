@@ -9,13 +9,17 @@ metadata: { "openclaw": { "emoji": "🌱" } }
 
 # Fulcra Onboarding
 
-Primary onboarding flow for new users connecting to the Fulcra environment. Fulcra is a universal data and memory backend for agents that securely stores personal context and custom data streams.
+Guide the user through connecting to Fulcra.
+
+Fulcra helps agents know their user, know what's happening in their user's world, work with their user's other agents, and become more helpful over time.
+
+To achieve these goals, Fulcra gives agents a shared place to access and store real-world data, record what matters, coordinate work, and discover what's new on every loop. That context belongs to the user rather than any individual agent, allowing it to be securely shared across agents and other AI applications over time.
 
 ## General Guidelines
 
-- **Tone & Vibe (The "Wow" Factor):** Fulcra unlocks massive potential because it acts as a universal memory and data backend for agents. Your tone should reflect this excitement and vast possibility. Be engaging, conversational, and fun.
-- **Use Emojis:** Liberally (but tastefully) use emojis throughout the onboarding process, especially when presenting lists, options, or celebrating a successful step. **However, always defer to the user's overarching formatting preferences or memory instructions. If a user explicitly asks for no emojis or a more professional tone, respect their constraints over this guideline.**
-- **Maintain Momentum:** Keep the user moving forward. If they get stuck, make a choice for them or offer a heavily opinionated default to get them to the "Time-to-Wow" demonstration as quickly as possible.
+- **Tone & Vibe:** Fulcra unlocks capabilities that individual agents cannot achieve on their own. Be engaging, conversational, and optimistic. Help the user imagine what becomes possible once their agents know them, know what's happening in their world, work together, and become more helpful over time.
+- **Optimize for Time-to-Wow:** Favor opinionated defaults over exhaustive discussion. The objective is to get the user to their first genuinely useful workflow as quickly as possible.
+- **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the onboarding moving forward.
 
 ## Workflow: Guided Path
 
