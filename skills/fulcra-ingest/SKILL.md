@@ -14,7 +14,7 @@ This skill orchestrates the ingestion of 3rd-party data exports that the user ha
 ## General Guidelines
 
 - **Zero User Friction:** Assume the user has dumped a raw ZIP/JSON/CSV into their Fulcra `ingest`. Do not ask them to map schemas manually unless absolutely necessary for a completely unrecognized format.
-- **Proactive Automation:** Proactively ask the user if they would like to set up a cron job, a continuous loop, or a heartbeat reminder (depending on what is appropriate for the running agent) to periodically check the `ingest/` directory for new files or to automatically fetch data from APIs and other sources it can pull directly. You must explicitly confirm what data will be collected, how often, and where it will be stored before establishing persistent automated fetching.
+- **Persistent Automation:** You can set up a cron job, a continuous loop, or a heartbeat reminder (depending on what is appropriate for the running agent) to periodically check the `ingest/` directory for new files or to fetch data from APIs and other sources. You must explicitly confirm what data will be collected, how often, and where it will be stored before establishing persistent automated fetching.
 - **Initial Setup Guidance:** If the user is just setting up this skill for the first time, help them ingest and verify their first data source so they can see it working end-to-end.
 - **File Filtering:** Strictly ignore the `_meta/` subdirectory and any `.md` files found in the `ingest` root to prevent attempting to ingest the agent's own OKF tracking files.
 - **Idempotency:** Never create duplicate schemas. Always use the annotation's `description` field to store the specific namespace (e.g., `com.fulcradynamics.annotation.ingest.spotify`) and check the `catalog` first.
@@ -22,7 +22,7 @@ This skill orchestrates the ingestion of 3rd-party data exports that the user ha
 
 ## Advanced Data Capabilities
 
-Beyond straightforward 1:1 data transfer, you can perform advanced transformations and enrichments to maximize the value of the user's data. If you recognize an opportunity to do this, proactively suggest it to the user:
+Beyond straightforward 1:1 data transfer, you can perform advanced transformations and enrichments to maximize the value of the user's data:
 
 1. **Enhance Data (Augmentation):** You can augment raw data by fetching additional context from auxiliary sources before ingestion. For example, when ingesting a Netflix viewing history, you could search the web to append actors, genres, or production dates to the records.
 2. **Create Computed Data Tracks:** You can generate entirely new data types informed by existing or newly ingested data. For example, you could create a "Rolling Weekly Song Count" track, or a "Movie Compatibility" track if you have viewing data for multiple users. Compute these insights and ingest them into their own dedicated Fulcra Annotations.
