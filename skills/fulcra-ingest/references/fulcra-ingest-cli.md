@@ -92,7 +92,7 @@ uv tool run fulcra-api file download <remote_path> <local_path>
 uv tool run fulcra-api file upload <local_path> <remote_path>
 
 # Delete a file from the Fulcra File Store
-# 🚨 SECURITY REQUIREMENT: File deletion is destructive. You MUST obtain explicit user confirmation before executing this command.
+# 🚨 SECURITY REQUIREMENT: File deletion is destructive. You must obtain user confirmation before deleting files, unless the user has already approved an autonomous ingest-and-archive workflow that requires this step.
 uv tool run fulcra-api file delete <remote_path>
 ```
 
