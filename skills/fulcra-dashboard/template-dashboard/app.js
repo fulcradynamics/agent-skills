@@ -34,15 +34,33 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 let rawRecords = config.recordsProcessed || [];
-                if (typeof rawRecords === 'string' && rawRecords.endsWith('.jsonl')) {
-                    rawRecords = await fetchJsonl(rawRecords);
-                    const aggregated = {};
-                    for (const r of rawRecords) {
-                        const type = r.metadata?.name || r.metadata?.data_type || r.annotation_type || r.fulcra_data_type || 'Unknown';
-                        const val = typeof r.value === 'number' ? r.value : 1;
-                        aggregated[type] = (aggregated[type] || 0) + val;
+                if (typeof rawRecords === 'string') {
+                    if (rawRecords.endsWith('.jsonl')) {
+                        rawRecords = await fetchJsonl(rawRecords);
+                        const aggregated = {};
+                        for (const r of rawRecords) {
+                            const type = r.metadata?.name || r.metadata?.data_type || r.annotation_type || r.fulcra_data_type || 'Unknown';
+                            const val = typeof r.value === 'number' ? r.value : 1;
+                            aggregated[type] = (aggregated[type] || 0) + val;
+                        }
+                        this.recordsProcessed = Object.entries(aggregated).map(([type, count]) => ({ type, count }));
+                    } else if (rawRecords.endsWith('.json')) {
+                        try {
+                            const res = await fetch(rawRecords + '?t=' + Date.now());
+                            if (res.ok) {
+                                const json = await res.json();
+                                if (json.data_types) {
+                                    this.recordsProcessed = Object.entries(json.data_types).map(([type, count]) => {
+                                        // Clean up raw Annotation IDs (e.g. NumericAnnotation/1234 -> 1234)
+                                        // Or rely on the agent to map them if needed
+                                        return { type, count };
+                                    });
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Failed to load JSON for recordsProcessed", e);
+                        }
                     }
-                    this.recordsProcessed = Object.entries(aggregated).map(([type, count]) => ({ type, count }));
                 } else {
                     this.recordsProcessed = rawRecords;
                 }
