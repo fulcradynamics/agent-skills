@@ -39,29 +39,20 @@
             </div>
         </header>
 
-        <!-- Main Dashboard Grid -->
-        <!-- Agent instruction: Preserve the structural grid classes below. -->
-        <!-- Do not remove or rename .dashboard-bento-grid, .bento-col-left, or .bento-col-right. -->
-        <!-- Do not flatten this structure, as it will break the grid layout. -->
-        <div class="dashboard-bento-grid">
+        <!-- Main Dashboard Content -->
+        <div class="dashboard-content-stack">
             
-            <!-- Left Column: Core Metrics & Agent Vault -->
-            <div class="bento-col-left">
+            <!-- Data Velocity Chart -->
+            <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
+                <div class="card-header">
+                    <div class="header-icon-box">📊</div>
+                    <h2 class="timeline-title">Data Velocity</h2>
+                </div>
+                <div class="chart-container bar-chart-zone" x-ref="barChartZone" style="width: 100%; min-height: 200px;"></div>
+            </section>
 
-                
-                <!-- Records Processed Chart -->
-                <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
-                    <div class="card-header">
-                        <div class="header-icon-box">📊</div>
-                        <h2 class="timeline-title">Data Velocity</h2>
-                    </div>
-                    <div class="chart-container bar-chart-zone" x-ref="barChartZone" style="flex: 1; min-height: 140px;"></div>
-                </section>
-                
-            </div>
-
-            <!-- Right Column: Chronological Timelines -->
-            <div class="bento-col-right timelines-grid">
+            <!-- Chronological Timelines -->
+            <div class="timelines-grid">
                 <template x-for="timeline in timelines" :key="timeline.id">
                     <section class="card glass-panel timeline-card" x-data="timelineComponent(timeline)">
                         <div class="card-header">
