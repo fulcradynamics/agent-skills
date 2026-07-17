@@ -34,15 +34,33 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 let rawRecords = config.recordsProcessed || [];
-                if (typeof rawRecords === 'string' && rawRecords.endsWith('.jsonl')) {
-                    rawRecords = await fetchJsonl(rawRecords);
-                    const aggregated = {};
-                    for (const r of rawRecords) {
-                        const type = r.metadata?.name || r.metadata?.data_type || r.annotation_type || r.fulcra_data_type || 'Unknown';
-                        const val = typeof r.value === 'number' ? r.value : 1;
-                        aggregated[type] = (aggregated[type] || 0) + val;
+                if (typeof rawRecords === 'string') {
+                    if (rawRecords.endsWith('.jsonl')) {
+                        rawRecords = await fetchJsonl(rawRecords);
+                        const aggregated = {};
+                        for (const r of rawRecords) {
+                            const type = r.metadata?.name || r.metadata?.data_type || r.annotation_type || r.fulcra_data_type || 'Unknown';
+                            const val = typeof r.value === 'number' ? r.value : 1;
+                            aggregated[type] = (aggregated[type] || 0) + val;
+                        }
+                        this.recordsProcessed = Object.entries(aggregated).map(([type, count]) => ({ type, count }));
+                    } else if (rawRecords.endsWith('.json')) {
+                        try {
+                            const res = await fetch(rawRecords + '?t=' + Date.now());
+                            if (res.ok) {
+                                const json = await res.json();
+                                if (json.data_types) {
+                                    this.recordsProcessed = Object.entries(json.data_types).map(([type, count]) => {
+                                        // Clean up raw Annotation IDs (e.g. NumericAnnotation/1234 -> 1234)
+                                        // Or rely on the agent to map them if needed
+                                        return { type, count };
+                                    });
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Failed to load JSON for recordsProcessed", e);
+                        }
                     }
-                    this.recordsProcessed = Object.entries(aggregated).map(([type, count]) => ({ type, count }));
                 } else {
                     this.recordsProcessed = rawRecords;
                 }
@@ -135,7 +153,7 @@ document.addEventListener('alpine:init', () => {
 
 function drawD3BarChart(data, container) {
     d3.select(container).selectAll("*").remove();
-    const margin = { top: 30, right: 30, bottom: 40, left: 150 };
+    const margin = { top: 30, right: 60, bottom: 40, left: 150 };
     const width = container.clientWidth - margin.left - margin.right || 600;
     const height = Math.max(250, data.length * 40);
 
@@ -148,7 +166,7 @@ function drawD3BarChart(data, container) {
     const sortedData = [...data].sort((a, b) => b.count - a.count);
 
     const x = d3.scaleLinear()
-        .domain([0, d3.max(sortedData, d => d.count)])
+        .domain([0, d3.max(sortedData, d => d.count) * 1.15])
         .range([0, width]);
 
     svg.append("g")

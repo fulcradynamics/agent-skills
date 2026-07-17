@@ -138,31 +138,14 @@ body {
   animation: slowPulse 2s infinite;
 }
 
-/* Dashboard Grid Layout */
-/* 🚨 AGENT CRITICAL WARNING: DO NOT MODIFY THESE GRID PROPERTIES 🚨 */
-/* Do not change grid-template-columns or flex directions. Only edit colors/fonts/borders! */
-.dashboard-bento-grid {
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 2rem;
-  align-items: start;
-}
-
-@media (max-width: 1024px) {
-  .dashboard-bento-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.bento-col-left {
+/* Dashboard Content Stack */
+.dashboard-content-stack {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  position: sticky;
-  top: 2rem;
 }
 
-.bento-col-right {
+.timelines-grid {
   display: flex;
   flex-direction: column;
   gap: 2rem;
