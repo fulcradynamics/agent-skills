@@ -450,7 +450,7 @@ function drawD3RadarChart(data, container, features) {
 
 /**
  * Renders an Interactive, Rotatable 3D Scatter Plot using Plotly.js
- * 🚨 AGENT INSTRUCTION: If you use this, you MUST inject the Plotly CDN into index.html:
+ * Agent note: If you use this, you must inject the Plotly CDN into index.html:
  * <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
  * 
  * Useful for finding clusters or outliers across 3 distinct dimensions (e.g. Time vs. Amount vs. Frequency).
