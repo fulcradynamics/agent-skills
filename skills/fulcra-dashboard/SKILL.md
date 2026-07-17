@@ -1,6 +1,6 @@
 ---
 name: fulcra-dashboard
-description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to securely export a sanitized, non-interactive version for public sharing."
+description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export the dashboard for public sharing."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
@@ -11,11 +11,11 @@ metadata: { "openclaw": { "emoji": "📊" } }
 
 This skill provides the automated setup for a lightweight, build-less web dashboard. It relies entirely on **Alpine.js** for state management and **Vanilla CSS** for styling. It eschews complex frameworks (like SvelteKit) and utility-class libraries in favor of a "Single-Scroll Artifact" or a "Static Triad".
 
-## Local First & Secure Exports
+## Local First & Public Exports
 
-This dashboard is designed fundamentally as a **local, private interface** for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's private data. 
+This dashboard is designed fundamentally as a **local, private interface** for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's private data. Because it is intended for eventual public sharing, it relies on standard third-party CDNs (like Alpine.js, D3.js, Plotly, and Google Fonts). 
 
-Important: The local application must never be published to the public internet directly if it contains unapproved private data. If the user wishes to share a dashboard, you must generate a separate, sanitized **export** that strips out unapproved private data.
+Important: The local application must never be published to the public internet directly if it contains unapproved private data. If the user wishes to share a dashboard, you must generate a separate **export** that strips out unapproved private data. You must make it clear to the user that the public export will be published and shared exactly with the data shown in the export folder.
 
 ## Architecture Decrees
 
@@ -115,9 +115,9 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
      1. Ask the user explicitly which specific data timelines and metrics they want to make public.
      2. Create a separate `public-export` directory.
      3. Scaffold a fresh HTML structure into `public-export` by copying the necessary components from the `template-dashboard` directory.
-     4. Copy ONLY the explicitly approved data files (e.g., specific `.jsonl` files) into `public-export`, and create a new, sanitized `data.json` referencing only those files. Copy over the `app.js`, `theme.css`, and required images.
+     4. Copy ONLY the explicitly approved data files (e.g., specific `.jsonl` files) into `public-export`, and create a new `data.json` referencing only those files. Copy over the `app.js`, `theme.css`, and required images.
      5. Start a new local server on a different port (e.g., 8082) serving ONLY the `public-export` directory.
-     6. Provide the user with this new localhost link and explicitly ask them to verify that the data shown is safe for public consumption.
+     6. Provide the user with this new localhost link and explicitly ask them to verify that the data shown is safe for public consumption. Inform the user that the dashboard will be published and shared with the data exactly as it is shown.
    - Wait for their explicit confirmation before proceeding.
    - If they agree, offer them three deployment options, ordered by ease of use:
      - **Option 1: Surge (Easiest, No Git Required)**
