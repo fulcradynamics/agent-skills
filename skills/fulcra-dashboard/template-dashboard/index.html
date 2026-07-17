@@ -84,10 +84,10 @@
             </div>
             
             <!-- Data Velocity Chart -->
-            <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
+            <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 1" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
                 <div class="card-header">
                     <div class="header-icon-box">📊</div>
-                    <h2 class="timeline-title">Data Velocity</h2>
+                    <h2 class="timeline-title">Your data</h2>
                 </div>
                 <div class="chart-container bar-chart-zone" x-ref="barChartZone" style="width: 100%; min-height: 200px;"></div>
             </section>

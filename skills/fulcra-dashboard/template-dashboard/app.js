@@ -135,7 +135,7 @@ document.addEventListener('alpine:init', () => {
 
 function drawD3BarChart(data, container) {
     d3.select(container).selectAll("*").remove();
-    const margin = { top: 30, right: 30, bottom: 40, left: 150 };
+    const margin = { top: 30, right: 60, bottom: 40, left: 150 };
     const width = container.clientWidth - margin.left - margin.right || 600;
     const height = Math.max(250, data.length * 40);
 
@@ -148,7 +148,7 @@ function drawD3BarChart(data, container) {
     const sortedData = [...data].sort((a, b) => b.count - a.count);
 
     const x = d3.scaleLinear()
-        .domain([0, d3.max(sortedData, d => d.count)])
+        .domain([0, d3.max(sortedData, d => d.count) * 1.15])
         .range([0, width]);
 
     svg.append("g")
