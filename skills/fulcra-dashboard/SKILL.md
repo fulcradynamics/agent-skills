@@ -15,11 +15,11 @@ This skill provides the automated setup for a lightweight, build-less web dashbo
 
 This dashboard is designed fundamentally as a **local, private interface** for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's private data. 
 
-**Crucially:** The local application must NEVER be published to the public internet directly if it contains unapproved private data. If the user wishes to share a dashboard, you must generate a separate, sanitized **export** that strips out unapproved private data.
+Important: The local application must never be published to the public internet directly if it contains unapproved private data. If the user wishes to share a dashboard, you must generate a separate, sanitized **export** that strips out unapproved private data.
 
 ## Architecture Decrees
 
-When constructing this dashboard, you **MUST** follow these strict architectural rules to prevent the file from becoming a tangled, unmaintainable monolith:
+When constructing this dashboard, you **must** follow these strict architectural rules to prevent the file from becoming a tangled, unmaintainable monolith:
 
 1. **Monumental Landmarks (Banner Comments):** Divide the HTML file into distinct provinces using highly visible comments. This ensures you (the agent) can navigate and edit surgical blocks safely.
    ```html
@@ -47,6 +47,22 @@ When constructing this dashboard, you **MUST** follow these strict architectural
    - `styles.css` (Custom overriding aesthetics)
    No build step is allowed.
 
+## Adding Advanced Visualizations
+
+When the user requests more complex or varied visualizations, you have two primary avenues:
+
+### 1. Frontend: New Alpine & D3.js Charts
+The default template includes basic charts, but you can add more specialized D3.js visualizations to the Alpine frontend.
+- **Workflow:** Add a new method inside the `Alpine.data()` block in `app.js` (or the script tag in `index.html`). Use D3.js to bind to the `.jsonl` timeline data and render SVG or Canvas elements.
+- **Examples:** Heatmaps for daily frequency, scatter plots for correlating two metrics, or radar charts for skill/habit tracking.
+- **Constraint:** Keep the D3 code clean and modular. Isolate chart rendering functions so they can be re-rendered on window resize or data updates.
+
+### 2. Backend: Python-Generated Visualizations
+For highly complex, compute-intensive, or specialized visual outputs (like word clouds, network graphs, or composite rasterized images), leverage the Python backend.
+- **Workflow:** Modify `server.py` (or create a secondary Python worker script) to read the local Fulcra `.jsonl` data, process it using libraries like `matplotlib`, `seaborn`, or `networkx`, and output a static image (e.g., `.png`, `.svg`) or pre-calculated JSON structure into the dashboard directory.
+- **Integration:** Update `index.html` to reference the generated image (e.g., `<img src="/generated-network.png">`) or have the Alpine state fetch the advanced JSON artifact.
+- **Constraint:** Ensure the Python generation step can be run independently or triggered reliably, so the dashboard always reflects the latest data without breaking the simple local server paradigm.
+
 ## Usage
 
 When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcradynamics/agent-skills/fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
@@ -68,22 +84,22 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
 1. **Scaffold:** The script copies a clean, un-styled Alpine.js dashboard template into the target directory.
 2. **Data Ingestion (Requires Consent):** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI. 
    - **Important:** Always ask the user for permission to query the Fulcra API to build the dashboard before fetching records.
-   - Run `uv tool run fulcra-api catalog` to discover available data. **CRITICAL:** Prioritize user-configured data over passive metrics (like step count). Explicitly filter for items where `categories` includes `"user_configured"`, or where the `id` follows the format `*Annotation/<UUID>` (e.g., `ScaleAnnotation/1234-abcd...`).
+   - Run `uv tool run fulcra-api catalog` to discover available data. Note: Prioritize user-configured data over passive metrics (like step count). Explicitly filter for items where `categories` includes `"user_configured"`, or where the `id` follows the format `*Annotation/<UUID>` (e.g., `ScaleAnnotation/1234-abcd...`).
    - Fetch records for the user's custom annotations (e.g., `uv tool run fulcra-api get-records "ScaleAnnotation/<UUID>" "30 days" > timeline_name.jsonl`).
-   - **Agent Visibility Package:** If the user previously enabled the Universal Agent Visibility Package (or if you see "Agent Tasks Completed" and "Current Agent Work" in their catalog), you MUST fetch these agent annotations as well and explicitly include them in the `data.json` timelines array so your background work is visualized alongside their personal data.
-   - **Records Processed:** You MUST fetch the `RecordsProcessed` metric for the timeline (e.g., `uv tool run fulcra-api get-records "RecordsProcessed" "30 days" > records_processed.jsonl`) to populate the Data Velocity chart. Do not skip this step or set it to null.
+   - **Agent Visibility Package:** If the user previously enabled the Universal Agent Visibility Package (or if you see "Agent Tasks Completed" and "Current Agent Work" in their catalog), you must fetch these agent annotations as well and explicitly include them in the `data.json` timelines array so your background work is visualized alongside their personal data.
+   - **Records Processed:** You must fetch the `RecordsProcessed` metric for the timeline (e.g., `uv tool run fulcra-api get-records "RecordsProcessed" "30 days" > records_processed.jsonl`) to populate the Data Velocity chart. Do not skip this step or set it to null.
    - Keep the files as raw JSONL in the dashboard directory.
-   - The `data.json` config file acts as a manifest. It should map your layout to the `.jsonl` files you downloaded, and you **must** include the annotation `description` in the timeline block, like this: `{"summary": "A concise overview of the current data and recent activity...", "timelines": [{"id": "...", "title": "...", "description": "The description from the catalog...", "icon": "...", "color": "...", "data": "timeline_name.jsonl"}], "recordsProcessed": "records_processed.jsonl"}`. **Crucial:** For the `"summary"` field, you MUST read the downloaded `.jsonl` data and write a short, personalized text summary of the actual real-world activity shown in the data (e.g., "You've been consistently tracking your mood, with a slight dip this week"). Do not write meta-descriptions like "This is a retro dashboard."
+   - The `data.json` config file acts as a manifest. It should map your layout to the `.jsonl` files you downloaded, and you **must** include the annotation `description` in the timeline block, like this: `{"summary": "A concise overview of the current data and recent activity...", "timelines": [{"id": "...", "title": "...", "description": "The description from the catalog...", "icon": "...", "color": "...", "data": "timeline_name.jsonl"}], "recordsProcessed": "records_processed.jsonl"}`. **Crucial:** For the `"summary"` field, you must read the downloaded `.jsonl` data and write a short, personalized text summary of the actual real-world activity shown in the data (e.g., "You've been consistently tracking your mood, with a slight dip this week"). Do not write meta-descriptions like "This is a retro dashboard."
    - You do not need to write an aggregation script; the dashboard will automatically parse `.jsonl` files and aggregate records for the charts natively on `init()`.
 3. **Theming & Visualization:**
    - **Theme Discovery:** Ask the user what "theme" or "vibe" they want (e.g., minimalist dark mode, cyberpunk, a retro diner, a space station, a cozy bakery). 
    - **Embrace the Theme (HTML & Copy):** Do not leave default boilerplate intact! Modify `index.html` directly to rewrite the main title, subtitle, and all component headers to fit the theme (e.g., change "Fulcra Dashboard" to "The Cybernetic Core" and "Records Processed" to "Baguettes Baked"). Replace all default emojis (like 📊 or 🛰️) with theme-appropriate icons.
-   - **Preserve the Bento Layout (CRITICAL):** The base HTML and CSS files use a `.dashboard-bento-grid` layout that features a sticky left column and a flexible right column. **Do not rewrite or remove the core structural HTML** (e.g. `.layout-container`, `.dashboard-bento-grid`, `.bento-col-left`, `.bento-col-right`). When you edit the CSS, you must leave the structural grid properties (`grid-template-columns`, `sticky` positioning, `flex` directions) intact to prevent breaking the layout. Limit your CSS edits to colors (by updating the root variables), fonts, borders, box-shadows, and backgrounds.
+   - **Preserve the Bento Layout (Required):** The base HTML and CSS files use a `.dashboard-bento-grid` layout that features a sticky left column and a flexible right column. **Do not rewrite or remove the core structural HTML** (e.g. `.layout-container`, `.dashboard-bento-grid`, `.bento-col-left`, `.bento-col-right`). When you edit the CSS, you must leave the structural grid properties (`grid-template-columns`, `sticky` positioning, `flex` directions) intact to prevent breaking the layout. Limit your CSS edits to colors (by updating the root variables), fonts, borders, box-shadows, and backgrounds.
    - **Original Art (Required):** Generate one piece of highly creative thematic art using the `image_generate` tool. Save it to the folder and reference it via an `<img>` tag in the dashboard header. **Style Directive:** The image must be extremely high-quality and perfectly cohesive with the user's chosen theme. Whether the vibe calls for retro 2D pixel art, a minimalist vector illustration, or a sleek 3D render, ensure the specific art style, color palette, and lighting strictly match the CSS variables and overall aesthetic you are building.
    - **Hero Text Legibility & Scale:** When styling the hero header, ensure the text overlaid on the image is highly legible. Adapt the technique to fit the theme (e.g., use a frosted glass `backdrop-filter: blur()` block for tech/modern themes, an ambient `radial-gradient` vignette for dark/moody themes). Additionally, the hero must not dominate the viewport. Keep it compact (e.g., `min-height: 250px`) so the core telemetry data is visible "above the fold."
    - **Dynamic Animated Elements:** Inject at least one CSS animation (using standard CSS `@keyframes` in `theme.css`) that fits the theme (e.g., a floating asteroid, a blinking cursor, a buzzing fly) and attach it to the `.animation-layer` or other suitable elements.
 4. **Git Repository Initialization:**
-   - Once scaffolded, **you MUST prompt the user to initialize a git repository**.
+   - Once scaffolded, **you must prompt the user to initialize a git repository**.
    - Check if `git` is installed. Suggest 1 or 2 fun repository names based on their theme.
    - Initialize locally (`git init && git add . && git commit -m "Initial commit"`). *Do not push to GitHub yet.*
 5. **Run & Verify:**
@@ -95,7 +111,7 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
    - Provide the user with the localhost link.
 6. **Public Publication (Requires Consent & Preview):**
    - The user may wish to publish a version of their dashboard to the public internet.
-   - **MANDATORY ISOLATION & SCRATCH BUILD:** The local dashboard is private. You MUST NOT copy the local dashboard files to the public internet. Instead, you must build the public dashboard from scratch as a separate entity:
+   - Isolation and scratch build: The local dashboard is private. You must not copy the local dashboard files to the public internet. Instead, you must build the public dashboard from scratch as a separate entity:
      1. Ask the user explicitly which specific data timelines and metrics they want to make public.
      2. Create a separate `public-export` directory.
      3. Scaffold a fresh HTML structure into `public-export` by copying the necessary components from the `template-dashboard` directory.
