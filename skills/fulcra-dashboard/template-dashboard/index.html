@@ -41,15 +41,6 @@
 
         <!-- Main Dashboard Content -->
         <div class="dashboard-content-stack">
-            
-            <!-- Data Velocity Chart -->
-            <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
-                <div class="card-header">
-                    <div class="header-icon-box">📊</div>
-                    <h2 class="timeline-title">Data Velocity</h2>
-                </div>
-                <div class="chart-container bar-chart-zone" x-ref="barChartZone" style="width: 100%; min-height: 200px;"></div>
-            </section>
 
             <!-- Chronological Timelines -->
             <div class="timelines-grid">
@@ -91,6 +82,15 @@
                     </section>
                 </template>
             </div>
+            
+            <!-- Data Velocity Chart -->
+            <section class="card glass-panel bar-chart-card" x-show="recordsProcessed.length > 0" x-data="barChartComponent()" x-effect="updateChart(recordsProcessed)">
+                <div class="card-header">
+                    <div class="header-icon-box">📊</div>
+                    <h2 class="timeline-title">Data Velocity</h2>
+                </div>
+                <div class="chart-container bar-chart-zone" x-ref="barChartZone" style="width: 100%; min-height: 200px;"></div>
+            </section>
             
         </div>
         
