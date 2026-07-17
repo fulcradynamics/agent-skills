@@ -47,6 +47,22 @@ When constructing this dashboard, you **MUST** follow these strict architectural
    - `styles.css` (Custom overriding aesthetics)
    No build step is allowed.
 
+## Adding Advanced Visualizations
+
+When the user requests more complex or varied visualizations, you have two primary avenues:
+
+### 1. Frontend: New Alpine & D3.js Charts
+The default template includes basic charts, but you can add more specialized D3.js visualizations to the Alpine frontend.
+- **Workflow:** Add a new method inside the `Alpine.data()` block in `app.js` (or the script tag in `index.html`). Use D3.js to bind to the `.jsonl` timeline data and render SVG or Canvas elements.
+- **Examples:** Heatmaps for daily frequency, scatter plots for correlating two metrics, or radar charts for skill/habit tracking.
+- **Constraint:** Keep the D3 code clean and modular. Isolate chart rendering functions so they can be re-rendered on window resize or data updates.
+
+### 2. Backend: Python-Generated Visualizations
+For highly complex, compute-intensive, or specialized visual outputs (like word clouds, network graphs, or composite rasterized images), leverage the Python backend.
+- **Workflow:** Modify `server.py` (or create a secondary Python worker script) to read the local Fulcra `.jsonl` data, process it using libraries like `matplotlib`, `seaborn`, or `networkx`, and output a static image (e.g., `.png`, `.svg`) or pre-calculated JSON structure into the dashboard directory.
+- **Integration:** Update `index.html` to reference the generated image (e.g., `<img src="/generated-network.png">`) or have the Alpine state fetch the advanced JSON artifact.
+- **Constraint:** Ensure the Python generation step can be run independently or triggered reliably, so the dashboard always reflects the latest data without breaking the simple local server paradigm.
+
 ## Usage
 
 When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcradynamics/agent-skills/fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
