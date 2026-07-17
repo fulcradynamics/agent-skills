@@ -123,10 +123,11 @@ def summarize_categorical(series: pd.Series, *, top_n: int = 10) -> dict[str, An
     """Summarize a categorical/object pandas Series."""
 
     values = series.dropna()
-    counts = values.astype("string").value_counts(dropna=True).head(top_n)
+    str_values = values.astype("string")
+    counts = str_values.value_counts(dropna=True).head(top_n)
     return {
         "count": int(values.count()),
-        "unique": int(values.nunique(dropna=True)),
+        "unique": int(str_values.nunique(dropna=True)),
         "top_values": {str(index): int(count) for index, count in counts.items()},
     }
 
@@ -194,13 +195,19 @@ def summarize_column(series: pd.Series, *, top_n: int = 10) -> ColumnSummary:
     else:
         stats = summarize_categorical(series, top_n=top_n)
 
+    try:
+        unique = int(series.nunique(dropna=True))
+    except TypeError:
+        # Fallback for unhashable types (like lists or dicts)
+        unique = int(series.astype("string").nunique(dropna=True))
+
     return ColumnSummary(
         name=str(series.name),
         dtype=str(series.dtype),
         non_null=row_count - missing,
         missing=missing,
         missing_fraction=0.0 if row_count == 0 else missing / row_count,
-        unique=int(series.nunique(dropna=True)),
+        unique=unique,
         kind=kind,
         stats=stats,
     )
