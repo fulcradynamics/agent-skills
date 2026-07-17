@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fulcra-analytics"
+version = "0.1.0"
+description = "Privacy-respecting analytics scaffold for Fulcra user data."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "first-olympiad" }]
+dependencies = [
+  "pandas>=2.2",
+  "numpy>=1.26",
+  "scipy>=1.12",
+  "scikit-learn>=1.5",
+  "pydantic>=2.7",
+  "python-dateutil>=2.9",
+  "typer>=0.12",
+  "rich>=13.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+viz = ["matplotlib>=3.8", "seaborn>=0.13", "plotly>=5.22"]
+
+[project.scripts]
+fulcra-analytics = "fulcra_analytics.cli:app"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
