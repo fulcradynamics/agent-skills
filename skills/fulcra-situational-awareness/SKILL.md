@@ -22,21 +22,18 @@ Before adopting situational awareness habits, the agent **MUST** explicitly ask 
 
 When performing an awareness scan (either periodically in the background or at the start of a new conversational session), you should execute the following checks. **You do not need to download and read the contents of all discovered files every time.** The goal is simply to be *aware* that they exist or have been updated recently, so you can fetch them if the user's request relates to them or if you need the context for a task.
 
-### A. Check for Recent File Uploads (Memory & Teams)
-You should list and review the recent contents of the core namespaces defined by the `fulcradynamics/agent-skills/fulcra-memory` and `fulcradynamics/agent-skills/fulcra-agent-teams` skills.
-- List files in `agent/<agent-name>/memory/session/` and `agent/<agent-name>/memory/task/`.
-- List files in relevant team namespaces: `team/<team-name>/session/` and `team/<team-name>/task/`.
-- Take note of the filenames (which often contain timestamps and subjects) and their modification dates.
+### A. Check for Recent File Updates and Processed Data
+You can use the Fulcra API's `data-updates` command to quickly summarize all recent data ingestion (e.g., Apple Health, location data) and recent file changes across the datastore in a single step.
+- Check `data-updates` for the past 24 hours (or since your last check).
+- This replaces the need to manually list directories or query raw `RecordsProcessed` events for situational awareness.
+- Review the summary:
+  - If team files or memory files changed (e.g., `agent/<agent-name>/memory/session/` or `team/<team-name>/progress.md`), take note. You can read the specific files that changed if they seem relevant to your current task.
+  - If new data types have been processed recently (e.g., health, location), you will know fresh data is available if the user asks. Note that `data-updates` rolls custom annotations up under their base type (e.g., `MomentAnnotation`). If you see annotation types listed and need to know which specific custom concepts were updated, you may need to fetch the actual recent annotation records.
 
 ### B. Check Team Inboxes
 Check for any pending coordination messages left by other agents or users.
 - List files in `team/<team-name>/member/<agent-name>/inbox/`.
 - If there are messages, you may decide to process them (download, archive, and delete from inbox) as defined by the `fulcradynamics/agent-skills/fulcra-agent-teams` skill.
-
-### C. Retrieve `RecordsProcessed` Events
-Fulcra tracks newly ingested data via `RecordsProcessed` events. By checking these records for the past 24 hours (or since your last check), you can understand what *types* of data the user has been generating or syncing (e.g., Apple Health data, location data, custom annotations).
-- Fetch `RecordsProcessed` records.
-- Note the data types that have been successfully processed recently. If the user mentions health, location, or custom tracking, you will know that fresh data is available to be queried.
 
 ## Workflow
 

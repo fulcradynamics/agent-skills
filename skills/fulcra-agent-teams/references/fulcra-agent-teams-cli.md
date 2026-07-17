@@ -7,7 +7,42 @@ description: "CLI command references for executing artifact uploads and team inb
 
 This reference dictates the exact shell commands required to execute the `fulcra-agent-teams` skill's operations. Ensure all CLI operations run in the agent's workspace.
 
-## 1. Uploading User Artifacts
+## Authentication Note
+If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
+1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+
+## 1. Checking Recent Team File Changes
+
+To quickly check for recent updates across a team's namespaces without listing individual directories:
+
+```bash
+# Get a summary of files changed in the last 1 day
+uv tool run fulcra-api data-updates "1 day"
+
+# Example output:
+# {
+#   "data_types": {},
+#   "file_changes": [
+#     {
+#       "full_name": "/team/first-olympiad/progress.md",
+#       "uploaded_at": "2026-07-01T21:23:28.690719Z",
+#       "state": "uploaded",
+#       "...": "..."
+#     },
+#     {
+#       "full_name": "/team/first-olympiad/task/setup-dashboard.md",
+#       "uploaded_at": "2026-07-01T21:23:28.690719Z",
+#       "state": "uploaded",
+#       "...": "..."
+#     }
+#   ]
+# }
+```
+
+*Note: The `file_changes` key is a list of file metadata objects. You can extract the `full_name` from each to see the file paths. If the summary shows that specific team files were changed, you can then read those specific files to update your context.*
+
+## 2. Uploading User Artifacts
 
 When an agent generates a file (like an HTML dashboard, an image, or a report), and the user explicitly approves saving it to their Fulcra account, upload it to the `artifact/` subdirectory.
 
@@ -37,7 +72,7 @@ uv tool run fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbo
 ```
 
 **Step C: Processing and Archiving a message**
-Once you have downloaded and read a message from your inbox, move it to the archive.
+Once you have downloaded and read a message from your inbox, move it to the archive. If the file was manually dropped and lacks a timestamp, **you must prepend one** (`YYYYMMDD-HHMMSS_`) when saving it to `archive/`.
 
 ```bash
 # 1. Download to read (if you haven't already)
@@ -91,6 +126,20 @@ echo "- [$(date +%Y-%m-%d)] <Objective summary>" >> /tmp/team_completed.md
 
 # 3. Upload the updated file back to Fulcra
 uv tool run fulcra-api file upload /tmp/team_completed.md "team/<team_name>/completed.md"
+```
+
+**Step C: Syncing Team and Member Roles & Progress**
+To ensure the team and its members understand their purpose and current context, maintain `role.md` and member `progress.md` files (with proper OKF frontmatter).
+```bash
+# Update the overall team role
+uv tool run fulcra-api file upload /tmp/team-role.md "team/<team_name>/role.md"
+
+# Update your specific agent's role within the team
+uv tool run fulcra-api file upload /tmp/member-role.md "team/<team_name>/member/<your_agent_name>/role.md"
+
+# Update your specific agent's progress (critical for isolated background jobs)
+uv tool run fulcra-api file upload /tmp/member-progress.md "team/<team_name>/member/<your_agent_name>/progress.md"
+```
 
 ## 4. Team Session and Task Tracking
 

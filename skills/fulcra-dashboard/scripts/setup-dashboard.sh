@@ -42,4 +42,3 @@ echo "1. Data Ingestion: Query the Fulcra API, format the timeline data, and ove
 echo "2. Theming: Ask the user for a vibe, generate hero art (save to assets/), and heavily edit theme.css."
 echo "3. Preview: Start the python server and show the user the local dashboard."
 echo "4. Git: Prompt the user to initialize a git repo, commit the dashboard, and push to GitHub Pages if desired."
-echo "5. Envoy: Remind the user that the Chat Envoy is dormant on GitHub, but functions locally."

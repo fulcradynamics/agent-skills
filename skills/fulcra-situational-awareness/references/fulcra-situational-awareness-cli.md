@@ -7,25 +7,46 @@ description: "CLI command references for executing situational awareness scans o
 
 This reference dictates the exact shell commands required to execute the `fulcra-situational-awareness` skill's operations. Ensure all CLI operations run in the agent's workspace.
 
-## 1. Scanning File Namespaces (Memory & Teams)
+## Authentication Note
+If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
+1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
 
-Use the `file list` command to check for recent session summaries, active tasks, or general memory updates.
+## 1. Checking Recent File Updates and Processed Data
 
-**Check Agent Memory:**
+Fulcra can summarize all recent data ingestion and file changes across the datastore in a single command. This is the fastest way to gain situational awareness.
+
+**Summarize recent updates (Last 24 Hours):**
 ```bash
-# Check your personal session and task directories
-uv tool run fulcra-api file list "agent/<your_agent_name>/memory/session/"
-uv tool run fulcra-api file list "agent/<your_agent_name>/memory/task/"
+# Get a summary of data types processed and files changed in the last 1 day
+uv tool run fulcra-api data-updates "1 day"
+
+# Example output:
+# {
+#   "data_types": {
+#     "ActiveCaloriesBurned": 150,
+#     "StepCount": 121
+#   },
+#   "file_changes": [
+#     {
+#       "full_name": "/agent/wazir/memory/session/20260701-120000_update.md",
+#       "uploaded_at": "2026-07-01T21:23:28.690719Z",
+#       "state": "uploaded",
+#       "...": "..."
+#     },
+#     {
+#       "full_name": "/team/first-olympiad/progress.md",
+#       "uploaded_at": "2026-07-01T21:23:28.690719Z",
+#       "state": "uploaded",
+#       "...": "..."
+#     }
+#   ]
+# }
 ```
 
-**Check Team Namespaces:**
-```bash
-# Check shared team session and task directories
-uv tool run fulcra-api file list "team/<team_name>/session/"
-uv tool run fulcra-api file list "team/<team_name>/task/"
-```
+*Note: The `data_types` key is a dictionary mapping data type names to the number of records written across the time range. The `file_changes` key is a list of file metadata objects; you can extract the `full_name` from each to see the file paths.*
 
-*Note: You do not need to download these files immediately. Simply listing them allows you to see the filenames (which include subjects/timestamps) so you are aware of recent activities.*
+*If the summary shows that specific team or memory files were changed, you can then read those specific files to update your context. If new data types are listed, you know that fresh data is available for querying. Note that `data-updates` rolls custom annotations up under their base type (e.g., `MomentAnnotation`). If you see annotation types listed and need to know which specific custom concepts were updated, you may need to fetch the actual recent annotation records.*
 
 ## 2. Checking Team Inboxes
 
@@ -36,23 +57,3 @@ uv tool run fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbo
 ```
 
 *(If you discover messages and need to process them, refer to the inbox lifecycle rules in the `fulcradynamics/agent-skills/fulcra-agent-teams` skill.)*
-
-## 3. Reviewing Recently Processed Data
-
-Fulcra logs a `RecordsProcessed` event whenever new data is ingested into the user's datastore. You can query these events to see which data types have seen recent activity.
-
-**Query Recent Processed Records (Last 24 Hours):**
-```bash
-# Fetch RecordsProcessed for the last 1 day and output as JSON
-uv tool run fulcra-api get-records RecordsProcessed "1 day"
-```
-
-**Extracting Data Types (Using `jq`):**
-If you want to quickly summarize which data types were updated, you can pipe the output to `jq` to extract the unique schema or data type identifiers from the processed records. (Note that `get-records` outputs line-delimited JSON, so we just extract the field from each line.)
-
-```bash
-# Example: Extracting the types of records that were recently processed
-uv tool run fulcra-api get-records RecordsProcessed "1 day" | jq -r '.fulcra_data_type' | sort | uniq
-```
-
-*(Depending on the exact schema of `RecordsProcessed`, the JSON path to the data type might vary. Inspect the raw JSON of a single record if you need to adjust the `jq` filter.)*

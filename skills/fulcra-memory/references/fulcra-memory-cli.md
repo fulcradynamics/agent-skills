@@ -7,7 +7,42 @@ description: "CLI command references for executing memory sync and progress repo
 
 This reference dictates the exact shell commands required to execute the `fulcra-memory` skill's operations. Ensure all CLI operations run in the agent's root workspace (`~/.openclaw/workspace`).
 
-## 1. Syncing Progress and OKF Files
+## Authentication Note
+If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
+1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+
+## 1. Discovering Recent Memory Changes
+
+To quickly see what memory files were updated or new knowledge was added recently:
+
+```bash
+# Get a summary of files changed in the last 1 day
+uv tool run fulcra-api data-updates "1 day"
+
+# Example output:
+# {
+#   "data_types": {},
+#   "file_changes": [
+#     {
+#       "full_name": "/agent/treecle/memory/knowledge/programming/python.md",
+#       "uploaded_at": "2026-07-01T21:23:28.690719Z",
+#       "state": "uploaded",
+#       "...": "..."
+#     },
+#     {
+#       "full_name": "/agent/treecle/memory/session/20260701-120000_setup.md",
+#       "uploaded_at": "2026-07-01T21:23:28.690719Z",
+#       "state": "uploaded",
+#       "...": "..."
+#     }
+#   ]
+# }
+```
+
+*Note: The `file_changes` key is a list of file metadata objects. You can extract the `full_name` from each to see the file paths. If the summary shows that specific memory files were changed, you can then read those specific files to update your context.*
+
+## 2. Syncing Progress and OKF Files
 
 To keep the agent's memory in sync, generate a `progress.md` summary, ensure OKF files are updated, and upload them to Fulcra.
 
@@ -48,9 +83,16 @@ Upload the files using the standardized agent path convention. Determine the age
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
-uv tool run fulcra-api file upload memory/progress.md "agent/<agent_name>/memory/progress.md"
-uv tool run fulcra-api file upload memory/log.md "agent/<agent_name>/memory/log.md"
-uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/memory/index.md"
+uv tool run fulcra-api file upload memory/progress.md "agent/<agent_name>/progress.md"
+uv tool run fulcra-api file upload memory/log.md "agent/<agent_name>/log.md"
+uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/index.md"
+```
+
+**Step C: Sync Identity & Role**
+If the agent's identity, duties, or standard operating procedures change, update the `role.md` file and upload it. Include OKF YAML frontmatter (`type: Role`).
+
+```bash
+uv tool run fulcra-api file upload memory/role.md "agent/<agent_name>/role.md"
 ```
 
 ## 2. Saving Session Summaries
@@ -65,7 +107,7 @@ Generate a concise markdown file capturing the session's context, decisions, and
 Upload the file to the `session/` namespace using the agent's name.
 
 ```bash
-uv tool run fulcra-api file upload memory/session/20260623-180530_setup-dashboard.md "agent/<agent_name>/memory/session/20260623-180530_setup-dashboard.md"
+uv tool run fulcra-api file upload memory/session/20260623-180530_setup-dashboard.md "agent/<agent_name>/session/20260623-180530_setup-dashboard.md"
 ```
 
 ## 3. Managing Long-Running Tasks
@@ -82,7 +124,25 @@ Ensure `memory/task/index.md` is updated to include a link to the new or active 
 **Step C: Upload to Fulcra**
 Upload both the task file and the task index.
 
+uv tool run fulcra-api file upload memory/task/setup-dashboard.md "agent/<agent_name>/task/setup-dashboard.md"
+uv tool run fulcra-api file upload memory/task/index.md "agent/<agent_name>/task/index.md"
+```
+
+## 4. Personal Inbox Lifecycle
+
+Agents can receive files in their personal inbox (`inbox/`) from users or external triggers. Users can drop files here manually without needing strict timestamp formats.
+
+**Step A: Process and Archive**
+Read the file from the inbox. Once processed, you must upload it to the `archive/` directory. If the original file name doesn't start with a timestamp, you **must prepend one** (`YYYYMMDD-HHMMSS_`).
+
 ```bash
-uv tool run fulcra-api file upload memory/task/setup-dashboard.md "agent/<agent_name>/memory/task/setup-dashboard.md"
-uv tool run fulcra-api file upload memory/task/index.md "agent/<agent_name>/memory/task/index.md"
+# Example for a file originally named "todo.md"
+uv tool run fulcra-api file upload memory/archive/20260624-153000_todo.md "agent/<agent_name>/archive/20260624-153000_todo.md"
+```
+
+**Step B: Delete from Inbox**
+Once safely archived, delete the original file from the inbox.
+
+```bash
+uv tool run fulcra-api file delete "agent/<agent_name>/inbox/todo.md"
 ```
