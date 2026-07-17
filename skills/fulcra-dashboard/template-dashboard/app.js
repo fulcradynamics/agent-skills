@@ -447,3 +447,62 @@ function drawD3RadarChart(data, container, features) {
             d3.selectAll(".radar-area").style("fill-opacity", 0.4);
         });
 }
+
+/**
+ * Renders an Interactive, Rotatable 3D Scatter Plot using Plotly.js
+ * 🚨 AGENT INSTRUCTION: If you use this, you MUST inject the Plotly CDN into index.html:
+ * <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+ * 
+ * Useful for finding clusters or outliers across 3 distinct dimensions (e.g. Time vs. Amount vs. Frequency).
+ */
+function drawPlotly3DScatter(data, container, xKey = "x", yKey = "y", zKey = "z", labelKey = "label") {
+    // Ensure container is a DOM node
+    const domNode = typeof container === 'string' ? document.getElementById(container) : container;
+    if (!domNode) return;
+    
+    domNode.innerHTML = ""; // Clear any existing D3 or Plotly charts
+    
+    if (typeof Plotly === 'undefined') {
+        console.error("Plotly is not loaded. Please add the CDN script to index.html.");
+        domNode.innerHTML = "<p style='color:var(--text-muted); text-align:center; padding:2rem;'>Plotly.js missing. Add CDN to index.html.</p>";
+        return;
+    }
+
+    const trace = {
+        x: data.map(d => d[xKey]),
+        y: data.map(d => d[yKey]),
+        z: data.map(d => d[zKey]),
+        text: data.map(d => d[labelKey] || ''),
+        mode: 'markers',
+        marker: {
+            size: 6,
+            color: data.map(d => d[zKey]), // Color gradient by Z axis
+            colorscale: 'Viridis',
+            opacity: 0.8,
+            line: { width: 0.5, color: 'rgba(255,255,255,0.3)' }
+        },
+        type: 'scatter3d',
+        hovertemplate: `${xKey}: %{x}<br>${yKey}: %{y}<br>${zKey}: %{z}<br><b>%{text}</b><extra></extra>`
+    };
+
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: 'rgba(0,0,0,0)', // Transparent to match dashboard themes
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        scene: {
+            xaxis: { title: xKey, showbackground: false, gridcolor: "rgba(128,128,128,0.2)", zerolinecolor: "rgba(128,128,128,0.5)" },
+            yaxis: { title: yKey, showbackground: false, gridcolor: "rgba(128,128,128,0.2)", zerolinecolor: "rgba(128,128,128,0.5)" },
+            zaxis: { title: zKey, showbackground: false, gridcolor: "rgba(128,128,128,0.2)", zerolinecolor: "rgba(128,128,128,0.5)" },
+            camera: {
+                eye: { x: 1.5, y: 1.5, z: 1.2 } // Initial rotation angle
+            }
+        }
+    };
+
+    const config = {
+        responsive: true,
+        displayModeBar: false // Keep it clean for the dashboard UI
+    };
+
+    Plotly.newPlot(domNode, [trace], layout, config);
+}
