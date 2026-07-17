@@ -92,7 +92,7 @@ uv tool run fulcra-api file download <remote_path> <local_path>
 uv tool run fulcra-api file upload <local_path> <remote_path>
 
 # Delete a file from the Fulcra File Store
-# 🚨 SECURITY REQUIREMENT: File deletion is destructive. You must obtain user confirmation before deleting files, unless the user has already approved an autonomous ingest-and-archive workflow that requires this step.
+# Note: File deletion is destructive. You must obtain user confirmation before deleting files, unless the user has already approved an autonomous ingest-and-archive workflow that requires this step.
 uv tool run fulcra-api file delete <remote_path>
 ```
 
@@ -144,7 +144,7 @@ The file or piped data must be formatted as **JSONL** (one JSON object per line)
 
 If a user requests a correction to their data (e.g., they want to change the tagging scheme or the source data was mutated), you must delete the old records before re-ingesting them. 
 
-**🚨 SECURITY REQUIREMENT:** Data deletion is a highly destructive operation with severe consequences (data loss, inconsistent timelines, loss of auditability). You MUST prominently surface this risk to the user, list the exact records affected, and require explicit confirmation before running the `fulcra-api delete` command.
+Data deletion is a highly destructive operation with severe consequences (data loss, inconsistent timelines, loss of auditability). You must prominently surface this risk to the user, list the exact records affected, and require explicit confirmation before running the `fulcra-api delete` command.
 
 Data is deleted using the `fulcra-api delete` CLI command. You can pass a file containing JSONL with `{"record_id": "<UUID>"}` on each line.
 
