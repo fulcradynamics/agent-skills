@@ -91,10 +91,14 @@ class FulcraClient:
             return []
         try:
             return json.loads(stdout)
-        except json.JSONDecodeError as exc:
-            raise FulcraClientError(
-                f"fulcra-api command did not return JSON for args {list(args)}: {stdout[:500]}"
-            ) from exc
+        except json.JSONDecodeError:
+            # Fallback for JSONL
+            try:
+                return [json.loads(line) for line in stdout.splitlines() if line.strip()]
+            except json.JSONDecodeError as exc:
+                raise FulcraClientError(
+                    f"fulcra-api command did not return JSON for args {list(args)}: {stdout[:500]}"
+                ) from exc
 
     def text(self, args: Sequence[str], *, timeout: int | None = None) -> str:
         """Run a Fulcra CLI command and return stdout text."""
