@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fulcra Control Panel</title>
+    <link rel="stylesheet" href="theme.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="envoy.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen relative" x-data="controlPanel()">
+    
+    <div class="animation-layer"></div>
+
+    <main class="layout-container">
+        <header class="glass-panel" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 250px;">
+            <img src="" alt="Hero Image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; filter: brightness(0.6) saturate(1.2);">
+            <div style="z-index: 10; text-align: center; color: white;">
+                <h1 style="font-size: 3rem; margin-bottom: 0.5rem; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">Fulcra Control Panel</h1>
+                <p style="font-size: 1.2rem; opacity: 0.9;">Secure Management Interface</p>
+            </div>
+        </header>
+
+        <div class="dashboard-bento-grid">
+            
+            <div class="bento-col-left">
+                <section class="card glass-panel local-only chat-envoy-card" x-data="chatEnvoy()">
+                    <div class="card-header">
+                        <div class="header-icon-box">🛰️</div>
+                        <h2 class="timeline-title">Relay</h2>
+                        <div class="status-indicator" :class="isTyping ? 'typing' : 'active'"></div>
+                    </div>
+                    
+                    <div class="chat-window sleek-scroll" x-ref="chatWindow">
+                        <template x-for="msg in messages" :key="Math.random()">
+                            <div class="message" :class="msg.role">
+                                <div class="bubble" x-text="msg.text"></div>
+                            </div>
+                        </template>
+                        <div class="message assistant typing-indicator" x-show="isTyping">
+                            <div class="bubble">...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <textarea x-model="input" x-ref="chatInput" @input="$el.style.height = 'auto'; $el.style.height = ($el.scrollHeight) + 'px'" @keydown="handleKeydown" placeholder="Transmit coordinates..." rows="1" style="overflow-y: hidden;"></textarea>
+                        <button @click="sendMessage" :disabled="isTyping || !input.trim()">Send</button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="bento-col-right">
+                <section class="card glass-panel local-only" x-data="fileBrowser()">
+                    <div class="card-header">
+                        <div class="header-icon-box">📁</div>
+                        <h2 class="timeline-title">Fulcra File Store</h2>
+                    </div>
+                    
+                    <div class="file-browser-container" style="padding: 0 1.5rem 1.5rem 1.5rem; font-size: 0.9rem;">
+                        <div class="breadcrumbs" style="margin-bottom: 1rem; color: var(--text-muted); display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="cursor: pointer; color: var(--chart-line-1);" @click="navigate('')">root</span>
+                            <template x-for="(crumb, idx) in breadcrumbs" :key="idx">
+                                <span style="display: flex; gap: 0.5rem;">
+                                    <span>/</span>
+                                    <span style="cursor: pointer; color: var(--chart-line-1);" @click="navigate(crumb.path)" x-text="crumb.name"></span>
+                                </span>
+                            </template>
+                        </div>
+                        
+                        <div x-show="loading" style="color: var(--text-muted); font-style: italic; padding: 1rem 0;">Scanning directory...</div>
+                        <div x-show="error" style="color: #ff6b6b; padding: 1rem 0;" x-text="error"></div>
+                        
+                        <div x-show="!loading && !error" class="file-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <template x-for="folder in folders" :key="folder.name">
+                                <div class="folder-row" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(0,0,0,0.1); border-radius: 6px; cursor: pointer;" @click="navigate(currentPath + (currentPath && !currentPath.endsWith('/') ? '/' : '') + folder.name + '/')">
+                                    <span style="font-size: 1.2rem;">📁</span>
+                                    <span style="font-weight: 500; color: var(--text-primary);" x-text="folder.name"></span>
+                                </div>
+                            </template>
+                            
+                            <template x-for="file in files" :key="file.name">
+                                <div class="file-row" style="display: flex; flex-direction: column; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 6px;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+                                        <span style="font-size: 1.2rem; filter: grayscale(1);">📄</span>
+                                        <span style="font-weight: 500; color: var(--text-primary);" x-text="file.name"></span>
+                                    </div>
+                                    <div style="display: flex; gap: 1rem; margin-left: 2rem; color: var(--text-muted); font-size: 0.8rem;">
+                                        <span x-text="file.size"></span>
+                                        <span x-text="file.date"></span>
+                                        <span x-text="file.versions + ' past versions'"></span>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <div x-show="folders.length === 0 && files.length === 0" style="color: var(--text-muted); padding: 1rem 0; font-style: italic;">
+                                Directory is empty.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+        </div>
+        
+        <footer class="glass-panel text-center" style="margin-top: 2rem; padding: 2rem;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Powered by Fulcra Control Plane.
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('controlPanel', () => ({
+                init() {
+                    console.log("Control Panel Init");
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
