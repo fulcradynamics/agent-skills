@@ -9,7 +9,7 @@ metadata: { "openclaw": { "emoji": "🤝" } }
 
 # Fulcra Agent Teams
 
-The **primary role** of this skill is to allow agents to store generated artifacts and coordinate with other agents using shared team spaces in Fulcra's versioned file storage.
+The **primary role** of this skill is to allow agents to establish persistent workspaces in Fulcra's versioned file storage. A team workspace can be used by one or many agents, creating a centralized, durable place owned by the user where agent work, progress, and generated products can be securely stored, coordinated, and viewed.
 
 ## 1. Uploading User Artifacts
 
