@@ -1,6 +1,6 @@
 ---
 name: fulcra-dashboard
-description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export the dashboard for public sharing."
+description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export a specific, previewable directory for public sharing."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
@@ -11,11 +11,11 @@ metadata: { "openclaw": { "emoji": "📊" } }
 
 This skill provides the automated setup for a lightweight, build-less web dashboard. It relies entirely on **Alpine.js** for state management and **Vanilla CSS** for styling. It eschews complex frameworks (like SvelteKit) and utility-class libraries in favor of a "Single-Scroll Artifact" or a "Static Triad".
 
-## Public Exports & Local Preview
+## Local First & Isolated Exports
 
-This dashboard is designed for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's data. Because it is intended for eventual public sharing, it relies on standard third-party CDNs (like Alpine.js, D3.js, Plotly, and Google Fonts). 
+This dashboard is designed fundamentally as a **local, private interface** for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's private data. 
 
-Important: If the user wishes to publish a dashboard, you must make it explicitly clear that everything visible in the local preview will be included in the public deployment. Ensure that no data files or records are copied into the dashboard directory other than those explicitly approved by the user to be visualized and shared.
+Important: The local working application must never be published to the public internet directly, as it often contains intermediate files and full datasets. If the user wishes to share a dashboard, you must generate a separate **export** directory that contains only the specific data and files intended for publication.
 
 ## Architecture Decrees
 
@@ -87,9 +87,9 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
    - Run `uv tool run fulcra-api catalog` to discover available data. Note: Prioritize user-configured data over passive metrics (like step count). Explicitly filter for items where `categories` includes `"user_configured"`, or where the `id` follows the format `*Annotation/<UUID>` (e.g., `ScaleAnnotation/1234-abcd...`).
    - Fetch records for the user's custom annotations (e.g., `uv tool run fulcra-api get-records "ScaleAnnotation/<UUID>" "30 days" > timeline_name.jsonl`).
    - **Agent Visibility Package:** If the user previously enabled the Universal Agent Visibility Package (or if you see "Agent Tasks Completed" and "Current Agent Work" in their catalog), you must fetch these agent annotations as well and explicitly include them in the `data.json` timelines array so your background work is visualized alongside their personal data.
-   - **Data Updates:** You must run the `data-updates` CLI command for the timeline (e.g., `uv tool run fulcra-api data-updates "30 days" > data_updates.json`) and link it as `"recordsProcessed": "data_updates.json"` in your config to populate the "Your data" chart. Do not skip this step. The frontend will automatically map the `data_types` response dictionary into the bar chart. You can also explicitly map them into an array of objects if you want to rename the ugly annotation IDs to friendly names (e.g. `[{"type": "My Annotations", "count": 12}]`).
-   - Keep the files as raw JSONL in the dashboard directory.
-   - The `data.json` config file acts as a manifest. It should map your layout to the `.jsonl` files you downloaded, and you **must** include the annotation `description` in the timeline block, like this: `{"summary": "A concise overview of the current data and recent activity...", "timelines": [{"id": "...", "title": "...", "description": "The description from the catalog...", "icon": "...", "color": "...", "data": "timeline_name.jsonl"}], "recordsProcessed": "records_processed.jsonl"}`. **Crucial:** For the `"summary"` field, you must read the downloaded `.jsonl` data and write a short, personalized text summary of the actual real-world activity shown in the data (e.g., "You've been consistently tracking your mood, with a slight dip this week"). Do not write meta-descriptions like "This is a retro dashboard."
+   - **Data Updates:** You must run the `data-updates` CLI command for the timeline (e.g., `uv tool run fulcra-api data-updates "30 days" > data_updates.json`), explicitly move it to `public/data_updates.json`, and link it as `"recordsProcessed": "data_updates.json"` in your config to populate the "Your data" chart. Do not skip this step.
+   - Keep the raw dumps in the root directory, and move ONLY the approved, final `.jsonl` and `.json` files to the `public/` directory so the frontend can read them.
+   - The `public/data.json` config file acts as a manifest. It should map your layout to the `.jsonl` files in the `public/` directory, and you **must** include the annotation `description` in the timeline block, like this: `{"summary": "A concise overview of the current data and recent activity...", "timelines": [{"id": "...", "title": "...", "description": "The description from the catalog...", "icon": "...", "color": "...", "data": "timeline_name.jsonl"}], "recordsProcessed": "records_processed.jsonl"}`. **Crucial:** For the `"summary"` field, you must read the downloaded `.jsonl` data and write a short, personalized text summary of the actual real-world activity shown in the data (e.g., "You've been consistently tracking your mood, with a slight dip this week"). Do not write meta-descriptions like "This is a retro dashboard."
    - You do not need to write an aggregation script; the dashboard will automatically parse `.jsonl` files and aggregate records for the charts natively on `init()`.
 3. **Theming & Visualization:**
    - **Theme Discovery:** Ask the user what "theme" or "vibe" they want (e.g., minimalist dark mode, cyberpunk, a retro diner, a space station, a cozy bakery). 
@@ -109,23 +109,25 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
      python3 server.py 8081 > dev.log 2>&1 &
      ```
    - Provide the user with the localhost link.
-6. **Public Publication (Requires Consent):**
-   - The user may wish to publish their dashboard to the public internet.
-   - Ask the user to verify in the local preview that the data shown is exactly what they want to share, and inform them that everything visible will be included in the deployment. Ensure that the dashboard directory does not contain any raw data files that are not actively used by the charts.
+6. **Public Publication (Requires Consent & Preview):**
+   - The user may wish to publish a version of their dashboard to the public internet.
+   - **The built-in `public` directory:** Because the dashboard is already structured with a `public/` directory that only contains the UI and explicitly copied data files, you do not need to create a new folder from scratch.
+     1. Ask the user to verify in the local preview that the data shown is exactly what they want to share.
+     2. Ensure that `public/` contains *only* the specific data files needed by the frontend, and that any raw data dumps, `dev.log`, or python scripts remain safely outside it in the root directory.
    - Wait for their explicit confirmation before proceeding.
    - If they agree, offer them three deployment options, ordered by ease of use:
      - **Option 1: Surge (Easiest, No Git Required)**
        - Installation: `npm install -g surge`
-       - Deployment: Run `surge` inside the dashboard directory.
+       - Deployment: Run `surge` inside the `public/` directory.
        - UX: The user will be prompted in the terminal for an email/password to create a free account on the fly, and then an auto-generated domain will be provided. Instantly deploys the folder.
      - **Option 2: GitHub Pages (Best for Version Control)**
        - Installation: Ensure `gh` (GitHub CLI) is installed and authenticated (`gh auth status`).
-       - Deployment: Initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
+       - Deployment: Navigate into the `public/` directory, initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
        - Enable Pages: `gh api repos/{owner}/{repo}/pages -X POST -f "source[branch]=main" -f "source[path]=/"`.
        - UX: Creates a standard GitHub repository and publishes to `https://<username>.github.io/<repo>/`.
      - **Option 3: Vercel (No Git Required, Professional Hosting)**
        - Installation: `npm i -g vercel`
-       - Deployment: Run `vercel deploy --prod` inside the dashboard directory.
+       - Deployment: Run `vercel deploy --prod` inside the `public/` directory.
        - UX: Opens a browser for authentication if needed, then asks a few interactive setup questions in the terminal before uploading the folder directly to Vercel's edge network.
    - Execute the chosen deployment path and provide the user with the final public URL.
 7. **Handoff & Next Steps:**

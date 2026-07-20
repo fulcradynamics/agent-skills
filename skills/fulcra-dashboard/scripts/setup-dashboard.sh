@@ -22,14 +22,14 @@ TEMPLATE_DIR="$(dirname "$SCRIPT_DIR")/template-dashboard"
 echo "📦 Copying dashboard template..."
 cp -R "$TEMPLATE_DIR/"* "$TARGET_DIR/"
 
-# 4. Create the empty data directory structure
+# 4. Create the empty data directory structure inside public
 echo "📁 Preparing data structures..."
-mkdir -p "$TARGET_DIR/assets"
+mkdir -p "$TARGET_DIR/public/assets"
 echo '{
   "summary": "Agent automatically generated summary of this dashboard.",
   "timelines": [],
   "recordsProcessed": "records_processed.jsonl"
-}' > "$TARGET_DIR/data.json" # Agents will overwrite this manifest to point to .jsonl files
+}' > "$TARGET_DIR/public/data.json" # Agents will overwrite this manifest to point to .jsonl files
 
 echo "✅ Dashboard scaffolded successfully in: $TARGET_DIR"
 echo ""
@@ -38,7 +38,7 @@ echo "  cd $TARGET_DIR"
 echo "  python3 server.py 8081"
 echo ""
 echo "🤖 AGENT DIRECTIVES:"
-echo "1. Data Ingestion: Query the Fulcra API, format the timeline data, and overwrite data.json."
-echo "2. Theming: Ask the user for a vibe, generate hero art (save to assets/), and heavily edit theme.css."
-echo "3. Preview: Start the python server and show the user the local dashboard."
-echo "4. Git: Prompt the user to initialize a git repo, commit the dashboard, and push to GitHub Pages if desired."
+echo "1. Data Ingestion: Query the Fulcra API, save raw files to the root, move ONLY approved files to public/, and update public/data.json."
+echo "2. Theming: Ask the user for a vibe, generate hero art (save to public/assets/), and heavily edit public/theme.css."
+echo "3. Preview: Start the python server and show the user the local dashboard (which only serves the public/ directory)."
+echo "4. Export: To publish, you can now simply deploy the public/ directory directly, as it is already isolated."
