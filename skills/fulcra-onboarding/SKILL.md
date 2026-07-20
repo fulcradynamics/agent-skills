@@ -34,7 +34,9 @@ The onboarding process follows a guided three-phase model. First, you get the us
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
 2. **Pre-flight Check & Context:**
-   - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to verify and install `uv` if necessary, asking the user for confirmation before installation. This must pass before proceeding.
+   - Verify `uv` is installed (`uv --version`), as it is required for all `fulcra-api` CLI interactions.
+   - If missing, ask the user for permission to install it (using standard shell methods like `curl -LsSf https://astral.sh/uv/install.sh | sh` or `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"`). This must pass before proceeding.
+   - *Note on Restricted Environments:* If the user cannot use the CLI or explicitly asks for an MCP setup, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for MCP setup instructions and skip the CLI steps below.
 
 3. **Authentication:**
    - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
