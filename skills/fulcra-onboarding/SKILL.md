@@ -33,8 +33,15 @@ The onboarding process follows a guided three-phase model. First, you get the us
    - **Task Connection:** If you already know what specific task or job the user wants you to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
-2. **Pre-flight Check & Context:**
-   - Read and execute the instructions in `references/fulcra-onboarding-prerequisites.md` to verify and install `uv` if necessary, asking the user for confirmation before installation. This must pass before proceeding.
+2. **Connection Options & Pre-flight:**
+   There are two ways for agents to connect to Fulcra. You must determine the appropriate path before proceeding:
+
+   - **Option 1: Fulcra CLI (Preferred)**
+     The `fulcra-api` CLI is the primary interface and supports the widest range of Fulcra use cases. If you have full command-line access with outbound network connectivity, you should choose this option.
+     *Pre-flight Check:* Verify `uv` is installed (`uv --version`). It is required for all CLI interactions. If missing, ask the user for permission to install it. This must pass before proceeding to authentication.
+
+   - **Option 2: MCP Connector (Restricted Environments)**
+     Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions, and skip the CLI authentication steps below.
 
 3. **Authentication:**
    - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
