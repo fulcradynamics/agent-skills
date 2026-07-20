@@ -1,6 +1,6 @@
 ---
 name: fulcra-dashboard
-description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export the dashboard for public sharing."
+description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export a specific, previewable directory for public sharing."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
@@ -11,11 +11,11 @@ metadata: { "openclaw": { "emoji": "📊" } }
 
 This skill provides the automated setup for a lightweight, build-less web dashboard. It relies entirely on **Alpine.js** for state management and **Vanilla CSS** for styling. It eschews complex frameworks (like SvelteKit) and utility-class libraries in favor of a "Single-Scroll Artifact" or a "Static Triad".
 
-## Public Exports & Local Preview
+## Local First & Isolated Exports
 
-This dashboard is designed for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's data. Because it is intended for eventual public sharing, it relies on standard third-party CDNs (like Alpine.js, D3.js, Plotly, and Google Fonts). 
+This dashboard is designed fundamentally as a **local, private interface** for data visualization. By default, it runs on localhost using a simple Python static server, granting it safe access to the user's private data. 
 
-Important: If the user wishes to publish a dashboard, you must make it explicitly clear that everything visible in the local preview will be included in the public deployment. Ensure that no data files or records are copied into the dashboard directory other than those explicitly approved by the user to be visualized and shared.
+Important: The local working application must never be published to the public internet directly, as it often contains intermediate files and full datasets. If the user wishes to share a dashboard, you must generate a separate **export** directory that contains only the specific data and files intended for publication.
 
 ## Architecture Decrees
 
@@ -109,23 +109,29 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
      python3 server.py 8081 > dev.log 2>&1 &
      ```
    - Provide the user with the localhost link.
-6. **Public Publication (Requires Consent):**
-   - The user may wish to publish their dashboard to the public internet.
-   - Ask the user to verify in the local preview that the data shown is exactly what they want to share, and inform them that everything visible will be included in the deployment. Ensure that the dashboard directory does not contain any raw data files that are not actively used by the charts.
+6. **Public Publication (Requires Consent & Preview):**
+   - The user may wish to publish a version of their dashboard to the public internet.
+   - Isolation and scratch build: The local dashboard is private. You must not copy the active local dashboard directory to the public internet. Instead, you must build the public dashboard as a separate entity:
+     1. Ask the user explicitly which specific data timelines and metrics they want to make public.
+     2. Create a separate `public-export` directory.
+     3. Scaffold the HTML structure into `public-export` by copying the necessary components.
+     4. Copy ONLY the explicitly approved data files into `public-export`, and create a new `data.json` referencing only those files. Copy over the `app.js`, `theme.css`, and required images. Do not emphasize "sanitizing" the data itself—your goal is simply to include exactly what is visible and requested, and leave the rest behind.
+     5. Start a new local server on a different port (e.g., 8082) serving ONLY the `public-export` directory.
+     6. Provide the user with this new localhost link. You must allow them to preview the dashboard exactly as it will be published, and confirm that the data shown is what they want to share.
    - Wait for their explicit confirmation before proceeding.
    - If they agree, offer them three deployment options, ordered by ease of use:
      - **Option 1: Surge (Easiest, No Git Required)**
        - Installation: `npm install -g surge`
-       - Deployment: Run `surge` inside the dashboard directory.
+       - Deployment: Run `surge` inside the `public-export` directory.
        - UX: The user will be prompted in the terminal for an email/password to create a free account on the fly, and then an auto-generated domain will be provided. Instantly deploys the folder.
      - **Option 2: GitHub Pages (Best for Version Control)**
        - Installation: Ensure `gh` (GitHub CLI) is installed and authenticated (`gh auth status`).
-       - Deployment: Initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
+       - Deployment: Navigate into the `public-export` directory, initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
        - Enable Pages: `gh api repos/{owner}/{repo}/pages -X POST -f "source[branch]=main" -f "source[path]=/"`.
        - UX: Creates a standard GitHub repository and publishes to `https://<username>.github.io/<repo>/`.
      - **Option 3: Vercel (No Git Required, Professional Hosting)**
        - Installation: `npm i -g vercel`
-       - Deployment: Run `vercel deploy --prod` inside the dashboard directory.
+       - Deployment: Run `vercel deploy --prod` inside the `public-export` directory.
        - UX: Opens a browser for authentication if needed, then asks a few interactive setup questions in the terminal before uploading the folder directly to Vercel's edge network.
    - Execute the chosen deployment path and provide the user with the final public URL.
 7. **Handoff & Next Steps:**
