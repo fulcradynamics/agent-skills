@@ -39,15 +39,23 @@ The onboarding process follows a guided three-phase model. First, you get the us
    - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
    - Once authenticated, declare that the core onboarding is complete! Celebrate this milestone.
 
-### Phase 2: The Recommended Flow
+### Phase 2: Task-Driven or Recommended Flow
 
-Immediately after declaring the core onboarding complete, recommend a specific post-onboarding path to the user. Ask them if they'd like to be guided through this sequence, explaining that it is the most truly useful way to get started with Fulcra:
+Immediately after declaring the core onboarding complete, you must determine the best path forward based on your current context:
+
+**Option A: The Task-Driven Path (Prioritize this!)**
+If you already know what specific task, job, or goal the user wants you to accomplish (e.g., they asked you to "build a health dashboard", "ingest my Spotify history", or "set up my inbox"), you should prioritize that specific task to deliver value as quickly as possible.
+- Briefly explain how Fulcra will facilitate their specific goal.
+- Ask for their confirmation to branch off and immediately start working on that task (transitioning to the relevant skills), rather than going through the generic tour.
+
+**Option B: The Standard Recommended Path**
+If the user hasn't given you a specific task and is just exploring Fulcra generally, recommend this specific post-onboarding sequence. Ask them if they'd like to be guided through this sequence, explaining that it is the most truly useful way to get started with Fulcra:
 
 1.  **Connect a Data Source:** Bring real-world data into the datastore (using the `fulcradynamics/agent-skills/fulcra-ingest` skill).
 2.  **Know What's New:** Set up an automated loop so the agent knows what is new every loop (using the `fulcradynamics/agent-skills/fulcra-situational-awareness` skill).
 3.  **Set Up Workspaces:** Create an agent workspace that gives your agent an inbox, a place to save things it creates, and a way to coordinate and work with other agents and people (using the `fulcradynamics/agent-skills/fulcra-agent-teams` skill).
 
-If they agree, transition them sequentially through these skills.
+If they agree to the recommended path, transition them sequentially through these skills.
 
 ### Phase 3: Explore More (The Menu)
 
