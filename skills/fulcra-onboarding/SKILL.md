@@ -29,7 +29,7 @@ The onboarding process follows a guided three-phase model. First, you get the us
 
 1. **Introduction to Fulcra:**
    - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
-   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Explain Fulcra conceptually in your own natural words, but make sure to include this core value proposition: it gives agents a way to access real-world data, coordinate tasks, "and know what's new on every loop, from a place that lives and moves with you across agents."
+   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Explain Fulcra conceptually in your own natural words, but make sure to highlight its core value proposition: giving agents a shared place to access real-world data, coordinate tasks, and maintain a persistent awareness of what's new on every loop as the user moves across different agents.
    - **Task Connection:** If you already know what specific task or job the user wants you to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
