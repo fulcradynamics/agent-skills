@@ -51,11 +51,12 @@ When constructing this dashboard, you **must** follow these strict architectural
 
 When the user requests more complex or varied visualizations, you have two primary avenues:
 
-### 1. Frontend: New Alpine & D3.js Charts
-The default template includes basic charts, but you can add more specialized D3.js visualizations to the Alpine frontend.
-- **Workflow:** Add a new method inside the `Alpine.data()` block in `app.js` (or the script tag in `index.html`). Use D3.js to bind to the `.jsonl` timeline data and render SVG or Canvas elements.
-- **Examples:** Heatmaps for daily frequency, scatter plots for correlating two metrics, or radar charts for skill/habit tracking.
-- **Constraint:** Keep the D3 code clean and modular. Isolate chart rendering functions so they can be re-rendered on window resize or data updates.
+### 1. Frontend: Multi-Dimensional & Interactive Charts (D3.js, Plotly, etc.)
+The default template includes basic charts, but the "Static Triad" architecture gracefully supports highly advanced, multi-dimensional visualizations—including interactive 3D WebGL scenes—without ever needing a build step.
+- **Workflow:** Include the required CDN library (e.g., `d3.js`, `plotly.js`) in `index.html`. Add a new rendering method inside the `Alpine.data()` block (or the script tag) to bind the `.jsonl` timeline data to the DOM.
+- **Examples:** Heatmaps for daily frequency, 2D D3 scatter plots, or fully interactive 3D WebGL scatter plots (e.g., mapping Sleep on X, Focus on Y, and Steps on Z) to explore complex correlations.
+- **Styling Integration:** Ensure advanced charting libraries blend seamlessly with the user's chosen theme. Explicitly configure library backgrounds and grid lines to be `transparent` or translucent so the CSS glassmorphism, gradients, and custom themes shine through. Increase container dimensions (e.g., `.chart-tall { height: 400px; }`) to give 3D scenes enough physical space to be comfortably rotated by the user.
+- **Constraint:** Keep the rendering code clean and modular. Isolate chart rendering functions so they can be easily re-rendered on window resize or data updates.
 
 ### 2. Backend: Python-Generated Visualizations
 For highly complex, compute-intensive, or specialized visual outputs (like word clouds, network graphs, or composite rasterized images), leverage the Python backend.
