@@ -9,86 +9,43 @@ metadata: { "openclaw": { "emoji": "🌱" } }
 
 # Fulcra Onboarding
 
-Guide the user through connecting to Fulcra.
+Guide the user through connecting to Fulcra in a fluid, intent-driven way.
 
-Fulcra helps agents know their user, know what's happening in their user's world, work with their user's other agents, and become more helpful over time.
+Fulcra helps agents know their user, know what's happening in their user's world, work with their user's other agents, and become more helpful over time. It provides a shared place to access and store real-world data, record what matters, coordinate work, and discover what's new on every loop.
 
-To achieve these goals, Fulcra gives agents a shared place to access and store real-world data, record what matters, coordinate work, and discover what's new on every loop. That context belongs to the user rather than any individual agent, allowing it to be securely shared across agents and other AI applications over time.
+## Playbook
 
-## General Guidelines
+Treat this as a fluid conversation. Avoid sounding like a rigid script.
 
-- **Tone & Vibe:** Fulcra unlocks capabilities that individual agents cannot achieve on their own. Be engaging, conversational, and optimistic. Help the user imagine what becomes possible once their agents know them, know what's happening in their world, work together, and become more helpful over time.
-- **Optimize for Time-to-Wow:** Favor opinionated defaults over exhaustive discussion. The objective is to get the user to their first genuinely useful workflow as quickly as possible.
-- **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the onboarding moving forward.
+### 1. Discover Intent
+Before diving into technical setup, establish the user's goal.
+- **Use Existing Context:** If the user has already stated a goal (e.g., "I want to track my Spotify data" or "Help me set up an agent workspace"), acknowledge it immediately. 
+- **Open-Ended Start:** If their goal is ambiguous, have a lightweight chat to figure it out. You can suggest things like connecting 3rd-party data, setting up a shared agent workspace, or tracking custom metrics based on the core value propositions.
+- Frame the upcoming setup not as "onboarding", but as the necessary step to unlock their specific goal.
 
-## Workflow: Guided Path
+### 2. The Auth Flow (Headless)
+Because you are running in a headless terminal, you cannot open a browser for the user. To authenticate them smoothly, always use the `--get-auth-url` flag so you can hand them a clickable link.
 
-The onboarding process follows a guided three-phase model. First, you get the user connected. Second, you recommend a powerful "golden path" of core agent capabilities. Third, you present a menu of additional options.
+**Pre-flight:** Verify `uv` is installed (`uv --version`). It is required for the CLI. If missing, ask permission to install it.
 
-### Phase 1: Core Setup
+**Authentication Steps:**
+1. Check if the user is already authenticated by running `uv tool run fulcra-api user-info`. If it succeeds, skip to Phase 3!
+2. Run this exact command to generate a secure link:
+   `uv tool run fulcra-api auth login --get-auth-url`
+3. Present the generated web auth URL and `user_code` to the user in a friendly message. Tell them to click the link and enter the code. Do not proceed until they confirm they are done.
+4. Once they confirm, complete the login using the device code you received in step 2:
+   `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5`
+5. Once authenticated, celebrate the milestone!
 
-1. **Introduction to Fulcra:**
-   - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
-   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Explain Fulcra conceptually in your own natural words, but make sure to highlight its core value proposition: giving agents a shared place to access real-world data, coordinate tasks, and maintain a persistent awareness of what's new on every loop as the user moves across different agents.
-   - **Task Connection:** If you already know what specific task or job the user wants you to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
-   - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
+*(Note for Restricted Environments: If the CLI fails due to outbound network blocks, fallback to the MCP Connector. Fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions.)*
 
-2. **Connection Options & Pre-flight:**
-   There are two ways for agents to connect to Fulcra. You must determine the appropriate path before proceeding:
+### 3. Fluid Branching
+Once connected, seamlessly transition to their goal by loading the appropriate skill. Do not show them a rigid menu; instead, guide them based on what you discussed in step 1.
 
-   - **Option 1: Fulcra CLI (Preferred)**
-     The `fulcra-api` CLI is the primary interface and supports the widest range of Fulcra use cases. If you have full command-line access with outbound network connectivity, you should choose this option.
-     *Pre-flight Check:* Verify `uv` is installed (`uv --version`). It is required for all CLI interactions. If missing, ask the user for permission to install it. This must pass before proceeding to authentication.
+- If they want to **access and store real-world data**: transition to `fulcradynamics/agent-skills/fulcra-ingest`
+- If they want to **discover what's new on every loop**: transition to `fulcradynamics/agent-skills/fulcra-situational-awareness`
+- If they want to **coordinate work** with other agents: transition to `fulcradynamics/agent-skills/fulcra-agent-teams`
+- If they want to **track custom metrics**: transition to `fulcradynamics/agent-skills/fulcra-tracking`
+- If they want to **record what matters**: transition to `fulcradynamics/agent-skills/fulcra-memory`
 
-   - **Option 2: MCP Connector (Restricted Environments)**
-     Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions, and skip the CLI authentication steps below.
-
-3. **Authentication:**
-   - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
-   - Once authenticated, declare that the core onboarding is complete! Celebrate this milestone.
-
-### Phase 2: Task-Driven or Recommended Flow
-
-Immediately after declaring the core onboarding complete, you must determine the best path forward based on your current context:
-
-**Option A: The Task-Driven Path (Prioritize this!)**
-If you already know what specific task, job, or goal the user wants you to accomplish (e.g., they asked you to "build a health dashboard", "ingest my Spotify history", or "set up my inbox"), you should prioritize that specific task to deliver value as quickly as possible.
-- Briefly explain how Fulcra will facilitate their specific goal.
-- Ask for their confirmation to branch off and immediately start working on that task (transitioning to the relevant skills), rather than going through the generic tour.
-
-**Option B: The Standard Recommended Path**
-If the user hasn't given you a specific task and is just exploring Fulcra generally, recommend this specific post-onboarding sequence. Ask them if they'd like to be guided through this sequence, explaining that it is the most truly useful way to get started with Fulcra:
-
-1.  **Connect a Data Source:** Bring real-world data into the datastore (using the `fulcradynamics/agent-skills/fulcra-ingest` skill).
-2.  **Know What's New:** Set up an automated loop so the agent knows what is new every loop (using the `fulcradynamics/agent-skills/fulcra-situational-awareness` skill).
-3.  **Set Up Workspaces:** Create an agent workspace that gives your agent an inbox, a place to save things it creates, and a way to coordinate and work with other agents and people (using the `fulcradynamics/agent-skills/fulcra-agent-teams` skill).
-
-If they agree to the recommended path, transition them sequentially through these skills.
-
-### Phase 3: Explore More (The Menu)
-
-After they complete the recommended path, or if they decide they do not want to do it, present the following menu of additional options to explore the Fulcra skills, app, and web dashboard.
-
-**Present this exact scannable menu to the user:**
-
-1.  📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
-2.  🧠 **Agent Memory & Knowledge:** Record high-level knowledge, tasks, and progress directly to your Fulcra datastore.
-3.  📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
-4.  💻 **Context Web:** Explore your data on the desktop portal.
-
-**When the user makes a choice, follow the corresponding path below:**
-
-#### Path 1: Agent Visibility & Custom Tracking
-1. Explain that you can set up data schemas to track their custom data, as well as an "Agent Visibility Package" to record agent activities, and visualize it all on a custom HTML dashboard.
-2. If they consent and are interested, transition them to the `fulcradynamics/agent-skills/fulcra-tracking` skill.
-
-#### Path 2: Agent Memory & Knowledge
-1. Explain that you can record high-level knowledge, track tasks, and log ongoing progress directly to their Fulcra datastore in a structured, readable way.
-2. If they consent, transition them to the `fulcradynamics/agent-skills/fulcra-memory` skill to set up their memory tracking.
-
-#### Path 3: Get the App
-1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
-2. Mention it unlocks automatic background sync (Health, location, calendar). **PRIVACY WARNING:** Explicitly inform the user these are highly sensitive data types requiring explicit iOS permissions, and they have full control to decline.
-
-#### Path 4: Context Web
-1. Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
+If they don't have a specific path yet, offer a quick conversational tour of what Fulcra can do based on the value propositions above, and let them choose what sounds best.
