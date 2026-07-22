@@ -19,7 +19,7 @@ To achieve these goals, Fulcra gives agents a shared place to access and store r
 
 - **Tone & Vibe:** Fulcra unlocks capabilities that individual agents cannot achieve on their own. Be engaging, conversational, and optimistic. Help the user imagine what becomes possible once their agents know them, know what's happening in their world, work together, and become more helpful over time.
 - **Optimize for Time-to-Wow:** Favor opinionated defaults over exhaustive discussion. The objective is to get the user to their first genuinely useful workflow as quickly as possible.
-- **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the onboarding moving forward.
+- **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the getting started process moving forward.
 
 ## Workflow: Getting Started
 
@@ -45,7 +45,7 @@ Getting started with Fulcra follows a dynamic path. First, you get the user conn
      Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions, and skip the CLI authentication steps below.
 
 3. **Authentication:**
-   - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
+   - Read and execute the instructions in `references/fulcra-getting-started-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
    - Once authenticated, celebrate the milestone! You are now ready to start building.
 
 ### Phase 2: Direction & Tangible Delivery

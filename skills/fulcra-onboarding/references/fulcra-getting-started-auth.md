@@ -1,11 +1,11 @@
 ---
-name: fulcra-onboarding-auth
+name: fulcra-getting-started-auth
 description: "Handles initial authentication for the Fulcra CLI."
 ---
 
-# Fulcra Onboarding: Authentication
+# Fulcra Getting Started: Authentication
 
-This reference handles Step 2 of the onboarding process, securely establishing the user's connection to Fulcra.
+This reference handles Step 2 of the getting started process, securely establishing the user's connection to Fulcra.
 
 ## Workflow
 
@@ -22,5 +22,5 @@ This reference handles Step 2 of the onboarding process, securely establishing t
    - Once they confirm, run `uv tool run fulcra-api auth login --device-code <DEVICE CODE> --poll-timeout=5` to complete the authentication process. The timeout ensures the command fails quickly if they haven't actually completed the flow.
 
 2. **Completion:**
-   - Once the device code login succeeds (or if they were already authenticated), declare the core onboarding complete!
-   - Hand control back to the main `fulcra-onboarding` flow to present the Next Steps menu.
+   - Once the device code login succeeds (or if they were already authenticated), declare the core setup complete!
+   - Hand control back to the main getting started flow to present the Next Steps menu.
