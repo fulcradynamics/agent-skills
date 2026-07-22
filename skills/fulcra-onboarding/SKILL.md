@@ -52,7 +52,7 @@ Getting started with Fulcra follows a dynamic path. First, you get the user conn
 
 Now that the user is connected, work with them to choose their direction—whether it's a project of their own inspired by your examples, or falling back on a "golden path" (like connecting a data source and establishing agent workspaces).
 
-**CRITICAL MILESTONE:** Whatever direction the user chooses, you **must** deliver the following three things to the user *before* the final branching point where they transition to other specific skills:
+**Delivery milestone:** Whatever direction the user chooses, aim to deliver the following three things to the user before the final branching point where they transition to other specific skills. Try to do all three, but deliver whatever is viable based on their specific goals:
 
 1. **A Cool Preview:** Create and show the user a tangible preview of what has been accomplished so far. This should represent real work done toward their chosen direction (e.g., a sample data visualization, a generated HTML artifact, a snippet of insights, or an initial test output).
 2. **Coordination of Continuing Work:** Establish how the work will continue. This could be setting up a cron job, establishing a team with sub-agents, or drafting a clear, iterative approach for ongoing work with scheduled periodic user reviews.
