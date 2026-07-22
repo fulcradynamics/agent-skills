@@ -1,5 +1,5 @@
 ---
-name: fulcra-onboarding
+name: fulcra-get-started
 description: "Guides a new user or agent through the initial setup, configuration, and capabilities of the Fulcra environment."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
@@ -7,7 +7,7 @@ user-invocable: true
 metadata: { "openclaw": { "emoji": "🌱" } }
 ---
 
-# Fulcra Onboarding
+# Getting Started with Fulcra
 
 Guide the user through connecting to Fulcra.
 
