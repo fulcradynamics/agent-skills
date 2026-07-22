@@ -48,4 +48,10 @@ Once connected, seamlessly transition to their goal by loading the appropriate s
 - If they want to **track custom metrics**: transition to `fulcradynamics/agent-skills/fulcra-tracking`
 - If they want to **record what matters**: transition to `fulcradynamics/agent-skills/fulcra-memory`
 
-If they don't have a specific path yet, offer a quick conversational tour of what Fulcra can do based on the value propositions above, and let them choose what sounds best.
+**The Recommended "Golden Path" (For Open-Ended Users)**
+If the user doesn't have a specific path in mind yet, you should strongly recommend this specific sequence to show them the true power of Fulcra. Ask if they'd like to be guided through it:
+1. **Connect a Data Source:** Give agents a way to **access and store real-world data** (`fulcradynamics/agent-skills/fulcra-ingest`).
+2. **Know What's New:** Set up an automated loop to **discover what's new on every loop** (`fulcradynamics/agent-skills/fulcra-situational-awareness`).
+3. **Set Up Workspaces:** Create an agent workspace to **coordinate work** with other agents (`fulcradynamics/agent-skills/fulcra-agent-teams`).
+
+If they decline the golden path, offer a quick conversational tour of the remaining options (Tracking, Memory, etc.) based on the value propositions and let them choose what sounds best.
