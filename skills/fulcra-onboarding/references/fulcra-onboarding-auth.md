@@ -1,5 +1,5 @@
 ---
-name: fulcra-getting-started-auth
+name: fulcra-onboarding-auth
 description: "Handles initial authentication for the Fulcra CLI."
 ---
 

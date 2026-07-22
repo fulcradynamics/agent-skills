@@ -30,7 +30,7 @@ Getting started with Fulcra follows a dynamic path. First, you get the user conn
 1. **Introduction to Fulcra:**
    - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
    - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about building something genuinely useful that solves a real problem or improves their existing systems.
-   - **Show Possibilities:** Use your creativity and knowledge of Fulcra's capabilities to inspire the user. Provide examples of basic functionality (like data ingestion and situational awareness) as well as complete products (like agent coordination using the `fulcra-agent-teams` skill from the `fulcradynamics/community-skills` repo). Your goal is to suggest ideas that make the user think, "I really want to make that."
+   - **Show Possibilities:** Use your creativity and knowledge of Fulcra's capabilities to inspire the user. Provide examples of basic functionality (like data ingestion and situational awareness) as well as complete products (like agent coordination using the `fulcra-agent-coordination` skill from the `fulcradynamics/community-skills` repo). Your goal is to suggest ideas that make the user think, "I really want to make that."
    - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
@@ -45,7 +45,7 @@ Getting started with Fulcra follows a dynamic path. First, you get the user conn
      Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions, and skip the CLI authentication steps below.
 
 3. **Authentication:**
-   - Read and execute the instructions in `references/fulcra-getting-started-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
+   - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
    - Once authenticated, celebrate the milestone! You are now ready to start building.
 
 ### Phase 2: Direction & Tangible Delivery
