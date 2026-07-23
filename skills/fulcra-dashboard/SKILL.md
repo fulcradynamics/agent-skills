@@ -53,8 +53,12 @@ When the user requests more complex or varied visualizations, you have two prima
 
 ### 1. Frontend: Multi-Dimensional & Interactive Charts (D3.js, Plotly, etc.)
 The default template includes basic charts, but the "Static Triad" architecture gracefully supports highly advanced, multi-dimensional visualizations—including interactive 3D WebGL scenes—without ever needing a build step.
-- **Workflow:** Include the required CDN library (e.g., `d3.js`, `plotly.js`) in `index.html`. Add a new rendering method inside the `Alpine.data()` block (or the script tag) to bind the `.jsonl` timeline data to the DOM.
-- **Examples:** Heatmaps for daily frequency, 2D D3 scatter plots, or fully interactive 3D WebGL scatter plots (e.g., mapping Sleep on X, Focus on Y, and Steps on Z) to explore complex correlations.
+- **Workflow:** Include the required CDN library (e.g., `d3.js`, `plotly.js`, `d3-cloud`) in `index.html`. Add a new rendering method inside the `Alpine.data()` block (or the script tag) to bind the `.jsonl` timeline data to the DOM.
+- **Supported Paradigms & Chart Types:** You can expand the dashboard with various chart types tailored to the user's data. **Do not restrict yourself to these examples; you are encouraged to pull in any chart type or lightweight CDN library that best fits the specific data.** Examples include:
+  - **Temporal & Milestones:** Implement Timeline or Gantt charts using D3 or Plotly to visualize spans of time, project milestones, or overlapping events.
+  - **Textual & Frequency:** Use Word Clouds (via `d3-cloud` or similar lightweight libraries) or Tag Clouds to show the frequency of text terms, keywords, or activity logs natively in the browser.
+  - **Progress & Completion:** Build Gauges, Progress Bars, or Burn-down charts to track completion status, quotas, or project progression against a defined goal.
+  - **Advanced Correlations:** Heatmaps for daily frequency, 2D D3 scatter plots, or fully interactive 3D WebGL scatter plots (e.g., mapping Sleep on X, Focus on Y, and Steps on Z) to explore complex relationships.
 - **Styling Integration:** Ensure advanced charting libraries blend seamlessly with the user's chosen theme. Explicitly configure library backgrounds and grid lines to be `transparent` or translucent so the CSS glassmorphism, gradients, and custom themes shine through. Increase container dimensions (e.g., `.chart-tall { height: 400px; }`) to give 3D scenes enough physical space to be comfortably rotated by the user.
 - **Constraint:** Keep the rendering code clean and modular. Isolate chart rendering functions so they can be easily re-rendered on window resize or data updates.
 
