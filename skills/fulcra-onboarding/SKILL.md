@@ -55,12 +55,12 @@ Now that the user is connected, work with them to choose their direction—wheth
 **Delivery milestone:** Whatever direction the user chooses, aim to deliver the following three things to the user before the final branching point where they transition to other specific skills. Try to do all three, but deliver whatever is viable based on their specific goals:
 
 1. **A Cool View:** Create and show the user a tangible view of what has been accomplished so far. This should represent real work done toward their chosen direction (e.g., a sample data visualization, a generated HTML artifact, a snippet of insights, or an initial test output).
-2. **Coordination of Continuing Work:** Establish how the work will continue. This could be setting up a cron job, establishing a team with sub-agents, or drafting a clear, iterative approach for ongoing work with scheduled periodic user reviews.
-3. **Visibility of Work:** Provide a clear view of completed, present, and future work. You can do this via a lightweight dashboard or a well-structured ASCII art timeline and summary. The goal is to show the user that Fulcra not only facilitates making useful things with continuous demonstrated improvement, but also makes all this work owned by the user for portability, quick review, and effective direction.
+2. **Coordination of Continuing Work:** Establish how the work will continue. Leverage the `fulcra-agent-teams` skill to create a dedicated agent team for the project, and use the `fulcra-tracking` skill to establish specific data types (annotations) to track the project's milestones, tasks, or outputs in the Fulcra datastore. Ensure these data types are recorded in the team's knowledge.
+3. **Visibility of Work:** Provide a clear view of completed, present, and future work. You can do this by using the `project-dashboard` skill (found in the community-skills repository) to build a robust management view of the team workspace. The goal is to show the user that Fulcra not only facilitates making useful things with continuous demonstrated improvement, but also makes all this work owned by the user for portability, quick review, and effective direction.
 
 ### Phase 3: Transition & Explore More
 
-After delivering the view, coordination plan, and visibility artifact, transition the user to the specific skills needed to continue their chosen project (e.g., `fulcra-dashboard`, `fulcra-agent-teams`, `fulcra-ingest`). 
+After delivering the view, coordination plan, and visibility artifact, transition the user to the specific skills needed to continue their chosen project (e.g., `project-dashboard`, `fulcra-agent-teams`, `fulcra-tracking`). 
 
 If the user wants to explore further, you can present this scannable menu of additional options:
 
