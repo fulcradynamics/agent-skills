@@ -70,12 +70,12 @@ For highly complex, compute-intensive, or specialized visual outputs (like word 
 
 ## Permissions & Consent
 
-Before proceeding with dashboard generation, you must explicitly declare your intentions and request the user's permission for the following actions:
+Before proceeding with the **initial** dashboard generation, you must explicitly declare your intentions and request the user's permission for the following actions:
 1. **Fetch Fulcra Data:** Permission to query the Fulcra API to download their personal data.
 2. **Use Third-Party Scripts:** Permission to include and rely on external scripts fetched from public CDNs (such as Alpine.js, D3.js, Plotly, etc.) to visualize the data.
 3. **Use Other Data Sources:** Permission to use other external tools (like image generation) to enhance the dashboard's theme.
 
-Wait for the user's explicit consent before proceeding with data ingestion or dashboard scaffolding.
+Wait for the user's explicit consent before proceeding with data ingestion or dashboard scaffolding. Once consent is granted for a specific project or workspace, you do not need to ask again for subsequent data updates or regenerations.
 
 ## Usage
 
