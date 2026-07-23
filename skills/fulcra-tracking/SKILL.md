@@ -16,9 +16,15 @@ This skill guides the user through discovering data they want to track in Fulcra
 - **Tone & Vibe:** Engaging, conversational, and focused on demonstrating the immediate value ("Time-to-Wow") of Fulcra's data tracking capabilities.
 - **Maintain Momentum:** Guide the user quickly from schema creation to data entry to dashboard generation.
 
+## Workflow Context
+
+Before executing this skill, determine your current context:
+- **Standalone Mode:** If the user directly asks you to track something new and you lack broader project context, follow the full workflow below (starting with Discovery).
+- **Project/Team Mode:** If you are invoking this skill as part of an ongoing project, team workspace (`fulcra-agent-teams`), or an overarching onboarding flow, the required data types are usually already dictated by the project scope. In this case, **skip Step 1 (Discovery) and Step 4 (Quick Visibility)**. Jump straight to creating the required schemas (Data Modeling) and recording the data.
+
 ## Workflow
 
-1.  **User Intent Discovery:** 
+1.  **User Intent Discovery (Standalone Mode Only):** 
     - Read the `references/fulcra-tracking-cli.md` file to understand the custom tracking CLI commands.
     - Ask the user what kind of specific data, events, or outputs they want to track for their project or life.
     - Propose the Universal Agent Visibility Package if they want visibility into background agent work or team accomplishments.
