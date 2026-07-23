@@ -35,6 +35,7 @@ Before executing this skill, determine your current context:
     - Prompt the user to enter their first piece of data for the new schema, or explain how they can automate it via other skills or apps.
 4.  **Quick Visibility (Optional):** 
     - Emphasize visibility into work being done. While the full dashboard creation is handled elsewhere, if the conversation centers heavily on the data being recorded, you can whip up a quick, lightweight HTML preview page to show them the data layout. 
+    - **Theming & Creativity:** If you do create a quick preview, stop and ask the user for a fun theme or vibe *before* generating it. Be creative with the CSS and styling to demonstrate the flexibility of the data.
     - **Architectural Rules:** If you create a quick HTML page, follow the "Static Triad" (index.html, app.js, theme.css) or single-scroll artifact paradigm using Alpine.js, D3.js, and pure Vanilla CSS. **Do not use Tailwind via CDN** due to CSP conflicts.
 5.  **Integration with Projects & Dashboards:**
     - Tell the user that the primary way to manage and visualize this data over time is through the `fulcra-dashboard` skill, and if working with a team, to ensure these data types are recorded in the `fulcra-agent-teams` knowledge base.
