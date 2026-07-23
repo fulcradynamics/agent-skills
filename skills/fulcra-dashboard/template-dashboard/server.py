@@ -20,7 +20,8 @@ if __name__ == "__main__":
     if os.path.exists(public_dir):
         os.chdir(public_dir)
     else:
-        print("⚠️ Warning: 'public' directory not found. Serving current directory.")
+        print("❌ Error: 'public' directory not found. Refusing to serve the root directory to prevent accidental data exposure.")
+        sys.exit(1)
 
     with socketserver.TCPServer(("127.0.0.1", PORT), DashboardHandler) as httpd:
         print(f"🌲 Primordial Python Server active at http://127.0.0.1:{PORT}")

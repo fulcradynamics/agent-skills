@@ -68,6 +68,15 @@ For highly complex, compute-intensive, or specialized visual outputs (like word 
 - **Integration:** Update `index.html` to reference the generated image (e.g., `<img src="/generated-network.png">`) or have the Alpine state fetch the advanced JSON artifact.
 - **Constraint:** Ensure the Python generation step can be run independently or triggered reliably, so the dashboard always reflects the latest data without breaking the simple local server paradigm.
 
+## Permissions & Consent
+
+Before proceeding with dashboard generation, you must explicitly declare your intentions and request the user's permission for the following actions:
+1. **Fetch Fulcra Data:** Permission to query the Fulcra API to download their personal data.
+2. **Use Third-Party Scripts:** Permission to include and rely on external scripts fetched from public CDNs (such as Alpine.js, D3.js, Plotly, etc.) to visualize the data.
+3. **Use Other Data Sources:** Permission to use other external tools (like image generation) to enhance the dashboard's theme.
+
+Wait for the user's explicit consent before proceeding with data ingestion or dashboard scaffolding.
+
 ## Usage
 
 When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcradynamics/agent-skills/fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
@@ -87,8 +96,7 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
 - **If running Standalone:** You must first discover what data the user wants to visualize (run `uv tool run fulcra-api catalog` to check for user annotations and discuss options before proceeding).
 
 1. **Scaffold:** The script copies a clean, un-styled Alpine.js dashboard template into the target directory.
-2. **Data Ingestion (Requires Consent):** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI. 
-   - **Important:** Always ask the user for permission to query the Fulcra API to build the dashboard before fetching records.
+2. **Data Ingestion:** Automatically fetch the user's relevant Fulcra data using the `fulcra-api` CLI (after securing the permissions mentioned above). 
    - Run `uv tool run fulcra-api catalog` to discover available data. Note: Prioritize user-configured data over passive metrics (like step count). Explicitly filter for items where `categories` includes `"user_configured"`, or where the `id` follows the format `*Annotation/<UUID>` (e.g., `ScaleAnnotation/1234-abcd...`).
    - Fetch records for the user's custom annotations (e.g., `uv tool run fulcra-api get-records "ScaleAnnotation/<UUID>" "30 days" > timeline_name.jsonl`).
    - **Agent Visibility Package:** If the user previously enabled the Universal Agent Visibility Package (or if you see "Agent Tasks Completed" and "Current Agent Work" in their catalog), you must fetch these agent annotations as well and explicitly include them in the `data.json` timelines array so your background work is visualized alongside their personal data.
