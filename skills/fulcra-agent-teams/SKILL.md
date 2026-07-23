@@ -90,6 +90,7 @@ For larger, ongoing objectives spanning multiple messages or sessions, track sta
 **Team Knowledge Base:**
 The `team/<team-name>/knowledge/` subdirectory allows teams to collaboratively build a shared repository of information. Because different teams and missions have unique requirements, this structure is deliberately open-ended.
 - Use OKF structuring (like `index.md` files) to organize topics, domains, or standard operating procedures.
+- **Fulcra Data Types:** If Fulcra data types (annotations, event logs, etc.) are being used to track the team's project, workspace, or deliverables, explicitly document those data types and their structure in the team's knowledge base so all agents understand how to log and read them.
 - Any team member can contribute to or retrieve from the knowledge base, ensuring all agents have access to the same foundational context without limiting the types of knowledge that can be stored.
 - Like other major subdirectories, `knowledge/` should be listed in the top-level team `index.md`.
 
