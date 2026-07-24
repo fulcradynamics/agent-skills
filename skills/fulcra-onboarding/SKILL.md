@@ -37,9 +37,9 @@ To deliver something useful that works and has iteration and visibility, you sho
    - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
    - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about making something genuinely useful that solves a real problem or improves their existing systems.
    - **Show Possibilities (The Five Branches):** There are five main branches for getting started. Use your creativity to inspire the user to choose one:
-     1. Make something the user wishes with Fulcra.
-     2. Solve a specific problem for the user with Fulcra.
-     3. Improve a setup the user already has.
+     1. Make something new and useful.
+     2. Solve a specific problem.
+     3. Improve a setup we already have.
      4. Share information with other users (e.g., share movie watching history to find recommendations for the group).
      5. Choose a specific skill from the `fulcradynamics/community-skills` repo (a new but growing hub where agents and users can discover solutions to specific problems and explore concrete use cases for Fulcra) or something inspired by one.
    - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
@@ -73,26 +73,12 @@ Now that the user is connected, work with them to choose their direction—wheth
 
 After delivering the view, coordination plan, and visibility artifact, transition the user to the specific skills needed to continue their chosen project (e.g., `project-dashboard`, `fulcra-agent-teams`, `fulcra-tracking`). 
 
-If the user wants to explore further, you can present this scannable menu of additional options:
+If the user wants to explore further, you should present a curated, scannable menu of options based on the conversation so far. Rather than a static list, recommend a few relevant choices from these categories:
 
-1.  📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
-2.  🧠 **Agent Memory & Knowledge:** Record high-level knowledge, tasks, and progress directly to your Fulcra datastore.
-3.  📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
-4.  💻 **Context Web:** Explore your data on the desktop portal.
+1.  **Apps & Interfaces:**
+    - 📱 **Get the App:** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434) for on-the-go logging and background sync (warn them about sensitive data permissions like Health, location, and calendar).
+    - 💻 **Context Web:** Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
+2.  **Fulcra Skills:** Suggest specific skills from the `agent-skills` or `community-skills` repositories that align with their goals (e.g., `fulcra-tracking` for custom schemas/dashboards, `fulcra-memory` for knowledge logging, or `fulcra-rapid-prototype` for quick builds).
+3.  **The Fulcra Cookbook:** Point them to the [Fulcra Cookbook](https://www.fulcradynamics.com/resources/cookbook) to explore more recipes, tutorials, and inspiration for what to make next.
 
-**When the user makes a choice, follow the corresponding path below:**
-
-#### Path 1: Agent Visibility & Custom Tracking
-1. Explain that you can set up data schemas to track their custom data, as well as an "Agent Visibility Package" to record agent activities, and visualize it all on a custom HTML dashboard.
-2. If they consent and are interested, transition them to the `fulcra-tracking` skill.
-
-#### Path 2: Agent Memory & Knowledge
-1. Explain that you can record high-level knowledge, track tasks, and log ongoing progress directly to their Fulcra datastore in a structured, readable way.
-2. If they consent, transition them to the `fulcra-memory` skill to set up their memory tracking.
-
-#### Path 3: Get the App
-1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
-2. Mention it unlocks automatic background sync (Health, location, calendar). **PRIVACY WARNING:** Explicitly inform the user these are highly sensitive data types requiring explicit iOS permissions, and they have full control to decline.
-
-#### Path 4: Context Web
-1. Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
+**When the user makes a choice, follow through by applying the chosen skill or guiding them to the requested resource.**
