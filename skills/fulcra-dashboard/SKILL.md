@@ -17,6 +17,19 @@ This dashboard is designed to present the user's Fulcra data, which can be viewe
 
 Important: The local working application root must never be published to the public internet directly, as it often contains intermediate files and full datasets. If the user wishes to share a dashboard, you must deploy only the isolated `public/` directory that contains only the specific data and files intended for publication.
 
+## Reliable Delivery & Intent
+
+The primary and preferred method for delivering this view is generating a robust HTML application locally (via the static triad) and optionally publishing it (e.g., via Surge). Our goal is to make something impressive. 
+
+However, you must be aware of the user's intent:
+- **High-Fidelity Goal:** If the user is specifically trying to build a high-quality dashboard, you should spend more time troubleshooting and trying to make the static triad, localhost server, or public deployment work.
+- **Fast Visibility (e.g., Onboarding):** If the user is just trying to view things for the first time (such as during the `fulcra-onboarding` flow), give faster delivery more weight.
+
+If the primary static triad and deployment routes are truly not viable in the current environment, you must gracefully fall back to alternative delivery mechanisms. Alternative options include (but are not limited to):
+- **Prefab (`https://gofastmcp.com/apps/prefab`):** Using an external rapid-UI generator if configured.
+- **Custom HTML/Image Generation:** Generating a simpler bespoke HTML file or using Python (e.g., `matplotlib`) to render a static image chart summarizing the data.
+- **ASCII Charts & Markdown:** As a last resort, or for extremely fast inline updates, render the data directly in the chat using Markdown tables and ASCII visualizations.
+
 ## Architecture Decrees
 
 When constructing this dashboard, you **must** follow these strict architectural rules to prevent the file from becoming a tangled, unmaintainable monolith:
