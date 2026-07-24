@@ -25,12 +25,23 @@ To achieve these goals, Fulcra gives agents a shared place to access and store r
 
 Getting started with Fulcra follows a dynamic path. First, you get the user connected. Second, you help them imagine and choose a direction based on real problems they want to solve. Third, you deliver a tangible view and establish a persistent structure for ongoing work before transitioning to the next steps.
 
+To deliver something useful that works and has iteration and visibility, you should leverage the following core Fulcra skills:
+- **`fulcradynamics/agent-skills/fulcra-agent-teams`**: At the center of making and coordinating things, it organizes the knowledge, tasks, plans, tracking, and results in files the user owns in their Fulcra account.
+- **`fulcradynamics/agent-skills/fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
+- **`fulcradynamics/agent-skills/fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
+- **`fulcradynamics/community-skills/fulcra-rapid-prototype`**: A flow for rapidly developing an idea into a result or solution.
+
 ### Phase 1: Core Setup & Inspiration
 
 1. **Introduction to Fulcra:**
    - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
-   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about building something genuinely useful that solves a real problem or improves their existing systems.
-   - **Show Possibilities:** Use your creativity and knowledge of Fulcra's capabilities to inspire the user. Provide examples of basic functionality (like data ingestion and situational awareness) as well as complete products (like agent coordination using the `fulcra-agent-coordination` skill from the `fulcradynamics/community-skills` repo). Your goal is to suggest ideas that make the user think, "I really want to make that."
+   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about making something genuinely useful that solves a real problem or improves their existing systems.
+   - **Show Possibilities (The Five Branches):** There are five main branches for getting started. Use your creativity to inspire the user to choose one:
+     1. Make something the user wishes with Fulcra.
+     2. Solve a specific problem for the user with Fulcra.
+     3. Improve a setup the user already has.
+     4. Share information with other users (e.g., share movie watching history to find recommendations for the group).
+     5. Choose a specific skill from the `fulcradynamics/community-skills` repo or something inspired by one (more specific use case skills will be coming to that repo).
    - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
@@ -46,7 +57,7 @@ Getting started with Fulcra follows a dynamic path. First, you get the user conn
 
 3. **Authentication:**
    - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
-   - Once authenticated, celebrate the milestone! You are now ready to start building.
+   - Once authenticated, celebrate the milestone! You are now ready to start making.
 
 ### Phase 2: Direction & Tangible Delivery
 
@@ -54,9 +65,9 @@ Now that the user is connected, work with them to choose their direction—wheth
 
 **Delivery milestone:** Whatever direction the user chooses, aim to deliver the following three things to the user before the final branching point where they transition to other specific skills. Try to do all three, but deliver whatever is viable based on their specific goals:
 
-1. **A Cool View:** Create and show the user a tangible view of what has been accomplished so far. This should represent real work done toward their chosen direction (e.g., a sample data visualization, a generated HTML artifact, a snippet of insights, or an initial test output).
+1. **A Cool View:** Create and show the user a tangible view of what has been accomplished so far. This should represent real work done toward their chosen direction (e.g., a fun ASCII visualization in the chat, a generated HTML artifact, a snippet of insights, or an initial test output). You should also provide a link to [Context Web Timeline](https://context.fulcradynamics.com/timeline?mode=week&date=YYYY-MM-DD) to view any new data (where `YYYY-MM-DD` is calculated as six days before the latest recorded data point to ensure it shows up in the week view).
 2. **Coordination of Continuing Work:** Establish how the work will continue. Leverage the `fulcra-agent-teams` skill to create a dedicated agent team for the project, and use the `fulcra-tracking` skill to establish specific data types (annotations) to track the project's milestones, tasks, or outputs in the Fulcra datastore. Ensure these data types are recorded in the team's knowledge.
-3. **Visibility of Work:** Provide a clear view of completed, present, and future work. You can do this by using the `project-dashboard` skill (found in the community-skills repository) to build a robust management view of the team workspace. The goal is to show the user that Fulcra not only facilitates making useful things with continuous demonstrated improvement, but also makes all this work owned by the user for portability, quick review, and effective direction.
+3. **Visibility of Work:** Provide a clear view of completed, present, and future work. You can do this by using the `project-dashboard` skill (found in the community-skills repository) to make a robust management view of the team workspace. The goal is to show the user that Fulcra not only facilitates making useful things with continuous demonstrated improvement, but also makes all this work owned by the user for portability, quick review, and effective direction.
 
 ### Phase 3: Transition & Explore More
 
