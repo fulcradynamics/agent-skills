@@ -130,10 +130,11 @@ Do not assume this skill is always run immediately after `fulcra-onboarding`.
    - **Crucial Warning & Confirmation:** Directly at the point of publishing (before running any deployment tools), you must present a clear warning to the user. State exactly which data files are inside the `public/` directory and will be made public, and explicitly ask for their final confirmation to proceed with the deployment.
    - Wait for their explicit confirmation before proceeding.
    - If they agree, offer them three deployment options, ordered by ease of use:
-     - **Option 1: Surge (Easiest, No Git Required)**
+     - **Option 1: Surge (Secure & Easiest, No Git Required)**
        - Installation: `npm install -g surge`
-       - Deployment: Run `surge` inside the `public/` directory.
-       - UX: The user will be prompted in the terminal for an email/password to create a free account on the fly, and then an auto-generated domain will be provided. Instantly deploys the folder.
+       - Security Prep: Before deploying, ensure you insert `<meta name="robots" content="noindex, nofollow">` into the `<head>` of `public/index.html` to prevent search engine indexing. (Surge subdomains are not publicly indexed or discoverable by default, so this combination provides security through obscurity and explicit opt-out).
+       - Deployment: Generate a random 6-character alphanumeric suffix and run `surge . <project-name>-<random-suffix>.surge.sh` inside the `public/` directory.
+       - UX: The user will be prompted in the terminal for an email/password to create a free account on the fly (if not already authenticated). The folder will instantly deploy to the unguessable subdomain. You must present the final link to the user explicitly as an `https://` URL.
      - **Option 2: GitHub Pages (Best for Version Control)**
        - Installation: Ensure `gh` (GitHub CLI) is installed and authenticated (`gh auth status`).
        - Deployment: Navigate into the `public/` directory, initialize git, create the repository, and push (`git init && git add . && git commit -m "Initial public export" && gh repo create <name> --public --source=. --remote=origin --push`).
