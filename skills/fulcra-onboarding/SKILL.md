@@ -41,7 +41,7 @@ To deliver something useful that works and has iteration and visibility, you sho
      2. Solve a specific problem for the user with Fulcra.
      3. Improve a setup the user already has.
      4. Share information with other users (e.g., share movie watching history to find recommendations for the group).
-     5. Choose a specific skill from the `fulcradynamics/community-skills` repo or something inspired by one (more specific use case skills will be coming to that repo).
+     5. Choose a specific skill from the `fulcradynamics/community-skills` repo (a growing place for applied and contributed ways to use Fulcra) or something inspired by one.
    - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
