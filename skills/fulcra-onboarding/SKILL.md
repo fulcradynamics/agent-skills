@@ -19,18 +19,30 @@ To achieve these goals, Fulcra gives agents a shared place to access and store r
 
 - **Tone & Vibe:** Fulcra unlocks capabilities that individual agents cannot achieve on their own. Be engaging, conversational, and optimistic. Help the user imagine what becomes possible once their agents know them, know what's happening in their world, work together, and become more helpful over time.
 - **Optimize for Time-to-Wow:** Favor opinionated defaults over exhaustive discussion. The objective is to get the user to their first genuinely useful workflow as quickly as possible.
-- **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the onboarding moving forward.
+- **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the getting started process moving forward.
 
-## Workflow: Guided Path
+## Workflow: Getting Started
 
-The onboarding process follows a guided three-phase model. First, you get the user connected. Second, you recommend a powerful "golden path" of core agent capabilities. Third, you present a menu of additional options.
+Getting started with Fulcra follows a dynamic path. First, you get the user connected. Second, you help them imagine and choose a direction based on real problems they want to solve. Third, you deliver a tangible view and establish a persistent structure for ongoing work before transitioning to the next steps.
 
-### Phase 1: Core Setup
+To deliver something useful that works and has iteration and visibility, you should leverage the following core Fulcra skills:
+- **`fulcradynamics/agent-skills/fulcra-agent-teams`**: At the center of making and coordinating things, it organizes the knowledge, tasks, plans, tracking, and results in files the user owns in their Fulcra account.
+- **`fulcradynamics/agent-skills/fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
+- **`fulcradynamics/agent-skills/fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
+- **`fulcradynamics/community-skills/fulcra-rapid-prototype`**: A flow for rapidly developing an idea into a result or solution.
+
+### Phase 1: Core Setup & Inspiration
 
 1. **Introduction to Fulcra:**
    - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
-   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Explain Fulcra conceptually in your own natural words, but make sure to highlight its core value proposition: giving agents a shared place to access real-world data, coordinate tasks, and maintain a persistent awareness of what's new on every loop as the user moves across different agents.
-   - **Task Connection:** If you already know what specific task or job the user wants you to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
+   - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about making something genuinely useful that solves a real problem or improves their existing systems.
+   - **Show Possibilities (The Five Branches):** There are five main branches for getting started. Use your creativity to inspire the user to choose one:
+     1. Make something new and useful.
+     2. Solve a specific problem.
+     3. Improve a setup we already have.
+     4. Share information with other users (e.g., share movie watching history to find recommendations for the group).
+     5. Choose a specific skill from the `fulcradynamics/community-skills` repo (a new but growing hub where agents and users can discover solutions to specific problems and explore concrete use cases for Fulcra) or something inspired by one.
+   - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
    - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
 
 2. **Connection Options & Pre-flight:**
@@ -45,50 +57,28 @@ The onboarding process follows a guided three-phase model. First, you get the us
 
 3. **Authentication:**
    - Read and execute the instructions in `references/fulcra-onboarding-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
-   - Once authenticated, declare that the core onboarding is complete! Celebrate this milestone.
+   - Once authenticated, celebrate the milestone! You are now ready to start making.
 
-### Phase 2: Task-Driven or Recommended Flow
+### Phase 2: Direction & Tangible Delivery
 
-Immediately after declaring the core onboarding complete, you must determine the best path forward based on your current context:
+Now that the user is connected, work with them to choose their direction—whether it's a project of their own inspired by your examples, or falling back on a "golden path" (like connecting a data source and establishing agent workspaces).
 
-**Option A: The Task-Driven Path (Prioritize this!)**
-If you already know what specific task, job, or goal the user wants you to accomplish (e.g., they asked you to "build a health dashboard", "ingest my Spotify history", or "set up my inbox"), you should prioritize that specific task to deliver value as quickly as possible.
-- Briefly explain how Fulcra will facilitate their specific goal.
-- Ask for their confirmation to branch off and immediately start working on that task (transitioning to the relevant skills), rather than going through the generic tour.
+**Delivery milestone:** Whatever direction the user chooses, aim to deliver the following three things to the user before the final branching point where they transition to other specific skills. Try to do all three, but deliver whatever is viable based on their specific goals:
 
-**Option B: The Standard Recommended Path**
-If the user hasn't given you a specific task and is just exploring Fulcra generally, recommend this specific post-onboarding sequence. Ask them if they'd like to be guided through this sequence, explaining that it is the most truly useful way to get started with Fulcra:
+1. **A Cool View:** Create and show the user a tangible view of what has been accomplished so far. This should represent real work done toward their chosen direction. Emphasize deliverability—if building a rich HTML dashboard encounters friction, seamlessly fall back to a simpler but immediate alternative (e.g., a fun ASCII visualization in the chat, a basic static image, or a snippet of insights). You should also provide a link to [Context Web Timeline](https://context.fulcradynamics.com/timeline?mode=week&date=YYYY-MM-DD) to view any new data (where `YYYY-MM-DD` is calculated as six days before the latest recorded data point to ensure it shows up in the week view).
+2. **Coordination of Continuing Work:** Establish how the work will continue. Leverage the `fulcra-agent-teams` skill to create a dedicated agent team for the project, and use the `fulcra-tracking` skill to establish specific data types (annotations) to track the project's milestones, tasks, or outputs in the Fulcra datastore. Ensure these data types are recorded in the team's knowledge.
+3. **Visibility of Work:** Provide a clear view of completed, present, and future work. You can do this by using the `fulcra-project-dashboard` skill (found in the community-skills repository) to make a robust management view of the team workspace. The goal is to show the user that Fulcra not only facilitates making useful things with continuous demonstrated improvement, but also makes all this work owned by the user for portability, quick review, and effective direction.
 
-1.  **Connect a Data Source:** Bring real-world data into the datastore (using the `fulcradynamics/agent-skills/fulcra-ingest` skill).
-2.  **Know What's New:** Set up an automated loop so the agent knows what is new every loop (using the `fulcradynamics/agent-skills/fulcra-situational-awareness` skill).
-3.  **Set Up Workspaces:** Create an agent workspace that gives your agent an inbox, a place to save things it creates, and a way to coordinate and work with other agents and people (using the `fulcradynamics/agent-skills/fulcra-agent-teams` skill).
+### Phase 3: Transition & Explore More
 
-If they agree to the recommended path, transition them sequentially through these skills.
+After delivering the view, coordination plan, and visibility artifact, transition the user to the specific skills needed to continue their chosen project (e.g., `fulcra-project-dashboard`, `fulcra-agent-teams`, `fulcra-tracking`). 
 
-### Phase 3: Explore More (The Menu)
+If the user wants to explore further, you should present a curated, scannable menu of options based on the conversation so far. Rather than a static list, recommend a few relevant choices from these categories:
 
-After they complete the recommended path, or if they decide they do not want to do it, present the following menu of additional options to explore the Fulcra skills, app, and web dashboard.
+1.  **Apps & Interfaces:**
+    - 📱 **Get the App:** Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434) for on-the-go logging and background sync (warn them about sensitive data permissions like Health, location, and calendar).
+    - 💻 **Context Web:** Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
+2.  **Fulcra Skills:** Suggest specific skills from the `agent-skills` or `community-skills` repositories that align with their goals (e.g., `fulcra-tracking` for custom schemas/dashboards, `fulcra-memory` for knowledge logging, or `fulcra-rapid-prototype` for quick builds).
+3.  **The Fulcra Cookbook:** Point them to the [Fulcra Cookbook](https://www.fulcradynamics.com/resources/cookbook) to explore more recipes, tutorials, and inspiration for what to make next.
 
-**Present this exact scannable menu to the user:**
-
-1.  📊 **Agent Visibility & Custom Tracking:** Discover how to track custom data, agent visibility metrics, and visualize them using a custom dashboard.
-2.  🧠 **Agent Memory & Knowledge:** Record high-level knowledge, tasks, and progress directly to your Fulcra datastore.
-3.  📱 **Get the App:** Download the iOS app for on-the-go logging and background sync.
-4.  💻 **Context Web:** Explore your data on the desktop portal.
-
-**When the user makes a choice, follow the corresponding path below:**
-
-#### Path 1: Agent Visibility & Custom Tracking
-1. Explain that you can set up data schemas to track their custom data, as well as an "Agent Visibility Package" to record agent activities, and visualize it all on a custom HTML dashboard.
-2. If they consent and are interested, transition them to the `fulcradynamics/agent-skills/fulcra-tracking` skill.
-
-#### Path 2: Agent Memory & Knowledge
-1. Explain that you can record high-level knowledge, track tasks, and log ongoing progress directly to their Fulcra datastore in a structured, readable way.
-2. If they consent, transition them to the `fulcradynamics/agent-skills/fulcra-memory` skill to set up their memory tracking.
-
-#### Path 3: Get the App
-1. Direct them to the [Fulcra Context iOS app](https://apps.apple.com/app/id1633037434).
-2. Mention it unlocks automatic background sync (Health, location, calendar). **PRIVACY WARNING:** Explicitly inform the user these are highly sensitive data types requiring explicit iOS permissions, and they have full control to decline.
-
-#### Path 4: Context Web
-1. Direct them to [Context Web](https://context.fulcradynamics.com/) to explore their datastore on desktop.
+**When the user makes a choice, follow through by applying the chosen skill or guiding them to the requested resource.**
