@@ -36,7 +36,32 @@ npx skills add fulcradynamics/agent-skills
 
 ### Manual
 
-Clone the repo and copy the skill folders you want into your agent's skills directory (e.g., `.claude/skills/` for Claude Code).
+Clone the repo and copy the skill folders you want into your agent's skills directory (e.g., `.claude/skills/` for Claude Code). Copy whole folders — every skill reads its own `references/`, `scripts/`, and template directories at runtime.
+
+## Other platforms
+
+This is an omni-repo: the same `skills/` directory installs natively on eight agentic platforms. Behavior is identical everywhere; only the install route and command spelling differ.
+
+| Platform | Install | Invoke | MCP connector | Status |
+|---|---|---|---|---|
+| Claude Code | `claude plugin install fulcra-skills@fulcra` | skill auto-trigger | `fulcra-mcp@fulcra` plugin | native |
+| Codex CLI | [INSTALL-CODEX.md](INSTALL-CODEX.md) | `$fulcra-…` | plugin or `config.toml` | ported, not verified live |
+| Gemini CLI | [INSTALL-GEMINI-CLI.md](INSTALL-GEMINI-CLI.md) | model-invoked, per-use consent | `settings.json` | ported, not verified live |
+| Antigravity | [INSTALL-ANTIGRAVITY.md](INSTALL-ANTIGRAVITY.md) | `/fulcra-…` | agy MCP config | ported, not verified live |
+| OpenCode | [INSTALL-OPENCODE.md](INSTALL-OPENCODE.md) | model-invoked | `opencode.json` | ported, not verified live |
+| Hermes | [INSTALL-HERMES.md](INSTALL-HERMES.md) | `/fulcra-…` | `config.yaml` | ported, not verified live |
+| Pi | [INSTALL-PI.md](INSTALL-PI.md) | `/skill:fulcra-…` | none (pi has no MCP) | ported, not verified live |
+| OpenClaw | [INSTALL-OPENCLAW.md](INSTALL-OPENCLAW.md) | `/fulcra-…` on any chat surface | gateway config | ported, not verified live |
+
+"Not verified live" means the glue was built against each platform's current documentation (researched 2026-08, versions noted per install doc) but has not yet been exercised against a live install of that platform. Every port has a fallback route that is plain file placement. If something misbehaves, please open an issue — a report from a platform we can't run is the integration test.
+
+<details>
+<summary>Maintainers: release + portability notes</summary>
+
+- **Version locations** (bump together on release): `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` (metadata), `plugins/fulcra-mcp/.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, `plugins/fulcra-mcp/.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json` (metadata), `gemini-extension.json`. The Antigravity `plugin.json` deliberately has no version field.
+- **Never add without a cross-platform check:** a root `package.json` (kills pi's conventional scan; makes pi run npm install), a root `GEMINI.md` (auto-loads as context on Gemini CLI), a root `commands/` dir (auto-discovered by Claude Code), a root `mcp_config.json` or root `.mcp.json` (would auto-register MCP on skill installs — MCP is opt-in by design), a native `openclaw.plugin.json` (inert today, shape-changing the day OpenClaw fixes its detection precedence).
+- **Keep `.codex-plugin/plugin.json` free of a `hooks` key** — OpenClaw reads that manifest as a Codex bundle and interprets `hooks` differently.
+</details>
 
 ## Skills
 

@@ -1,0 +1,15 @@
+{
+  "name": "fulcra-mcp",
+  "version": "0.1.0",
+  "description": "Connects your agent to the hosted Fulcra Context MCP server for direct access to your Fulcra data (sleep, workouts, location, calendars, custom metrics). Useful in restricted environments where the Fulcra CLI cannot run.",
+  "author": {
+    "name": "Fulcra Dynamics",
+    "email": "support@fulcradynamics.com",
+    "url": "https://fulcradynamics.com"
+  },
+  "homepage": "https://github.com/fulcradynamics/fulcra-context-mcp",
+  "repository": "https://github.com/fulcradynamics/agent-skills",
+  "license": "MIT",
+  "keywords": ["fulcra", "mcp", "personal-data", "context"],
+  "mcpServers": "./.mcp.json"
+}
