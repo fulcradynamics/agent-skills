@@ -23,16 +23,16 @@ codex plugin marketplace add fulcradynamics/agent-skills   # then: codex plugin 
 npx skills add fulcradynamics/agent-skills                 # or: plain skills into ~/.agents/skills/
 ```
 
-- Invoke as **`$fulcra-onboarding`** (no slash form; `/skills` lists them).
+- Invoke as **`$fulcra-skills:fulcra-onboarding`** — plugin-qualified with `$plugin:skill`, no slash form. An `@fulcra-skills` plugin mention also works — the model surfaces the whole skill set and routes from there.
 - **The default sandbox blocks outbound network**, which fails every `uvx fulcra-api` call. In `~/.codex/config.toml`: `sandbox_mode = "workspace-write"` plus `network_access = true` under `[sandbox_workspace_write]`.
-- MCP opt-in, also in `config.toml`:
+- MCP opt-in: `codex plugin add fulcra-mcp@fulcra`, then `codex mcp login fulcra-context` for the OAuth flow. Or skip the plugin and register directly in `config.toml`:
 
   ```toml
   [mcp_servers.fulcra-context]
   url = "https://mcp.fulcradynamics.com/mcp"
   ```
 
-**Status:** researched against docs of rust-v0.147.0 era (2026-08-09); no live binary exercised. The `.agents/plugins/marketplace.json` catalog format is a guess mirroring Claude's. OpenAI also co-authored [Agent Plugins 1.0](#agent-plugins-10-clients-vs-code-cursor-copilot-kiro) — if your Codex resolves plugins that way instead, use that section's route and open an issue saying which worked, so the loser can be retired.
+**Status:** fully verified live on codex-cli 0.147.0 (2026-08-10, against a GitHub fork of this repo): marketplace add, both plugin installs including the subdirectory-sourced `fulcra-mcp@fulcra`, MCP server registration via the manifest's `"mcpServers": "./.mcp.json"` indirection (surfaces at startup pending `codex mcp login fulcra-context`), skill-set discovery via `@fulcra-skills` mention, and a model-driven `$fulcra-skills:fulcra-onboarding` run end-to-end — progressive disclosure of `references/` files, live `uv` preflight, halting at the auth consent gate as designed. OpenAI also co-authored [Agent Plugins 1.0](#agent-plugins-10-clients-vs-code-cursor-copilot-kiro); the bespoke `.codex-plugin` route is the one verified live.
 
 ## Gemini CLI
 
