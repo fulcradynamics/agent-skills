@@ -14,6 +14,8 @@ Status lines record what was exercised against a live binary (with version and d
 
 See [Installation](README.md#installation) — the marketplace (`claude plugin marketplace add fulcradynamics/agent-skills`) is the native home. MCP: install `fulcra-mcp@fulcra`.
 
+**Status:** verified live on Claude Code 2.1.212 (2026-08-10, against a GitHub fork of this repo): marketplace add, both plugin installs, discovery of all 12 skills, and MCP server registration from the plugin's `.mcp.json` (shows as `plugin:fulcra-mcp:fulcra-context`, pending OAuth). The `npx skills add <github-repo>` route was verified live from GitHub the same day.
+
 ## Codex CLI
 
 ```bash

@@ -44,7 +44,7 @@ This is an omni-repo: the same `skills/` directory installs natively on eight ag
 
 | Platform | Install | Invoke | MCP connector | Status |
 |---|---|---|---|---|
-| Claude Code | `claude plugin install fulcra-skills@fulcra` | skill auto-trigger | `fulcra-mcp@fulcra` plugin | native |
+| Claude Code | `claude plugin install fulcra-skills@fulcra` | skill auto-trigger | `fulcra-mcp@fulcra` plugin | verified live (Claude Code 2.1.212) |
 | Codex CLI | [PLATFORMS.md](PLATFORMS.md#codex-cli) | `$fulcra-…` | plugin or `config.toml` | ported, not verified live |
 | Gemini CLI | [PLATFORMS.md](PLATFORMS.md#gemini-cli) | model-invoked, per-use consent | `settings.json` | ported, not verified live |
 | Antigravity | [PLATFORMS.md](PLATFORMS.md#antigravity-agy) | `/fulcra-…` | agy MCP config | verified live (agy v1.1.4) |
