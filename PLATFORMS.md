@@ -50,7 +50,7 @@ npx skills add fulcradynamics/agent-skills                                 # or:
 
 - Unpaid tiers are migrating to Antigravity CLI — see the next section if that's you.
 
-**Status:** researched against v0.54.4 docs (2026-08-09); no live install exercised. If `gemini skills list` comes back empty, try `/skills reload` and report.
+**Status:** fully verified live on Gemini CLI 0.56.0-nightly.20260806 (2026-08-10, against a GitHub fork of this repo): `gemini extensions install <repo-url>` (the install consent flow previews each skill; non-interactively it reads consent from stdin), whole-repo staging to `~/.gemini/extensions/fulcra-skills/` with the other platforms' manifests inert, `gemini skills list` discovery of all 12 skills, and a headless model-driven activation of `fulcra-onboarding` (`gemini -p`), which loaded the skill and reported its instructions. No name collisions: Gemini warns loudly on duplicate skill names across locations, and none involved the `fulcra-` prefix.
 
 ## Antigravity (agy)
 
