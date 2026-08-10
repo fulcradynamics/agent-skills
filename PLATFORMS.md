@@ -67,16 +67,16 @@ agy plugin install https://github.com/fulcradynamics/agent-skills
 ## OpenCode
 
 ```bash
-npx skills add fulcradynamics/agent-skills   # lands in ~/.agents/skills/, a documented location
+npx skills add fulcradynamics/agent-skills --global   # lands in ~/.agents/skills/, a documented location
 ```
 
-Or copy `skills/fulcra-*` folders into any scanned path (global: `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/`; per-project: `.opencode/skills/`, `.claude/skills/`, `.agents/skills/`). Skills are model-invoked. MCP opt-in in `opencode.json`:
+Without `--global`, the skills CLI installs to the current project's `.agents/skills/` when run inside one. Or copy `skills/fulcra-*` folders into any scanned path (global: `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/`; per-project: `.opencode/skills/`, `.claude/skills/`, `.agents/skills/`). Skills are model-invoked. MCP opt-in in `opencode.json`:
 
 ```json
 { "mcp": { "fulcra-context": { "type": "remote", "url": "https://mcp.fulcradynamics.com/mcp", "enabled": true } } }
 ```
 
-**Status:** discovery paths and MCP syntax verified against docs (2026-08-10); no live session exercised.
+**Status:** fully verified live on OpenCode 1.18.16 (2026-08-10, against a GitHub fork of this repo): `npx skills add --global` staging to `~/.agents/skills/`, headless discovery of all 12 skills (`opencode run`), and a model-driven activation of `fulcra-onboarding` via OpenCode's native skill tool, reporting the correct first instruction. MCP syntax remains docs-verified only.
 
 ## Hermes
 

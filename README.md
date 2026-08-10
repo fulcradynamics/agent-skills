@@ -48,7 +48,7 @@ This is an omni-repo: the same `skills/` directory installs natively on eight ag
 | Codex CLI | [PLATFORMS.md](PLATFORMS.md#codex-cli) | `$fulcra-skills:fulcra-…` | `fulcra-mcp@fulcra` plugin or `config.toml` | verified live (codex-cli 0.147.0) |
 | Gemini CLI | [PLATFORMS.md](PLATFORMS.md#gemini-cli) | model-invoked, per-use consent | `settings.json` | verified live (0.56.0-nightly) |
 | Antigravity | [PLATFORMS.md](PLATFORMS.md#antigravity-agy) | `/fulcra-…` | agy MCP config | verified live (agy v1.1.4) |
-| OpenCode | [PLATFORMS.md](PLATFORMS.md#opencode) | model-invoked | `opencode.json` | ported, not verified live |
+| OpenCode | [PLATFORMS.md](PLATFORMS.md#opencode) | model-invoked | `opencode.json` | verified live (1.18.16) |
 | Hermes | [PLATFORMS.md](PLATFORMS.md#hermes) | `/fulcra-…` | `config.yaml` | ported, not verified live |
 | Pi | [PLATFORMS.md](PLATFORMS.md#pi) | `/skill:fulcra-…` | none (pi has no MCP) | verified live (pi 0.84.1) |
 | OpenClaw | [PLATFORMS.md](PLATFORMS.md#openclaw) | `/fulcra-…` on any chat surface | gateway config | ported, not verified live |
