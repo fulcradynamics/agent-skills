@@ -1,10 +1,11 @@
 ---
 name: fulcra-onboarding
 description: "Guides a new user or agent through the initial setup, configuration, and capabilities of the Fulcra environment."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": "{\"emoji\": \"🌱\"}" }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🌱\"}"
 ---
 
 # Fulcra Onboarding

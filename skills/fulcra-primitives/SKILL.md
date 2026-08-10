@@ -1,10 +1,11 @@
 ---
 name: fulcra-primitives
 description: "A plain, no-nonsense introduction to the Fulcra CLI, covering core primitives (data types and versioned file uploads)."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": "{\"emoji\": \"🐙\"}" }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🐙\"}"
 ---
 
 # Fulcra Primitives

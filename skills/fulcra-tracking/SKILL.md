@@ -1,10 +1,11 @@
 ---
 name: fulcra-tracking
 description: "Allows the user to record custom data annotations and agent visibility metrics, and generates simple HTML dashboards for visualization."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": "{\"emoji\": \"📊\"}" }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"📊\"}"
 ---
 
 # Fulcra Tracking & Dashboards

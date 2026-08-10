@@ -1,10 +1,11 @@
 ---
 name: fulcra-control-panel
 description: "Sets up a secure, local-only administration control panel for the Fulcra environment. Features an interactive Chat Envoy for direct agent communication, and a File Store Explorer for browsing the user's data backend."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": "{\"emoji\": \"🎛️\"}" }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🎛️\"}"
 ---
 
 # Fulcra Control Panel

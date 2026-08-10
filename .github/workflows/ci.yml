@@ -17,30 +17,22 @@ jobs:
       - name: Lint skills against the Agent Skills spec
         run: uvx skillscheck ./skills
 
-  frontmatter-strict:
-    name: Strict YAML frontmatter (pi drops silently on failure)
+  spec-reference-validator:
+    name: Official Agent Skills reference validator (skills-ref)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Parse every SKILL.md frontmatter as strict YAML
+      - uses: astral-sh/setup-uv@v5
+      # The agentskills.io reference implementation: strict YAML, allowed
+      # frontmatter fields only, name/description constraints, string-valued
+      # metadata. Guards against silent skill drops on strict parsers (pi).
+      - name: Validate every skill with the reference validator
         run: |
-          pip install pyyaml
-          python3 - <<'EOF'
-          import glob, sys, yaml
-          failed = False
-          for p in sorted(glob.glob('skills/*/SKILL.md')):
-              try:
-                  fm = open(p).read().split('---')[1]
-                  d = yaml.safe_load(fm)
-                  assert d.get('name'), 'missing name'
-                  assert d.get('description'), 'missing description (pi drops the skill silently)'
-                  for k, v in (d.get('metadata') or {}).items():
-                      assert isinstance(v, str), f'metadata.{k} must be a string per the Agent Skills spec'
-              except Exception as e:
-                  print(f'FAIL {p}: {e}')
-                  failed = True
-          sys.exit(1 if failed else 0)
-          EOF
+          fails=0
+          for d in skills/*/; do
+            uvx --from skills-ref agentskills validate "$d" || fails=1
+          done
+          exit $fails
 
   manifest-validation:
     name: Plugin manifest validation (Claude Code + Agent Plugins 1.0)

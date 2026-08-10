@@ -1,10 +1,11 @@
 ---
 name: fulcra-agent-teams
 description: "Enable agents to collaborate using shared memory, team inboxes, and user artifacts via Fulcra's versioned file storage."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": "{\"emoji\": \"🤝\"}" }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🤝\"}"
 ---
 
 # Fulcra Agent Teams

@@ -1,10 +1,11 @@
 ---
 name: fulcra-memory
 description: "Manages agent progress reporting and OKF-compliant memory syncing to Fulcra."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": "{\"emoji\": \"🧠\"}" }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🧠\"}"
 ---
 
 # Fulcra Agent Memory Sync

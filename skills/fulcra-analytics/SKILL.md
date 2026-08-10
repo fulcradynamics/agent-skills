@@ -1,16 +1,11 @@
 ---
 name: fulcra-analytics
 description: "Analyze Fulcra user data with privacy-respecting Python and CLI workflows: fetch records or metrics, normalize them into DataFrames, compute descriptive summaries, and produce auditable JSON or OKF-ready reports."
-homepage: https://github.com/fulcradynamics/agent-skills
 license: MIT
-user-invocable: true
-tags:
-  - fulcra
-  - analytics
-  - data-science
-  - okf
-  - pandas
 metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  tags: "fulcra,analytics,data-science,okf,pandas"
   openclaw: "{\"emoji\": \"📊\"}"
   fulcra: "{\"default_output_namespace\": \"analytics/\"}"
 ---
