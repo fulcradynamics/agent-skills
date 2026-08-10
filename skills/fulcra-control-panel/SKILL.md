@@ -4,7 +4,7 @@ description: "Sets up a secure, local-only administration control panel for the 
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "🎛️" } }
+metadata: { "openclaw": "{\"emoji\": \"🎛️\"}" }
 ---
 
 # Fulcra Control Panel

@@ -4,7 +4,7 @@ description: "Equips agents with the ability to proactively scan Fulcra for rece
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "📡" } }
+metadata: { "openclaw": "{\"emoji\": \"📡\"}" }
 ---
 
 # Fulcra Situational Awareness

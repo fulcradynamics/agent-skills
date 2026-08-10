@@ -4,7 +4,7 @@ description: "Autonomously orchestrate the ingestion of 3rd-party data exports (
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "📥" } }
+metadata: { "openclaw": "{\"emoji\": \"📥\"}" }
 ---
 
 # Fulcra Ingest 

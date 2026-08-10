@@ -11,10 +11,8 @@ tags:
   - okf
   - pandas
 metadata:
-  openclaw:
-    emoji: "📊"
-  fulcra:
-    default_output_namespace: analytics/
+  openclaw: "{\"emoji\": \"📊\"}"
+  fulcra: "{\"default_output_namespace\": \"analytics/\"}"
 ---
 
 # Fulcra Analytics

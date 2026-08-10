@@ -4,7 +4,7 @@ description: "Load the user's cross-platform preferences at session start and ca
 homepage: "https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-prefs"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "⚙️" } }
+metadata: { "openclaw": "{\"emoji\": \"⚙️\"}" }
 ---
 
 # fulcra-prefs

@@ -4,7 +4,7 @@ description: "Allows the user to record custom data annotations and agent visibi
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "📊" } }
+metadata: { "openclaw": "{\"emoji\": \"📊\"}" }
 ---
 
 # Fulcra Tracking & Dashboards

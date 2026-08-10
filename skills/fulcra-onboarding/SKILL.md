@@ -4,7 +4,7 @@ description: "Guides a new user or agent through the initial setup, configuratio
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "🌱" } }
+metadata: { "openclaw": "{\"emoji\": \"🌱\"}" }
 ---
 
 # Fulcra Onboarding

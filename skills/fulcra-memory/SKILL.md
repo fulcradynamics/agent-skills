@@ -4,7 +4,7 @@ description: "Manages agent progress reporting and OKF-compliant memory syncing 
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "🧠" } }
+metadata: { "openclaw": "{\"emoji\": \"🧠\"}" }
 ---
 
 # Fulcra Agent Memory Sync

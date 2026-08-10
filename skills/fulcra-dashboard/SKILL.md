@@ -4,7 +4,7 @@ description: "Builds a highly customizable, interactive HTML dashboard using Alp
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "📊" } }
+metadata: { "openclaw": "{\"emoji\": \"📊\"}" }
 ---
 
 # Fulcra Dashboard

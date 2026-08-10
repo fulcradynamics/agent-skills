@@ -4,7 +4,7 @@ description: "Enable agents to collaborate using shared memory, team inboxes, an
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "🤝" } }
+metadata: { "openclaw": "{\"emoji\": \"🤝\"}" }
 ---
 
 # Fulcra Agent Teams

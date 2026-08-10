@@ -4,7 +4,7 @@ description: "Manages agent memory backup, restoration, rollback, and cloning us
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
-metadata: { "openclaw": { "emoji": "💾" } }
+metadata: { "openclaw": "{\"emoji\": \"💾\"}" }
 ---
 
 # Fulcra Agent Backup Management
