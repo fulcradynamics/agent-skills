@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fulcra-context": {
+      "type": "http",
+      "url": "https://mcp.fulcradynamics.com/mcp"
+    }
+  }
+}

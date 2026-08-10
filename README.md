@@ -6,13 +6,37 @@ Install them once, and your agent will know what to do when you ask.
 
 ## Installation
 
+### Claude Code plugin
+
+Add the Fulcra marketplace, then install the plugins you want:
+
+```bash
+claude plugin marketplace add fulcradynamics/agent-skills
+```
+
+```bash
+claude plugin install fulcra-skills@fulcra
+```
+
+Optionally, install the MCP connector as well (recommended for restricted environments where the Fulcra CLI cannot run; connects to the hosted server at `mcp.fulcradynamics.com`):
+
+```bash
+claude plugin install fulcra-mcp@fulcra
+```
+
+Or from within Claude Code, run `/plugin marketplace add fulcradynamics/agent-skills` and pick plugins from the `/plugin` menu.
+
+### Skills CLI
+
 Using the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
 npx skills add fulcradynamics/agent-skills
 ```
 
-Or clone the repo and copy the skill folders you want into your agent's skills directory (e.g., `.claude/skills/` for Claude Code).
+### Manual
+
+Clone the repo and copy the skill folders you want into your agent's skills directory (e.g., `.claude/skills/` for Claude Code).
 
 ## Skills
 
