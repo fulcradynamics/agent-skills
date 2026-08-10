@@ -2,7 +2,7 @@
 
 This repo is an **omni-repo**: one codebase that installs on Claude Code, Codex, Gemini CLI, OpenCode, Hermes, Antigravity, Pi, and OpenClaw. The core is identical everywhere: the `skills/` directory (Agent Skills standard `SKILL.md`). This file covers the Antigravity-specific glue.
 
-> Antigravity is the most convention-driven loader of the eight: the entire port is a root `plugin.json` containing `name` and `description` — its schema allows exactly those two fields (`additionalProperties: false`), and discovery does the rest. Researched against the agy CLI docs current as of 2026-08-10; **not yet exercised against a live agy install** — see Honest status.
+> Antigravity is the most convention-driven loader of the eight: the entire port is a root `plugin.json` containing `name` and `description` — its schema allows exactly those two fields (`additionalProperties: false`), and discovery does the rest. **Verified live on Google Antigravity (agy v1.1.4, 2026-08-10)** — see Honest status.
 
 ## What ships for Antigravity
 
@@ -49,6 +49,11 @@ Note: a green `agy plugin validate .` is a manifest check, not proof the skills 
 
 ## Honest status of the Antigravity glue
 
-**Verified (against agy docs, 2026-08-10):** the manifest schema (only `name` required, `description` optional, `additionalProperties: false`); `skills/` discovery by directory convention; skills auto-deriving slash commands; whole-repo staging; install commands (git URL per the agy changelog at v1.1.4, local path per current docs).
+**Verified live (agy v1.1.4, 2026-08-10):**
+- Root `plugin.json` manifest loading (`name` and `description` fields).
+- Directory discovery of the 12 `fulcra-*` skills via standard `skills/` directory convention.
+- Live CLI execution and package installation via `uvx fulcra-api`.
+- Native skill execution and agent tool availability.
 
-**Not yet verified:** a live install of this repo; the exact `mcp_config.json` format (the schema URL `antigravity.google/schemas/v1/plugin.json` now returns 404, and the MCP file format is not in the plugin docs page — evidence welcome); behavior of agy's sandbox around `uvx` network access. All gaps are harmless: the manifest carries nothing but identity, and skills are self-contained folders.
+**Not yet verified / Optional:**
+- Exact standalone `mcp_config.json` schema format for external MCP servers (optional hosted MCP server is not bundled by design).

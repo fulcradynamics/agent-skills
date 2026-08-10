@@ -47,13 +47,13 @@ This is an omni-repo: the same `skills/` directory installs natively on eight ag
 | Claude Code | `claude plugin install fulcra-skills@fulcra` | skill auto-trigger | `fulcra-mcp@fulcra` plugin | native |
 | Codex CLI | [INSTALL-CODEX.md](INSTALL-CODEX.md) | `$fulcra-…` | plugin or `config.toml` | ported, not verified live |
 | Gemini CLI | [INSTALL-GEMINI-CLI.md](INSTALL-GEMINI-CLI.md) | model-invoked, per-use consent | `settings.json` | ported, not verified live |
-| Antigravity | [INSTALL-ANTIGRAVITY.md](INSTALL-ANTIGRAVITY.md) | `/fulcra-…` | agy MCP config | ported, not verified live |
+| Antigravity | [INSTALL-ANTIGRAVITY.md](INSTALL-ANTIGRAVITY.md) | `/fulcra-…` | agy MCP config | verified live (agy v1.1.4) |
 | OpenCode | [INSTALL-OPENCODE.md](INSTALL-OPENCODE.md) | model-invoked | `opencode.json` | ported, not verified live |
 | Hermes | [INSTALL-HERMES.md](INSTALL-HERMES.md) | `/fulcra-…` | `config.yaml` | ported, not verified live |
 | Pi | [INSTALL-PI.md](INSTALL-PI.md) | `/skill:fulcra-…` | none (pi has no MCP) | ported, not verified live |
 | OpenClaw | [INSTALL-OPENCLAW.md](INSTALL-OPENCLAW.md) | `/fulcra-…` on any chat surface | gateway config | ported, not verified live |
 
-"Not verified live" means the glue was built against each platform's current documentation (researched 2026-08, versions noted per install doc) but has not yet been exercised against a live install of that platform. Every port has a fallback route that is plain file placement. If something misbehaves, please open an issue — a report from a platform we can't run is the integration test.
+Platforms marked "ported, not verified live" were built against each platform's current documentation (researched 2026-08, versions noted per install doc) but have not yet been exercised against a live install of that platform. Every port has a fallback route that is plain file placement. If something misbehaves, please open an issue — a report from a platform we can't run is the integration test.
 
 <details>
 <summary>Maintainers: release + portability notes</summary>
