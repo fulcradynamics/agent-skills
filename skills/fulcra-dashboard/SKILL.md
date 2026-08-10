@@ -1,6 +1,6 @@
 ---
 name: fulcra-dashboard
-description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export a specific, previewable directory for public sharing."
+description: "Builds a highly customizable, interactive HTML dashboard using Alpine.js, modern Vanilla CSS, and a Python backend to display private data from the user's Fulcra data store locally. Includes workflows to export a specific, previewable directory for public sharing. Use when the user wants a persistent, interactive dashboard of their Fulcra data, or wants to publish a sanitized public version of one."
 license: "MIT"
 metadata:
   homepage: "https://github.com/fulcradynamics/agent-skills"

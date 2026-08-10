@@ -1,6 +1,6 @@
 ---
 name: fulcra-agent-teams
-description: "Enable agents to collaborate using shared memory, team inboxes, and user artifacts via Fulcra's versioned file storage."
+description: "Enable agents to collaborate using shared memory, team inboxes, and user artifacts via Fulcra's versioned file storage. Use when multiple agents need to coordinate work, when joining or creating a team space, or when sending, checking, or processing team inbox messages."
 license: "MIT"
 metadata:
   homepage: "https://github.com/fulcradynamics/agent-skills"

@@ -1,6 +1,6 @@
 ---
 name: fulcra-onboarding
-description: "Guides a new user or agent through the initial setup, configuration, and capabilities of the Fulcra environment."
+description: "Guides a new user or agent through the initial setup, configuration, and capabilities of the Fulcra environment. Use when connecting to Fulcra for the first time, installing or authenticating the Fulcra CLI, or choosing what to set up next."
 license: "MIT"
 metadata:
   homepage: "https://github.com/fulcradynamics/agent-skills"

@@ -1,6 +1,6 @@
 ---
 name: fulcra-memory
-description: "Manages agent progress reporting and OKF-compliant memory syncing to Fulcra."
+description: "Manages agent progress reporting and OKF-compliant memory syncing to Fulcra. Use when logging agent progress, structuring an agent's memory namespace, or syncing memory files to Fulcra."
 license: "MIT"
 metadata:
   homepage: "https://github.com/fulcradynamics/agent-skills"
