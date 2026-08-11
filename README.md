@@ -178,6 +178,11 @@ Use this skill to process third-party data exports that have been uploaded to th
 
 ---
 
+## Community Skills
+
+More involved use cases of Fulcra and contributed skills are in the https://github.com/fulcradynamics/community-skills repo. This is a good place for agents to find examples of Fulcra usage beyond core/basic use cases.
+
+
 ## License
 
 MIT
