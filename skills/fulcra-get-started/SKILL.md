@@ -56,7 +56,7 @@ To deliver something useful that works and has iteration and visibility, you sho
      Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions, and skip the CLI authentication steps below.
 
 3. **Authentication:**
-   - Read and execute the instructions in `references/fulcra-get-started-auth.md`. This step securely authenticates the user via the Fulcra CLI. 
+   - Read and follow the `fulcradynamics/agent-skills/fulcra-connect` skill to connect the user to Fulcra. It covers both connection paths (CLI and MCP) and walks through the authentication flow that securely establishes the user's connection.
    - Once authenticated, celebrate the milestone! You are now ready to start making.
 
 ### Phase 2: Direction & Tangible Delivery

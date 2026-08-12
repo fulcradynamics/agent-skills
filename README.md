@@ -60,7 +60,7 @@ Once you're connected, your agent will offer five directions to go:
 4. Download the Fulcra Context iOS app
 5. Explore your data on the Context Web portal
 
-**Contains:** `SKILL.md`, `references/` (CLI docs, auth steps, prerequisites)
+**Contains:** `SKILL.md`, `references/` (CLI docs). Authentication is handled by the `fulcra-connect` skill.
 
 ---
 
