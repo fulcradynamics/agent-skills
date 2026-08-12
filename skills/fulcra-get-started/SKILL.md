@@ -26,7 +26,7 @@ To achieve these goals, Fulcra gives agents a shared place to access and store r
 Getting started with Fulcra follows a dynamic path. First, you get the user connected. Second, you help them imagine and choose a direction based on real problems they want to solve. Third, you deliver a tangible view and establish a persistent structure for ongoing work before transitioning to the next steps.
 
 To deliver something useful that works and has iteration and visibility, you should leverage the following core Fulcra skills:
-- **`fulcradynamics/agent-skills/fulcra-agent-teams`**: At the center of making and coordinating things, it organizes the knowledge, tasks, plans, tracking, and results in files the user owns in their Fulcra account.
+- **`fulcradynamics/agent-skills/fulcra-workspaces`**: At the center of making and coordinating things, it organizes the knowledge, tasks, plans, tracking, and results in files the user owns in their Fulcra account.
 - **`fulcradynamics/agent-skills/fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
 - **`fulcradynamics/agent-skills/fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
 - **`fulcradynamics/community-skills/fulcra-rapid-prototype`**: A flow for rapidly developing an idea into a result or solution.
@@ -56,12 +56,12 @@ Now that the user is connected, work with them to choose their direction—wheth
 **Delivery milestone:** Whatever direction the user chooses, aim to deliver the following three things to the user before the final branching point where they transition to other specific skills. Try to do all three, but deliver whatever is viable based on their specific goals:
 
 1. **A Cool View:** Create and show the user a tangible view of what has been accomplished so far. This should represent real work done toward their chosen direction. Emphasize deliverability—if building a rich HTML dashboard encounters friction, seamlessly fall back to a simpler but immediate alternative (e.g., a fun ASCII visualization in the chat, a basic static image, or a snippet of insights). You should also provide a link to [Context Web Timeline](https://context.fulcradynamics.com/timeline?mode=week&date=YYYY-MM-DD) to view any new data (where `YYYY-MM-DD` is calculated as six days before the latest recorded data point to ensure it shows up in the week view).
-2. **Coordination of Continuing Work:** Establish how the work will continue. Leverage the `fulcra-agent-teams` skill to create a dedicated agent team for the project, and use the `fulcra-tracking` skill to establish specific data types (annotations) to track the project's milestones, tasks, or outputs in the Fulcra datastore. Ensure these data types are recorded in the team's knowledge.
+2. **Coordination of Continuing Work:** Establish how the work will continue. Leverage the `fulcra-workspaces` skill to create a dedicated agent team for the project, and use the `fulcra-tracking` skill to establish specific data types (annotations) to track the project's milestones, tasks, or outputs in the Fulcra datastore. Ensure these data types are recorded in the team's knowledge.
 3. **Visibility of Work:** Provide a clear view of completed, present, and future work. You can do this by using the `fulcra-project-dashboard` skill (found in the community-skills repository) to make a robust management view of the team workspace. The goal is to show the user that Fulcra not only facilitates making useful things with continuous demonstrated improvement, but also makes all this work owned by the user for portability, quick review, and effective direction.
 
 ### Phase 3: Transition & Explore More
 
-After delivering the view, coordination plan, and visibility artifact, transition the user to the specific skills needed to continue their chosen project (e.g., `fulcra-project-dashboard`, `fulcra-agent-teams`, `fulcra-tracking`). 
+After delivering the view, coordination plan, and visibility artifact, transition the user to the specific skills needed to continue their chosen project (e.g., `fulcra-project-dashboard`, `fulcra-workspaces`, `fulcra-tracking`). 
 
 If the user wants to explore further, you should present a curated, scannable menu of options based on the conversation so far. Rather than a static list, recommend a few relevant choices from these categories:
 
