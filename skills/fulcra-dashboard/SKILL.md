@@ -23,7 +23,7 @@ The primary and preferred method for delivering this view is generating a robust
 
 However, you must be aware of the user's intent:
 - **High-Fidelity Goal:** If the user is specifically trying to build a high-quality dashboard, you should spend more time troubleshooting and trying to make the static triad, localhost server, or public deployment work.
-- **Fast Visibility (e.g., Onboarding):** If the user is just trying to view things for the first time (such as during the `fulcra-onboarding` flow), give faster delivery more weight.
+- **Fast Visibility (e.g., Onboarding):** If the user is just trying to view things for the first time (such as during the `fulcra-get-started` flow), give faster delivery more weight.
 
 If the primary static triad and deployment routes are truly not viable in the current environment, you must gracefully fall back to alternative delivery mechanisms. Alternative options include (but are not limited to):
 - **Prefab (`https://gofastmcp.com/apps/prefab`):** Using an external rapid-UI generator if configured.
@@ -92,7 +92,7 @@ Wait for the user's explicit consent before proceeding with data ingestion or da
 
 ## Usage
 
-When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcradynamics/agent-skills/fulcra-onboarding` skill), you should execute the setup script provided by this skill. 
+When a user requests to "set up the web app" or "create a dashboard for the Fulcra skills" (or if they are transitioning from the `fulcradynamics/agent-skills/fulcra-get-started` skill), you should execute the setup script provided by this skill. 
 
 ```bash
 # Run the setup script to scaffold the Alpine dashboard
@@ -104,7 +104,7 @@ If no `<target-directory>` is provided, it defaults to creating a `fulcra-dashbo
 ## Workflow
 
 **Contextual Awareness (Standalone vs. Post-Onboarding):** 
-Do not assume this skill is always run immediately after `fulcra-onboarding`. 
+Do not assume this skill is always run immediately after `fulcra-get-started`. 
 - **If transitioning from Onboarding:** The user has likely just seen a static HTML preview of their data. Acknowledge this transition and frame this step as *building out* and *upgrading* their existing preview into a live, interactive web app. Leverage the context of the annotations they just built, skip redundant discovery, and carry over their preferred theme.
 - **If running Standalone:** You must first discover what data the user wants to visualize (run `uv tool run fulcra-api catalog` to check for user annotations and discuss options before proceeding).
 
