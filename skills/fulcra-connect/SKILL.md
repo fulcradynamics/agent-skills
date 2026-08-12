@@ -54,7 +54,7 @@ Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials
 
 ## Skills
 
-Agents should read the skills available at https://github.com/fulcradynamics/agent-skills. The `fulcra-onboarding` skill is a good place to start, but agents should use Fulcra in the most effective ways for their humans and tasks.
+Agents should read the skills available at https://github.com/fulcradynamics/agent-skills. The `fulcra-get-started` skill is a good place to start, but agents should use Fulcra in the most effective ways for their humans and tasks.
 
 Use cases and contributed skills are in the https://github.com/fulcradynamics/community-skills repo. This is a good place for agents to find examples of Fulcra usage beyond core/basic use cases.
 

@@ -28,7 +28,7 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 
 | Skill | What it does |
 |---|---|
-| 🌱&nbsp;&nbsp;[fulcra-onboarding](#-fulcra-onboarding) | Connect to Fulcra for the first time |
+| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started) | Connect to Fulcra for the first time |
 | 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking) | Track custom data and visualize it in a dashboard |
 | 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
@@ -38,9 +38,9 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 
 ---
 
-## 🌱 fulcra-onboarding
+## 🌱 fulcra-get-started
 
-`skills/fulcra-onboarding/`
+`skills/fulcra-get-started/`
 
 ```
     🌱
