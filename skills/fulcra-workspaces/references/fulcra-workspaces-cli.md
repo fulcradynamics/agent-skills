@@ -1,11 +1,11 @@
 ---
-name: fulcra-agent-teams-cli
+name: fulcra-workspaces-cli
 description: "CLI command references for executing artifact uploads and team inbox operations with Fulcra."
 ---
 
-# Fulcra Agent Teams CLI Reference
+# Fulcra Workspaces CLI Reference
 
-This reference dictates the exact shell commands required to execute the `fulcra-agent-teams` skill's operations. Ensure all CLI operations run in the agent's workspace.
+This reference dictates the exact shell commands required to execute the `fulcra-workspaces` skill's operations. Ensure all CLI operations run in the agent's workspace.
 
 ## Authentication Note
 If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:

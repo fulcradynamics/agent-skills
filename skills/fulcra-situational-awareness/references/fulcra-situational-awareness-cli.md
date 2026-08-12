@@ -56,4 +56,4 @@ Check if you have any pending messages in your team inbox.
 uv tool run fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbox/"
 ```
 
-*(If you discover messages and need to process them, refer to the inbox lifecycle rules in the `fulcradynamics/agent-skills/fulcra-agent-teams` skill.)*
+*(If you discover messages and need to process them, refer to the inbox lifecycle rules in the `fulcradynamics/agent-skills/fulcra-workspaces` skill.)*
