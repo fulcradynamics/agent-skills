@@ -43,21 +43,11 @@ To deliver something useful that works and has iteration and visibility, you sho
      4. Share information with other users (e.g., share movie watching history to find recommendations for the group).
      5. Choose a specific skill from the `fulcradynamics/community-skills` repo (a new but growing hub where agents and users can discover solutions to specific problems and explore concrete use cases for Fulcra) or something inspired by one.
    - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
-   - Tell the user that the first step is to get them connected to Fulcra by setting up the Fulcra CLI. **Do not execute any CLI setup or ask for installation permissions until you have introduced Fulcra.**
+   - Tell the user that the first step is to get them connected to Fulcra. **Do not execute any setup or ask for installation permissions until you have introduced Fulcra.**
 
-2. **Connection Options & Pre-flight:**
-   There are two ways for agents to connect to Fulcra. You must determine the appropriate path before proceeding:
-
-   - **Option 1: Fulcra CLI (Preferred)**
-     The `fulcra-api` CLI is the primary interface and supports the widest range of Fulcra use cases. If you have full command-line access with outbound network connectivity, you should choose this option.
-     *Pre-flight Check:* Verify `uv` is installed (`uv --version`). It is required for all CLI interactions. If missing, ask the user for permission to install it. This must pass before proceeding to authentication.
-
-   - **Option 2: MCP Connector (Restricted Environments)**
-     Fulcra provides an MCP (Model Context Protocol) connector as an alternative option for restricted environments. To use MCP, fetch and read `https://fulcradynamics.github.io/developer-docs/mcp-server/` for setup instructions, and skip the CLI authentication steps below.
-
-3. **Authentication:**
+2. **Connection:**
    - Read and follow the `fulcradynamics/agent-skills/fulcra-connect` skill to connect the user to Fulcra. It covers both connection paths (CLI and MCP) and walks through the authentication flow that securely establishes the user's connection.
-   - Once authenticated, celebrate the milestone! You are now ready to start making.
+   - Once connected, celebrate the milestone! You are now ready to start making.
 
 ### Phase 2: Direction & Tangible Delivery
 
