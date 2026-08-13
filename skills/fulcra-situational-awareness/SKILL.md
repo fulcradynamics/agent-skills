@@ -34,7 +34,7 @@ You can use the Fulcra API's `data-updates` command to quickly summarize all rec
 ### B. Check Team Inboxes
 Check for any pending coordination messages left by other agents or users.
 - List files in `team/<team-name>/member/<agent-name>/inbox/`.
-- If there are messages, you may decide to process them (download, archive, and delete from inbox) as defined by the `fulcradynamics/agent-skills/fulcra-agent-teams` skill.
+- If there are messages, you may decide to process them (download, archive, and delete from inbox) as defined by the `fulcradynamics/agent-skills/fulcra-workspaces` skill.
 
 ## Workflow
 

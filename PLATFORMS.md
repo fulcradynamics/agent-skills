@@ -4,9 +4,9 @@ The `skills/` directory follows the [Agent Skills](https://agentskills.io) stand
 
 Three facts hold everywhere:
 
-- **Skills shell out to `uvx fulcra-api …`** — whichever machine executes skills needs `uv` on PATH, outbound network access, and Fulcra auth (the `fulcra-onboarding` skill walks through it).
+- **Skills shell out to `uvx fulcra-api …`** — whichever machine executes skills needs `uv` on PATH, outbound network access, and Fulcra auth (the `fulcra-connect` skill walks through it).
 - **MCP is opt-in by design.** Installing the skills never registers the hosted Fulcra Context MCP server (`https://mcp.fulcradynamics.com/mcp`, streamable HTTP, OAuth handled server-side). Each section shows its platform's opt-in syntax.
-- **Verify any install the same way:** `uvx fulcra-api --help` resolves, and your platform's skill listing shows twelve `fulcra-*` entries. Trust a real skill invocation over a green manifest check.
+- **Verify any install the same way:** `uvx fulcra-api --help` resolves, and your platform's skill listing shows one `fulcra-*` entry per directory in `skills/` (15 today, two of them deprecation pointers). Trust a real skill invocation over a green manifest check.
 
 Status lines record what was exercised against a live binary (with version and date) versus researched from docs. A report from a platform we can't run is the integration test — please open issues.
 
@@ -23,7 +23,7 @@ codex plugin marketplace add fulcradynamics/agent-skills   # then: codex plugin 
 npx skills add fulcradynamics/agent-skills                 # or: plain skills into ~/.agents/skills/
 ```
 
-- Invoke as **`$fulcra-skills:fulcra-onboarding`** — plugin-qualified with `$plugin:skill`, no slash form. An `@fulcra-skills` plugin mention also works — the model surfaces the whole skill set and routes from there.
+- Invoke as **`$fulcra-skills:fulcra-get-started`** — plugin-qualified with `$plugin:skill`, no slash form. An `@fulcra-skills` plugin mention also works — the model surfaces the whole skill set and routes from there.
 - **The default sandbox blocks outbound network**, which fails every `uvx fulcra-api` call. In `~/.codex/config.toml`: `sandbox_mode = "workspace-write"` plus `network_access = true` under `[sandbox_workspace_write]`.
 - MCP opt-in: `codex plugin add fulcra-mcp@fulcra`, then `codex mcp login fulcra-context` for the OAuth flow. Or skip the plugin and register directly in `config.toml`:
 
@@ -58,7 +58,7 @@ npx skills add fulcradynamics/agent-skills                                 # or:
 agy plugin install https://github.com/fulcradynamics/agent-skills
 ```
 
-- Skills auto-derive slash commands: `/fulcra-onboarding`, `/fulcra-tracking`, …
+- Skills auto-derive slash commands: `/fulcra-get-started`, `/fulcra-tracking`, …
 - Staging copies the whole repo; the other platforms' manifests come along and are inert. No update flow as of agy v1.1.4 — reinstall.
 - MCP opt-in: add the hosted server through agy's own MCP configuration (agy auto-discovers a root `mcp_config.json` in plugins, which is exactly why this repo doesn't ship one).
 
@@ -94,7 +94,7 @@ skills:
 
 - **Do NOT use `hermes skills install`** — the hub installer copies only files referenced from each `SKILL.md`, silently severing whole directories some skills carry (`template-dashboard/`, the fulcra-analytics package). Clone + `external_dirs` stages everything.
 - Skills register as `/fulcra-…` on every surface (CLI, TUI, Telegram, Discord). `uv` + Fulcra auth live on **whichever host runs the terminal backend** (local, Docker, SSH, Modal) — authenticate there.
-- Don't smoke-test headless: `hermes chat -q "/fulcra-onboarding"` passes slash commands through as literal text, a false negative. Test interactively.
+- Don't smoke-test headless: `hermes chat -q "/fulcra-get-started"` passes slash commands through as literal text, a false negative. Test interactively.
 - MCP opt-in in `~/.hermes/config.yaml`:
 
   ```yaml
@@ -111,7 +111,7 @@ skills:
 pi install git:github.com/fulcradynamics/agent-skills   # or: pi install /path/to/clone
 ```
 
-- Invoke as **`/skill:fulcra-onboarding`**; update with `pi update --extensions` (bare `pi update` updates only the pi CLI).
+- Invoke as **`/skill:fulcra-get-started`**; update with `pi update --extensions` (bare `pi update` updates only the pi CLI).
 - **Pi has no MCP by design** — the `uvx fulcra-api` route is the only route, and pi's bash tool inherits your environment, so it works as-is.
 - Pi needs Node >= 22.19 (`@earendil-works/pi-coding-agent`; on Node 20, npm silently serves a legacy rescue release — `pi --version` tells you).
 - Pi warns-but-loads on most frontmatter violations, but **silently drops** a skill with a blank `description` — CI guards this.

@@ -21,7 +21,7 @@ This skill guides the user through discovering data they want to track in Fulcra
 
 Before executing this skill, determine your current context:
 - **Standalone Mode:** If the user directly asks you to track something new and you lack broader project context, follow the full workflow below (starting with Discovery).
-- **Project/Team Mode:** If you are invoking this skill as part of an ongoing project, team workspace (`fulcra-agent-teams`), or an overarching onboarding flow, the required data types are usually already dictated by the project scope. In this case, **skip Step 1 (Discovery) and Step 4 (Quick Visibility)**. Jump straight to creating the required schemas (Data Modeling) and recording the data.
+- **Project/Team Mode:** If you are invoking this skill as part of an ongoing project, team workspace (`fulcra-workspaces`), or an overarching onboarding flow, the required data types are usually already dictated by the project scope. In this case, **skip Step 1 (Discovery) and Step 4 (Quick Visibility)**. Jump straight to creating the required schemas (Data Modeling) and recording the data.
 
 ## Workflow
 
@@ -39,4 +39,4 @@ Before executing this skill, determine your current context:
     - **Theming & Creativity:** If you do create a quick preview, stop and ask the user for a fun theme or vibe *before* generating it. Be creative with the CSS and styling to demonstrate the flexibility of the data.
     - **Architectural Rules:** If you create a quick HTML preview dashboard, it should be just a single file (HTML/CSS/JS all in one), not the triad. If the dashboard goes beyond a simple preview, transition the user to the `fulcra-dashboard` skill to implement the full Static Triad. **Do not use Tailwind via CDN** due to CSP conflicts.
 5.  **Integration with Projects & Dashboards:**
-    - Tell the user that the primary way to manage and visualize this data over time is through the `fulcra-dashboard` skill, and if working with a team, to ensure these data types are recorded in the `fulcra-agent-teams` knowledge base.
+    - Tell the user that the primary way to manage and visualize this data over time is through the `fulcra-dashboard` skill, and if working with a team, to ensure these data types are recorded in the `fulcra-workspaces` knowledge base.

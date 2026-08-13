@@ -64,7 +64,7 @@ Platforms marked "ported, not verified live" were built against each platform's 
 - **The root `plugin.json` must stay exactly `{name, description}`** — Antigravity's manifest schema is `additionalProperties: false` (verified live, agy v1.1.4). Do not add `$schema`/`version` to make it an Agent Plugins 1.0 manifest without re-verifying against a live agy; see [PLATFORMS.md](PLATFORMS.md#agent-plugins-10-clients-vs-code-cursor-copilot-kiro).
 - **Never add without a cross-platform check:** a root `package.json` (makes pi run `npm install --omit=dev` in its clone; a populated `pi.<resource>` key in it would also override pi's conventional `skills/` scan), a root `GEMINI.md` (auto-loads as context on Gemini CLI), a root `commands/` dir (auto-discovered by Claude Code), a root `mcp_config.json` or root `.mcp.json` (would auto-register MCP on skill installs — MCP is opt-in by design), a native `openclaw.plugin.json` (inert today, shape-changing the day OpenClaw fixes its detection precedence).
 - **Keep `.codex-plugin/plugin.json` free of a `hooks` key** — OpenClaw reads that manifest as a Codex bundle and interprets `hooks` differently.
-- **CI** (`.github/workflows/ci.yml`) gates every PR on: skillscheck spec lint (errors only — warnings are a burn-down list, flip to `--strict` at zero), the official agentskills.io reference validator (strict YAML, allowed frontmatter fields, string-valued `metadata` — pi drops non-compliant skills silently), Claude Code manifest validation, Agent Plugins 1.0 schema validation, the Antigravity minimal-manifest invariant, and a clean-room `npx skills add` smoke test asserting all 12 skills land.
+- **CI** (`.github/workflows/ci.yml`) gates every PR on: skillscheck spec lint (errors only — warnings are a burn-down list, flip to `--strict` at zero), the official agentskills.io reference validator (strict YAML, allowed frontmatter fields, string-valued `metadata` — pi drops non-compliant skills silently), Claude Code manifest validation, Agent Plugins 1.0 schema validation, the Antigravity minimal-manifest invariant, and a clean-room `npx skills add` smoke test asserting every `skills/` directory lands.
 </details>
 
 ## Skills
@@ -81,19 +81,19 @@ Platforms marked "ported, not verified live" were built against each platform's 
 
 | Skill | What it does |
 |---|---|
-| 🌱&nbsp;&nbsp;[fulcra-onboarding](#-fulcra-onboarding) | Connect to Fulcra for the first time |
+| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started) | Connect to Fulcra for the first time |
 | 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking) | Track custom data and visualize it in a dashboard |
 | 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
-| 🤝&nbsp;&nbsp;[fulcra-agent-teams](#-fulcra-agent-teams) | Let multiple agents coordinate work through shared team spaces |
+| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces) | Let multiple agents coordinate work through shared team spaces |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
 | 📥&nbsp;&nbsp;[Ingest](#-ingest) | Import third-party data exports into Fulcra Annotations |
 
 ---
 
-## 🌱 fulcra-onboarding
+## 🌱 fulcra-get-started
 
-`skills/fulcra-onboarding/`
+`skills/fulcra-get-started/`
 
 ```
     🌱
@@ -113,7 +113,7 @@ Once you're connected, your agent will offer five directions to go:
 4. Download the Fulcra Context iOS app
 5. Explore your data on the Context Web portal
 
-**Contains:** `SKILL.md`, `references/` (CLI docs, auth steps, prerequisites)
+**Contains:** `SKILL.md`, `references/` (CLI docs). Authentication is handled by the `fulcra-connect` skill.
 
 ---
 
@@ -168,9 +168,9 @@ Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloud
 
 ---
 
-## 🤝 fulcra-agent-teams
+## 🤝 fulcra-workspaces
 
-`skills/fulcra-agent-teams/`
+`skills/fulcra-workspaces/`
 
 Use this skill when you have more than one agent and want them to work together. Each agent gets an inbox in a shared team space, where other agents can drop tasks and messages for it to pick up.
 
@@ -230,6 +230,11 @@ Use this skill to process third-party data exports that have been uploaded to th
 **Contains:** `SKILL.md`, `references/` (CLI commands, record ingestion, source mapping), `scripts/` (deterministic ID generation)
 
 ---
+
+## Community Skills
+
+More involved use cases of Fulcra and contributed skills are in the https://github.com/fulcradynamics/community-skills repo. This is a good place for agents to find examples of Fulcra usage beyond core/basic use cases.
+
 
 ## License
 

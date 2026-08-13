@@ -15,7 +15,7 @@ jobs:
       # Gate on spec errors. Warnings (description phrasing, orphans) are a
       # burn-down list; switch to --strict once they reach zero.
       - name: Lint skills against the Agent Skills spec
-        run: uvx skillscheck ./skills
+        run: uvx skillscheck==0.9.5 ./skills
 
   spec-reference-validator:
     name: Official Agent Skills reference validator (skills-ref)
@@ -67,11 +67,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install into a clean project via npx skills, assert all 12 land
+      - name: Install into a clean project via npx skills, assert all skills land
         run: |
+          expected=$(ls -d "$GITHUB_WORKSPACE"/skills/fulcra-* | wc -l)
           mkdir /tmp/target && cd /tmp/target
           npx -y skills add "$GITHUB_WORKSPACE" --agent claude-code --yes
           count=$(ls -d .claude/skills/fulcra-* | wc -l)
-          echo "installed: $count skills"
-          test "$count" -eq 12
-          test -f .claude/skills/fulcra-onboarding/SKILL.md
+          echo "installed: $count of $expected skills"
+          test "$count" -eq "$expected"
+          test -f .claude/skills/fulcra-get-started/SKILL.md
