@@ -18,6 +18,7 @@ _UUID = re.compile(
 )
 _CHECKPOINT_SCHEMA = "fulcra.workspaces-checkpoint.v1"
 _LATEST_SCHEMA = "fulcra.workspaces-continuity-latest.v1"
+_ROLE_LATEST_SCHEMA = "fulcra.workspaces-role-continuity-latest.v1"
 _LIST_FIELDS = (
     "decisions",
     "completed",
@@ -60,6 +61,9 @@ def parse_checkpoint(raw: object) -> dict[str, Any] | None:
         "workspace", "identity"
     )):
         return None
+    role = doc.get("role")
+    if role is not None and _NAME.fullmatch(str(role)) is None:
+        return None
     if _parse_time(doc.get("timestamp")) is None:
         return None
     if not isinstance(doc.get("objective"), str) or not doc["objective"]:
@@ -83,14 +87,29 @@ class ContinuityService:
         *,
         checkpoint_id: str | None = None,
         timestamp: str | None = None,
+        role: str | None = None,
     ) -> Outcome:
         checkpoint_id = checkpoint_id or str(uuid.uuid4())
         timestamp = timestamp or _now()
+        if role is not None:
+            from .roles import parse_role
+
+            role_raw, role_state = self.transport.read_file(
+                f"team/{workspace}/roles/{role}/definition.json"
+            )
+            role_doc = parse_role(role_raw) if role_state == "ok" else None
+            if (
+                role_doc is None
+                or role_doc["workspace"] != workspace
+                or role_doc["role"] != role
+            ):
+                return Outcome(State.UNKNOWN, "role definition is unreadable", exit_code=3)
         doc = {
             "schema": _CHECKPOINT_SCHEMA,
             "id": checkpoint_id,
             "workspace": workspace,
             "identity": identity,
+            "role": role,
             "timestamp": timestamp,
             "objective": snapshot.get("objective"),
             **{key: snapshot.get(key) for key in _LIST_FIELDS},
@@ -136,6 +155,32 @@ class ContinuityService:
                 {"ptr": ptr},
                 2,
             )
+        if role is not None:
+            role_latest_ptr = f"team/{workspace}/roles/{role}/continuity/latest.json"
+            role_latest = compact_json({
+                "schema": _ROLE_LATEST_SCHEMA,
+                "workspace": workspace,
+                "role": role,
+                "identity": identity,
+                "timestamp": timestamp,
+                "ptr": ptr,
+                "sha256": _sha256(rendered),
+            })
+            if not self.transport.write_file(role_latest_ptr, role_latest):
+                return Outcome(
+                    State.DURABLE_ONLY,
+                    "checkpoint is durable but role projection failed",
+                    {"ptr": ptr},
+                    2,
+                )
+            role_readback, role_state = self.transport.read_file(role_latest_ptr)
+            if role_state != "ok" or role_readback != role_latest:
+                return Outcome(
+                    State.DURABLE_ONLY,
+                    "checkpoint is durable but role projection mismatched",
+                    {"ptr": ptr},
+                    2,
+                )
         return Outcome(State.DATA, "checkpoint saved", {"ptr": ptr})
 
     def resume(
@@ -184,3 +229,63 @@ class ContinuityService:
             return Outcome(State.UNKNOWN, "checkpoint failed verification", exit_code=3)
         return Outcome(State.DATA, "continuity resumed", {"checkpoint": checkpoint, "ptr": ptr})
 
+    def resume_role(
+        self,
+        workspace: str,
+        role: str,
+        *,
+        now: str,
+        max_age_seconds: int,
+        max_bytes: int,
+    ) -> Outcome:
+        if max_age_seconds <= 0 or max_bytes <= 0:
+            return Outcome(State.UNKNOWN, "resume bounds must be positive", exit_code=2)
+        now_dt = _parse_time(now)
+        if now_dt is None or _NAME.fullmatch(role) is None:
+            return Outcome(State.UNKNOWN, "role resume fields are invalid", exit_code=2)
+        latest_ptr = f"team/{workspace}/roles/{role}/continuity/latest.json"
+        latest_raw, state = self.transport.read_file(latest_ptr)
+        if state != "ok":
+            return Outcome(State.UNKNOWN, "latest role continuity is unreadable", exit_code=3)
+        try:
+            latest = json.loads(latest_raw)
+        except (TypeError, ValueError):
+            latest = None
+        identity = latest.get("identity") if isinstance(latest, dict) else None
+        ptr = latest.get("ptr") if isinstance(latest, dict) else None
+        timestamp_dt = _parse_time(latest.get("timestamp")) if isinstance(latest, dict) else None
+        if (
+            not isinstance(latest, dict)
+            or latest.get("schema") != _ROLE_LATEST_SCHEMA
+            or latest.get("workspace") != workspace
+            or latest.get("role") != role
+            or not isinstance(identity, str)
+            or _NAME.fullmatch(identity) is None
+            or not isinstance(ptr, str)
+            or not ptr.startswith(
+                f"team/{workspace}/member/{identity}/continuity/checkpoint/"
+            )
+            or timestamp_dt is None
+            or timestamp_dt > now_dt
+            or (now_dt - timestamp_dt).total_seconds() > max_age_seconds
+        ):
+            return Outcome(State.UNKNOWN, "latest role continuity is stale or conflicting", exit_code=3)
+        checkpoint_raw, checkpoint_state = self.transport.read_file(ptr)
+        if checkpoint_state != "ok" or not isinstance(checkpoint_raw, str):
+            return Outcome(State.UNKNOWN, "role checkpoint is unreadable", exit_code=3)
+        if len(checkpoint_raw.encode("utf-8")) > max_bytes:
+            return Outcome(State.UNKNOWN, "role checkpoint exceeds resume byte bound", exit_code=3)
+        checkpoint = parse_checkpoint(checkpoint_raw)
+        if (
+            checkpoint is None
+            or checkpoint.get("workspace") != workspace
+            or checkpoint.get("identity") != identity
+            or checkpoint.get("role") != role
+            or _sha256(checkpoint_raw) != latest.get("sha256")
+        ):
+            return Outcome(State.UNKNOWN, "role checkpoint failed verification", exit_code=3)
+        return Outcome(
+            State.DATA,
+            "role continuity resumed",
+            {"checkpoint": checkpoint, "ptr": ptr},
+        )

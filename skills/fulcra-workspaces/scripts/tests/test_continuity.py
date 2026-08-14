@@ -2,12 +2,14 @@ import json
 
 from fulcra_workspaces.continuity import ContinuityService
 from fulcra_workspaces.model import State
+from fulcra_workspaces.roles import RoleService
 
 
 class MemoryTransport:
     def __init__(self):
         self.files = {}
         self.fail_latest = False
+        self.fail_path = None
 
     def read_file(self, path):
         if path not in self.files:
@@ -15,6 +17,8 @@ class MemoryTransport:
         return self.files[path], "ok"
 
     def write_file(self, path, content):
+        if self.fail_path == path:
+            return False
         if self.fail_latest and path.endswith("/latest.json"):
             return False
         self.files[path] = content
@@ -103,3 +107,67 @@ def test_resume_is_bounded_and_fails_closed_on_stale_malformed_or_oversized():
         max_age_seconds=3600, max_bytes=10_000,
     ).state is State.UNKNOWN
 
+
+def test_role_checkpoint_projects_one_bounded_resume_pointer(tmp_path):
+    transport = MemoryTransport()
+    RoleService(transport, tmp_path).define(
+        "demo", "reviewer", "exclusive", 3600, "Review work"
+    )
+    service = ContinuityService(transport)
+
+    outcome = service.checkpoint(
+        "demo", "alice", SNAPSHOT, role="reviewer",
+        checkpoint_id="00000000-0000-0000-0000-000000000001",
+        timestamp="2026-08-14T10:00:00Z",
+    )
+    resumed = service.resume_role(
+        "demo", "reviewer", now="2026-08-14T10:30:00Z",
+        max_age_seconds=3600, max_bytes=10_000,
+    )
+
+    assert outcome.state is State.DATA
+    assert resumed.state is State.DATA
+    assert resumed.data["checkpoint"]["role"] == "reviewer"
+    assert resumed.data["checkpoint"]["identity"] == "alice"
+
+
+def test_role_resume_fails_closed_on_conflicting_projection(tmp_path):
+    transport = MemoryTransport()
+    RoleService(transport, tmp_path).define(
+        "demo", "reviewer", "exclusive", 3600, "Review work"
+    )
+    service = ContinuityService(transport)
+    service.checkpoint(
+        "demo", "alice", SNAPSHOT, role="reviewer",
+        checkpoint_id="00000000-0000-0000-0000-000000000001",
+        timestamp="2026-08-14T10:00:00Z",
+    )
+    ptr = "team/demo/roles/reviewer/continuity/latest.json"
+    projection = json.loads(transport.files[ptr])
+    projection["identity"] = "mallory"
+    transport.files[ptr] = json.dumps(projection)
+
+    outcome = service.resume_role(
+        "demo", "reviewer", now="2026-08-14T10:30:00Z",
+        max_age_seconds=3600, max_bytes=10_000,
+    )
+
+    assert outcome.state is State.UNKNOWN
+
+
+def test_failed_role_projection_keeps_the_checkpoint_durable(tmp_path):
+    transport = MemoryTransport()
+    RoleService(transport, tmp_path).define(
+        "demo", "reviewer", "exclusive", 3600, "Review work"
+    )
+    transport.fail_path = "team/demo/roles/reviewer/continuity/latest.json"
+    service = ContinuityService(transport)
+
+    outcome = service.checkpoint(
+        "demo", "alice", SNAPSHOT, role="reviewer",
+        checkpoint_id="00000000-0000-0000-0000-000000000001",
+        timestamp="2026-08-14T10:00:00Z",
+    )
+
+    assert outcome.state is State.DURABLE_ONLY
+    assert outcome.data["ptr"] in transport.files
