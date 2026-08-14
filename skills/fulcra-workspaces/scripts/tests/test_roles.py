@@ -188,3 +188,19 @@ def test_release_rejects_a_foreign_live_session(tmp_path):
 
     assert outcome.state is State.UNKNOWN
     assert len([path for path in transport.files if "/history/" in path]) == 1
+
+
+def test_status_accepts_store_directory_suffixes(tmp_path):
+    transport = MemoryTransport()
+    service = RoleService(transport, tmp_path)
+    define(service)
+    service.claim(
+        "demo", "reviewer", "alice", now="2026-08-14T10:00:00Z",
+        event_id=UUID_1, session_nonce="session-a",
+    )
+    transport.list_dir = lambda path: (["alice/"], "ok")
+
+    outcome = service.status("demo", "reviewer", now="2026-08-14T10:01:00Z")
+
+    assert outcome.state is State.DATA
+    assert outcome.data["holders"] == ["alice"]

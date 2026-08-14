@@ -227,15 +227,21 @@ class RoleService:
         now_dt = _parse_time(now)
         if now_dt is None or self.max_holders <= 0:
             return Outcome(State.UNKNOWN, "role status bounds are invalid", exit_code=2)
-        names, listing_state = self.transport.list_dir(
+        raw_names, listing_state = self.transport.list_dir(
             f"team/{workspace}/roles/{role}/leases"
         )
         if (
             listing_state != "ok"
-            or names is None
-            or len(names) > self.max_holders
-            or any(not _valid_name(name) for name in names)
+            or raw_names is None
+            or len(raw_names) > self.max_holders
         ):
+            return Outcome(
+                State.UNKNOWN,
+                "role holder listing is unreadable or unbounded",
+                exit_code=3,
+            )
+        names = [name.rstrip("/").rsplit("/", 1)[-1] for name in raw_names]
+        if any(not _valid_name(name) for name in names):
             return Outcome(
                 State.UNKNOWN,
                 "role holder listing is unreadable or unbounded",
