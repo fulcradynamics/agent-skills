@@ -34,7 +34,7 @@ To deliver something useful that works and has iteration and visibility, you sho
 ### Phase 1: Core Setup & Inspiration
 
 1. **Introduction to Fulcra:**
-   - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
+   - If Fulcra MCP tools are available, read `references/fulcra-mcp.md`. Otherwise read `references/fulcra-cli.md` for CLI context and capabilities.
    - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about making something genuinely useful that solves a real problem or improves their existing systems.
    - **Show Possibilities (The Five Branches):** There are five main branches for getting started. Use your creativity to inspire the user to choose one:
      1. Make something new and useful.

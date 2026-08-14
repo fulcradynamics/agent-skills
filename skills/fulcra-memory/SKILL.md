@@ -77,11 +77,12 @@ The `inbox/` subdirectory (`agent/<agent-name>/inbox/`) is used for asynchronous
 
 ## Workflow
 
-To perform memory tracking operations, agents must interact with the Fulcra CLI. 
+To perform memory tracking operations, agents must use Fulcra MCP tools when available, falling back to the Fulcra CLI.
 
 For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcradynamics/agent-skills/fulcra-get-started` skill, or read the full OKF specification directly:
 - [https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-get-started/references/fulcra-cli.md](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-get-started/references/fulcra-cli.md)
 - [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 
 See the reference documentation for the exact commands needed to sync progress:
-- Read `references/fulcra-memory-cli.md` for exact file management and CLI execution steps.
+- Read `references/fulcra-memory-mcp.md` when Fulcra MCP tools are available.
+- Read `references/fulcra-memory-cli.md` for CLI fallback.

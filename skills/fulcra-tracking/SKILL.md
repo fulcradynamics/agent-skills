@@ -25,11 +25,11 @@ Before executing this skill, determine your current context:
 ## Workflow
 
 1.  **User Intent Discovery (Standalone Mode Only):** 
-    - Read the `references/fulcra-tracking-cli.md` file to understand the custom tracking CLI commands.
+    - Read `references/fulcra-tracking-mcp.md` when Fulcra MCP tools are available; otherwise read `references/fulcra-tracking-cli.md`.
     - Ask the user what kind of specific data, events, or outputs they want to track for their project or life.
     - Propose the Universal Agent Visibility Package if they want visibility into background agent work or team accomplishments.
 2.  **Data Modeling:** 
-    - Use the `fulcra-api data-type create` command to create the custom schemas based on the user's intent. 
+    - Use MCP `create_data_type` when available, otherwise use `fulcra-api data-type create`, to create schemas based on the user's intent.
     - Remember the `id`s returned by the create command.
 3.  **Record Data:** 
     - Prompt the user to enter their first piece of data for the new schema, or explain how they can automate it via other skills or apps.
