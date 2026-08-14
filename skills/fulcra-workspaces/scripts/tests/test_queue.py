@@ -6,6 +6,7 @@ from fulcra_workspaces.authority import AUTHORITY_PATH, render_authority
 from fulcra_workspaces.model import Authority, State
 from fulcra_workspaces.queue import QueueService
 from fulcra_workspaces.store import Message, render_message
+from fulcra_workspaces.transfer import TransferService
 
 
 AUTHORITY = Authority(
@@ -57,6 +58,8 @@ class FakeTransport:
     def __init__(self, rows=None):
         self.rows = rows
         self.files = {}
+        self.bytes = {}
+        self.events = []
         self.calls = []
         self.write_ok = True
         for row in rows or []:
@@ -79,6 +82,19 @@ class FakeTransport:
         if not self.write_ok:
             return False
         self.files[path] = content
+        return True
+
+    def read_bytes(self, path):
+        if path not in self.bytes:
+            return None, "absent"
+        return self.bytes[path], "ok"
+
+    def write_bytes(self, path, content):
+        self.bytes[path] = content
+        return True
+
+    def record_write(self, data_type, api_version, note, source, *, tags=()):
+        self.events.append(json.loads(note))
         return True
 
     def list_dir(self, path):
@@ -230,6 +246,30 @@ def test_control_looking_malformed_event_is_unknown_not_skipped(tmp_path):
     queue = service(tmp_path, transport)
 
     assert queue.read_queue(NOW).state is State.UNKNOWN
+
+
+def test_queue_accepts_a_verified_transfer_manifest_pointer(tmp_path):
+    transport = FakeTransport([])
+    sent = TransferService(transport, AUTHORITY).send(
+        "research", "planner", "analyst", "report.bin", b"payload",
+        media_type="application/octet-stream",
+        disclosure="User approved report transfer",
+        transfer_id="00000000-0000-0000-0000-000000000099",
+        timestamp="2026-08-14T00:40:00Z",
+    )
+    assert sent.state is State.DATA
+    transport.rows = [{
+        "id": "transfer-record",
+        "recorded_at": "2026-08-14T00:40:00Z",
+        "sources": ["planner"],
+        "note": compact_json(transport.events[-1]),
+    }]
+    queue = service(tmp_path, transport)
+
+    outcome = queue.read_queue(NOW)
+
+    assert outcome.state is State.DATA
+    assert outcome.data["events"][0]["ptr"] == sent.data["ptr"]
 
 
 def test_clear_revalidates_authority_on_twelfth_consecutive_clear(tmp_path):

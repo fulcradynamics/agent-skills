@@ -148,6 +148,47 @@ class FulcraTransport:
                 except OSError:
                     pass
 
+    def read_bytes(self, path: str) -> tuple[bytes | None, str]:
+        handle, local = tempfile.mkstemp()
+        os.close(handle)
+        try:
+            os.unlink(local)
+            cp = self._run(["file", "download", path, local])
+            if cp is None:
+                return None, "error"
+            if cp.returncode != 0:
+                error = (cp.stderr or "").strip().lower()
+                if error.startswith("error: file not found in fulcra"):
+                    return None, "absent"
+                return None, "error"
+            try:
+                with open(local, "rb") as stream:
+                    return stream.read(), "ok"
+            except OSError:
+                return None, "error"
+        finally:
+            try:
+                os.unlink(local)
+            except OSError:
+                pass
+
+    def write_bytes(self, path: str, content: bytes) -> bool:
+        local: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile("wb", delete=False) as handle:
+                handle.write(content)
+                local = handle.name
+            cp = self._run(["file", "upload", local, path])
+            return cp is not None and cp.returncode == 0
+        except OSError:
+            return False
+        finally:
+            if local is not None:
+                try:
+                    os.unlink(local)
+                except OSError:
+                    pass
+
     def list_dir(self, path: str) -> tuple[list[str] | None, str]:
         cp = self._run(["file", "list", path])
         if cp is None or cp.returncode != 0:
@@ -236,4 +277,3 @@ class FulcraTransport:
                     if isinstance(existing, str) and existing:
                         return existing
         return None
-

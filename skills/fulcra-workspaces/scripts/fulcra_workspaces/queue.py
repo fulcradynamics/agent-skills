@@ -11,7 +11,7 @@ from typing import Any
 from .jsonutil import compact_json
 from .authority import AUTHORITY_PATH, parse_authority
 from .model import Authority, Cursor, Outcome, State, parse_event
-from .store import parse_message
+from .pointer import parse_pointed_document
 
 
 _OVERLAP_SECONDS = 120
@@ -343,7 +343,7 @@ class QueueService:
                 seen_ids.add(record_id)
                 continue
             body, body_state = self.transport.read_file(parsed.ptr)
-            if body_state != "ok" or parse_message(body) is None:
+            if body_state != "ok" or parse_pointed_document(body) is None:
                 return Outcome(
                     State.UNKNOWN,
                     f"pointed document is {body_state} or invalid",
@@ -518,8 +518,8 @@ class QueueService:
             if receipt_state == "ok":
                 continue
             body, body_state = self.transport.read_file(index.get("ptr"))
-            message = parse_message(body) if body_state == "ok" else None
-            if message is None or message.sha256 != index.get("sha256"):
+            document = parse_pointed_document(body) if body_state == "ok" else None
+            if document is None or document.digest != index.get("sha256"):
                 return Outcome(State.UNKNOWN, "indexed message failed verification", exit_code=3)
             messages.append({
                 "message_id": message_id,

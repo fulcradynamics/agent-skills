@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 
 from fulcra_workspaces.transport import FulcraTransport
@@ -89,3 +90,38 @@ def test_file_read_classifies_absent_separately_from_error():
     ok = FulcraTransport(runner=Runner([cp(out="body")]))
     assert ok.read_file("x") == ("body", "ok")
 
+
+def test_binary_write_uses_a_temporary_file_and_cleans_it_up():
+    observed = {}
+
+    def runner(argv, *, timeout, input_text=None):
+        local = argv[-2]
+        observed["local"] = local
+        with open(local, "rb") as stream:
+            observed["payload"] = stream.read()
+        return cp()
+
+    transport = FulcraTransport(runner=runner)
+    assert transport.write_bytes("team/demo/payload.bin", b"\x00\xff")
+    assert observed["payload"] == b"\x00\xff"
+    assert not os.path.exists(observed["local"])
+
+
+def test_binary_read_uses_a_temporary_file_and_classifies_absent():
+    observed = {}
+
+    def runner(argv, *, timeout, input_text=None):
+        local = argv[-1]
+        observed["local"] = local
+        with open(local, "wb") as stream:
+            stream.write(b"\x00\xff")
+        return cp()
+
+    transport = FulcraTransport(runner=runner)
+    assert transport.read_bytes("team/demo/payload.bin") == (b"\x00\xff", "ok")
+    assert not os.path.exists(observed["local"])
+
+    absent = FulcraTransport(runner=Runner([
+        cp(rc=1, err="Error: File not found in Fulcra: x")
+    ]))
+    assert absent.read_bytes("x") == (None, "absent")
