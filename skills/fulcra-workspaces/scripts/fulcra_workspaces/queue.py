@@ -3,11 +3,13 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 from .jsonutil import compact_json
+from .authority import AUTHORITY_PATH, parse_authority
 from .model import Authority, Cursor, Outcome, State, parse_event
 from .store import parse_message
 
@@ -15,6 +17,10 @@ from .store import parse_message
 _OVERLAP_SECONDS = 120
 _RECEIPT_SCHEMA = "fulcra.workspaces-receipt.v1"
 _INBOX_SCHEMA = "fulcra.workspaces-inbox-pointer.v1"
+_CURSOR_SCHEMA = "fulcra.workspaces-cursor.v1"
+_COLLISION_SCHEMA = "fulcra.workspaces-collision.v1"
+_AUTHORITY_CLEAR_LIMIT = 12
+_AUTHORITY_MAX_AGE = timedelta(hours=6)
 
 
 def _parse_time(value: str) -> datetime | None:
@@ -54,9 +60,13 @@ def _write_local(path: Path, content: str) -> bool:
 
 def _cursor_json(cursor: Cursor) -> str:
     return compact_json({
-        "schema": "fulcra.workspaces-cursor.v1",
+        "schema": _CURSOR_SCHEMA,
         "last_read": cursor.last_read,
         "seen": list(cursor.seen),
+        "session_nonce": cursor.session_nonce,
+        "observed_mirror_nonce": cursor.observed_mirror_nonce,
+        "authority_validated_at": cursor.authority_validated_at,
+        "consecutive_clear": cursor.consecutive_clear,
     })
 
 
@@ -65,15 +75,34 @@ def _parse_cursor(raw: object) -> Cursor | None:
         doc = json.loads(raw)
     except (TypeError, ValueError):
         return None
-    if not isinstance(doc, dict) or doc.get("schema") != "fulcra.workspaces-cursor.v1":
+    if not isinstance(doc, dict) or doc.get("schema") != _CURSOR_SCHEMA:
         return None
     last_read = doc.get("last_read")
     seen = doc.get("seen")
+    session_nonce = doc.get("session_nonce", "")
+    observed_mirror_nonce = doc.get("observed_mirror_nonce")
+    authority_validated_at = doc.get("authority_validated_at") or last_read
+    consecutive_clear = doc.get("consecutive_clear", 0)
     if _parse_time(last_read) is None or not isinstance(seen, list):
         return None
     if any(not isinstance(item, str) or not item for item in seen):
         return None
-    return Cursor(last_read=last_read, seen=tuple(seen))
+    if not isinstance(session_nonce, str):
+        return None
+    if observed_mirror_nonce is not None and not isinstance(observed_mirror_nonce, str):
+        return None
+    if _parse_time(authority_validated_at) is None:
+        return None
+    if not isinstance(consecutive_clear, int) or consecutive_clear < 0:
+        return None
+    return Cursor(
+        last_read=last_read,
+        seen=tuple(seen),
+        session_nonce=session_nonce,
+        observed_mirror_nonce=observed_mirror_nonce,
+        authority_validated_at=authority_validated_at,
+        consecutive_clear=consecutive_clear,
+    )
 
 
 class QueueService:
@@ -83,6 +112,7 @@ class QueueService:
         authority: Authority,
         identity: str,
         state_dir: Path,
+        session_nonce: str | None = None,
     ):
         self.transport = transport
         self.authority = authority
@@ -90,15 +120,37 @@ class QueueService:
         self.state_dir = state_dir / identity
         self.local_cursor_path = self.state_dir / "cursor.json"
         self.pending_path = self.state_dir / "pending.json"
+        self.session_nonce_path = self.state_dir / "session-nonce"
+        self.session_nonce = session_nonce or self._load_or_create_session_nonce()
 
     @property
     def durable_cursor_path(self) -> str:
         return f"_workspaces/member/{self.identity}/cursor.json"
 
+    @property
+    def collision_path(self) -> str:
+        return f"_workspaces/member/{self.identity}/collision.json"
+
+    def _load_or_create_session_nonce(self) -> str:
+        try:
+            value = self.session_nonce_path.read_text().strip()
+            if value:
+                return value
+        except OSError:
+            pass
+        value = str(uuid.uuid4())
+        if not _write_local(self.session_nonce_path, value + "\n"):
+            return value
+        return value
+
     def seed_cursor(self, at: str) -> bool:
         if _parse_time(at) is None:
             return False
-        return _write_local(self.local_cursor_path, _cursor_json(Cursor(at)))
+        return _write_local(self.local_cursor_path, _cursor_json(Cursor(
+            last_read=at,
+            session_nonce=self.session_nonce,
+            authority_validated_at=at,
+        )))
 
     def _load_cursor(self) -> Cursor | None:
         try:
@@ -108,12 +160,85 @@ class QueueService:
             if state != "ok":
                 return None
             durable = _parse_cursor(durable_raw)
-            if durable is None or not _write_local(
-                self.local_cursor_path, _cursor_json(durable)
+            if durable is None:
+                return None
+            restored = Cursor(
+                last_read=durable.last_read,
+                seen=durable.seen,
+                session_nonce=self.session_nonce,
+                observed_mirror_nonce=durable.session_nonce or None,
+                authority_validated_at=durable.authority_validated_at,
+                consecutive_clear=durable.consecutive_clear,
+            )
+            if not _write_local(
+                self.local_cursor_path, _cursor_json(restored)
             ):
                 return None
-            return durable
-        return _parse_cursor(local_raw)
+            return restored
+        local = _parse_cursor(local_raw)
+        if local is None:
+            return None
+        if local.session_nonce == self.session_nonce:
+            return local
+        adopted = Cursor(
+            last_read=local.last_read,
+            seen=local.seen,
+            session_nonce=self.session_nonce,
+            observed_mirror_nonce=local.observed_mirror_nonce,
+            authority_validated_at=local.authority_validated_at,
+            consecutive_clear=local.consecutive_clear,
+        )
+        if not _write_local(self.local_cursor_path, _cursor_json(adopted)):
+            return None
+        return adopted
+
+    def _revalidate_authority(self, cursor: Cursor, now_dt: datetime) -> Cursor | None:
+        validated_dt = _parse_time(cursor.authority_validated_at)
+        due = (
+            cursor.consecutive_clear >= _AUTHORITY_CLEAR_LIMIT - 1
+            or validated_dt is None
+            or now_dt - validated_dt >= _AUTHORITY_MAX_AGE
+        )
+        if not due:
+            return cursor
+        raw, state = self.transport.read_file(AUTHORITY_PATH)
+        if state != "ok" or parse_authority(raw) != self.authority:
+            return None
+        refreshed = Cursor(
+            last_read=cursor.last_read,
+            seen=cursor.seen,
+            session_nonce=self.session_nonce,
+            observed_mirror_nonce=cursor.observed_mirror_nonce,
+            authority_validated_at=_render_time(now_dt),
+            consecutive_clear=0,
+        )
+        if not _write_local(self.local_cursor_path, _cursor_json(refreshed)):
+            return None
+        return refreshed
+
+    def _record_collision(
+        self,
+        expected: Cursor,
+        observed: Cursor | None,
+        detected_at: str,
+    ) -> bool:
+        body = compact_json({
+            "schema": _COLLISION_SCHEMA,
+            "identity": self.identity,
+            "detected_at": detected_at,
+            "session_nonce": self.session_nonce,
+            "expected_mirror_nonce": expected.observed_mirror_nonce,
+            "expected_last_read": expected.last_read,
+            "observed_mirror_nonce": observed.session_nonce if observed else None,
+            "observed_last_read": observed.last_read if observed else None,
+        })
+        existing, state = self.transport.read_file(self.collision_path)
+        if state == "ok":
+            return True
+        if state != "absent" or not self.transport.write_file(self.collision_path, body):
+            return False
+        readback, read_state = self.transport.read_file(self.collision_path)
+        return read_state == "ok" and readback == body
 
     def _load_pending(self) -> dict[str, Any] | None:
         try:
@@ -163,6 +288,14 @@ class QueueService:
                 "cursor is outside the bounded read horizon",
                 {"last_read": cursor.last_read, "now": now},
                 2,
+            )
+
+        cursor = self._revalidate_authority(cursor, now_dt)
+        if cursor is None:
+            return Outcome(
+                State.UNKNOWN,
+                "durable Bus authority is unreadable or differs from local authority",
+                exit_code=3,
             )
 
         since = _render_time(cursor_dt - timedelta(seconds=_OVERLAP_SECONDS))
@@ -232,12 +365,29 @@ class QueueService:
             })
 
         if selected:
+            active = Cursor(
+                last_read=cursor.last_read,
+                seen=cursor.seen,
+                session_nonce=self.session_nonce,
+                observed_mirror_nonce=cursor.observed_mirror_nonce,
+                authority_validated_at=cursor.authority_validated_at,
+                consecutive_clear=0,
+            )
+            if not _write_local(self.local_cursor_path, _cursor_json(active)):
+                return Outcome(State.UNKNOWN, "local cursor write failed", exit_code=3)
             pending_doc = {"until": now, "events": selected}
             if not self._save_pending(pending_doc):
                 return Outcome(State.UNKNOWN, "pending batch could not be staged", exit_code=3)
             return Outcome(State.DATA, f"{len(selected)} event(s)", {"events": selected})
 
-        advanced = Cursor(last_read=now, seen=tuple(sorted(seen_ids)[-1000:]))
+        advanced = Cursor(
+            last_read=now,
+            seen=tuple(sorted(seen_ids)[-1000:]),
+            session_nonce=self.session_nonce,
+            observed_mirror_nonce=cursor.observed_mirror_nonce,
+            authority_validated_at=cursor.authority_validated_at,
+            consecutive_clear=cursor.consecutive_clear + 1,
+        )
         if not _write_local(self.local_cursor_path, _cursor_json(advanced)):
             return Outcome(State.UNKNOWN, "local cursor write failed", exit_code=3)
         return Outcome(State.CLEAR, "bounded queue read is clear")
@@ -282,16 +432,48 @@ class QueueService:
         cursor = self._load_cursor()
         if cursor is None:
             return Outcome(State.UNKNOWN, "cursor became unreadable", exit_code=3)
+        collision, collision_state = self.transport.read_file(self.collision_path)
+        if collision_state == "ok":
+            return Outcome(State.UNKNOWN, "identity has unresolved collision evidence", exit_code=3)
+        if collision_state == "error":
+            return Outcome(State.UNKNOWN, "identity collision state is unreadable", exit_code=3)
+        mirror_raw, mirror_state = self.transport.read_file(self.durable_cursor_path)
+        mirror = _parse_cursor(mirror_raw) if mirror_state == "ok" else None
+        mirror_nonce = mirror.session_nonce if mirror is not None else None
+        if (
+            mirror_state not in ("ok", "absent")
+            or (mirror_state == "ok" and mirror is None)
+            or mirror_nonce != cursor.observed_mirror_nonce
+            or (mirror is not None and mirror.last_read != cursor.last_read)
+        ):
+            self._record_collision(cursor, mirror, pending["until"])
+            return Outcome(
+                State.UNKNOWN,
+                "another session advanced this identity; collision recorded",
+                exit_code=3,
+            )
         seen = tuple(sorted(set(cursor.seen) | {
             item["record_id"] for item in pending["events"]
         })[-1000:])
-        advanced = Cursor(last_read=pending["until"], seen=seen)
+        advanced = Cursor(
+            last_read=pending["until"],
+            seen=seen,
+            session_nonce=self.session_nonce,
+            observed_mirror_nonce=self.session_nonce,
+            authority_validated_at=cursor.authority_validated_at,
+            consecutive_clear=0,
+        )
         rendered = _cursor_json(advanced)
         if not self.transport.write_file(self.durable_cursor_path, rendered):
             return Outcome(State.UNKNOWN, "durable cursor mirror write failed", exit_code=3)
         mirror, mirror_state = self.transport.read_file(self.durable_cursor_path)
         if mirror_state != "ok" or mirror != rendered:
-            return Outcome(State.UNKNOWN, "durable cursor mirror mismatch", exit_code=3)
+            self._record_collision(cursor, _parse_cursor(mirror), pending["until"])
+            return Outcome(
+                State.UNKNOWN,
+                "durable cursor mirror mismatch; collision recorded",
+                exit_code=3,
+            )
         if not _write_local(self.local_cursor_path, rendered):
             return Outcome(State.UNKNOWN, "local cursor write failed", exit_code=3)
         try:

@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timezone
 
 from fulcra_workspaces.jsonutil import compact_json
+from fulcra_workspaces.authority import AUTHORITY_PATH, render_authority
 from fulcra_workspaces.model import Authority, State
 from fulcra_workspaces.queue import QueueService
 from fulcra_workspaces.store import Message, render_message
@@ -89,9 +90,18 @@ class FakeTransport:
             if key.startswith(prefix) and "/" not in key.removeprefix(prefix)
         ), "ok"
 
+    def replace_rows(self, rows):
+        self.rows = rows
+        for row in rows:
+            payload = json.loads(row["note"])
+            if "ptr" in payload:
+                self.files[payload["ptr"]] = message_for(row)
+
 
 def service(tmp_path, transport):
-    queue = QueueService(transport, AUTHORITY, "analyst", tmp_path)
+    queue = QueueService(
+        transport, AUTHORITY, "analyst", tmp_path, session_nonce="session-a"
+    )
     assert queue.seed_cursor(START)
     return queue
 
@@ -220,3 +230,93 @@ def test_control_looking_malformed_event_is_unknown_not_skipped(tmp_path):
     queue = service(tmp_path, transport)
 
     assert queue.read_queue(NOW).state is State.UNKNOWN
+
+
+def test_clear_revalidates_authority_on_twelfth_consecutive_clear(tmp_path):
+    transport = FakeTransport([])
+    transport.files[AUTHORITY_PATH] = render_authority(AUTHORITY)
+    queue = service(tmp_path, transport)
+
+    for minute in range(1, 13):
+        now = f"2026-08-14T00:{30 + minute:02d}:00Z"
+        assert queue.read_queue(now).state is State.CLEAR
+
+    authority_reads = [
+        call for call in transport.calls
+        if call == ("read", AUTHORITY_PATH)
+    ]
+    assert len(authority_reads) == 1
+
+
+def test_rotated_authority_cannot_report_clear_past_horizon(tmp_path):
+    transport = FakeTransport([])
+    transport.files[AUTHORITY_PATH] = render_authority(Authority(
+        data_type="MomentAnnotation/00000000-0000-0000-0000-000000000099",
+        api_version="v1alpha1",
+        protocol=1,
+        base_tag=AUTHORITY.base_tag,
+        max_window_seconds=3600,
+        max_records=500,
+    ))
+    queue = service(tmp_path, transport)
+
+    for minute in range(1, 12):
+        now = f"2026-08-14T00:{30 + minute:02d}:00Z"
+        assert queue.read_queue(now).state is State.CLEAR
+    outcome = queue.read_queue("2026-08-14T00:42:00Z")
+
+    assert outcome.state is State.UNKNOWN
+    assert "authority" in outcome.message
+
+
+def test_authority_revalidates_after_six_hours_even_without_many_clears(tmp_path):
+    authority = Authority(
+        data_type=AUTHORITY.data_type,
+        api_version=AUTHORITY.api_version,
+        protocol=AUTHORITY.protocol,
+        base_tag=AUTHORITY.base_tag,
+        max_window_seconds=12 * 3600,
+        max_records=AUTHORITY.max_records,
+    )
+    transport = FakeTransport([])
+    transport.files[AUTHORITY_PATH] = render_authority(authority)
+    queue = QueueService(
+        transport, authority, "analyst", tmp_path, session_nonce="session-a"
+    )
+    assert queue.seed_cursor(START)
+
+    outcome = queue.read_queue("2026-08-14T06:30:00Z")
+
+    assert outcome.state is State.CLEAR
+    assert ("read", AUTHORITY_PATH) in transport.calls
+
+
+def test_nonce_mismatch_records_collision_and_refuses_advance(tmp_path):
+    transport = FakeTransport([event(1)])
+    first = QueueService(
+        transport, AUTHORITY, "analyst", tmp_path / "host-a",
+        session_nonce="session-a",
+    )
+    assert first.seed_cursor(START)
+    assert first.read_queue(NOW).state is State.DATA
+    assert first.complete("r-1", "completed").state is State.DATA
+
+    transport.replace_rows([event(2)])
+    second = QueueService(
+        transport, AUTHORITY, "analyst", tmp_path / "host-b",
+        session_nonce="session-b",
+    )
+    assert second.read_queue("2026-08-14T01:10:00Z").state is State.DATA
+    assert second.complete("r-2", "completed").state is State.DATA
+
+    transport.replace_rows([event(3)])
+    assert first.read_queue("2026-08-14T01:20:00Z").state is State.DATA
+    collision = first.complete("r-3", "completed")
+
+    assert collision.state is State.UNKNOWN
+    marker = "_workspaces/member/analyst/collision.json"
+    assert marker in transport.files
+
+    transport.replace_rows([event(4)])
+    assert second.read_queue("2026-08-14T01:30:00Z").state is State.DATA
+    assert second.complete("r-4", "completed").state is State.UNKNOWN

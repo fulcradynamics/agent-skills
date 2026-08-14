@@ -82,6 +82,13 @@ def test_authority_and_cursor_are_immutable_value_objects():
         max_window_seconds=3600,
         max_records=500,
     )
-    cursor = Cursor(last_read="2026-08-14T00:00:00Z", seen=("r-1",))
+    cursor = Cursor(
+        last_read="2026-08-14T00:00:00Z",
+        seen=("r-1",),
+        session_nonce="session-a",
+        observed_mirror_nonce="session-a",
+        authority_validated_at="2026-08-14T00:00:00Z",
+        consecutive_clear=2,
+    )
     assert authority.protocol == 1
     assert cursor.seen == ("r-1",)

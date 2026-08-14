@@ -29,6 +29,12 @@ version, and finite read limits. A verified local cache avoids a File Store
 read before every queue read. A new machine adopts the durable authority once
 and verifies the same channel rather than creating another one.
 
+The cache is revalidated after 12 consecutive `CLEAR` reads or six hours since
+its last successful validation, whichever comes first. Until revalidation
+succeeds, a wake returns `UNKNOWN`; a readable but superseded channel cannot
+continue reporting `CLEAR`. A different valid authority requires explicit
+adoption rather than a silent channel switch during a wake.
+
 Setup gives the channel a human-visible spec and base tag. Joining registers a
 logical identity and any declared machine/cloud, harness, and model dimensions.
 These are attribution metadata, not a security boundary.
@@ -100,11 +106,14 @@ verifies a per-recipient receipt before advancing the local cursor and its
 durable mirror. Replay checks the receipt and returns the prior result rather
 than repeating the side effect.
 
-The File Store has no proven compare-and-swap. Two concurrent consumers must
-not use the same logical identity because they could race shared cursor and
-receipt projections. Concurrent sessions use distinct identities. An identity
-may move after the prior consumer stops; its history remains one logical
-history and the changed machine or harness is noted.
+The File Store has no proven compare-and-swap, so Workspaces cannot prevent the
+first same-identity race. Each session carries a nonce in its local cursor and
+durable cursor mirrors. Before advancing, it re-reads the mirror. A nonce or
+coverage mismatch records durable collision evidence and refuses advancement;
+every later advance checks that evidence, so both sessions surface the
+collision. Concurrent sessions should use distinct identities. Identity
+movement uses explicit takeover after the prior consumer stops; its history
+remains one logical history and the changed machine or harness is noted.
 
 ## Repair
 
@@ -177,4 +186,3 @@ channel.
 Private rosters, live machine mappings, routing policy, model policy, fleet
 manifests, and cross-account mesh configuration do not belong in either public
 repository.
-

@@ -28,8 +28,8 @@ workspace. Use `references/fulcra-workspaces-cli.md` for exact commands.
 3. **Fail visibly.** `UNKNOWN`, `BACKLOG`, `DURABLE_ONLY`, and `STORE_ONLY` are
    not `CLEAR`.
 4. **No exactly-once claim.** Use immutable ids and receipts so replay is safe.
-5. **One consumer per identity.** Concurrent sessions use distinct logical
-   identities because the Store does not provide proven CAS.
+5. **Detect identity collisions.** Session nonces detect conflicting cursor
+   advances; they do not pretend to provide mutual exclusion without CAS.
 6. **Keep private topology in Fulcra.** Repositories contain schemas and
    examples, never live machine, harness, model, or identity mappings.
 7. **Respect ownership.** Do not transfer user data or artifacts between
@@ -48,8 +48,9 @@ the same verified channel. Joining records:
 - optional declared machine/cloud, harness, and model dimensions.
 
 Identity metadata is attribution, not authorization. If an identity moves,
-retain its logical history and record the changed machine or harness. Do not run
-two consumers under that identity at once.
+retain its logical history and record the changed machine or harness. Use an
+explicit takeover after the prior consumer stops. Concurrent consumers can be
+detected and stopped at cursor advance, but the first race cannot be prevented.
 
 ## Workspace Layout
 
@@ -94,6 +95,10 @@ available for repair and reports `DURABLE_ONLY`. Retrying reuses the same id.
 On a normal wake, read the Bus once for the current identity. Handle `DATA`,
 `CLEAR`, `BACKLOG`, and `UNKNOWN` as distinct outcomes. Never widen a stale
 cursor into an unbounded read.
+
+Revalidate cached Bus authority after 12 consecutive clear reads or six hours.
+A wake cannot report `CLEAR` past that horizon until the durable authority is
+verified unchanged.
 
 Fetch only pointer bodies returned by the queue. After processing one, write
 and verify its receipt before completing the event. If a receipt already

@@ -47,6 +47,10 @@ class Authority:
 class Cursor:
     last_read: str
     seen: tuple[str, ...] = ()
+    session_nonce: str = ""
+    observed_mirror_nonce: str | None = None
+    authority_validated_at: str = ""
+    consecutive_clear: int = 0
 
 
 @dataclass(frozen=True)
