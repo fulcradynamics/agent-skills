@@ -9,16 +9,18 @@
     "append-only-receipts",
     "session-nonce-collision-evidence",
     "structured-continuity",
+    "portable-role-leases",
+    "role-continuity-handoff",
     "manifest-file-transfer"
   ],
   "advanced_features_delegated": [
     "task-state-machines",
     "presence",
-    "role-leases",
+    "role-vacancy-escalation",
+    "role-addressed-routing",
     "exact-head-review",
     "obligation-folds",
     "forge-integration"
   ],
   "source": "https://github.com/fulcradynamics/fulcra-tools"
 }
-

@@ -84,6 +84,42 @@ workspaces resume <workspace> <identity> \
   --max-age-seconds 86400 --max-bytes 65536
 ```
 
+## Portable Roles
+
+Define a role once, then claim or refresh its lease while acting in it:
+
+```bash
+workspaces role-define <workspace> reviewer --policy exclusive \
+  --lease-seconds 43200 --description "Review plans and pull requests"
+workspaces role-claim <workspace> reviewer <identity>
+workspaces role-status <workspace> reviewer
+```
+
+Definitions are immutable. Role status is `HELD`, `VACANT`, or `CONTESTED`;
+unreadable state is `UNKNOWN`. A live same-identity lease from another session
+requires an explicit takeover after the prior consumer stops:
+
+```bash
+workspaces role-claim <workspace> reviewer <identity> --takeover
+```
+
+Checkpoint and release in one ordered operation, then resume from any machine
+or harness with bounded reads:
+
+```bash
+workspaces checkpoint <workspace> <identity> --role reviewer \
+  --snapshot-file snapshot.json
+workspaces role-handoff <workspace> reviewer <identity> \
+  --snapshot-file snapshot.json
+workspaces role-resume <workspace> reviewer \
+  --max-age-seconds 86400 --max-bytes 65536
+workspaces role-release <workspace> reviewer <identity>
+```
+
+`role-handoff` verifies the checkpoint before releasing the lease. Role status
+is an explicit bounded control-plane operation; normal `queue` reads do not
+scan roles.
+
 ## File Transfer
 
 Transfer only within the user's approved disclosure boundary:

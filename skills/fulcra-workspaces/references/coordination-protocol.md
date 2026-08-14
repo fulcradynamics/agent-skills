@@ -66,8 +66,9 @@ Required fields:
 - `ptr`: durable document below `team/<workspace>/`.
 
 The pointed document's OKF `type` distinguishes a message, task, checkpoint,
-transfer, or receipt. Roles and review events belong to the optional advanced
-coordination layer.
+transfer, or receipt. Portable role leases are explicit Store control-plane
+operations. Role-addressed routing and review events belong to the optional
+advanced coordination layer.
 
 ## Durable-First Delivery
 
@@ -148,6 +149,39 @@ written only after checkpoint read-back succeeds. `resume` verifies freshness
 and returns a bounded brief. An invalid projection is `UNKNOWN`, not permission
 to invent missing continuity.
 
+## Portable Roles
+
+A role definition is write-once at:
+
+```text
+team/<workspace>/roles/<role>/definition.json
+```
+
+It names `exclusive` or `shared` policy, a positive lease duration, and a
+human-readable purpose. Each identity writes immutable `held` or `released`
+events below `roles/<role>/leases/<identity>/history/`, then updates a verified
+`latest.json` projection containing the selected event pointer and digest.
+Release is an append-only transition, not deletion.
+
+`role-status` performs one bounded holder listing and verifies each selected
+lease before folding it. A defined role with no fresh holders is `VACANT`; one
+or more permitted holders is `HELD`; multiple fresh holders of an exclusive
+role is `CONTESTED`. An unreadable, malformed, or oversized fold is `UNKNOWN`,
+never `VACANT`.
+
+The File Store has no proven compare-and-swap. Different identities can race
+to claim an exclusive role, so Workspaces detects `CONTESTED` rather than
+claiming prevention. A fresh same-identity lease with a foreign session nonce
+requires explicit takeover. Stale or released leases may be claimed by a new
+session. Machine or harness movement changes member attribution, not the
+logical identity's role history.
+
+A role checkpoint is an immutable member checkpoint plus a verified role
+continuity projection. `role-handoff` must write and verify that checkpoint
+before releasing the lease. `role-resume` reads the projection and selected
+checkpoint only, with freshness and byte limits; it does not scan member or
+workspace history.
+
 ## File Transfer
 
 Agent-to-agent file transfer uses Store payloads and Bus pointers:
@@ -182,13 +216,13 @@ path. It has higher read cost and pickup latency.
 ## Advanced Coordination Boundary
 
 The portable Workspaces layer owns setup, identity declaration, durable-first
-delivery, queue/receipt/repair, continuity, transfer, doctor, and a two-agent
-acceptance flow.
+delivery, queue/receipt/repair, role definitions and leases, role continuity
+handoff, transfer, doctor, and a two-agent acceptance flow.
 
 The optional `fulcra-agent-coordination` skill may add typed task policy,
-presence, role leases, append-only exact-head review, obligation folds, and
-forge integration. It consumes this account Bus and must not create a competing
-channel.
+presence, vacancy escalation, role-addressed routing, append-only exact-head
+review, obligation folds, and forge integration. It consumes this account Bus
+and must not create a competing channel.
 
 Private rosters, live machine mappings, routing policy, model policy, fleet
 manifests, and cross-account mesh configuration do not belong in either public

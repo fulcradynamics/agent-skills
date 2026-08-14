@@ -1,4 +1,5 @@
 import hashlib
+import json
 import re
 from pathlib import Path
 
@@ -23,6 +24,8 @@ def test_coordination_protocol_defines_the_scalable_public_contract():
         "BACKLOG",
         "one bounded",
         "no proven compare-and-swap",
+        "CONTESTED",
+        "role-handoff",
     )
     for phrase in required:
         assert phrase in text
@@ -74,8 +77,14 @@ def test_cli_docs_and_alignment_stamp_match_the_helper_surface():
 
     for command in (
         "setup", "join", "send", "queue", "complete", "repair",
-        "checkpoint", "resume", "transfer-send", "transfer-receive", "doctor",
+        "checkpoint", "resume", "role-define", "role-claim", "role-release",
+        "role-status", "role-handoff", "role-resume",
+        "transfer-send", "transfer-receive", "doctor",
     ):
         assert command in cli
-    assert "session-nonce-collision-evidence" in alignment
-    assert "manifest-file-transfer" in alignment
+    stamp = json.loads(alignment)
+    assert "session-nonce-collision-evidence" in stamp["aligned_features"]
+    assert "manifest-file-transfer" in stamp["aligned_features"]
+    assert "portable-role-leases" in stamp["aligned_features"]
+    assert "role-continuity-handoff" in stamp["aligned_features"]
+    assert "role-leases" not in stamp["advanced_features_delegated"]

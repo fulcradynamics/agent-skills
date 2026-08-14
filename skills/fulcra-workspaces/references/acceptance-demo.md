@@ -16,12 +16,16 @@ prior knowledge of Coord.
 5. The second agent checkpoints objective, decisions, completed work, next
    actions, questions, and pointers. A fresh process resumes from a bounded,
    digest-verified brief.
-6. The first agent sends a file. Bytes stay in the File Store; the Bus carries
+6. The agents define an exclusive reviewer role. The first agent claims it,
+   writes and verifies a role checkpoint, then releases through `role-handoff`.
+   The second agent claims the role from another harness and uses `role-resume`
+   to recover the first holder's decisions and next actions.
+7. The first agent sends a file. Bytes stay in the File Store; the Bus carries
    only the manifest pointer. The receiver verifies recipient, size, and SHA-256
    before accepting it.
-7. An injected Bus read failure reports `UNKNOWN`, never `CLEAR`. A legacy
+8. An injected Bus read failure reports `UNKNOWN`, never `CLEAR`. A legacy
    workspace with files but no verified Bus reports `STORE_ONLY`.
-8. An injected malformed event is returned as visible poison, consumed, and
+9. An injected malformed event is returned as visible poison, consumed, and
    cannot prevent a healthy event or the next queue window from progressing.
 
 The executable proof is

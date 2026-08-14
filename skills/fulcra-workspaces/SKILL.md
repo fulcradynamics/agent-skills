@@ -13,8 +13,8 @@ Use this skill when one or more agents need a persistent workspace owned by the
 user. Workspaces combines a fast notification plane with durable documents:
 
 - one account-level Agent Coordination Bus handles normal wake-up reads;
-- the versioned File Store holds messages, tasks, progress, knowledge,
-  checkpoints, artifacts, transfers, receipts, and evidence.
+- the versioned File Store holds messages, tasks, progress, knowledge, roles,
+  leases, checkpoints, artifacts, transfers, receipts, and evidence.
 
 Read `references/coordination-protocol.md` before creating or joining a
 workspace. Use `references/fulcra-workspaces-cli.md` for exact commands and
@@ -69,6 +69,8 @@ The shared namespace remains OKF-compatible:
 - `team/<workspace>/knowledge/`: shared reference material.
 - `team/<workspace>/artifact/`: user-approved non-Markdown outputs.
 - `team/<workspace>/transfer/`: payloads, manifests, and receipts.
+- `team/<workspace>/roles/`: durable role definitions, lease history, and role
+  continuity pointers.
 - `team/<workspace>/member/<identity>/role.md`: confirmed member role.
 - `team/<workspace>/member/<identity>/progress.md`: member progress.
 - `team/<workspace>/member/<identity>/inbox/`: legacy/manual drop-zone and
@@ -134,6 +136,28 @@ Continue to update human-readable team or member progress when it materially
 helps collaborators. Do not require several broad shared-file rewrites after
 every small action; last-writer-wins shared files are poor event logs.
 
+## Portable Roles
+
+Workspaces includes the minimum durable role lifecycle needed for a complete
+coordination demo. Define a role as `exclusive` or `shared` with a finite lease
+duration. Agents claim or refresh append-only per-identity leases, release by
+writing a release transition, and use the deterministic status fold instead of
+eyeballing timestamps.
+
+Status is `HELD`, `VACANT`, or `CONTESTED`. `CONTESTED` means multiple fresh
+identities claimed an exclusive role. Because the File Store has no proven
+compare-and-swap, Workspaces detects that race but cannot prevent it. A live
+same-identity lease with another session nonce requires explicit `--takeover`;
+stale leases may be adopted normally. Identity movement preserves the logical
+lease history while member profiles record changed machine or harness
+attribution.
+
+Use `role-handoff` to write and verify a role checkpoint before releasing the
+lease. The next holder uses `role-resume` to fetch the small verified
+projection and selected checkpoint, without scanning broad workspace state.
+Role operations are explicit control-plane reads and never add Store scans to
+the normal Bus wake.
+
 ## Artifacts And Transfers
 
 Upload user artifacts only with explicit approval. Store personal artifacts at
@@ -158,7 +182,7 @@ the user's harness owns when an agent wakes.
 ## Advanced Coordination
 
 Install `fulcra-agent-coordination` when the workspace needs deterministic task
-state machines, presence, role leases, exact-head review, obligation folds, or
-forge integration. That layer consumes the same account Bus and durable
-Workspaces documents. Team-specific policy remains in Fulcra, not the public
-skill.
+state machines, presence, vacancy escalation, role-addressed routing,
+exact-head review, obligation folds, or forge integration. That layer consumes
+the same account Bus and durable Workspaces documents. Team-specific policy
+remains in Fulcra, not the public skill.
