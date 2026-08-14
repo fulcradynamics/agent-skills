@@ -78,10 +78,10 @@ def test_authority_and_cursor_are_immutable_value_objects():
         data_type="MomentAnnotation/00000000-0000-0000-0000-000000000001",
         api_version="v1alpha1",
         protocol=1,
+        base_tag="00000000-0000-0000-0000-000000000002",
         max_window_seconds=3600,
         max_records=500,
     )
     cursor = Cursor(last_read="2026-08-14T00:00:00Z", seen=("r-1",))
     assert authority.protocol == 1
     assert cursor.seen == ("r-1",)
-

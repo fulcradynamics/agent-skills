@@ -38,6 +38,7 @@ class Authority:
     data_type: str
     api_version: str
     protocol: int
+    base_tag: str
     max_window_seconds: int
     max_records: int
 
