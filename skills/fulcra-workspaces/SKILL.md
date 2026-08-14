@@ -17,7 +17,10 @@ user. Workspaces combines a fast notification plane with durable documents:
   checkpoints, artifacts, transfers, receipts, and evidence.
 
 Read `references/coordination-protocol.md` before creating or joining a
-workspace. Use `references/fulcra-workspaces-cli.md` for exact commands.
+workspace. Use `references/fulcra-workspaces-cli.md` for exact commands and
+`references/acceptance-demo.md` for the tested two-agent walkthrough. The
+machine-readable `references/coord-alignment.json` records the public boundary
+with Coord so drift can be reviewed explicitly.
 
 ## Core Rules
 

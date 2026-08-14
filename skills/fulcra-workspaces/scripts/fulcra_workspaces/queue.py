@@ -260,6 +260,28 @@ class QueueService:
             f"{message_id}.json"
         )
 
+    def _valid_receipt(
+        self,
+        raw: object,
+        *,
+        workspace: str,
+        message_id: str,
+        record_id: str,
+    ) -> bool:
+        try:
+            receipt = json.loads(raw)
+        except (TypeError, ValueError):
+            return False
+        return (
+            isinstance(receipt, dict)
+            and receipt.get("schema") == _RECEIPT_SCHEMA
+            and receipt.get("workspace") == workspace
+            and receipt.get("recipient") == self.identity
+            and receipt.get("message_id") == message_id
+            and receipt.get("record_id") == record_id
+            and isinstance(receipt.get("outcome"), str)
+        )
+
     def read_queue(self, now: str) -> Outcome:
         pending = self._load_pending()
         if pending is not None and pending["events"]:
@@ -334,22 +356,30 @@ class QueueService:
                 return Outcome(State.UNKNOWN, "event lacks stable record id", exit_code=3)
             if record_id in seen_ids or parsed.to not in (self.identity, "all"):
                 continue
-            message_id = parsed.ptr.rsplit("/", 1)[-1].removesuffix(".md")
-            receipt_path = self._receipt_path(parsed.workspace, message_id)
-            receipt, receipt_state = self.transport.read_file(receipt_path)
-            if receipt_state == "error":
-                return Outcome(State.UNKNOWN, "receipt state is unreadable", exit_code=3)
-            if receipt_state == "ok":
-                seen_ids.add(record_id)
-                continue
             body, body_state = self.transport.read_file(parsed.ptr)
-            if body_state != "ok" or parse_pointed_document(body) is None:
+            document = parse_pointed_document(body) if body_state == "ok" else None
+            if document is None:
                 return Outcome(
                     State.UNKNOWN,
                     f"pointed document is {body_state} or invalid",
                     {"ptr": parsed.ptr},
                     3,
                 )
+            message_id = document.document_id
+            receipt_path = self._receipt_path(parsed.workspace, message_id)
+            receipt, receipt_state = self.transport.read_file(receipt_path)
+            if receipt_state == "error":
+                return Outcome(State.UNKNOWN, "receipt state is unreadable", exit_code=3)
+            if receipt_state == "ok":
+                if not self._valid_receipt(
+                    receipt,
+                    workspace=parsed.workspace,
+                    message_id=message_id,
+                    record_id=record_id,
+                ):
+                    return Outcome(State.UNKNOWN, "receipt is malformed or conflicting", exit_code=3)
+                seen_ids.add(record_id)
+                continue
             selected.append({
                 "record_id": record_id,
                 "recorded_at": row["recorded_at"],

@@ -96,3 +96,10 @@ def test_malformed_durable_authority_is_invalid_not_recreated(tmp_path):
     assert AuthorityStore(transport, tmp_path / "authority.json").setup() is None
     assert transport.created == 0
 
+
+def test_adopt_durable_never_provisions_a_missing_channel(tmp_path):
+    transport = FakeTransport()
+    store = AuthorityStore(transport, tmp_path / "authority.json")
+
+    assert store.adopt_durable() is None
+    assert transport.created == 0

@@ -105,6 +105,15 @@ class AuthorityStore:
                 except OSError:
                     pass
 
+    def adopt_durable(self) -> Authority | None:
+        durable_raw, durable_state = self.transport.read_file(AUTHORITY_PATH)
+        if durable_state != "ok":
+            return None
+        durable = parse_authority(durable_raw)
+        if durable is None or not self._write_local(durable):
+            return None
+        return durable
+
     def setup(self) -> Authority | None:
         local = self.load_local()
         if local is not None:

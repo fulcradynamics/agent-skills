@@ -192,7 +192,16 @@ class TransferService:
                 receipt = json.loads(existing)
             except (TypeError, ValueError):
                 receipt = None
-            if not isinstance(receipt, dict) or receipt.get("schema") != _RECEIPT_SCHEMA:
+            if (
+                not isinstance(receipt, dict)
+                or receipt.get("schema") != _RECEIPT_SCHEMA
+                or receipt.get("transfer_id") != manifest["id"]
+                or receipt.get("workspace") != manifest["workspace"]
+                or receipt.get("recipient") != recipient
+                or receipt.get("manifest_ptr") != manifest_ptr
+                or receipt.get("manifest_sha256") != _sha256_text(manifest_raw)
+                or receipt.get("status") not in ("accepted", "rejected")
+            ):
                 return Outcome(State.UNKNOWN, "transfer receipt is malformed", exit_code=3)
             state_value = State.DATA if receipt.get("status") == "accepted" else State.UNKNOWN
             return Outcome(state_value, "existing transfer receipt replayed", {

@@ -239,6 +239,18 @@ def test_receipted_replay_is_suppressed_and_coverage_advances(tmp_path):
     assert json.loads(queue.local_cursor_path.read_text())["last_read"] == NOW
 
 
+def test_malformed_receipt_cannot_suppress_replay(tmp_path):
+    row = event(1)
+    transport = FakeTransport([row])
+    queue = service(tmp_path, transport)
+    message_id = json.loads(row["note"])["ptr"].rsplit("/", 1)[-1][:-3]
+    transport.files[
+        f"team/research/member/analyst/receipt/{message_id}.json"
+    ] = "{}"
+
+    assert queue.read_queue(NOW).state is State.UNKNOWN
+
+
 def test_control_looking_malformed_event_is_unknown_not_skipped(tmp_path):
     row = event(1)
     row["note"] = '{"v":1,"workspace":"research"}'
@@ -270,6 +282,7 @@ def test_queue_accepts_a_verified_transfer_manifest_pointer(tmp_path):
 
     assert outcome.state is State.DATA
     assert outcome.data["events"][0]["ptr"] == sent.data["ptr"]
+    assert outcome.data["events"][0]["message_id"] == sent.data["id"]
 
 
 def test_clear_revalidates_authority_on_twelfth_consecutive_clear(tmp_path):
