@@ -248,13 +248,103 @@ def test_malformed_receipt_cannot_suppress_replay(tmp_path):
         f"team/research/member/analyst/receipt/{message_id}.json"
     ] = "{}"
 
-    assert queue.read_queue(NOW).state is State.UNKNOWN
+    outcome = queue.read_queue(NOW)
+
+    assert outcome.state is State.DATA
+    assert outcome.data["events"] == []
+    assert outcome.data["poison"][0]["record_id"] == "r-1"
+    assert "receipt" in outcome.data["poison"][0]["reason"]
+    assert queue.read_queue(NOW).state is State.CLEAR
 
 
-def test_control_looking_malformed_event_is_unknown_not_skipped(tmp_path):
+def test_control_looking_malformed_event_is_visible_poison_and_consumed(tmp_path):
     row = event(1)
     row["note"] = '{"v":1,"workspace":"research"}'
     transport = FakeTransport([row])
+    queue = service(tmp_path, transport)
+
+    outcome = queue.read_queue(NOW)
+
+    assert outcome.state is State.DATA
+    assert outcome.data["events"] == []
+    assert outcome.data["poison"] == [{
+        "record_id": "r-1",
+        "reason": "malformed schema-v1 control event",
+    }]
+    assert queue.read_queue(NOW).state is State.CLEAR
+
+
+def test_invalid_pointer_is_poison_but_healthy_event_still_delivers(tmp_path):
+    bad, healthy = event(1), event(2)
+    transport = FakeTransport([bad, healthy])
+    del transport.files[json.loads(bad["note"])["ptr"]]
+    queue = service(tmp_path, transport)
+
+    outcome = queue.read_queue(NOW)
+
+    assert outcome.state is State.DATA
+    assert [item["record_id"] for item in outcome.data["events"]] == ["r-2"]
+    assert outcome.data["poison"][0]["record_id"] == "r-1"
+    assert "pointed document" in outcome.data["poison"][0]["reason"]
+
+
+def test_poison_stays_consumed_after_healthy_batch_completes(tmp_path):
+    poisoned, healthy = event(1), event(2)
+    poisoned["note"] = '{"v":1,"workspace":"research"}'
+    transport = FakeTransport([poisoned, healthy])
+    queue = service(tmp_path, transport)
+
+    first = queue.read_queue(NOW)
+    assert first.state is State.DATA
+    assert queue.complete("r-2", "completed").state is State.DATA
+
+    replay = queue.read_queue(NOW)
+    assert replay.state is State.CLEAR
+    assert replay.data == {}
+
+
+def test_event_without_stable_record_id_is_consumed_as_poison(tmp_path):
+    row = event(1)
+    del row["id"]
+    transport = FakeTransport([row])
+    queue = service(tmp_path, transport)
+
+    outcome = queue.read_queue(NOW)
+
+    assert outcome.state is State.DATA
+    assert outcome.data["events"] == []
+    assert "stable record id" in outcome.data["poison"][0]["reason"]
+
+
+def test_poison_only_local_advance_does_not_create_false_collision(tmp_path):
+    transport = FakeTransport([event(1)])
+    queue = service(tmp_path, transport)
+    assert queue.read_queue(NOW).state is State.DATA
+    assert queue.complete("r-1", "completed").state is State.DATA
+
+    poison = event(2)
+    poison["note"] = '{"v":1,"workspace":"research"}'
+    transport.replace_rows([poison])
+    assert queue.read_queue("2026-08-14T01:10:00Z").state is State.DATA
+
+    transport.replace_rows([event(3)])
+    assert queue.read_queue("2026-08-14T01:20:00Z").state is State.DATA
+    assert queue.complete("r-3", "completed").state is State.DATA
+
+
+def test_pointer_transport_failure_keeps_whole_window_unknown(tmp_path):
+    row = event(1)
+    transport = FakeTransport([row])
+    ptr = json.loads(row["note"])["ptr"]
+    transport.read_errors = {ptr}
+    original = transport.read_file
+
+    def read_file(path):
+        if path in transport.read_errors:
+            return None, "error"
+        return original(path)
+
+    transport.read_file = read_file
     queue = service(tmp_path, transport)
 
     assert queue.read_queue(NOW).state is State.UNKNOWN

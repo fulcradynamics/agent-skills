@@ -21,8 +21,9 @@ prior knowledge of Coord.
    before accepting it.
 7. An injected Bus read failure reports `UNKNOWN`, never `CLEAR`. A legacy
    workspace with files but no verified Bus reports `STORE_ONLY`.
+8. An injected malformed event is returned as visible poison, consumed, and
+   cannot prevent a healthy event or the next queue window from progressing.
 
 The executable proof is
 `scripts/tests/test_acceptance_pair.py`. It uses an in-memory account and no
 private fleet names, credentials, or routing policy.
-

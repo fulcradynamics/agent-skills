@@ -96,15 +96,27 @@ def test_repair_skips_receipted_message(tmp_path):
     assert queue.repair("research", limit=10).state is State.CLEAR
 
 
-def test_repair_unreadable_or_malformed_index_is_unknown(tmp_path):
+def test_repair_unreadable_listing_is_unknown(tmp_path):
     transport = RepairTransport()
     queue = QueueService(transport, AUTHORITY, "analyst", tmp_path)
     transport.list_state = "error"
     assert queue.repair("research", limit=10).state is State.UNKNOWN
 
-    transport.list_state = "ok"
-    transport.files[
-        "team/research/member/analyst/inbox/bad.json"
-    ] = json.dumps({"schema": "wrong"})
-    assert queue.repair("research", limit=10).state is State.UNKNOWN
 
+
+def test_repair_quarantines_bad_index_and_returns_healthy_item(tmp_path):
+    transport = RepairTransport()
+    add_message(transport, "00000000-0000-0000-0000-000000000001")
+    transport.files[
+        "team/research/member/analyst/inbox/000-bad.json"
+    ] = json.dumps({"schema": "wrong"})
+    queue = QueueService(transport, AUTHORITY, "analyst", tmp_path)
+
+    outcome = queue.repair("research", limit=10)
+
+    assert outcome.state is State.DATA
+    assert len(outcome.data["messages"]) == 1
+    assert outcome.data["poison"] == [{
+        "entry": "000-bad.json",
+        "reason": "recipient index has unknown schema",
+    }]

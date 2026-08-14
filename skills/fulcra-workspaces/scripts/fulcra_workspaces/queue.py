@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import tempfile
@@ -35,6 +36,15 @@ def _parse_time(value: str) -> datetime | None:
 
 def _render_time(value: datetime) -> str:
     return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _record_id_or_poison_key(row: object) -> str:
+    if isinstance(row, dict):
+        record_id = row.get("id")
+        if isinstance(record_id, str) and record_id:
+            return record_id
+    rendered = json.dumps(row, sort_keys=True, separators=(",", ":"), default=str)
+    return "poison-" + hashlib.sha256(rendered.encode()).hexdigest()[:24]
 
 
 def _write_local(path: Path, content: str) -> bool:
@@ -288,7 +298,10 @@ class QueueService:
             return Outcome(
                 State.DATA,
                 "pending batch replayed without another remote query",
-                {"events": pending["events"]},
+                {
+                    "events": pending["events"],
+                    "poison": pending.get("poison", []),
+                },
             )
 
         cursor = self._load_cursor()
@@ -331,11 +344,18 @@ class QueueService:
             return Outcome(State.UNKNOWN, "record window is unreadable", exit_code=3)
 
         selected: list[dict[str, Any]] = []
+        poison: list[dict[str, str]] = []
         seen_ids = set(cursor.seen)
         for row in sorted(
             rows,
-            key=lambda item: (str(item.get("recorded_at") or ""), str(item.get("id") or "")),
+            key=lambda item: (
+                str(item.get("recorded_at") or "") if isinstance(item, dict) else "",
+                _record_id_or_poison_key(item),
+            ),
         ):
+            record_id = _record_id_or_poison_key(row)
+            if record_id in seen_ids:
+                continue
             note = row.get("note") if isinstance(row, dict) else None
             parsed = parse_event(note)
             if parsed is None:
@@ -345,26 +365,33 @@ class QueueService:
                     except (ValueError, AttributeError):
                         looks_control = False
                     if looks_control:
-                        return Outcome(
-                            State.UNKNOWN,
-                            "malformed schema-v1 control event",
-                            exit_code=3,
-                        )
+                        poison.append({
+                            "record_id": record_id,
+                            "reason": "malformed schema-v1 control event",
+                        })
+                        seen_ids.add(record_id)
                 continue
-            record_id = row.get("id")
-            if not isinstance(record_id, str) or not record_id:
-                return Outcome(State.UNKNOWN, "event lacks stable record id", exit_code=3)
-            if record_id in seen_ids or parsed.to not in (self.identity, "all"):
+            if parsed.to not in (self.identity, "all"):
+                continue
+            source_record_id = row.get("id") if isinstance(row, dict) else None
+            if not isinstance(source_record_id, str) or not source_record_id:
+                poison.append({
+                    "record_id": record_id,
+                    "reason": "event lacks stable record id",
+                })
+                seen_ids.add(record_id)
                 continue
             body, body_state = self.transport.read_file(parsed.ptr)
+            if body_state == "error":
+                return Outcome(State.UNKNOWN, "pointed document is unreadable", exit_code=3)
             document = parse_pointed_document(body) if body_state == "ok" else None
             if document is None:
-                return Outcome(
-                    State.UNKNOWN,
-                    f"pointed document is {body_state} or invalid",
-                    {"ptr": parsed.ptr},
-                    3,
-                )
+                poison.append({
+                    "record_id": record_id,
+                    "reason": f"pointed document is {body_state} or invalid",
+                })
+                seen_ids.add(record_id)
+                continue
             message_id = document.document_id
             receipt_path = self._receipt_path(parsed.workspace, message_id)
             receipt, receipt_state = self.transport.read_file(receipt_path)
@@ -377,7 +404,12 @@ class QueueService:
                     message_id=message_id,
                     record_id=record_id,
                 ):
-                    return Outcome(State.UNKNOWN, "receipt is malformed or conflicting", exit_code=3)
+                    poison.append({
+                        "record_id": record_id,
+                        "reason": "receipt is malformed or conflicting",
+                    })
+                    seen_ids.add(record_id)
+                    continue
                 seen_ids.add(record_id)
                 continue
             selected.append({
@@ -405,10 +437,14 @@ class QueueService:
             )
             if not _write_local(self.local_cursor_path, _cursor_json(active)):
                 return Outcome(State.UNKNOWN, "local cursor write failed", exit_code=3)
-            pending_doc = {"until": now, "events": selected}
+            pending_doc = {"until": now, "events": selected, "poison": poison}
             if not self._save_pending(pending_doc):
                 return Outcome(State.UNKNOWN, "pending batch could not be staged", exit_code=3)
-            return Outcome(State.DATA, f"{len(selected)} event(s)", {"events": selected})
+            return Outcome(
+                State.DATA,
+                f"{len(selected)} event(s), {len(poison)} poison",
+                {"events": selected, "poison": poison},
+            )
 
         advanced = Cursor(
             last_read=now,
@@ -420,6 +456,12 @@ class QueueService:
         )
         if not _write_local(self.local_cursor_path, _cursor_json(advanced)):
             return Outcome(State.UNKNOWN, "local cursor write failed", exit_code=3)
+        if poison:
+            return Outcome(
+                State.DATA,
+                f"{len(poison)} poison event(s) consumed",
+                {"events": [], "poison": poison},
+            )
         return Outcome(State.CLEAR, "bounded queue read is clear")
 
     def complete(self, record_id: str, result: str) -> Outcome:
@@ -470,11 +512,15 @@ class QueueService:
         mirror_raw, mirror_state = self.transport.read_file(self.durable_cursor_path)
         mirror = _parse_cursor(mirror_raw) if mirror_state == "ok" else None
         mirror_nonce = mirror.session_nonce if mirror is not None else None
+        mirror_ahead = (
+            mirror is not None
+            and _parse_time(mirror.last_read) > _parse_time(cursor.last_read)
+        )
         if (
             mirror_state not in ("ok", "absent")
             or (mirror_state == "ok" and mirror is None)
             or mirror_nonce != cursor.observed_mirror_nonce
-            or (mirror is not None and mirror.last_read != cursor.last_read)
+            or mirror_ahead
         ):
             self._record_collision(cursor, mirror, pending["until"])
             return Outcome(
@@ -484,6 +530,8 @@ class QueueService:
             )
         seen = tuple(sorted(set(cursor.seen) | {
             item["record_id"] for item in pending["events"]
+        } | {
+            item["record_id"] for item in pending.get("poison", [])
         })[-1000:])
         advanced = Cursor(
             last_read=pending["until"],
@@ -520,27 +568,49 @@ class QueueService:
         if state != "ok" or names is None:
             return Outcome(State.UNKNOWN, "recipient inbox listing is unreadable", exit_code=3)
         messages = []
+        poison = []
+        inspected = 0
         for name in names:
-            if len(messages) >= limit:
+            if inspected >= limit:
                 break
+            inspected += 1
             if "/" in name or not name.endswith(".json"):
-                return Outcome(State.UNKNOWN, "recipient inbox entry is malformed", exit_code=3)
+                poison.append({
+                    "entry": name,
+                    "reason": "recipient inbox entry is malformed",
+                })
+                continue
             index_raw, index_state = self.transport.read_file(prefix + name)
-            if index_state != "ok":
+            if index_state == "error":
                 return Outcome(State.UNKNOWN, "recipient index is unreadable", exit_code=3)
+            if index_state != "ok":
+                poison.append({
+                    "entry": name,
+                    "reason": "recipient index is absent after listing",
+                })
+                continue
             try:
                 index = json.loads(index_raw)
             except (TypeError, ValueError):
-                return Outcome(State.UNKNOWN, "recipient index is malformed", exit_code=3)
+                poison.append({"entry": name, "reason": "recipient index is malformed"})
+                continue
             if not isinstance(index, dict) or index.get("schema") != _INBOX_SCHEMA:
-                return Outcome(State.UNKNOWN, "recipient index has unknown schema", exit_code=3)
+                poison.append({
+                    "entry": name,
+                    "reason": "recipient index has unknown schema",
+                })
+                continue
             message_id = index.get("id")
             if (
                 index.get("workspace") != workspace
                 or index.get("recipient") != self.identity
                 or not isinstance(message_id, str)
             ):
-                return Outcome(State.UNKNOWN, "recipient index fields conflict", exit_code=3)
+                poison.append({
+                    "entry": name,
+                    "reason": "recipient index fields conflict",
+                })
+                continue
             receipt_path = self._receipt_path(workspace, message_id)
             _, receipt_state = self.transport.read_file(receipt_path)
             if receipt_state == "error":
@@ -548,14 +618,24 @@ class QueueService:
             if receipt_state == "ok":
                 continue
             body, body_state = self.transport.read_file(index.get("ptr"))
+            if body_state == "error":
+                return Outcome(State.UNKNOWN, "indexed message is unreadable", exit_code=3)
             document = parse_pointed_document(body) if body_state == "ok" else None
             if document is None or document.digest != index.get("sha256"):
-                return Outcome(State.UNKNOWN, "indexed message failed verification", exit_code=3)
+                poison.append({
+                    "entry": name,
+                    "reason": "indexed message failed verification",
+                })
+                continue
             messages.append({
                 "message_id": message_id,
                 "ptr": index["ptr"],
                 "body": body,
             })
-        if not messages:
+        if not messages and not poison:
             return Outcome(State.CLEAR, "bounded repair found no unreceipted messages")
-        return Outcome(State.DATA, f"{len(messages)} repair item(s)", {"messages": messages})
+        return Outcome(
+            State.DATA,
+            f"{len(messages)} repair item(s), {len(poison)} poison",
+            {"messages": messages, "poison": poison},
+        )

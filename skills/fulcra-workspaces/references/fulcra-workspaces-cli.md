@@ -57,6 +57,10 @@ workspaces complete <identity> <record-id> --result completed
 `DATA`, `CLEAR`, `UNKNOWN`, and `BACKLOG` are distinct. A pending local batch
 replays without another Bus query. Do not run a polling loop.
 
+`DATA` may include a `poison` list for malformed event, pointer, or receipt
+content. Those rows are loud and consumed so they cannot wedge future reads.
+Transport failures remain `UNKNOWN` and do not advance coverage.
+
 ## Bounded Repair
 
 Repair only one recipient index, with an explicit item bound:
@@ -66,6 +70,8 @@ workspaces repair <workspace> <identity> --limit 50
 ```
 
 This is the recovery path for `DURABLE_ONLY`; it is not part of every wake.
+Malformed entries are returned as bounded `poison` rows while healthy repair
+items continue; unreadable transport remains `UNKNOWN`.
 
 ## Continuity
 

@@ -96,6 +96,11 @@ A normal wake:
 
 Success is explicitly `DATA` or `CLEAR`. An unreadable authority, cursor, or
 record window is `UNKNOWN`, never `CLEAR`, and does not advance coverage.
+Malformed event content, a missing or invalid pointed document, or a malformed
+receipt is different: the queue returns `DATA` with a per-record `poison` row,
+marks that record seen, and continues delivering healthy events. Poison is
+visible and consumed so one permanently bad record cannot wedge the identity's
+cursor forever. A pointer or receipt transport read failure remains `UNKNOWN`.
 
 A read range is bounded by time and output size. A cursor older than that
 horizon returns `BACKLOG`. Explicit catch-up advances through finite windows;
@@ -122,7 +127,9 @@ operation lists only one recipient's durable inbox or message index, applies a
 positive item limit, and reconciles documents without receipts. It does not
 scan unrelated workspace files and does not run on every normal wake.
 
-An unreadable or malformed repair listing is `UNKNOWN`.
+An unreadable repair listing or entry read is `UNKNOWN`. A malformed entry is
+reported in the bounded result's `poison` list while repair continues with
+other entries; content corruption cannot hide healthy recovery work.
 
 ## Continuity
 

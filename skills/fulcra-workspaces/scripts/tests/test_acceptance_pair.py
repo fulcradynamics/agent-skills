@@ -152,9 +152,19 @@ def test_two_agent_coordination_acceptance(tmp_path):
     assert bob.read_queue("2026-08-14T10:35:00Z").state is State.UNKNOWN
     account.records_fail = False
 
+    account.rows.append({
+        "id": "record-poison",
+        "recorded_at": "2026-08-14T10:36:00Z",
+        "sources": ["alice"],
+        "note": '{"v":1,"workspace":"demo"}',
+    })
+    poisoned = bob.read_queue("2026-08-14T10:40:00Z")
+    assert poisoned.state is State.DATA
+    assert poisoned.data["poison"][0]["record_id"] == "record-poison"
+    assert bob.read_queue("2026-08-14T10:40:00Z").state is State.CLEAR
+
     legacy = Account()
     legacy.files["team/legacy/progress.md"] = "legacy"
     assert DoctorService(legacy, tmp_path).check(
         None, workspace="legacy"
     ).state is State.STORE_ONLY
-
