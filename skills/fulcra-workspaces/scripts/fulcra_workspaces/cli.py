@@ -12,9 +12,11 @@ from .authority import AuthorityStore
 from .continuity import ContinuityService
 from .delivery import DeliveryService
 from .doctor import DoctorService
+from .handoff import RoleHandoffService
 from .member import MemberService
 from .model import Outcome, State
 from .queue import QueueService
+from .roles import RoleService
 from .transfer import TransferService
 from .transport import FulcraTransport
 
@@ -101,6 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
     checkpoint.add_argument("workspace")
     checkpoint.add_argument("identity")
     checkpoint.add_argument("--snapshot-file", required=True)
+    checkpoint.add_argument("--role")
 
     resume = commands.add_parser("resume", help="load a bounded continuity brief")
     resume.add_argument("workspace")
@@ -108,6 +111,51 @@ def build_parser() -> argparse.ArgumentParser:
     resume.add_argument("--now", default=None)
     resume.add_argument("--max-age-seconds", type=int, default=86_400)
     resume.add_argument("--max-bytes", type=int, default=65_536)
+
+    role_define = commands.add_parser("role-define", help="define a portable role")
+    role_define.add_argument("workspace")
+    role_define.add_argument("role")
+    role_define.add_argument("--policy", choices=("exclusive", "shared"), required=True)
+    role_define.add_argument("--lease-seconds", type=int, required=True)
+    role_define.add_argument("--description", required=True)
+
+    role_claim = commands.add_parser("role-claim", help="claim or refresh a role lease")
+    role_claim.add_argument("workspace")
+    role_claim.add_argument("role")
+    role_claim.add_argument("identity")
+    role_claim.add_argument("--takeover", action="store_true")
+    role_claim.add_argument("--now", default=None)
+    role_claim.add_argument("--event-id")
+
+    role_release = commands.add_parser("role-release", help="release a role lease")
+    role_release.add_argument("workspace")
+    role_release.add_argument("role")
+    role_release.add_argument("identity")
+    role_release.add_argument("--now", default=None)
+    role_release.add_argument("--event-id")
+
+    role_status = commands.add_parser("role-status", help="fold portable role status")
+    role_status.add_argument("workspace")
+    role_status.add_argument("role")
+    role_status.add_argument("--now", default=None)
+
+    role_handoff = commands.add_parser(
+        "role-handoff", help="checkpoint a role before releasing it"
+    )
+    role_handoff.add_argument("workspace")
+    role_handoff.add_argument("role")
+    role_handoff.add_argument("identity")
+    role_handoff.add_argument("--snapshot-file", required=True)
+    role_handoff.add_argument("--now", default=None)
+    role_handoff.add_argument("--checkpoint-id")
+    role_handoff.add_argument("--release-event-id")
+
+    role_resume = commands.add_parser("role-resume", help="load a bounded role brief")
+    role_resume.add_argument("workspace")
+    role_resume.add_argument("role")
+    role_resume.add_argument("--now", default=None)
+    role_resume.add_argument("--max-age-seconds", type=int, default=86_400)
+    role_resume.add_argument("--max-bytes", type=int, default=65_536)
 
     transfer_send = commands.add_parser("transfer-send", help="send a verified Store payload")
     transfer_send.add_argument("workspace")
@@ -190,11 +238,46 @@ def run(argv: list[str] | None = None) -> Outcome:
         except (OSError, ValueError):
             return Outcome(State.UNKNOWN, "snapshot file is unreadable or invalid", exit_code=2)
         return ContinuityService(transport).checkpoint(
-            args.workspace, args.identity, snapshot
+            args.workspace, args.identity, snapshot, role=args.role
         )
     if args.command == "resume":
         return ContinuityService(transport).resume(
             args.workspace, args.identity, now=args.now or _now(),
+            max_age_seconds=args.max_age_seconds, max_bytes=args.max_bytes,
+        )
+    if args.command == "role-define":
+        return RoleService(transport, state_dir).define(
+            args.workspace, args.role, args.policy, args.lease_seconds,
+            args.description,
+        )
+    if args.command == "role-claim":
+        return RoleService(transport, state_dir).claim(
+            args.workspace, args.role, args.identity, now=args.now or _now(),
+            event_id=args.event_id, takeover=args.takeover,
+        )
+    if args.command == "role-release":
+        return RoleService(transport, state_dir).release(
+            args.workspace, args.role, args.identity, now=args.now or _now(),
+            event_id=args.event_id,
+        )
+    if args.command == "role-status":
+        return RoleService(transport, state_dir).status(
+            args.workspace, args.role, now=args.now or _now()
+        )
+    if args.command == "role-handoff":
+        try:
+            snapshot = json.loads(_read_text(args.snapshot_file))
+        except (OSError, ValueError):
+            return Outcome(State.UNKNOWN, "snapshot file is unreadable or invalid", exit_code=2)
+        roles = RoleService(transport, state_dir)
+        return RoleHandoffService(roles, ContinuityService(transport)).handoff(
+            args.workspace, args.role, args.identity, snapshot,
+            now=args.now or _now(), checkpoint_id=args.checkpoint_id,
+            release_event_id=args.release_event_id,
+        )
+    if args.command == "role-resume":
+        return ContinuityService(transport).resume_role(
+            args.workspace, args.role, now=args.now or _now(),
             max_age_seconds=args.max_age_seconds, max_bytes=args.max_bytes,
         )
     if args.command == "transfer-send":
@@ -225,4 +308,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

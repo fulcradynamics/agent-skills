@@ -4,9 +4,11 @@ from fulcra_workspaces.authority import AuthorityStore
 from fulcra_workspaces.continuity import ContinuityService
 from fulcra_workspaces.delivery import DeliveryService
 from fulcra_workspaces.doctor import DoctorService
+from fulcra_workspaces.handoff import RoleHandoffService
 from fulcra_workspaces.member import MemberService
 from fulcra_workspaces.model import State
 from fulcra_workspaces.queue import QueueService
+from fulcra_workspaces.roles import RoleService
 from fulcra_workspaces.transfer import TransferService
 
 
@@ -88,6 +90,16 @@ def test_two_agent_coordination_acceptance(tmp_path):
         timestamp="2026-08-14T10:00:00Z",
     ).state is State.DATA
 
+    roles = RoleService(account, tmp_path / "roles")
+    assert roles.define(
+        "demo", "reviewer", "exclusive", 3600, "Review plans"
+    ).state is State.DATA
+    assert roles.claim(
+        "demo", "reviewer", "alice", now="2026-08-14T10:02:00Z",
+        event_id="00000000-0000-0000-0000-000000000006",
+        session_nonce="alice-session",
+    ).state is State.DATA
+
     account.event_time = "2026-08-14T10:05:00Z"
     sent = DeliveryService(account, authority).send_message(
         "demo", "alice", "bob", "review-plan", "Please review the plan.",
@@ -130,6 +142,37 @@ def test_two_agent_coordination_acceptance(tmp_path):
         "demo", "bob", now="2026-08-14T10:20:00Z",
         max_age_seconds=3600, max_bytes=10_000,
     ).state is State.DATA
+
+    role_snapshot = {
+        "objective": "Review the bounded coordination demo",
+        "decisions": ["Keep the normal wake to one Bus read"],
+        "completed": ["Reviewed durable delivery"],
+        "next_actions": ["Review transfer receipts"],
+        "open_questions": [],
+        "pointers": [sent.data["ptr"]],
+    }
+    handoffs = RoleHandoffService(roles, continuity)
+    assert handoffs.handoff(
+        "demo", "reviewer", "alice", role_snapshot,
+        now="2026-08-14T10:16:00Z",
+        checkpoint_id="00000000-0000-0000-0000-000000000007",
+        release_event_id="00000000-0000-0000-0000-000000000008",
+        session_nonce="alice-session",
+    ).state is State.DATA
+    assert roles.claim(
+        "demo", "reviewer", "bob", now="2026-08-14T10:17:00Z",
+        event_id="00000000-0000-0000-0000-000000000009",
+        session_nonce="bob-session",
+    ).state is State.DATA
+    role_resume = continuity.resume_role(
+        "demo", "reviewer", now="2026-08-14T10:20:00Z",
+        max_age_seconds=3600, max_bytes=10_000,
+    )
+    assert role_resume.state is State.DATA
+    assert role_resume.data["checkpoint"]["identity"] == "alice"
+    assert roles.status(
+        "demo", "reviewer", now="2026-08-14T10:20:00Z"
+    ).data["holders"] == ["bob"]
 
     account.event_time = "2026-08-14T10:25:00Z"
     transfer = TransferService(account, authority).send(

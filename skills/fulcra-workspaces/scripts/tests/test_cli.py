@@ -18,7 +18,8 @@ def test_cli_help_names_the_bounded_coordination_surface():
     assert result.returncode == 0
     for command in (
         "setup", "join", "send", "queue", "complete", "repair",
-        "checkpoint", "resume", "transfer-send", "transfer-receive", "doctor",
+        "checkpoint", "resume", "role-define", "role-claim", "role-release",
+        "role-status", "role-handoff", "role-resume",
+        "transfer-send", "transfer-receive", "doctor",
     ):
         assert command in result.stdout
-
