@@ -116,9 +116,10 @@ workspaces role-resume <workspace> reviewer \
 workspaces role-release <workspace> reviewer <identity>
 ```
 
-`role-handoff` verifies the checkpoint before releasing the lease. Role status
-is an explicit bounded control-plane operation; normal `queue` reads do not
-scan roles.
+Role-bound checkpoints require the named identity and local session to hold a
+fresh lease. `role-handoff` verifies that precondition before writing anything,
+then verifies the checkpoint before releasing the lease. Role status is an
+explicit bounded control-plane operation; normal `queue` reads do not scan roles.
 
 ## File Transfer
 

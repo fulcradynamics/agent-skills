@@ -92,9 +92,12 @@ can race to claim an exclusive role. Workspaces detects the resulting
 contention when status folds the fresh leases; it does not claim to prevent the
 race. A release is another append-only event, not deletion.
 
-`role-handoff` writes and verifies the role checkpoint before releasing the
-lease. If release fails, the checkpoint remains durable and the lease remains
-held or unknown; the command never releases first and loses resume context.
+Role checkpoint publication first verifies that the named identity and local
+session hold a fresh lease. `role-handoff` then writes and verifies the role
+checkpoint before releasing the lease. If release fails after that precondition,
+the checkpoint remains durable and the lease remains held or unknown; the
+command never releases first and loses resume context. A non-holder or foreign
+session writes no checkpoint or role continuity projection.
 
 ## Efficiency
 

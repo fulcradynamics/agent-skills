@@ -220,6 +220,51 @@ class RoleService:
             self._remove_nonce(workspace, role, identity)
         return outcome
 
+    def verify_holder(
+        self,
+        workspace: str,
+        role: str,
+        identity: str,
+        *,
+        now: str,
+        session_nonce: str | None = None,
+    ) -> Outcome:
+        _, error = self._definition(workspace, role)
+        if error is not None:
+            return error
+        now_dt = _parse_time(now)
+        if now_dt is None or not _valid_name(identity):
+            return Outcome(State.UNKNOWN, "role holder fields are invalid", exit_code=2)
+        nonce = self._nonce(
+            workspace, role, identity, session_nonce, create=False
+        )
+        if nonce is None:
+            return Outcome(State.UNKNOWN, "local role nonce is unavailable", exit_code=3)
+        current, current_error = self._current(workspace, role, identity)
+        if current_error is not None:
+            return current_error
+        if (
+            current is None
+            or current["state"] != "held"
+            or _parse_time(current["expires_at"]) <= now_dt
+        ):
+            return Outcome(
+                State.UNKNOWN,
+                "identity does not hold a live role lease",
+                exit_code=3,
+            )
+        if current["session_nonce"] != nonce:
+            return Outcome(
+                State.UNKNOWN,
+                "live role lease belongs to another session",
+                exit_code=3,
+            )
+        return Outcome(
+            State.DATA,
+            "role holder verified",
+            {"identity": identity, "expires_at": current["expires_at"]},
+        )
+
     def status(self, workspace: str, role: str, *, now: str) -> Outcome:
         definition, error = self._definition(workspace, role)
         if error is not None:

@@ -152,8 +152,9 @@ stale leases may be adopted normally. Identity movement preserves the logical
 lease history while member profiles record changed machine or harness
 attribution.
 
-Use `role-handoff` to write and verify a role checkpoint before releasing the
-lease. The next holder uses `role-resume` to fetch the small verified
+Only the identity and local session holding a fresh lease may publish a
+role-bound checkpoint. Use `role-handoff` to verify that holder, then write and
+verify its role checkpoint before releasing the lease. The next holder uses `role-resume` to fetch the small verified
 projection and selected checkpoint, without scanning broad workspace state.
 Role operations are explicit control-plane reads and never add Store scans to
 the normal Bus wake.

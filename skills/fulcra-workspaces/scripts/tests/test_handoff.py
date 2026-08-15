@@ -48,7 +48,7 @@ class MemoryTransport:
 
 def services(transport, tmp_path):
     roles = RoleService(transport, tmp_path)
-    continuity = ContinuityService(transport)
+    continuity = ContinuityService(transport, role_service=roles)
     roles.define("demo", "reviewer", "exclusive", 3600, "Review work")
     roles.claim(
         "demo", "reviewer", "alice", now="2026-08-14T10:00:00Z",
@@ -101,9 +101,9 @@ def test_handoff_does_not_release_when_checkpoint_projection_fails(tmp_path):
     assert not any('"state":"released"' in body for body in transport.files.values())
 
 
-def test_handoff_keeps_checkpoint_when_release_session_conflicts(tmp_path):
+def test_handoff_rejects_session_conflict_before_checkpoint(tmp_path):
     transport = MemoryTransport()
-    roles, continuity, handoffs = services(transport, tmp_path)
+    roles, _, handoffs = services(transport, tmp_path)
 
     outcome = handoffs.handoff(
         "demo", "reviewer", "alice", SNAPSHOT,
@@ -111,8 +111,55 @@ def test_handoff_keeps_checkpoint_when_release_session_conflicts(tmp_path):
         release_event_id=UUID_3, session_nonce="session-b",
     )
 
-    assert outcome.state is State.DURABLE_ONLY
-    assert continuity.resume_role(
-        "demo", "reviewer", now="2026-08-14T10:31:00Z",
-        max_age_seconds=3600, max_bytes=10_000,
-    ).state is State.DATA
+    assert outcome.state is State.UNKNOWN
+    assert "team/demo/roles/reviewer/continuity/latest.json" not in transport.files
+    assert not any(
+        "/member/alice/continuity/" in path for path in transport.files
+    )
+    assert roles.status(
+        "demo", "reviewer", now="2026-08-14T10:31:00Z"
+    ).data["status"] == "HELD"
+
+
+def test_handoff_rejects_non_holder_before_publishing_role_continuity(tmp_path):
+    transport = MemoryTransport()
+    roles, _, handoffs = services(transport, tmp_path)
+
+    outcome = handoffs.handoff(
+        "demo", "reviewer", "bob", SNAPSHOT,
+        now="2026-08-14T10:30:00Z", checkpoint_id=UUID_2,
+        release_event_id=UUID_3, session_nonce="session-b",
+    )
+
+    assert outcome.state is State.UNKNOWN
+    assert "team/demo/roles/reviewer/continuity/latest.json" not in transport.files
+    assert not any(
+        "/member/bob/continuity/" in path for path in transport.files
+    )
+    assert roles.status(
+        "demo", "reviewer", now="2026-08-14T10:31:00Z"
+    ).data == {
+        "status": "HELD",
+        "policy": "exclusive",
+        "holders": ["alice"],
+    }
+
+
+def test_handoff_rejects_expired_holder_before_publishing_role_continuity(tmp_path):
+    transport = MemoryTransport()
+    roles, _, handoffs = services(transport, tmp_path)
+
+    outcome = handoffs.handoff(
+        "demo", "reviewer", "alice", SNAPSHOT,
+        now="2026-08-14T11:00:00Z", checkpoint_id=UUID_2,
+        release_event_id=UUID_3, session_nonce="session-a",
+    )
+
+    assert outcome.state is State.UNKNOWN
+    assert "team/demo/roles/reviewer/continuity/latest.json" not in transport.files
+    assert not any(
+        "/member/alice/continuity/" in path for path in transport.files
+    )
+    assert roles.status(
+        "demo", "reviewer", now="2026-08-14T11:00:00Z"
+    ).data["status"] == "VACANT"

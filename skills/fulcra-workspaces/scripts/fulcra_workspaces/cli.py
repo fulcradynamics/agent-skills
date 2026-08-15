@@ -237,7 +237,8 @@ def run(argv: list[str] | None = None) -> Outcome:
             snapshot = json.loads(_read_text(args.snapshot_file))
         except (OSError, ValueError):
             return Outcome(State.UNKNOWN, "snapshot file is unreadable or invalid", exit_code=2)
-        return ContinuityService(transport).checkpoint(
+        roles = RoleService(transport, state_dir) if args.role else None
+        return ContinuityService(transport, role_service=roles).checkpoint(
             args.workspace, args.identity, snapshot, role=args.role
         )
     if args.command == "resume":
@@ -270,7 +271,8 @@ def run(argv: list[str] | None = None) -> Outcome:
         except (OSError, ValueError):
             return Outcome(State.UNKNOWN, "snapshot file is unreadable or invalid", exit_code=2)
         roles = RoleService(transport, state_dir)
-        return RoleHandoffService(roles, ContinuityService(transport)).handoff(
+        continuity = ContinuityService(transport, role_service=roles)
+        return RoleHandoffService(roles, continuity).handoff(
             args.workspace, args.role, args.identity, snapshot,
             now=args.now or _now(), checkpoint_id=args.checkpoint_id,
             release_event_id=args.release_event_id,

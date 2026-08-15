@@ -76,8 +76,9 @@ def parse_checkpoint(raw: object) -> dict[str, Any] | None:
 
 
 class ContinuityService:
-    def __init__(self, transport: Any):
+    def __init__(self, transport: Any, *, role_service: Any | None = None):
         self.transport = transport
+        self.role_service = role_service
 
     def checkpoint(
         self,
@@ -88,22 +89,28 @@ class ContinuityService:
         checkpoint_id: str | None = None,
         timestamp: str | None = None,
         role: str | None = None,
+        role_session_nonce: str | None = None,
+        role_service: Any | None = None,
     ) -> Outcome:
         checkpoint_id = checkpoint_id or str(uuid.uuid4())
         timestamp = timestamp or _now()
         if role is not None:
-            from .roles import parse_role
-
-            role_raw, role_state = self.transport.read_file(
-                f"team/{workspace}/roles/{role}/definition.json"
+            verifier = role_service or self.role_service
+            if verifier is None:
+                return Outcome(
+                    State.UNKNOWN,
+                    "role lease verifier is unavailable",
+                    exit_code=3,
+                )
+            holder = verifier.verify_holder(
+                workspace,
+                role,
+                identity,
+                now=timestamp,
+                session_nonce=role_session_nonce,
             )
-            role_doc = parse_role(role_raw) if role_state == "ok" else None
-            if (
-                role_doc is None
-                or role_doc["workspace"] != workspace
-                or role_doc["role"] != role
-            ):
-                return Outcome(State.UNKNOWN, "role definition is unreadable", exit_code=3)
+            if holder.state is not State.DATA:
+                return holder
         doc = {
             "schema": _CHECKPOINT_SCHEMA,
             "id": checkpoint_id,

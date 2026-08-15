@@ -35,6 +35,17 @@ SNAPSHOT = {
 }
 
 
+def claimed_role(transport, tmp_path):
+    roles = RoleService(transport, tmp_path)
+    roles.define("demo", "reviewer", "exclusive", 3600, "Review work")
+    roles.claim(
+        "demo", "reviewer", "alice", now="2026-08-14T10:00:00Z",
+        event_id="00000000-0000-0000-0000-000000000009",
+        session_nonce="session-a",
+    )
+    return roles
+
+
 def test_checkpoints_are_append_only_and_latest_is_verified_projection():
     transport = MemoryTransport()
     service = ContinuityService(transport)
@@ -110,10 +121,8 @@ def test_resume_is_bounded_and_fails_closed_on_stale_malformed_or_oversized():
 
 def test_role_checkpoint_projects_one_bounded_resume_pointer(tmp_path):
     transport = MemoryTransport()
-    RoleService(transport, tmp_path).define(
-        "demo", "reviewer", "exclusive", 3600, "Review work"
-    )
-    service = ContinuityService(transport)
+    roles = claimed_role(transport, tmp_path)
+    service = ContinuityService(transport, role_service=roles)
 
     outcome = service.checkpoint(
         "demo", "alice", SNAPSHOT, role="reviewer",
@@ -131,12 +140,28 @@ def test_role_checkpoint_projects_one_bounded_resume_pointer(tmp_path):
     assert resumed.data["checkpoint"]["identity"] == "alice"
 
 
+def test_role_checkpoint_rejects_a_non_holder_before_writing(tmp_path):
+    transport = MemoryTransport()
+    roles = claimed_role(transport, tmp_path)
+    service = ContinuityService(transport, role_service=roles)
+
+    outcome = service.checkpoint(
+        "demo", "bob", SNAPSHOT, role="reviewer",
+        checkpoint_id="00000000-0000-0000-0000-000000000002",
+        timestamp="2026-08-14T10:30:00Z",
+    )
+
+    assert outcome.state is State.UNKNOWN
+    assert "team/demo/roles/reviewer/continuity/latest.json" not in transport.files
+    assert not any(
+        "/member/bob/continuity/" in path for path in transport.files
+    )
+
+
 def test_role_resume_fails_closed_on_conflicting_projection(tmp_path):
     transport = MemoryTransport()
-    RoleService(transport, tmp_path).define(
-        "demo", "reviewer", "exclusive", 3600, "Review work"
-    )
-    service = ContinuityService(transport)
+    roles = claimed_role(transport, tmp_path)
+    service = ContinuityService(transport, role_service=roles)
     service.checkpoint(
         "demo", "alice", SNAPSHOT, role="reviewer",
         checkpoint_id="00000000-0000-0000-0000-000000000001",
@@ -157,11 +182,9 @@ def test_role_resume_fails_closed_on_conflicting_projection(tmp_path):
 
 def test_failed_role_projection_keeps_the_checkpoint_durable(tmp_path):
     transport = MemoryTransport()
-    RoleService(transport, tmp_path).define(
-        "demo", "reviewer", "exclusive", 3600, "Review work"
-    )
+    roles = claimed_role(transport, tmp_path)
     transport.fail_path = "team/demo/roles/reviewer/continuity/latest.json"
-    service = ContinuityService(transport)
+    service = ContinuityService(transport, role_service=roles)
 
     outcome = service.checkpoint(
         "demo", "alice", SNAPSHOT, role="reviewer",

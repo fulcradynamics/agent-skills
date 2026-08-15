@@ -31,6 +31,8 @@ class RoleHandoffService:
             checkpoint_id=checkpoint_id,
             timestamp=now,
             role=role,
+            role_session_nonce=session_nonce,
+            role_service=self.roles,
         )
         if checkpoint.state is not State.DATA:
             return checkpoint

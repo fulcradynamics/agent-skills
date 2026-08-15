@@ -177,10 +177,11 @@ session. Machine or harness movement changes member attribution, not the
 logical identity's role history.
 
 A role checkpoint is an immutable member checkpoint plus a verified role
-continuity projection. `role-handoff` must write and verify that checkpoint
-before releasing the lease. `role-resume` reads the projection and selected
-checkpoint only, with freshness and byte limits; it does not scan member or
-workspace history.
+continuity projection. Publication requires a fresh lease held by the named
+identity and local session. `role-handoff` verifies that precondition before
+writing anything, then writes and verifies the checkpoint before releasing the
+lease. `role-resume` reads the projection and selected checkpoint only, with
+freshness and byte limits; it does not scan member or workspace history.
 
 ## File Transfer
 
