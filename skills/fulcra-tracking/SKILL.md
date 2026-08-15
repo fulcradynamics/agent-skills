@@ -1,10 +1,11 @@
 ---
 name: fulcra-tracking
-description: "Allows the user to record custom data annotations and agent visibility metrics, and generates simple HTML dashboards for visualization."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Allows the user to record custom data annotations and agent visibility metrics, and generates simple HTML dashboards for visualization. Use when the user wants to track custom data such as habits, moods, or metrics, record entries, or see a quick dashboard preview of tracked data."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "📊" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"📊\"}"
 ---
 
 # Fulcra Tracking & Dashboards
@@ -25,7 +26,7 @@ Before executing this skill, determine your current context:
 ## Workflow
 
 1.  **User Intent Discovery (Standalone Mode Only):** 
-    - Read the `references/fulcra-tracking-cli.md` file to understand the custom tracking CLI commands.
+    - Read the `references/fulcra-tracking-cli.md` file to understand the custom tracking CLI commands, and `references/fulcra-tracking-usecases.md` for example tracking setups.
     - Ask the user what kind of specific data, events, or outputs they want to track for their project or life.
     - Propose the Universal Agent Visibility Package if they want visibility into background agent work or team accomplishments.
 2.  **Data Modeling:** 

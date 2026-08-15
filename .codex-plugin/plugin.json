@@ -1,0 +1,15 @@
+{
+  "name": "fulcra-skills",
+  "version": "0.1.0",
+  "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent teams, preferences, and data ingest. Uses the Fulcra CLI (uvx fulcra-api).",
+  "author": {
+    "name": "Fulcra Dynamics",
+    "email": "support@fulcradynamics.com",
+    "url": "https://fulcradynamics.com"
+  },
+  "homepage": "https://github.com/fulcradynamics/agent-skills",
+  "repository": "https://github.com/fulcradynamics/agent-skills",
+  "license": "MIT",
+  "keywords": ["fulcra", "personal-data", "health", "tracking", "dashboard", "memory"],
+  "skills": "./skills/"
+}

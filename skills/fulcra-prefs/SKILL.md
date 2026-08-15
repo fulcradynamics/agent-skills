@@ -1,10 +1,11 @@
 ---
 name: fulcra-prefs
-description: "Load the user's cross-platform preferences at session start and capture new ones the moment they're expressed. Trigger when the user says 'remember that I…', 'from now on…', 'I always/never want…', corrects a preference you applied, or confirms a pattern you noticed — and at the start of any session where user preferences would change your behavior."
-homepage: "https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-prefs"
+description: "Load the user's cross-platform preferences at session start and capture new ones the moment they're expressed. Use at the start of any session where stored preferences would change your behavior, and whenever the user says 'remember that I…', 'from now on…', 'I always/never want…', corrects a preference you applied, or confirms a pattern you noticed."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "⚙️" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills/tree/main/skills/fulcra-prefs"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"⚙️\"}"
 ---
 
 # fulcra-prefs

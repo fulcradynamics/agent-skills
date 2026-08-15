@@ -1,0 +1,24 @@
+{
+  "name": "fulcra",
+  "owner": {
+    "name": "Fulcra Dynamics",
+    "email": "support@fulcradynamics.com",
+    "url": "https://fulcradynamics.com"
+  },
+  "metadata": {
+    "description": "Fulcra plugins for Codex: agent skills for working with your Fulcra data, plus an optional MCP connector.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "fulcra-skills",
+      "source": "./",
+      "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent teams, preferences, and data ingest. Uses the Fulcra CLI (uvx fulcra-api)."
+    },
+    {
+      "name": "fulcra-mcp",
+      "source": "./plugins/fulcra-mcp",
+      "description": "Connects your agent to the hosted Fulcra Context MCP server for direct data access. Recommended for restricted environments where the Fulcra CLI cannot run."
+    }
+  ]
+}

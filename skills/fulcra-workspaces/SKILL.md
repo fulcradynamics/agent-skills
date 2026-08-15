@@ -1,10 +1,11 @@
 ---
 name: fulcra-workspaces
-description: "Enable agents to collaborate using shared memory, team inboxes, and user artifacts via Fulcra's versioned file storage."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Enable agents to collaborate using shared memory, team inboxes, and user artifacts via Fulcra's versioned file storage. Use when multiple agents need to coordinate work, when joining or creating a shared workspace, or when sending, checking, or processing workspace inbox messages."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "🤝" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🤝\"}"
 ---
 
 # Fulcra Workspaces

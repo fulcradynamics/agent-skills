@@ -1,0 +1,5 @@
+{
+  "name": "fulcra-skills",
+  "version": "0.1.0",
+  "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent teams, preferences, and data ingest. Uses the Fulcra CLI (uvx fulcra-api)."
+}

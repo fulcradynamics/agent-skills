@@ -1,10 +1,11 @@
 ---
 name: fulcra-situational-awareness
-description: "Equips agents with the ability to proactively scan Fulcra for recent memory files, team inbox messages, and newly ingested data to maintain high context awareness."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Equips agents with the ability to proactively scan Fulcra for recent memory files, team inbox messages, and newly ingested data to maintain high context awareness. Use at session start or periodically during long sessions to check for recent memory changes, unread team inbox messages, and newly ingested data."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "📡" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"📡\"}"
 ---
 
 # Fulcra Situational Awareness

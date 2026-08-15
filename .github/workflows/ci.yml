@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  skill-lint:
+    name: Agent Skills spec lint (skillscheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # Gate on spec errors. Warnings (description phrasing, orphans) are a
+      # burn-down list; switch to --strict once they reach zero.
+      - name: Lint skills against the Agent Skills spec
+        run: uvx skillscheck==0.9.5 ./skills
+
+  spec-reference-validator:
+    name: Official Agent Skills reference validator (skills-ref)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # The agentskills.io reference implementation: strict YAML, allowed
+      # frontmatter fields only, name/description constraints, string-valued
+      # metadata. Guards against silent skill drops on strict parsers (pi).
+      - name: Validate every skill with the reference validator
+        run: |
+          fails=0
+          for d in skills/*/; do
+            uvx --from skills-ref agentskills validate "$d" || fails=1
+          done
+          exit $fails
+
+  manifest-validation:
+    name: Plugin manifest validation (Claude Code + Agent Plugins 1.0)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Validate Agent Plugins 1.0 manifests against official schemas
+        run: |
+          curl -sfL https://agent-plugins.org/schemas/1.0.0/plugin.schema.json -o /tmp/plugin.schema.json
+          curl -sfL https://agent-plugins.org/schemas/1.0.0/mcp.schema.json -o /tmp/mcp.schema.json
+          uvx check-jsonschema --schemafile /tmp/plugin.schema.json plugins/fulcra-mcp/plugin.json
+          uvx check-jsonschema --schemafile /tmp/mcp.schema.json plugins/fulcra-mcp/mcp.json
+      - name: Validate Claude Code marketplace and plugin manifests
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate .
+          claude plugin validate plugins/fulcra-mcp
+      - name: Antigravity manifest stays minimal (name + description only)
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          keys = set(json.load(open('plugin.json')).keys())
+          if keys != {'name', 'description'}:
+              print(f'root plugin.json must contain exactly name and description '
+                    f'(Antigravity schema is additionalProperties: false); found {sorted(keys)}')
+              sys.exit(1)
+          EOF
+
+  install-smoke:
+    name: Install smoke test (skills CLI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install into a clean project via npx skills, assert all skills land
+        run: |
+          expected=$(ls -d "$GITHUB_WORKSPACE"/skills/fulcra-* | wc -l)
+          mkdir /tmp/target && cd /tmp/target
+          npx -y skills add "$GITHUB_WORKSPACE" --agent claude-code --yes
+          count=$(ls -d .claude/skills/fulcra-* | wc -l)
+          echo "installed: $count of $expected skills"
+          test "$count" -eq "$expected"
+          test -f .claude/skills/fulcra-get-started/SKILL.md

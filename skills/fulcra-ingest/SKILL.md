@@ -1,10 +1,11 @@
 ---
 name: fulcra-ingest
-description: "Autonomously orchestrate the ingestion of 3rd-party data exports (e.g., Spotify, Netflix) from the Fulcra File Store into properly mapped Fulcra Annotations."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Autonomously orchestrate the ingestion of 3rd-party data exports (e.g., Spotify, Netflix) from the Fulcra File Store into properly mapped Fulcra Annotations. Use when third-party exports are waiting in the ingest/ folder of the Fulcra File Store or the user asks to import external data into Fulcra."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "📥" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"📥\"}"
 ---
 
 # Fulcra Ingest 

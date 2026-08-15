@@ -1,3 +1,13 @@
+---
+name: fulcra-connect
+description: "Connect an agent to Fulcra: install the fulcra-api CLI, authenticate on the user's behalf via the device-login flow, or fall back to the hosted MCP connector in restricted environments. Use when connecting to Fulcra for the first time, when credentials are missing or expired, or when another skill needs an authenticated Fulcra environment."
+license: "MIT"
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🔌\"}"
+---
+
 # Agents Get Started with Fulcra
 
 Fulcra gives agents a shared place to access and store real-world data, record what matters, coordinate work, and discover what's new on every loop. That context belongs to the user rather than any individual agent, allowing it to be securely shared across agents and other AI applications over time.
