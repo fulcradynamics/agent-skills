@@ -19,8 +19,14 @@ See [Installation](README.md#installation) — the marketplace (`claude plugin m
 ## Codex CLI
 
 ```bash
-codex plugin marketplace add fulcradynamics/agent-skills   # then: codex plugin add fulcra-skills@fulcra
-npx skills add fulcradynamics/agent-skills                 # or: plain skills into ~/.agents/skills/
+codex plugin marketplace add fulcradynamics/agent-skills
+codex plugin add fulcra-skills@fulcra
+```
+
+Alternatively, skip the plugin machinery and install the skills alone into `~/.agents/skills/`:
+
+```bash
+npx skills add fulcradynamics/agent-skills
 ```
 
 - Invoke as **`$fulcra-skills:fulcra-get-started`** — plugin-qualified with `$plugin:skill`, no slash form. An `@fulcra-skills` plugin mention also works — the model surfaces the whole skill set and routes from there.
@@ -37,8 +43,13 @@ npx skills add fulcradynamics/agent-skills                 # or: plain skills in
 ## Gemini CLI
 
 ```bash
-gemini extensions install https://github.com/fulcradynamics/agent-skills   # update: gemini extensions update fulcra-skills
-npx skills add fulcradynamics/agent-skills                                 # or: plain skills into ~/.agents/skills/
+gemini extensions install https://github.com/fulcradynamics/agent-skills
+```
+
+Update later with `gemini extensions update fulcra-skills`. Alternatively, skip the extension and install the skills alone into `~/.agents/skills/`, which Gemini reads natively:
+
+```bash
+npx skills add fulcradynamics/agent-skills
 ```
 
 - Skills are **model-invoked with a per-use confirmation** (no slash commands). Manage with `/skills list|enable|disable`.

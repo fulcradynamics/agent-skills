@@ -6,9 +6,17 @@ Install them once, and your agent will know what to do when you ask.
 
 ## Installation
 
+### Skills CLI (any agent)
+
+The [skills CLI](https://github.com/vercel-labs/skills) installs the skills on Claude Code, Codex, Cursor, OpenCode, Gemini CLI, and dozens of other agents:
+
+```bash
+npx skills add fulcradynamics/agent-skills
+```
+
 ### Claude Code plugin
 
-Add the Fulcra marketplace, then install the plugins you want:
+On Claude Code, the plugin marketplace is worth using over the skills CLI for two things the universal route can't do: it also carries the optional MCP connector plugin, and it gets native updates (`claude plugin update`). Add the marketplace, then install:
 
 ```bash
 claude plugin marketplace add fulcradynamics/agent-skills
@@ -25,14 +33,6 @@ claude plugin install fulcra-mcp@fulcra
 ```
 
 Or from within Claude Code, run `/plugin marketplace add fulcradynamics/agent-skills` and pick plugins from the `/plugin` menu.
-
-### Skills CLI
-
-Using the [skills CLI](https://github.com/vercel-labs/skills):
-
-```bash
-npx skills add fulcradynamics/agent-skills
-```
 
 ### Manual
 
