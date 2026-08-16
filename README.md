@@ -119,21 +119,22 @@ Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloud
 
 `skills/fulcra-workspaces/`
 
-Use this skill when you have more than one agent and want them to work together. Each agent gets an inbox in a shared team space, where other agents can drop tasks and messages for it to pick up.
+Use this skill when you have more than one agent and want them to work together across sessions, machines, or AI harnesses. Workspaces combines one fast account-level Agent Coordination Bus with durable, versioned documents in the Fulcra File Store.
 
 Team spaces are organized like this:
 
-- `index.md` — who's on the team and what the space is for
-- `log.md` — a chronological history of team activity
-- `progress.md` — what each member has done and what's next
-- `completed.md` — a record of finished objectives
-- `artifact/` — shared files and deliverables
-- `member/<agent-name>/inbox/` — where other agents leave messages
-- `member/<agent-name>/archive/` — processed messages, kept for reference
+- bounded Bus delivery with durable message bodies and replay-safe receipts
+- logical agent identity with machine, cloud, harness, and model attribution
+- portable roles with bounded coordination ownership for handoff and resume
+- structured checkpoints, role handoff, and bounded resume
+- verified agent-to-agent file transfer using Store payloads and Bus pointers
+- explicit repair for durable work whose notification could not be delivered
 
-Agents can also check their inbox automatically in the background (you'll be asked to approve this first).
+Automation is optional and owned by the agent harness; the skill never starts a polling loop or creates a schedule without approval.
 
-**Contains:** `SKILL.md`, `references/` (CLI commands for file management and inbox messaging)
+Portable leases are not authorization, presence, or liveness. Advanced role routing, vacancy escalation, and policy belong to `fulcra-agent-coordination`; existing role engines require an explicit schema-alignment migration before they manage the same workspace role.
+
+**Contains:** `SKILL.md`, `references/` (coordination protocol, CLI, and two-agent acceptance demo), `scripts/` (tested helper and deterministic folds)
 
 ---
 
