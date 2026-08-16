@@ -27,6 +27,21 @@ It does not add role-addressed Bus delivery, vacancy escalation, role-based
 review routing, presence, task state machines, or forge policy. Those remain
 advanced Coord features over the same Bus and File Store documents.
 
+## Boundary And Compatibility
+
+A portable lease records coordination ownership for handoff and resume. It is
+not authorization, an access-control grant, proof of process liveness, or a
+substitute for user approval. The finite expiry lets agents recover from an
+abandoned handoff without requiring the presence, heartbeat, routing, or
+escalation policies owned by the advanced layer.
+
+The portable schema is the compatibility target for advanced coordination,
+not a claim that every existing `fulcra-agent-coordination` release already
+uses the same paths or event model. Until that skill lands an explicit
+alignment migration, operators must not run its role engine and the Workspaces
+role engine against the same workspace role. Other advanced features may layer
+over Workspaces without treating their current role records as interchangeable.
+
 ## Durable Layout
 
 ```text
