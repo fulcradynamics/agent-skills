@@ -40,6 +40,19 @@ def test_skill_routes_normal_wakes_to_bus_and_store_scans_to_repair():
     assert "data-updates" not in text.split("### Legacy Store-only", 1)[0]
 
 
+def test_portable_roles_define_policy_and_compatibility_boundaries():
+    skill = SKILL.read_text()
+    protocol = PROTOCOL.read_text()
+    public_contract = "\n".join((skill, protocol))
+
+    assert "coordination ownership" in public_contract
+    assert "not authorization" in public_contract
+    assert "proof of process liveness" in public_contract
+    assert "must not run" in public_contract
+    assert "same workspace role" in public_contract
+    assert "alignment migration" in public_contract
+
+
 def test_public_docs_do_not_embed_private_team_topology():
     text = "\n".join(
         path.read_text()
