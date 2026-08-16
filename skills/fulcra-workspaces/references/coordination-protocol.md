@@ -163,6 +163,11 @@ events below `roles/<role>/leases/<identity>/history/`, then updates a verified
 `latest.json` projection containing the selected event pointer and digest.
 Release is an append-only transition, not deletion.
 
+The lease represents coordination ownership for checkpoint, handoff, and
+resume. It is not authorization, access control, user approval, presence, or
+proof of process liveness. Expiry permits recovery from an abandoned handoff;
+it does not introduce heartbeat or escalation policy into Workspaces.
+
 `role-status` performs one bounded holder listing and verifies each selected
 lease before folding it. A defined role with no fresh holders is `VACANT`; one
 or more permitted holders is `HELD`; multiple fresh holders of an exclusive
@@ -222,8 +227,15 @@ handoff, transfer, doctor, and a two-agent acceptance flow.
 
 The optional `fulcra-agent-coordination` skill may add typed task policy,
 presence, vacancy escalation, role-addressed routing, append-only exact-head
-review, obligation folds, and forge integration. It consumes this account Bus
-and must not create a competing channel.
+review, obligation folds, and forge integration. It may consume this account
+Bus and must not create a competing channel.
+
+The portable role schema is the alignment target for advanced coordination,
+not a claim that every existing `fulcra-agent-coordination` release already
+uses the same paths or event model. Until an explicit alignment migration
+lands, operators must not run its role engine and the Workspaces role engine
+against the same workspace role. Other advanced features may layer over
+Workspaces without treating current role records as interchangeable.
 
 Private rosters, live machine mappings, routing policy, model policy, fleet
 manifests, and cross-account mesh configuration do not belong in either public

@@ -125,12 +125,14 @@ Team spaces are organized like this:
 
 - bounded Bus delivery with durable message bodies and replay-safe receipts
 - logical agent identity with machine, cloud, harness, and model attribution
-- portable roles with shared or exclusive leases and deterministic status
+- portable roles with bounded coordination ownership for handoff and resume
 - structured checkpoints, role handoff, and bounded resume
 - verified agent-to-agent file transfer using Store payloads and Bus pointers
 - explicit repair for durable work whose notification could not be delivered
 
 Automation is optional and owned by the agent harness; the skill never starts a polling loop or creates a schedule without approval.
+
+Portable leases are not authorization, presence, or liveness. Advanced role routing, vacancy escalation, and policy belong to `fulcra-agent-coordination`; existing role engines require an explicit schema-alignment migration before they manage the same workspace role.
 
 **Contains:** `SKILL.md`, `references/` (coordination protocol, CLI, and two-agent acceptance demo), `scripts/` (tested helper and deterministic folds)
 

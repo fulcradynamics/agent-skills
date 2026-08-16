@@ -144,6 +144,12 @@ duration. Agents claim or refresh append-only per-identity leases, release by
 writing a release transition, and use the deterministic status fold instead of
 eyeballing timestamps.
 
+A portable lease records coordination ownership for checkpoint, handoff, and
+resume. It is not authorization, access control, user approval, presence, or
+proof of process liveness. Finite expiry only lets an agent recover from an
+abandoned handoff without importing heartbeat or escalation policy into the
+portable layer.
+
 Status is `HELD`, `VACANT`, or `CONTESTED`. `CONTESTED` means multiple fresh
 identities claimed an exclusive role. Because the File Store has no proven
 compare-and-swap, Workspaces detects that race but cannot prevent it. A live
@@ -154,10 +160,10 @@ attribution.
 
 Only the identity and local session holding a fresh lease may publish a
 role-bound checkpoint. Use `role-handoff` to verify that holder, then write and
-verify its role checkpoint before releasing the lease. The next holder uses `role-resume` to fetch the small verified
-projection and selected checkpoint, without scanning broad workspace state.
-Role operations are explicit control-plane reads and never add Store scans to
-the normal Bus wake.
+verify its role checkpoint before releasing the lease. The next holder uses
+`role-resume` to fetch the small verified projection and selected checkpoint,
+without scanning broad workspace state. Role operations are explicit
+control-plane reads and never add Store scans to the normal Bus wake.
 
 ## Artifacts And Transfers
 
@@ -184,6 +190,7 @@ the user's harness owns when an agent wakes.
 
 Install `fulcra-agent-coordination` when the workspace needs deterministic task
 state machines, presence, vacancy escalation, role-addressed routing,
-exact-head review, obligation folds, or forge integration. That layer consumes
-the same account Bus and durable Workspaces documents. Team-specific policy
-remains in Fulcra, not the public skill.
+exact-head review, obligation folds, or forge integration. That layer may
+consume the same account Bus and aligned durable Workspaces documents, but an
+existing role engine with a different schema is not automatically compatible.
+Team-specific policy remains in Fulcra, not the public skill.
