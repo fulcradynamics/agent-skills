@@ -30,7 +30,7 @@ Beyond straightforward 1:1 data transfer, you can perform advanced transformatio
 
 ## References
 - **`references/fulcra-ingest-cli.md`**: The primary reference. Contains the necessary CLI commands, exact batch ingestion syntax, JSON schemas, and **tagging instructions** required for bulk ingestion.
-- **`references/fulcra-ingest-mcp.md`**: Use as a first-class alternative for MCP schema, record, and text-file operations.
+- **`references/fulcra-ingest-mcp.md`**: Use as an alternative for MCP schema, record, and text-file operations.
 - **`references/fulcra-ingest-source-mapping.md`**: Outlines the structure and workflow for maintaining the `ingest/_meta/source_map.md` file, which tracks data lineage, prevents duplicate schemas, handles ingest versioning, and logs archived files.
 - **`scripts/generate_deterministic_id.py`**: A python script that takes arbitrary string arguments and returns a consistent, deterministic UUID. Use this to ensure idempotency across ingested records.
 

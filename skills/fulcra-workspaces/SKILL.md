@@ -130,7 +130,7 @@ To ensure agents never lose track of their team responsibilities across main ses
 
 ## Workflow
 
-To perform workspace operations, agents should prefer the Fulcra CLI, though Fulcra MCP tools are supported as a first-class alternative.
+To perform workspace operations, agents should prefer the Fulcra CLI, though Fulcra MCP tools are supported as an alternative.
 
 For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcradynamics/agent-skills/fulcra-get-started` skill, or read the full OKF specification directly:
 - [https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-get-started/references/fulcra-cli.md](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-get-started/references/fulcra-cli.md)

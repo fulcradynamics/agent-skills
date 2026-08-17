@@ -37,7 +37,7 @@ Check for any pending coordination messages left by other agents or users.
 
 ## Workflow
 
-To perform the awareness scan, use the Fulcra CLI as the primary interface, or use Fulcra MCP tools as a first-class alternative.
+To perform the awareness scan, use the Fulcra CLI as the primary interface, or use Fulcra MCP tools as an alternative.
 
 See the reference documentation for the exact commands needed to perform these checks efficiently:
 - Read `references/fulcra-situational-awareness-cli.md` for exact CLI execution steps.
