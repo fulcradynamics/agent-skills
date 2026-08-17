@@ -9,13 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .authority import AuthorityStore
-from .continuity import ContinuityService
-from .delivery import DeliveryService
-from .doctor import DoctorService
-from .member import MemberService
 from .model import Outcome, State
 from .queue import QueueService
-from .transfer import TransferService
 from .transport import FulcraTransport
 
 
@@ -67,64 +62,10 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("setup", help="provision or adopt the account Bus")
 
-    join = commands.add_parser("join", help="join and announce an identity")
-    join.add_argument("workspace")
-    join.add_argument("identity")
-    join.add_argument("--dimension", action="append", default=[])
-    join.add_argument("--at", default=None)
-
-    send = commands.add_parser("send", help="write, verify, and announce a message")
-    send.add_argument("workspace")
-    send.add_argument("--from", dest="sender", required=True)
-    send.add_argument("--to", dest="recipient", required=True)
-    send.add_argument("--slug", required=True)
-    send.add_argument("--body-file", required=True)
-    send.add_argument("--priority", default="P2")
-    send.add_argument("--kind", default="directive")
-    send.add_argument("--message-id")
-
     queue = commands.add_parser("queue", help="perform one bounded Bus read")
     queue.add_argument("identity")
     queue.add_argument("--now", default=None)
 
-    complete = commands.add_parser("complete", help="receipt one staged event")
-    complete.add_argument("identity")
-    complete.add_argument("record_id")
-    complete.add_argument("--result", default="completed")
-
-    repair = commands.add_parser("repair", help="inspect one recipient index")
-    repair.add_argument("workspace")
-    repair.add_argument("identity")
-    repair.add_argument("--limit", type=int, default=50)
-
-    checkpoint = commands.add_parser("checkpoint", help="save structured continuity")
-    checkpoint.add_argument("workspace")
-    checkpoint.add_argument("identity")
-    checkpoint.add_argument("--snapshot-file", required=True)
-
-    resume = commands.add_parser("resume", help="load a bounded continuity brief")
-    resume.add_argument("workspace")
-    resume.add_argument("identity")
-    resume.add_argument("--now", default=None)
-    resume.add_argument("--max-age-seconds", type=int, default=86_400)
-    resume.add_argument("--max-bytes", type=int, default=65_536)
-
-    transfer_send = commands.add_parser("transfer-send", help="send a verified Store payload")
-    transfer_send.add_argument("workspace")
-    transfer_send.add_argument("--from", dest="sender", required=True)
-    transfer_send.add_argument("--to", dest="recipient", required=True)
-    transfer_send.add_argument("--file", required=True)
-    transfer_send.add_argument("--media-type")
-    transfer_send.add_argument("--disclosure", required=True)
-    transfer_send.add_argument("--transfer-id")
-
-    transfer_receive = commands.add_parser("transfer-receive", help="verify and receipt a transfer")
-    transfer_receive.add_argument("manifest_ptr")
-    transfer_receive.add_argument("identity")
-
-    doctor = commands.add_parser("doctor", help="report Bus or legacy Store state")
-    doctor.add_argument("--workspace")
-    doctor.add_argument("--json", action="store_true")
     return parser
 
 
@@ -144,74 +85,11 @@ def run(argv: list[str] | None = None) -> Outcome:
         })
 
     authority = _authority_or_unknown(authority_store)
-    if args.command == "doctor":
-        return DoctorService(transport, state_dir).check(
-            authority, workspace=args.workspace
-        )
-    if authority is None:
-        return Outcome(State.UNKNOWN, "verified account Bus authority is unavailable", exit_code=3)
 
-    if args.command == "join":
-        try:
-            dimensions = _dimensions(args.dimension)
-        except ValueError as exc:
-            return Outcome(State.UNKNOWN, str(exc), exit_code=2)
-        timestamp = args.at or _now()
-        outcome = MemberService(transport, authority).join(
-            args.workspace, args.identity, dimensions, timestamp=timestamp
-        )
-        if outcome.state in (State.DATA, State.DURABLE_ONLY):
-            QueueService(transport, authority, args.identity, state_dir).seed_cursor(timestamp)
-        return outcome
-    if args.command == "send":
-        try:
-            body = _read_text(args.body_file)
-        except OSError:
-            return Outcome(State.UNKNOWN, "message body file is unreadable", exit_code=2)
-        return DeliveryService(transport, authority).send_message(
-            args.workspace, args.sender, args.recipient, args.slug, body,
-            args.priority, kind=args.kind, message_id=args.message_id,
-        )
     if args.command == "queue":
         return QueueService(
             transport, authority, args.identity, state_dir
         ).read_queue(args.now or _now())
-    if args.command == "complete":
-        return QueueService(
-            transport, authority, args.identity, state_dir
-        ).complete(args.record_id, args.result)
-    if args.command == "repair":
-        return QueueService(
-            transport, authority, args.identity, state_dir
-        ).repair(args.workspace, limit=args.limit)
-    if args.command == "checkpoint":
-        try:
-            snapshot = json.loads(_read_text(args.snapshot_file))
-        except (OSError, ValueError):
-            return Outcome(State.UNKNOWN, "snapshot file is unreadable or invalid", exit_code=2)
-        return ContinuityService(transport).checkpoint(
-            args.workspace, args.identity, snapshot
-        )
-    if args.command == "resume":
-        return ContinuityService(transport).resume(
-            args.workspace, args.identity, now=args.now or _now(),
-            max_age_seconds=args.max_age_seconds, max_bytes=args.max_bytes,
-        )
-    if args.command == "transfer-send":
-        try:
-            payload = Path(args.file).read_bytes()
-        except OSError:
-            return Outcome(State.UNKNOWN, "transfer file is unreadable", exit_code=2)
-        return TransferService(transport, authority).send(
-            args.workspace, args.sender, args.recipient, Path(args.file).name,
-            payload, media_type=args.media_type, disclosure=args.disclosure,
-            transfer_id=args.transfer_id,
-        )
-    if args.command == "transfer-receive":
-        return TransferService(transport, authority).receive(
-            args.manifest_ptr, args.identity
-        )
-    return Outcome(State.UNKNOWN, "unsupported command", exit_code=2)
 
 
 def main() -> int:
