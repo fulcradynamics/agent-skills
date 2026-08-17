@@ -29,8 +29,8 @@ Beyond straightforward 1:1 data transfer, you can perform advanced transformatio
 3. **Adjust Existing Data:** You can adjust the tag scheme, values, or anything about existing data. To do this, delete the old records via the CLI (individual record deletion is not yet exposed by MCP), update the schema (creating a new data type if necessary), and re-ingest the data. You must obtain explicit user confirmation before deleting records. You can re-import previously archived files from `ingest/_meta/archive/artifact/` to process the new tags. Before modifying or re-processing existing records, confirm the plan with the user.
 
 ## References
-- **`references/fulcra-ingest-mcp.md`**: Use for MCP schema, record, and text-file operations.
-- **`references/fulcra-ingest-cli.md`**: Contains the necessary CLI commands and exact batch ingestion syntax, JSON schemas, and **tagging instructions** required for bulk ingestion and unsupported MCP operations.
+- **`references/fulcra-ingest-cli.md`**: The primary reference. Contains the necessary CLI commands, exact batch ingestion syntax, JSON schemas, and **tagging instructions** required for bulk ingestion.
+- **`references/fulcra-ingest-mcp.md`**: Use as a first-class alternative for MCP schema, record, and text-file operations.
 - **`references/fulcra-ingest-source-mapping.md`**: Outlines the structure and workflow for maintaining the `ingest/_meta/source_map.md` file, which tracks data lineage, prevents duplicate schemas, handles ingest versioning, and logs archived files.
 - **`scripts/generate_deterministic_id.py`**: A python script that takes arbitrary string arguments and returns a consistent, deterministic UUID. Use this to ensure idempotency across ingested records.
 

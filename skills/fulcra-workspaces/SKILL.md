@@ -130,12 +130,12 @@ To ensure agents never lose track of their team responsibilities across main ses
 
 ## Workflow
 
-To perform workspace operations, agents must use Fulcra MCP tools when available, falling back to the Fulcra CLI for unsupported file transfers.
+To perform workspace operations, agents should prefer the Fulcra CLI, though Fulcra MCP tools are supported as a first-class alternative.
 
 For general information about the Fulcra File Store and the required Open Knowledge Format (OKF) standard, please refer to the main Fulcra CLI documentation found in the `fulcradynamics/agent-skills/fulcra-get-started` skill, or read the full OKF specification directly:
 - [https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-get-started/references/fulcra-cli.md](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/fulcra-get-started/references/fulcra-cli.md)
 - [https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 
 See the reference documentation for the exact commands needed to manage artifacts and inbox messaging:
-- Read `references/fulcra-workspaces-mcp.md` when Fulcra MCP tools are available.
-- Read `references/fulcra-workspaces-cli.md` for CLI fallback and binary/local artifact transfer.
+- Read `references/fulcra-workspaces-cli.md` for exact file management and primary CLI execution steps.
+- Read `references/fulcra-workspaces-mcp.md` if using the MCP alternative.
