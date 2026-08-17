@@ -48,7 +48,8 @@ If the user installs this skill specifically to clone an agent, orient your inte
 
 ## Workflow
 
-To perform memory backup and restoration operations, agents must interact with the Fulcra CLI.
+To perform memory backup and restoration operations, agents should use the Fulcra CLI as the primary interface, though Fulcra MCP tools are supported as an alternative.
 
 See the reference documentation for the exact commands needed to compress files, upload to Fulcra, and trigger restorations:
 - Read `references/fulcra-agent-backup-cli.md` for exact file management and CLI execution steps.
+- Read `references/fulcra-agent-backup-mcp.md` if using the MCP alternative.
