@@ -1,118 +1,34 @@
-# Fulcra Workspaces CLI
+# fulcra-workspaces CLI
 
-Run the helper from the skill directory:
+Two verbs. Everything else is downstream in the optional coordination layer.
 
-```bash
-skills/fulcra-workspaces/scripts/workspaces --help
-```
-
-The helper invokes `fulcra-api` with a 30-second timeout. Override the command,
-timeout, or local paths with `FULCRA_WORKSPACES_COMMAND`,
-`FULCRA_WORKSPACES_TIMEOUT`, `FULCRA_WORKSPACES_CONFIG`, and
-`FULCRA_WORKSPACES_STATE`. Outputs are one JSON object with a typed state.
-
-## Setup And Identity
-
-Provision or adopt the one account-level Bus:
+## setup
 
 ```bash
-workspaces setup
+scripts/workspaces setup
 ```
 
-Join a workspace and publish live attribution data to Fulcra. Values below are
-placeholders, not repository fixtures:
+Provisions the account channel, or adopts it if one already exists, and writes
+`_workspaces/bus-v1/authority.json` — the data type, api version, protocol
+number, and the `max_window_seconds` / `max_records` bounds every read honours.
+
+## queue
 
 ```bash
-workspaces join <workspace> <identity> \
-  --dimension machine=<machine> \
-  --dimension cloud=<cloud> \
-  --dimension harness=<harness> \
-  --dimension model=<model>
+scripts/workspaces queue --identity <name> --now <ISO-8601>
 ```
 
-A changed dimension creates append-only profile history and records
-`moved_from`. Joining seeds the local queue cursor at the join time.
+One bounded read of everything addressed to `<name>` since that identity's
+cursor. Seed the cursor explicitly the first time; guessing a start point either
+re-delivers history or silently skips it.
 
-## Send, Read, Complete
+### Exit codes
 
-Message content comes from a file so it does not enter process arguments:
+| code | state | meaning |
+|---|---|---|
+| 0 | `DATA` / `CLEAR` | read completed; events, or genuinely none |
+| 2 | `BACKLOG` | no usable cursor, or a window wider than one read can answer — re-seed |
+| 3 | `UNKNOWN` | the read could not be completed; retry, and do not treat it as empty |
 
-```bash
-workspaces send <workspace> --from <sender> --to <recipient> \
-  --slug <slug> --priority P1 --body-file /path/to/body.md
-```
-
-Run exactly one bounded Bus query:
-
-```bash
-workspaces queue <identity>
-```
-
-Process an event's pointed body, then receipt it using the returned record id:
-
-```bash
-workspaces complete <identity> <record-id> --result completed
-```
-
-`DATA`, `CLEAR`, `UNKNOWN`, and `BACKLOG` are distinct. A pending local batch
-replays without another Bus query. Do not run a polling loop.
-
-`DATA` may include a `poison` list for malformed event, pointer, or receipt
-content. Those rows are loud and consumed so they cannot wedge future reads.
-Transport failures remain `UNKNOWN` and do not advance coverage.
-
-## Bounded Repair
-
-Repair only one recipient index, with an explicit item bound:
-
-```bash
-workspaces repair <workspace> <identity> --limit 50
-```
-
-This is the recovery path for `DURABLE_ONLY`; it is not part of every wake.
-Malformed entries are returned as bounded `poison` rows while healthy repair
-items continue; unreadable transport remains `UNKNOWN`.
-
-## Continuity
-
-The snapshot file is JSON with `objective`, `decisions`, `completed`,
-`next_actions`, `open_questions`, and `pointers`:
-
-```bash
-workspaces checkpoint <workspace> <identity> --snapshot-file snapshot.json
-workspaces resume <workspace> <identity> \
-  --max-age-seconds 86400 --max-bytes 65536
-```
-
-## File Transfer
-
-Transfer only within the user's approved disclosure boundary:
-
-```bash
-workspaces transfer-send <workspace> --from <sender> --to <recipient> \
-  --file /path/to/artifact.bin --disclosure "<authorization and purpose>"
-workspaces transfer-receive <manifest-pointer> <recipient>
-```
-
-The sender uploads and verifies bytes, manifest, and recipient index before the
-Bus pointer. The receiver verifies size and SHA-256 before writing an accepted
-or rejected receipt.
-
-## Doctor
-
-```bash
-workspaces doctor --workspace <workspace> --json
-```
-
-Doctor distinguishes a ready account Bus from legacy `STORE_ONLY` and
-unreadable `UNKNOWN` state. It does not create a channel.
-
-## Authentication
-
-Authenticate `fulcra-api` separately. For device login, use its bounded
-two-step flow rather than leaving an agent blocked in an unbounded poll:
-
-```bash
-fulcra-api auth login --get-auth-url
-fulcra-api auth login --device-code <device-code> --poll-timeout=5
-```
+A non-zero exit is never "nothing to do". Scripts that collapse 2 and 3 into
+success reintroduce exactly the failure the bounded read exists to make visible.

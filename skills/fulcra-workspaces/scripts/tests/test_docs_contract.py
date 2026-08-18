@@ -29,8 +29,15 @@ def test_skill_routes_normal_wakes_to_bus_and_store_scans_to_repair():
 
     assert "one account-level" in text
     assert "normal wake" in text
-    assert "repair" in text
-    assert "data-updates" not in text.split("### Legacy Store-only", 1)[0]
+    # The optional layers must be NAMED as downstream — describing them is the
+    # point of the boundary section, so this checks for INVOCATIONS of the
+    # dropped verbs, not for the words. Forbidding the words would fail on the
+    # sentence that correctly says where they live.
+    assert "downstream" in text
+    for dropped_verb in ("complete", "repair", "checkpoint", "resume",
+                         "transfer-send", "transfer-receive", "doctor", "join", "send"):
+        assert f"workspaces {dropped_verb}" not in text, (
+            f"SKILL.md still invokes the dropped verb {dropped_verb!r}")
 
 
 def test_public_docs_do_not_embed_private_team_topology():

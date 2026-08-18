@@ -1,195 +1,87 @@
----
-name: fulcra-workspaces-coordination-protocol
-description: "Portable Bus and File Store contract for dependable agent coordination in Fulcra Workspaces."
----
-
 # Workspaces Coordination Protocol
 
-This protocol keeps the common path fast without making an event the only copy
-of important work.
+A shared, typed-record channel that lets an agent answer one question cheaply:
+**is there anything new addressed to me?**
 
-- The **Bus** is the event plane. It answers a normal wake with one bounded,
-  range-queryable read.
-- The **File Store** is the document plane. It owns messages, tasks,
-  checkpoints, transfer manifests, payloads, receipts, and evidence.
-- An event is a hint with a pointer. It is never the sole authority for an
-  obligation or result.
+Everything else stays where it already was. The Fulcra File Store remains the
+authoritative, human-readable home for messages, tasks and evidence. This
+protocol adds a bounded discovery plane over it, so that finding work does not
+require folding a file tree that grows without limit.
 
 ## Account Bus
 
-Every Fulcra account has at most one Workspaces coordination channel, shared by
-all workspaces in that account. Its canonical authority document is:
+One account-level annotation channel carries the events. Its identity lives at
+`_workspaces/bus-v1/authority.json`, which names the record data type, the API
+version, the protocol number, and the two bounds every read must honour:
+`max_window_seconds` and `max_records`.
 
-```text
-_workspaces/bus-v1/authority.json
-```
-
-The authority names a `MomentAnnotation/<uuid>` data type, API version, protocol
-version, and finite read limits. A verified local cache avoids a File Store
-read before every queue read. A new machine adopts the durable authority once
-and verifies the same channel rather than creating another one.
-
-The cache is revalidated after 12 consecutive `CLEAR` reads or six hours since
-its last successful validation, whichever comes first. Until revalidation
-succeeds, a wake returns `UNKNOWN`; a readable but superseded channel cannot
-continue reporting `CLEAR`. A different valid authority requires explicit
-adoption rather than a silent channel switch during a wake.
-
-Setup gives the channel a human-visible spec and base tag. Joining registers a
-logical identity and any declared machine/cloud, harness, and model dimensions.
-These are attribution metadata, not a security boundary.
+Resolve the channel from that document. Never hardcode a data type: an agent
+reading a stale channel id sees an empty inbox and cannot tell that it is
+looking in the wrong place.
 
 ## Event Envelope
 
-The record note is compact JSON compatible with the Coord schema-v1 envelope:
+An event is a compact JSON note, versioned so a reader can refuse anything it
+does not understand:
 
 ```json
-{
-  "v": 1,
-  "workspace": "research",
-  "to": "analyst",
-  "kind": "directive",
-  "pri": "P1",
-  "slug": "review-market-map",
-  "ptr": "team/research/message/01JABCDEF.md"
-}
+{"v": 1, "workspace": "ws", "to": "alice", "kind": "directive",
+ "pri": "P2", "slug": "review-the-plan", "ptr": "team/ws/tasks/review-the-plan.md"}
 ```
 
-Required fields:
+Every field is required and validated. `ptr` must point inside the workspace it
+claims. An envelope that fails any check is not "an event we can skip" — see the
+read rule below.
 
-- `v`: envelope version; readers do not guess unknown versions.
-- `workspace`: workspace name used to isolate traffic on the account channel.
-- `to`: one logical identity or `all`.
-- `kind`: `directive` or `response` in the portable Workspaces layer.
-- `pri`: `P0` through `P3`.
-- `slug`: stable human-readable join key.
-- `ptr`: durable document below `team/<workspace>/`.
+## The Durable-Pointer Rule
 
-The pointed document's OKF `type` distinguishes a message, task, checkpoint,
-transfer, or receipt. Roles and review events belong to the optional advanced
-coordination layer.
+**The event is a notification. The document it points at is the record.**
 
-## Durable-First Delivery
+An event may be replayed, deduplicated, or dropped without any of that touching
+the work. Consequently:
 
-An actionable send follows one order:
+- write the Store document **first**, then announce it
+- keep the document human-readable, under the workspace path a person would look in
+- never put the content in the event; put the pointer
 
-1. Generate a fresh document id and write the durable document.
-2. Read it back and verify the id, workspace, recipient, and SHA-256 digest.
-3. Emit the Bus event carrying its pointer.
-4. Report `DATA` only after both writes are proven.
+This is what keeps the channel cheap and the history legible at the same time.
 
-If the document write or verification fails, emit no event and return
-`UNKNOWN`. If the document is verified but the event write fails, preserve the
-document and return `DURABLE_ONLY`. Recovery may re-emit the same pointer; it
-must not create a second obligation.
+## One Bounded Read
 
-## Queue And Completion
+An agent holds a cursor and asks for the window since it last read:
 
-A normal wake:
+1. load the cursor; refuse if it is absent or unreadable
+2. refuse if the window is wider than `max_window_seconds` — that is history, not an inbox
+3. request at most `max_records`, starting slightly **before** the cursor so an
+   event written during the previous round trip cannot fall between two windows
+4. deduplicate by record id, keep what is addressed to this agent
+5. advance the cursor only after the read is recorded
 
-1. resolves the verified channel from local cache;
-2. makes one bounded record query from the local identity cursor;
-3. retains known events addressed to that identity or `all`;
-4. validates `workspace` against `ptr`;
-5. deduplicates by immutable record id;
-6. fetches only the selected pointer bodies.
-
-Success is explicitly `DATA` or `CLEAR`. An unreadable authority, cursor, or
-record window is `UNKNOWN`, never `CLEAR`, and does not advance coverage.
-Malformed event content, a missing or invalid pointed document, or a malformed
-receipt is different: the queue returns `DATA` with a per-record `poison` row,
-marks that record seen, and continues delivering healthy events. Poison is
-visible and consumed so one permanently bad record cannot wedge the identity's
-cursor forever. A pointer or receipt transport read failure remains `UNKNOWN`.
-
-A read range is bounded by time and output size. A cursor older than that
-horizon returns `BACKLOG`. Explicit catch-up advances through finite windows;
-one invocation never hides an unbounded polling loop.
-
-Queue reads stage work but do not mark it complete. Completion writes and
-verifies a per-recipient receipt before advancing the local cursor and its
-durable mirror. Replay checks the receipt and returns the prior result rather
-than repeating the side effect.
-
-The File Store has no proven compare-and-swap, so Workspaces cannot prevent the
-first same-identity race. Each session carries a nonce in its local cursor and
-durable cursor mirrors. Before advancing, it re-reads the mirror. A nonce or
-coverage mismatch records durable collision evidence and refuses advancement;
-every later advance checks that evidence, so both sessions surface the
-collision. Concurrent sessions should use distinct identities. Identity
-movement uses explicit takeover after the prior consumer stops; its history
-remains one logical history and the changed machine or harness is noted.
-
-## Repair
-
-The Bus is the hot path, not the only recovery path. An explicit `repair`
-operation lists only one recipient's durable inbox or message index, applies a
-positive item limit, and reconciles documents without receipts. It does not
-scan unrelated workspace files and does not run on every normal wake.
-
-An unreadable repair listing or entry read is `UNKNOWN`. A malformed entry is
-reported in the bounded result's `poison` list while repair continues with
-other entries; content corruption cannot hide healthy recovery work.
-
-## Continuity
-
-Each checkpoint is an append-only document containing:
-
-- objective;
-- decisions;
-- completed work;
-- next actions;
-- open questions;
-- relevant pointers;
-- timestamp and identity.
-
-The append-only checkpoint is canonical. A `latest` document is a projection
-written only after checkpoint read-back succeeds. `resume` verifies freshness
-and returns a bounded brief. An invalid projection is `UNKNOWN`, not permission
-to invent missing continuity.
-
-## File Transfer
-
-Agent-to-agent file transfer uses Store payloads and Bus pointers:
-
-1. Generate a fresh transfer id and confirm the payload path is absent.
-2. Upload bytes below
-   `team/<workspace>/transfer/<id>/payload/<filename>`.
-3. Write and verify a manifest containing sender, recipient, byte size, media
-   type, SHA-256 digest, disclosure note, and payload pointer.
-4. Emit a `directive` pointing to the manifest.
-5. The receiver downloads and verifies size and digest before writing an
-   append-only accepted or rejected receipt.
-
-The event never carries file bytes. A collision or read-back mismatch fails
-the transfer and requires a new id; it is not overwritten. Explicit user
-authorization and data ownership boundaries still apply.
+The cost is fixed, whatever the history has grown to.
 
 ## Outcome Vocabulary
 
-| State | Meaning |
-| --- | --- |
-| `DATA` | The bounded operation returned actionable items. |
-| `CLEAR` | A successful bounded read positively found no matching events. |
-| `DURABLE_ONLY` | The document is verified but its event was not delivered. |
-| `BACKLOG` | Coverage is older than the finite read horizon. |
-| `STORE_ONLY` | A legacy workspace has no verified account Bus. |
-| `UNKNOWN` | Transport, authority, cursor, parsing, or verification failed. |
+Four states, and the distinctions between them are the point:
 
-`STORE_ONLY` preserves compatibility but is not equivalent to the normal Bus
-path. It has higher read cost and pickup latency.
+| state | meaning |
+|---|---|
+| `DATA` | events were read, and they are all of them |
+| `CLEAR` | the window was read and held nothing |
+| `BACKLOG` | more than one bounded read can answer, or no usable cursor — re-seed |
+| `UNKNOWN` | the read could not be completed |
+
+**`UNKNOWN` is never `CLEAR`.** An unreadable window, one unparseable record, a
+cursor that could not be persisted — each makes the whole read UNKNOWN. A
+partial answer that renders as a complete one is the failure this protocol
+exists to prevent: an empty inbox and a broken inbox must never look the same.
 
 ## Advanced Coordination Boundary
 
-The portable Workspaces layer owns setup, identity declaration, durable-first
-delivery, queue/receipt/repair, continuity, transfer, doctor, and a two-agent
-acceptance flow.
+This protocol is deliberately the substrate and nothing more: channel, envelope,
+bounded read, pointer rule.
 
-The optional `fulcra-agent-coordination` skill may add typed task policy,
-presence, role leases, append-only exact-head review, obligation folds, and
-forge integration. It consumes this account Bus and must not create a competing
-channel.
-
-Private rosters, live machine mappings, routing policy, model policy, fleet
-manifests, and cross-account mesh configuration do not belong in either public
-repository.
+Richer coordination — typed task state machines, presence, role leases,
+review gates, receipts, repair, continuity checkpoints, file transfer — is an
+optional layer built **on** these primitives, and it lives downstream rather
+than here. Each such piece is a candidate to graduate into this repository only
+once its failure class shows up for someone other than its author.
