@@ -22,7 +22,6 @@ from typing import Any
 
 from .jsonutil import compact_json
 from .model import Authority, Cursor, Outcome, State, parse_event
-from .pointer import parse_pointed_document
 
 #: Re-read slightly before the cursor so an event written during the previous
 #: read's round trip cannot fall between two windows. Duplicates are removed by
@@ -162,10 +161,11 @@ class QueueService:
         if rows is None:
             return Outcome(State.UNKNOWN, "record window is unreadable", exit_code=3)
 
-        seen = set(cursor.seen)
+        seen_order: list[str] = list(cursor.seen)
+        seen = set(seen_order)
         events: list[dict[str, Any]] = []
         for row in sorted(rows, key=lambda r: str(r.get("recorded_at") or "")):
-            record_id = row.get("record_id")
+            record_id = row.get("id")
             event = parse_event(row.get("note"))
             if event is None or not isinstance(record_id, str) or not record_id:
                 # One unreadable row poisons the window: it may be addressed to
@@ -178,19 +178,22 @@ class QueueService:
             if record_id in seen:
                 continue
             seen.add(record_id)
+            seen_order.append(record_id)
             if event.to != self.identity:
                 continue          # addressed elsewhere; counted as seen
-            pointed = parse_pointed_document(event.ptr)
             events.append({
                 "id": record_id,
                 "kind": event.kind,
                 "pointer": event.ptr,
-                "document": pointed.document_id if pointed else None,
             })
 
         advanced = Cursor(
             last_read=now,
-            seen=tuple(sorted(seen))[-self.authority.max_records:],
+            # Keep the MOST RECENTLY OBSERVED ids. Sorting here would discard by
+            # lexical value, so a fresh low-sorting id could be dropped and then
+            # re-delivered by the next overlap window — the exact guarantee the
+            # overlap exists to provide.
+            seen=tuple(seen_order[-self.authority.max_records:]),
             session_nonce=self.session_nonce,
         )
         if not _write_local(self.local_cursor_path, _cursor_json(advanced)):

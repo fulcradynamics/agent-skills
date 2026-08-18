@@ -53,8 +53,11 @@ Store, not in an event.
 # provision or adopt the account channel
 scripts/workspaces setup
 
+# set where this identity starts reading (once)
+scripts/workspaces seed --identity alice --at 2026-01-01T00:00:00Z
+
 # one bounded read for this identity
-scripts/workspaces queue --identity alice --now 2026-01-01T00:00:00Z
+scripts/workspaces queue --identity alice
 ```
 
 `queue` returns `DATA`, `CLEAR`, `BACKLOG`, or `UNKNOWN` — and exits non-zero for

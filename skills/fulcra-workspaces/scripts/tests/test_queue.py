@@ -37,7 +37,7 @@ class FakeTransport:
 
 def event(record_id, *, to="alice", kind="directive", ptr="team/ws/p.md", at="2026-01-01T00:00:10Z"):
     return {
-        "record_id": record_id,
+        "id": record_id,
         "recorded_at": at,
         "note": json.dumps({
             "v": 1, "workspace": "ws", "to": to, "kind": kind,
@@ -106,7 +106,7 @@ def test_an_UNREADABLE_window_is_UNKNOWN_never_CLEAR(tmp_path):
 def test_ONE_unparseable_row_poisons_the_whole_window(tmp_path):
     """It may be addressed to us and we cannot tell, so 'everything else' is
     not the answer — a shorter list that looks complete is the failure."""
-    q = svc(tmp_path, [event("r1"), {"record_id": "bad", "note": "not json"}])
+    q = svc(tmp_path, [event("r1"), {"id": "bad", "note": "not json"}])
     q.seed_cursor("2026-01-01T00:00:00Z")
     out = q.read_queue("2026-01-01T00:01:00Z")
     assert out.state is State.UNKNOWN
@@ -166,3 +166,65 @@ def test_a_cursor_that_cannot_be_PERSISTED_does_not_claim_the_read(tmp_path):
 
 def test_seed_refuses_an_invalid_start_time(tmp_path):
     assert svc(tmp_path, []).seed_cursor("nonsense") is False
+
+
+# --- the contract the fake must not be allowed to drift from -----------------
+
+def test_the_queue_consumes_the_REAL_transport_row_shape(tmp_path):
+    """codex-reviewer, r1 P1, and the most important test in this file.
+
+    The queue read `record_id`; the real transport emits `id`. Every valid row
+    from production therefore poisoned the window and returned UNKNOWN — and the
+    suite was green throughout, because the fake in this file emitted the field
+    the queue wanted rather than the field the transport produces. The test
+    encoded my assumption and then confirmed it.
+
+    So this one does not use the fake at all: it drives the REAL FulcraTransport
+    over a stubbed subprocess, and feeds whatever that produces to the queue.
+    If the two ever disagree again, this fails.
+    """
+    import json as _json
+    import subprocess as _subprocess
+    from fulcra_workspaces.transport import FulcraTransport
+
+    note = _json.dumps({
+        "v": 1, "workspace": "ws", "to": "alice", "kind": "directive",
+        "pri": "P2", "slug": "s", "ptr": "team/ws/p.md",
+    })
+    line = _json.dumps({
+        "id": "r1", "recorded_at": "2026-01-01T00:00:10Z",
+        "sources": ["bob"], "note": note,
+    })
+
+    def runner(argv, *, timeout, input_text=None):
+        return _subprocess.CompletedProcess([], 0, line + "\n", "")
+
+    real_rows = FulcraTransport(runner=runner, timeout=7).records(
+        AUTHORITY.data_type, "2026-01-01T00:00:00Z",
+        "2026-01-01T00:01:00Z", max_records=AUTHORITY.max_records)
+
+    class Replay:
+        def records(self, *a, **k):
+            return real_rows
+
+    q = QueueService(Replay(), AUTHORITY, "alice", tmp_path)
+    q.seed_cursor("2026-01-01T00:00:00Z")
+    out = q.read_queue("2026-01-01T00:01:00Z")
+
+    assert out.state is State.DATA, (
+        f"a valid row from the REAL transport did not read as data: {out.message}")
+    assert [e["id"] for e in out.data["events"]] == ["r1"]
+
+
+def test_seen_ids_are_retained_by_RECENCY_not_lexical_value(tmp_path):
+    """codex-reviewer, r1 P2. Truncating a sorted set drops by lexical value, so
+    a freshly delivered low-sorting id is discarded and then re-delivered by the
+    next overlap window — defeating the guarantee the overlap exists to give."""
+    small = Authority(**{**AUTHORITY.__dict__, "max_records": 2})
+    q = QueueService(FakeTransport([event("zzz"), event("aaa")]), small, "alice", tmp_path)
+    q.seed_cursor("2026-01-01T00:00:00Z")
+    assert q.read_queue("2026-01-01T00:01:00Z").state is State.DATA
+
+    # Both are inside the overlap on the next read; neither may come back.
+    assert q.read_queue("2026-01-01T00:01:30Z").state is State.CLEAR, (
+        "a delivered id was evicted by lexical truncation and re-delivered")

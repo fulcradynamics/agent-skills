@@ -63,8 +63,13 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("setup", help="provision or adopt the account Bus")
 
     queue = commands.add_parser("queue", help="perform one bounded Bus read")
-    queue.add_argument("identity")
+    queue.add_argument("--identity", required=True)
     queue.add_argument("--now", default=None)
+
+    seed = commands.add_parser(
+        "seed", help="set this identity's cursor start point (required once)")
+    seed.add_argument("--identity", required=True)
+    seed.add_argument("--at", required=True)
 
     return parser
 
@@ -85,6 +90,24 @@ def run(argv: list[str] | None = None) -> Outcome:
         })
 
     authority = _authority_or_unknown(authority_store)
+    if authority is None:
+        # Fail closed. Without the authority we do not know the channel or the
+        # read bounds, so we cannot distinguish "nothing addressed to me" from
+        # "looking in the wrong place" — and BACKLOG would claim we could.
+        return Outcome(
+            State.UNKNOWN,
+            "account Bus authority is missing or unreadable; run setup",
+            exit_code=3,
+        )
+
+    if args.command == "seed":
+        ok = QueueService(
+            transport, authority, args.identity, state_dir
+        ).seed_cursor(args.at)
+        if not ok:
+            return Outcome(
+                State.UNKNOWN, "cursor could not be seeded", exit_code=3)
+        return Outcome(State.DATA, "cursor seeded", {"at": args.at})
 
     if args.command == "queue":
         return QueueService(

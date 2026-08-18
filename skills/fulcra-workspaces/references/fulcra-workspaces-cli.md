@@ -1,6 +1,6 @@
 # fulcra-workspaces CLI
 
-Two verbs. Everything else is downstream in the optional coordination layer.
+Three verbs. Everything else is downstream in the optional coordination layer.
 
 ## setup
 
@@ -11,6 +11,15 @@ scripts/workspaces setup
 Provisions the account channel, or adopts it if one already exists, and writes
 `_workspaces/bus-v1/authority.json` — the data type, api version, protocol
 number, and the `max_window_seconds` / `max_records` bounds every read honours.
+
+## seed
+
+```bash
+scripts/workspaces seed --identity <name> --at <ISO-8601>
+```
+
+Sets where this identity starts reading. Required once before the first
+`queue`; guessing a start point either re-delivers history or silently skips it.
 
 ## queue
 
