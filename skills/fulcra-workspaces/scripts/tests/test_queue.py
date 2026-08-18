@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from fulcra_workspaces.authority import render_authority
+from fulcra_workspaces.authority import parse_authority, render_authority
 from fulcra_workspaces.model import Authority, State
 from fulcra_workspaces.queue import QueueService
 
@@ -256,7 +256,18 @@ def test_a_STALE_local_authority_can_never_report_CLEAR(tmp_path):
     module did to itself: the reduction deleted the periodic durable
     revalidation, so after a rotation the client queried the old data type and
     reported CLEAR indefinitely. A rotated channel is not an empty one."""
-    rotated = Authority(**{**AUTHORITY.__dict__, "data_type": "Workspace/ROTATED"})
+    # A VALID authority that differs — not a malformed one. codex-reviewer, r3:
+    # my first cut used "Workspace/ROTATED", which parse_authority REJECTS, so
+    # the test proved malformed-document handling and an implementation that
+    # trusted every well-formed mismatch would have passed it. I had fixed the
+    # shared fixture for this exact reason in the same commit and then built its
+    # neighbour the same broken way.
+    rotated = Authority(**{
+        **AUTHORITY.__dict__,
+        "data_type": "MomentAnnotation/8a1d4e02-71c3-4f96-b5e8-0d3a9c6f2e14",
+    })
+    assert parse_authority(render_authority(rotated)) == rotated, (
+        "the rotated fixture is not a document production would accept")
     transport = FakeTransport([], durable=rotated)
     q = QueueService(transport, AUTHORITY, "alice", tmp_path)
     q.seed_cursor("2026-01-01T00:00:00Z")
