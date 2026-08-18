@@ -8,14 +8,21 @@ inbox and an unreadable inbox must be distinguishable at every failure.
 import json
 from pathlib import Path
 
+import pytest
+
+from fulcra_workspaces.authority import render_authority
 from fulcra_workspaces.model import Authority, State
 from fulcra_workspaces.queue import QueueService
 
+# A REAL authority: one the production parser accepts. The previous fixture
+# ("Workspace/abc", base_tag "ws") could not survive render -> parse, and nobody
+# noticed because no test had ever round-tripped it. Same shape as the r1
+# record_id/id bug — a fixture that describes the code's author, not the system.
 AUTHORITY = Authority(
-    data_type="Workspace/abc",
+    data_type="MomentAnnotation/3f2b1c44-9d0e-4a71-8b6f-2c5d7e8a1b09",
     api_version="v1alpha1",
     protocol=1,
-    base_tag="ws",
+    base_tag="7c9e6a15-2d84-4b3f-9a01-6e5b8d4c2f37",
     max_window_seconds=3600,
     max_records=50,
 )
@@ -26,13 +33,24 @@ class FakeTransport:
     one that matters: the real client cannot distinguish empty from failed, so
     it returns None and the caller must not guess."""
 
-    def __init__(self, rows):
+    def __init__(self, rows, durable=None, durable_state="ok"):
         self.rows = rows
         self.calls = 0
+        self.durable_reads = 0
+        # Serialized by the REAL renderer. A fake that hand-writes the document
+        # it is about to be asked to parse tests the test, not the code.
+        self.durable = render_authority(durable if durable is not None else AUTHORITY)
+        self.durable_state = durable_state
 
     def records(self, data_type, since, until, max_records=None):
         self.calls += 1
         return self.rows
+
+    def read_file(self, path):
+        self.durable_reads += 1
+        if self.durable_state != "ok":
+            return None, self.durable_state
+        return self.durable, "ok"
 
 
 def event(record_id, *, to="alice", kind="directive", ptr="team/ws/p.md", at="2026-01-01T00:00:10Z"):
@@ -203,11 +221,11 @@ def test_the_queue_consumes_the_REAL_transport_row_shape(tmp_path):
         AUTHORITY.data_type, "2026-01-01T00:00:00Z",
         "2026-01-01T00:01:00Z", max_records=AUTHORITY.max_records)
 
-    class Replay:
+    class Replay(FakeTransport):
         def records(self, *a, **k):
             return real_rows
 
-    q = QueueService(Replay(), AUTHORITY, "alice", tmp_path)
+    q = QueueService(Replay([]), AUTHORITY, "alice", tmp_path)
     q.seed_cursor("2026-01-01T00:00:00Z")
     out = q.read_queue("2026-01-01T00:01:00Z")
 
@@ -221,10 +239,74 @@ def test_seen_ids_are_retained_by_RECENCY_not_lexical_value(tmp_path):
     a freshly delivered low-sorting id is discarded and then re-delivered by the
     next overlap window — defeating the guarantee the overlap exists to give."""
     small = Authority(**{**AUTHORITY.__dict__, "max_records": 2})
-    q = QueueService(FakeTransport([event("zzz"), event("aaa")]), small, "alice", tmp_path)
+    q = QueueService(
+        FakeTransport([event("zzz"), event("aaa")], durable=small),
+        small, "alice", tmp_path)
     q.seed_cursor("2026-01-01T00:00:00Z")
     assert q.read_queue("2026-01-01T00:01:00Z").state is State.DATA
 
     # Both are inside the overlap on the next read; neither may come back.
     assert q.read_queue("2026-01-01T00:01:30Z").state is State.CLEAR, (
         "a delivered id was evicted by lexical truncation and re-delivered")
+
+
+def test_a_STALE_local_authority_can_never_report_CLEAR(tmp_path):
+    """codex-reviewer, r2 P1. Core Rule 4 says an agent pointed at a stale
+    channel sees an empty inbox and cannot tell. That is exactly what this
+    module did to itself: the reduction deleted the periodic durable
+    revalidation, so after a rotation the client queried the old data type and
+    reported CLEAR indefinitely. A rotated channel is not an empty one."""
+    rotated = Authority(**{**AUTHORITY.__dict__, "data_type": "Workspace/ROTATED"})
+    transport = FakeTransport([], durable=rotated)
+    q = QueueService(transport, AUTHORITY, "alice", tmp_path)
+    q.seed_cursor("2026-01-01T00:00:00Z")
+
+    out = q.read_queue("2026-01-01T00:01:00Z")
+
+    assert out.state is State.UNKNOWN, (
+        f"a client on a stale channel reported {out.state.value}, not UNKNOWN")
+    assert out.exit_code == 3
+    assert transport.durable_reads == 1, "the durable authority was never read"
+
+
+def test_an_unreadable_durable_authority_is_UNKNOWN_not_CLEAR(tmp_path):
+    """Failing to READ the authority is not evidence that the channel is
+    current. Same family: absence of a confirmation is not a confirmation."""
+    transport = FakeTransport([], durable_state="error")
+    q = QueueService(transport, AUTHORITY, "alice", tmp_path)
+    q.seed_cursor("2026-01-01T00:00:00Z")
+
+    out = q.read_queue("2026-01-01T00:01:00Z")
+
+    assert out.state is State.UNKNOWN and out.exit_code == 3
+
+
+def test_a_run_of_CLEAR_reads_reschedules_the_channel_confirmation(tmp_path):
+    """A quiet inbox is the observation a rotated channel produces, so a run of
+    clear reads is precisely when the channel must be re-confirmed — not
+    trusted because nothing has arrived."""
+    transport = FakeTransport([])
+    q = QueueService(transport, AUTHORITY, "alice", tmp_path)
+    q.seed_cursor("2026-01-01T00:00:00Z")
+
+    for minute in range(1, 15):
+        out = q.read_queue(f"2026-01-01T00:{minute:02d}:00Z")
+        assert out.state is State.CLEAR, out.message
+
+    assert transport.durable_reads >= 2, (
+        "the channel was confirmed once and then trusted through 14 clear "
+        f"reads (durable_reads={transport.durable_reads})")
+
+
+def test_an_identity_can_never_write_its_cursor_outside_the_state_root(tmp_path):
+    """codex-reviewer, r2 P1 — and this bug is one I INTRODUCED fixing r1.
+    Making --identity a public CLI argument added an unvalidated string that is
+    joined straight onto the state root; `../escaped` seeded a cursor outside
+    it. The recipient grammar already existed and I did not reuse it."""
+    root = tmp_path / "state"
+    for hostile in ("../escaped", "/tmp/absolute", "a/b", ".."):
+        with pytest.raises(ValueError):
+            QueueService(FakeTransport([]), AUTHORITY, hostile, root)
+
+    assert not (tmp_path / "escaped").exists()
+    assert list(tmp_path.iterdir()) == [] or root.exists()

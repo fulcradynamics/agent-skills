@@ -20,14 +20,23 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from .authority import AUTHORITY_PATH, parse_authority
 from .jsonutil import compact_json
-from .model import Authority, Cursor, Outcome, State, parse_event
+from .model import Authority, Cursor, Outcome, State, is_valid_name, parse_event
 
 #: Re-read slightly before the cursor so an event written during the previous
 #: read's round trip cannot fall between two windows. Duplicates are removed by
 #: id; a gap could not be.
 _OVERLAP_SECONDS = 120
 _CURSOR_SCHEMA = "fulcra.workspaces-cursor.v1"
+
+#: A rotated channel is invisible from the client side: the old data type keeps
+#: answering, and it answers EMPTY. So a local authority is re-checked against
+#: the durable one on a bounded schedule — whichever of these comes first.
+#: Without it, Core Rule 4 ("an agent pointed at a stale channel sees an empty
+#: inbox and cannot tell") describes this module instead of warning about it.
+_AUTHORITY_CLEAR_LIMIT = 12
+_AUTHORITY_MAX_AGE = timedelta(hours=6)
 
 
 def _parse_time(value: object) -> datetime | None:
@@ -62,6 +71,8 @@ def _cursor_json(cursor: Cursor) -> str:
         "last_read": cursor.last_read,
         "seen": list(cursor.seen),
         "session_nonce": cursor.session_nonce,
+        "authority_validated_at": cursor.authority_validated_at,
+        "consecutive_clear": cursor.consecutive_clear,
     })
 
 
@@ -81,10 +92,20 @@ def _parse_cursor(raw: object) -> Cursor | None:
     seen = payload.get("seen")
     if not isinstance(seen, list) or not all(isinstance(s, str) for s in seen):
         return None
+    consecutive_clear = payload.get("consecutive_clear", 0)
+    if not isinstance(consecutive_clear, int) or consecutive_clear < 0:
+        return None
+    # An absent validation stamp is not an error — it reads as "never
+    # validated", which makes the next read revalidate rather than trust.
+    validated_at = payload.get("authority_validated_at") or ""
+    if not isinstance(validated_at, str):
+        return None
     return Cursor(
         last_read=last_read,
         seen=tuple(seen),
         session_nonce=str(payload.get("session_nonce") or ""),
+        authority_validated_at=validated_at,
+        consecutive_clear=consecutive_clear,
     )
 
 
@@ -99,6 +120,11 @@ class QueueService:
         state_dir: Path,
         session_nonce: str | None = None,
     ):
+        if not is_valid_name(identity):
+            # The identity is a path segment AND the address events are matched
+            # against. Refusing here makes the unsafe state unrepresentable
+            # rather than validated at each of the places it is used.
+            raise ValueError("identity is not a valid protocol name")
         self.transport = transport
         self.authority = authority
         self.identity = identity
@@ -115,6 +141,37 @@ class QueueService:
             self.local_cursor_path,
             _cursor_json(Cursor(last_read=at, session_nonce=self.session_nonce)),
         )
+
+    def _revalidate_authority(self, cursor: Cursor, now_dt: datetime) -> Cursor | None:
+        """Re-check the local channel against the durable authority, on a
+        schedule. ``None`` means the channel could not be CONFIRMED — which is
+        UNKNOWN, never CLEAR, because an unconfirmed channel and an empty one
+        are the same observation from here."""
+        validated_dt = _parse_time(cursor.authority_validated_at)
+        due = (
+            cursor.consecutive_clear >= _AUTHORITY_CLEAR_LIMIT - 1
+            or validated_dt is None
+            or now_dt - validated_dt >= _AUTHORITY_MAX_AGE
+        )
+        if not due:
+            return cursor
+        raw, state = self.transport.read_file(AUTHORITY_PATH)
+        if state != "ok" or parse_authority(raw) != self.authority:
+            return None
+        refreshed = Cursor(
+            last_read=cursor.last_read,
+            seen=cursor.seen,
+            session_nonce=self.session_nonce,
+            authority_validated_at=_render_time(now_dt),
+            consecutive_clear=0,
+        )
+        # Persisting the stamp is an optimisation — it only defers the next
+        # confirmation. If the write fails, say nothing about the channel: it
+        # WAS confirmed, and reporting that as "could not confirm" would name a
+        # conclusion where we have an observation. The read continues, and the
+        # cursor write at the end is the one place persistence is reported.
+        _write_local(self.local_cursor_path, _cursor_json(refreshed))
+        return refreshed
 
     def _load_cursor(self) -> Cursor | None:
         try:
@@ -149,6 +206,15 @@ class QueueService:
                 "cursor is outside the bounded read horizon; re-seed",
                 {"last_read": cursor.last_read, "now": now},
                 2,
+            )
+
+        cursor = self._revalidate_authority(cursor, now_dt)
+        if cursor is None:
+            return Outcome(
+                State.UNKNOWN,
+                "the channel in use could not be confirmed against the durable "
+                "authority; a rotated channel answers EMPTY, not an error",
+                exit_code=3,
             )
 
         since = _render_time(cursor_dt - timedelta(seconds=_OVERLAP_SECONDS))
@@ -195,6 +261,11 @@ class QueueService:
             # overlap exists to provide.
             seen=tuple(seen_order[-self.authority.max_records:]),
             session_nonce=self.session_nonce,
+            authority_validated_at=cursor.authority_validated_at,
+            # A run of clear reads is the signature of a rotated channel, so it
+            # is also what schedules the next confirmation. Any delivery proves
+            # the channel is live and resets the count.
+            consecutive_clear=cursor.consecutive_clear + 1 if not events else 0,
         )
         if not _write_local(self.local_cursor_path, _cursor_json(advanced)):
             # Coverage is a fact about what this process READ. If we cannot

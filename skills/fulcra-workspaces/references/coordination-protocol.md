@@ -52,12 +52,25 @@ An agent holds a cursor and asks for the window since it last read:
 
 1. load the cursor; refuse if it is absent or unreadable
 2. refuse if the window is wider than `max_window_seconds` — that is history, not an inbox
-3. request at most `max_records`, starting slightly **before** the cursor so an
-   event written during the previous round trip cannot fall between two windows
-4. deduplicate by record id, keep what is addressed to this agent
-5. advance the cursor only after the read is recorded
+3. read that one window, starting slightly **before** the cursor so an event
+   written during the previous round trip cannot fall between two windows
+4. refuse the window if it holds more than `max_records` — see below
+5. deduplicate by record id, keep what is addressed to this agent
+6. advance the cursor only after the read is recorded
 
-The cost is fixed, whatever the history has grown to.
+**One operation, whatever the history has grown to.** The bound is the *time
+window*, and it is the honest one: the read surface takes a data type and a time
+range, and offers no server-side record limit. So `max_records` cannot be a
+request parameter, and this protocol does not claim it is.
+
+`max_records` is a **rejection tripwire**, not a limit: a window holding more
+than that many records is refused whole and reported UNKNOWN. It is never
+truncated to fit, because a truncated window is a partial answer that looks
+complete — the one failure this protocol exists to prevent. A client that keeps
+tripping it should narrow its wake interval, not raise the number.
+
+The consequence worth stating plainly: operation count is fixed, but bytes and
+memory for a single window are bounded only by how much was written into it.
 
 ## Outcome Vocabulary
 

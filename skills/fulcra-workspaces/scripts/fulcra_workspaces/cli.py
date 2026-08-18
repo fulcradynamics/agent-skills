@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .authority import AuthorityStore
-from .model import Outcome, State
+from .model import Outcome, State, is_valid_name
 from .queue import QueueService
 from .transport import FulcraTransport
 
@@ -88,6 +88,17 @@ def run(argv: list[str] | None = None) -> Outcome:
             "data_type": authority.data_type,
             "protocol": authority.protocol,
         })
+
+    # Argument validity is a fact about the INVOCATION, not the environment, so
+    # it is decided before anything is resolved. Behind the authority gate this
+    # check never ran on a host that had not been set up. The identity names a
+    # state directory; an unchecked one writes wherever it points.
+    if not is_valid_name(getattr(args, "identity", None)):
+        return Outcome(
+            State.UNKNOWN,
+            "identity is not a valid protocol name",
+            exit_code=3,
+        )
 
     authority = _authority_or_unknown(authority_store)
     if authority is None:

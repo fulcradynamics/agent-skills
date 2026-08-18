@@ -47,3 +47,16 @@ def test_a_first_read_has_a_documented_way_to_SEED(monkeypatch):
     result = _run("seed", "--identity", "alice", "--at", "2026-01-01T00:00:00Z")
     assert "unrecognized arguments" not in result.stderr, result.stderr
     assert "invalid choice" not in result.stderr, result.stderr
+
+
+def test_the_CLI_refuses_a_traversing_identity_rather_than_tracebacking():
+    """codex-reviewer, r2 P1. `--identity` is a public argument that becomes a
+    path segment; `../escaped` wrote a cursor outside the state root. The
+    service now refuses to be constructed at all, and the CLI must turn that
+    into an OUTCOME the operator can read, not a stack trace."""
+    for hostile in ("../escaped", "/tmp/absolute", "a/b"):
+        result = _run("seed", "--identity", hostile,
+                      "--at", "2026-01-01T00:00:00Z")
+        assert "Traceback" not in result.stderr, result.stderr
+        assert result.returncode != 0, f"{hostile} was accepted"
+        assert "identity" in result.stdout, result.stdout

@@ -64,6 +64,15 @@ class FulcraTransport:
         *,
         max_records: int,
     ) -> list[dict[str, Any]] | None:
+        """One read of one time window.
+
+        ``max_records`` is a REJECTION TRIPWIRE, not a request limit: the read
+        surface takes a data type and a time range and exposes no server-side
+        cap, so an over-full window is refused whole (``None`` -> UNKNOWN)
+        rather than truncated. Truncating would hand back a partial window that
+        looks complete. Operation count is fixed; response bytes are bounded by
+        the window, not by ``max_records``.
+        """
         cp = self._run(["get-records", data_type, since, until])
         if cp is None or cp.returncode != 0:
             return None

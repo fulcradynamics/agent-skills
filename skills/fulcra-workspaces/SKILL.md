@@ -31,7 +31,9 @@ workspace, and `references/fulcra-workspaces-cli.md` for exact commands.
    UNKNOWN. An empty inbox and a broken inbox must not look the same.
 4. **Resolve the channel, never hardcode it.** The authority document names the
    data type and the read bounds. An agent pointed at a stale channel sees an
-   empty inbox and cannot tell it is looking in the wrong place.
+   empty inbox and cannot tell it is looking in the wrong place — so the client
+   re-confirms its channel against the authority on a bounded schedule, and
+   after a run of clear reads, which is the signature a rotation produces.
 
 ## Workspace Layout
 

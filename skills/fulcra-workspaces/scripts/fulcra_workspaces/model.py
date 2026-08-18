@@ -14,6 +14,16 @@ _KINDS = frozenset(("directive", "response"))
 _PRIORITIES = frozenset(("P0", "P1", "P2", "P3"))
 
 
+def is_valid_name(value: object) -> bool:
+    """The protocol's name grammar — workspaces, recipients, identities.
+
+    Anything that becomes a path segment, or is compared against ``event.to``,
+    must pass this. The grammar admits no ``/``, no ``..`` and no leading
+    separator, so a name can never redirect a write outside its own root.
+    """
+    return isinstance(value, str) and _NAME.fullmatch(value) is not None
+
+
 class State(str, Enum):
     DATA = "DATA"
     CLEAR = "CLEAR"
