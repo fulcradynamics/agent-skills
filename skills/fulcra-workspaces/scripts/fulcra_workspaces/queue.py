@@ -165,8 +165,9 @@ class QueueService:
         seen = set(cursor.seen)
         events: list[dict[str, Any]] = []
         for row in sorted(rows, key=lambda r: str(r.get("recorded_at") or "")):
-            event = parse_event(row)
-            if event is None:
+            record_id = row.get("record_id")
+            event = parse_event(row.get("note"))
+            if event is None or not isinstance(record_id, str) or not record_id:
                 # One unreadable row poisons the window: it may be addressed to
                 # us and we cannot tell, so "everything else" is not the answer.
                 return Outcome(
@@ -174,14 +175,16 @@ class QueueService:
                     "a record in the window could not be parsed",
                     exit_code=3,
                 )
-            if event.record_id in seen:
+            if record_id in seen:
                 continue
-            seen.add(event.record_id)
-            pointed = parse_pointed_document(event.pointer)
+            seen.add(record_id)
+            if event.to != self.identity:
+                continue          # addressed elsewhere; counted as seen
+            pointed = parse_pointed_document(event.ptr)
             events.append({
-                "id": event.record_id,
+                "id": record_id,
                 "kind": event.kind,
-                "pointer": event.pointer,
+                "pointer": event.ptr,
                 "document": pointed.document_id if pointed else None,
             })
 
