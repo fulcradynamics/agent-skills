@@ -56,7 +56,7 @@ Within a team's directory, the following OKF structure is used:
 - Keep the `index.md` and `log.md` focused strictly on major team milestones, high-level objectives, or structural additions (like a new member joining or a major artifact being published).
 
 ### Checking for Team File Changes
-To stay aware of recent team activity across many files and subdirectories without exhaustively listing them all, agents can use the Fulcra API's `data-updates` command (e.g., `uv tool run fulcra-api data-updates "1 day"`). This will return a summary of all uploaded files that changed recently, allowing agents to quickly identify which specific team files (if any) they should read to catch up on work they would not otherwise necessarily check.
+To stay aware of recent team activity across many files and subdirectories without exhaustively listing them all, agents can use the Fulcra API's `data-updates` command (e.g., `uvx fulcra-api data-updates "1 day"`). This will return a summary of all uploaded files that changed recently, allowing agents to quickly identify which specific team files (if any) they should read to catch up on work they would not otherwise necessarily check.
 
 ### The Inbox Lifecycle
 
