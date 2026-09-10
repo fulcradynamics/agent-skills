@@ -92,21 +92,34 @@ uv tool run fulcra-api file delete "team/<team_name>/member/<your_agent_name>/in
 
 Agents can update shared files to track the team's high-level progress and completed objectives. Ensure all markdown files contain OKF YAML frontmatter, and that `log.md` and `index.md` are updated when appropriate.
 
+These flows update existing shared files. Download to a fresh local directory before editing. If a download fails, stop without creating or uploading a replacement: an authentication, permission, network or service error does not establish that a path is absent. Initialize a new file separately only after independently establishing that the path is new. Preserve existing content, avoid adding the same entry again, and upload only changed content.
+
+After writing a file, read it back from the same Fulcra account and check that its contents match the user's requested update before reporting it saved.
+
 **Step A: Updating Team Progress**
 To update the `progress.md` file (which stores what the team members have recently done and what they plan to do next):
 ```bash
-# 1. Download the current progress file
-uv tool run fulcra-api file download "team/<team_name>/progress.md" /tmp/team_progress.md || touch /tmp/team_progress.md
+# 1. Download the existing progress file; any failure stops this update
+progress_dir=$(mktemp -d)
+progress_file="$progress_dir/progress.md"
+if ! uv tool run fulcra-api file download "team/<team_name>/progress.md" "$progress_file"; then
+  printf '%s\n' 'Download failed; do not create or upload a replacement.' >&2
+  exit 1
+fi
+cp "$progress_file" "$progress_dir/original.md"
 
-# 2. Edit /tmp/team_progress.md locally to reflect the latest plans and recent work. 
-# Make sure it has OKF frontmatter:
-# ---
-# type: Progress Report
-# title: Team Progress
-# ---
+# 2. Edit "$progress_file" locally, preserving existing content and OKF frontmatter.
+# Merge the latest plans and work only if they are not already recorded.
 
-# 3. Upload the updated file back to Fulcra
-uv tool run fulcra-api file upload /tmp/team_progress.md "team/<team_name>/progress.md"
+# 3. Upload changed content and verify the same remote path before reporting success
+if ! cmp -s "$progress_dir/original.md" "$progress_file"; then
+  uv tool run fulcra-api file upload "$progress_file" "team/<team_name>/progress.md" || exit 1
+  uv tool run fulcra-api file download "team/<team_name>/progress.md" "$progress_dir/readback.md" || exit 1
+  if ! cmp -s "$progress_file" "$progress_dir/readback.md"; then
+    printf '%s\n' 'Readback differs; the update is not verified.' >&2
+    exit 1
+  fi
+fi
 
 # 4. Also append an update entry to log.md
 DATE=$(date -u +"%Y-%m-%d")
@@ -118,14 +131,28 @@ echo "* **Update**: <agent_name> updated team progress." >> /tmp/log_update.md
 **Step B: Recording Completed Objectives**
 To add a newly completed high-level objective to `completed.md` (which should generally only grow):
 ```bash
-# 1. Download the current completed file
-uv tool run fulcra-api file download "team/<team_name>/completed.md" /tmp/team_completed.md || touch /tmp/team_completed.md
+# 1. Download the existing completed file; any failure stops this update
+completed_dir=$(mktemp -d)
+completed_file="$completed_dir/completed.md"
+if ! uv tool run fulcra-api file download "team/<team_name>/completed.md" "$completed_file"; then
+  printf '%s\n' 'Download failed; do not create or upload a replacement.' >&2
+  exit 1
+fi
 
-# 2. Append the new objective (ensure OKF frontmatter exists at the top of the file)
-echo "- [$(date +%Y-%m-%d)] <Objective summary>" >> /tmp/team_completed.md
+# 2. Preserve existing content and append only when this exact entry is absent
+objective_entry="- [$(date +%Y-%m-%d)] <Objective summary>"
+if ! grep -Fqx -- "$objective_entry" "$completed_file"; then
+  printf '%s\n' "$objective_entry" >> "$completed_file"
 
-# 3. Upload the updated file back to Fulcra
-uv tool run fulcra-api file upload /tmp/team_completed.md "team/<team_name>/completed.md"
+  # 3. Upload and verify before reporting the objective recorded
+  uv tool run fulcra-api file upload "$completed_file" "team/<team_name>/completed.md" || exit 1
+  uv tool run fulcra-api file download "team/<team_name>/completed.md" "$completed_dir/readback.md" || exit 1
+  if ! cmp -s "$completed_file" "$completed_dir/readback.md"; then
+    printf '%s\n' 'Readback differs; the update is not verified.' >&2
+    exit 1
+  fi
+fi
+
 ```
 
 **Step C: Syncing Team and Member Roles & Progress**
