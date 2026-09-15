@@ -1,3 +1,12 @@
+---
+name: fulcra-connect
+description: "Connects an agent to Fulcra through the CLI two-step login or the MCP connector, and recovers from a network-restricted shell."
+homepage: "https://github.com/fulcradynamics/agent-skills"
+license: "MIT"
+user-invocable: true
+metadata: { "openclaw": { "emoji": "🔌" } }
+---
+
 # Agents Get Started with Fulcra
 
 Fulcra gives agents a shared place to access and store real-world data, record what matters, coordinate work, and discover what's new on every loop. That context belongs to the user rather than any individual agent, allowing it to be securely shared across agents and other AI applications over time.
