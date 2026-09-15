@@ -25,7 +25,7 @@ Agents can collaborate and share memory using a shared `workspace/<workspace-nam
 Before creating a new workspace, you MUST always check if a workspace with that name already exists by listing the `workspace/` directory or checking for a `workspace/<workspace-name>/role.md` file. Do not accidentally overwrite or recreate an existing workspace structure. If the workspace already exists, simply join it.
 
 ### Joining a Workspace (or Solo Workspace)
-When joining a workspace, do not assume your role. You MUST explicitly ask the user to confirm or clarify what your specific role, duties, and identity will be. Once the user clarifies your role, document it in `workspace/<workspace-name>/member/<agent-name>/role.md`. Establishing this identity is valuable even if you are the only agent, as it provides a foundation that can scale if other agents join later.
+When joining a workspace, do not assume your role. If the user has already told you your role, duties, or identity, use what they gave you and ask only to confirm or fill in what is missing; otherwise you MUST explicitly ask the user to clarify what your specific role, duties, and identity will be. Once the role is settled, document it in `workspace/<workspace-name>/member/<agent-name>/role.md`. Establishing this identity is valuable even if you are the only agent, as it provides a foundation that can scale if other agents join later.
 
 After joining, the setup of a member inbox and background checking habit is **completely optional**:
 - Explain to the user that teamwork and communication can be kept going autonomously by creating a member inbox (`workspace/<workspace-name>/member/<agent-name>/inbox/`) and setting up a habit to regularly check it.
