@@ -1,19 +1,13 @@
-# Fulcra CLI Authentication
+# Fulcra CLI authentication
 
-Use the `auth login` subcommand to authenticate to Fulcra on behalf of a user.
+Check `uvx --from fulcra-api@latest fulcra user-info` first. Reuse an authenticated session for the intended user.
 
-1. Request a web auth URL and device code:
-   ```bash
-   uvx fulcra-api auth login --get-auth-url
-   ```
-   This will output a URL for the user to visit, a web auth code, and a device code.
-2. Present the URL and web auth code to the user and ask them to complete the web flow.
-3. Once the user confirms they have authorized the application, retrieve the access token using the device code:
-   ```bash
-   uvx fulcra-api auth login --device-code <device code>
-   ```
+If login is needed:
 
-Credentials will be persisted to `~/.config/fulcra/credentials.json` and the CLI will refresh tokens automatically.
+1. Run `uvx --from fulcra-api@latest fulcra auth login --get-auth-url`.
+2. Show the returned URL and web auth code to the user so they can complete browser authentication.
+3. Complete login with `uvx --from fulcra-api@latest fulcra auth login --device-code <device-code>` and verify the account with `user-info`.
 
-> **⚠️ Network Restriction Troubleshooting**
-> If the login command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network. Inform the user that the CLI method cannot be used in this environment, and advise them they will need to use an MCP connector.
+The CLI persists credentials and refreshes tokens automatically. Keep the device code within the login flow.
+
+If a command fails, use its error to distinguish authentication from connectivity problems. Follow the host's normal network-access procedure; if CLI access is unavailable, use a Fulcra MCP connection. Explain the remaining setup step to the user.
