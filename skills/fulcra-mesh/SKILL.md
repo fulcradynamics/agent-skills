@@ -1,6 +1,7 @@
 ---
 name: fulcra-mesh
 description: "Exchange messages with agents on OTHER Fulcra accounts — a different person's assistant, a site agent, a teammate's bot — using a dedicated outbox channel and a narrow datashare. Use when a user says connect my agent to X's agent, set up a mesh, send this to another account's agent, or check what another agent sent us."
+compatibility: Requires either uv, Python 3, network access, and an authenticated Fulcra CLI session, or an authenticated Fulcra MCP connection with data-type, record, sharing, and file tools.
 ---
 
 # Fulcra Mesh
@@ -37,9 +38,13 @@ If the user asks you to connect to someone who may not have Fulcra set up yet, o
 3. Set up their own outbox and share it back to your user's ID (which you **must explicitly populate in the generated prompt** so the peer agent knows who to share with).
 4. Write an initial handshake message to their new outbox containing a specific, identifiable phrase (e.g., "mesh-handshake: wanting to schedule dinner") **and** their own Fulcra User ID in the body (so you can find their ID when you read the handshake).
 
-**Finally**, let your user know you will watch for that incoming share. You can periodically check `uvx fulcra-api share list-incoming`, read the records of any new outboxes, and extract the peer's User ID from the handshake message. Once you have it, automatically set up your outbox and share it back to complete the mesh!
+**Finally**, check `uvx fulcra-api share list-incoming` on request or through an authorized recurring check. Read the new outbox and obtain the peer's account ID from the share, using the handshake to identify the introduction. Set up your return outbox within your user's authorization, honoring any acceptance step in the invitation. Promise background checks only after a schedule is configured.
 
 ## Setup (once per peer)
+
+A user's request to connect to a named peer authorizes creating and sharing the dedicated outbox. Reuse an existing connection when available.
+
+Use the connection details supplied in the invitation, including any required introduction format or acceptance step.
 
 1. Create your outbox and note the `id` in the response:
 
@@ -54,7 +59,7 @@ If the user asks you to connect to someone who may not have Fulcra set up yet, o
    uvx fulcra-api share create --name "mesh outbox for <peer>" --data-type "MomentAnnotation/<uuid>" --user-id <peer-user-id>
    ```
 
-3. The peer does the same in the other direction. You are linked when their outbox appears in `uvx fulcra-api share list-incoming`.
+3. Send the introduction. The peer shares a return outbox and acknowledges the introduction, referencing its `mid` in the body. Until then, report the introduction as awaiting a reply.
 
 ## The envelope
 
@@ -90,9 +95,9 @@ print("delivered" if hit else "NOT DELIVERED")'
 
 A send whose read-back does not print `delivered` for its own `mid` did not happen: re-send with the correct form (and a fresh `mid`), never re-assert it.
 
-## Receiving — sweep on a schedule, from a durable cursor
+## Receiving — check from a durable cursor
 
-Mesh traffic arrives in no queue and fires no notification; only a scheduled sweep surfaces it. Setting up that recurring sweep — a cron job, a scheduled trigger, any standing automation — needs the user's explicit consent first, same as the share: tell them what will run, how often, and what it reads, and let them say yes before installing it.
+Check on request, through an existing authorized agent loop, or on a user-requested schedule. A connection does not require a schedule. Before configuring recurring checks, agree with the user on the cadence and what they should be notified about.
 
 When setting up the scheduled sweep, you should configure it to **notify the user** when it finds new messages. A cron that runs silently in the background and writes to a hidden log leaves the user out of the loop. Surface actionable mesh traffic directly into the user's active chat or session context so they stay informed.
 
