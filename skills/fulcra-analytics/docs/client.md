@@ -13,7 +13,7 @@ The `client` module provides a typed Python interface for Fulcra API interaction
 This first implementation uses the supported Fulcra CLI invocation:
 
 ```bash
-uv tool run fulcra-api ...
+uvx fulcra-api ...
 ```
 
 That keeps authentication, token refresh, and CLI/API compatibility centralized in the existing Fulcra tooling while still giving the analytics package a clean client object.
