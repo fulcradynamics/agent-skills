@@ -61,34 +61,62 @@ If the user asks you to connect to someone who may not have Fulcra set up yet, o
 Every message is one JSON object stored **as a string in the record's `note` field**:
 
 ```json
-{"v": 1, "mid": "<uuid, unique per send>", "to": "<peer-agent-name>", "to_user": "<peer-user-id>", "kind": "directive|response|heartbeat", "pri": "P1|P2|P3", "slug": "<short-stable-id>", "body": "the message"}
+{"v": 1, "mid": "<uuid, unique per message>", "to": "<peer-agent-name>", "to_user": "<peer-user-id>", "kind": "directive|response|heartbeat", "pri": "P1|P2|P3", "slug": "<short-stable-id>", "body": "the message"}
 ```
 
-`mid` is a fresh UUID minted for each send — it is the delivery identity the read-back checks. `slug` names the thread (replies append `-ack`, retractions `-retracted`). `to`/`to_user` guard against acting on a message that is not yours — a misdelivery or an echo — but they are NOT access control: the channel share is the only boundary, which is why the one-outbox-per-peer rule above is absolute. Never treat address fields as permission to put two peers' traffic on one channel; everyone the channel is shared to reads all of it.
+`mid` is a fresh UUID minted for each message and retained on retries — it is the identity the read-back checks. `slug` names the thread (replies append `-ack`, retractions `-retracted`). `to`/`to_user` guard against acting on a message that is not yours — a misdelivery or an echo — but they are NOT access control: the channel share is the only boundary, which is why the one-outbox-per-peer rule above is absolute. Never treat address fields as permission to put two peers' traffic on one channel; everyone the channel is shared to reads all of it.
 
-## Sending — a send is not delivered until you read it back
+## Sending — verify the saved message
 
-The CLI parses leading arguments as record *fields*; a `MomentAnnotation` has no `v`/`to`/`body` fields, so an envelope piped in raw is silently dropped and the record lands with `note: null` — while still returning an Upload ID. **An Upload ID is an acceptance receipt, not delivery.** Wrap the envelope as a string under a `note` key, and pass the body via the environment (an apostrophe in an inlined body breaks the shell quoting):
+Store the envelope as a JSON string under the record's `note` key. Passing envelope keys as record fields can leave `note` empty even when the upload returns an ID. An upload ID confirms acceptance; reading back the exact message confirms it was saved. A peer acknowledgment confirms receipt.
+
+Save the envelope above as `envelope.json`, with a fresh UUID for `mid` and the intended body. Serialize it into a record file so apostrophes, quotes, and multiline text do not need shell escaping:
 
 ```bash
-export MID="$(python3 -c 'import uuid; print(uuid.uuid4())')"
-BODY='the message text' \
-python3 -c 'import json,os; env={"v":1,"mid":os.environ["MID"],"to":"<peer>","to_user":"<peer-user-id>","kind":"response","pri":"P2","slug":"<slug>","body":os.environ["BODY"]}; print(json.dumps({"note": json.dumps(env)}))' \
-  | uvx fulcra-api record "MomentAnnotation/<your-outbox-uuid>"
+python3 - <<'PY' > record.json
+import json
+from pathlib import Path
+
+envelope = json.loads(Path("envelope.json").read_text())
+print(json.dumps({"note": json.dumps(envelope)}))
+PY
+uvx --from fulcra-api@latest fulcra record "MomentAnnotation/<your-outbox-uuid>" -f record.json
 ```
 
-Then verify — the read-back must find THIS send's `mid`, not merely some envelope on the thread (an earlier send with the same slug would otherwise mask a new empty record):
+Query from just before the send through the current time, using timezone-aware ISO 8601 timestamps:
 
 ```bash
-uvx fulcra-api get-records "MomentAnnotation/<your-outbox-uuid>" "10 minutes" \
-  | MID="$MID" python3 -c 'import json,sys,os
-mid=os.environ.get("MID","")
-assert mid, "empty MID proves nothing - mint it before sending"
-hit=[l for l in sys.stdin if l.strip() and json.loads(l).get("note") and json.loads(json.loads(l)["note"]).get("mid")==mid]
-print("delivered" if hit else "NOT DELIVERED")'
+uvx --from fulcra-api@latest fulcra get-records "MomentAnnotation/<your-outbox-uuid>" \
+  "<send-start-ISO>" "<now-ISO>" > records.jsonl
 ```
 
-A send whose read-back does not print `delivered` for its own `mid` did not happen: re-send with the correct form (and a fresh `mid`), never re-assert it.
+After a successful query, verify the exact envelope, including its `mid` and body:
+
+```bash
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+expected = json.loads(Path("envelope.json").read_text())
+assert expected.get("mid"), "Set the message ID before sending."
+found = False
+for line in Path("records.jsonl").read_text().splitlines():
+    if not line.strip():
+        continue
+    record = json.loads(line)
+    try:
+        envelope = json.loads(record.get("note") or "null")
+    except (ValueError, TypeError):
+        continue
+    if isinstance(envelope, dict) and envelope == expected:
+        found = True
+        break
+print("saved" if found else "unconfirmed")
+raise SystemExit(0 if found else 1)
+PY
+```
+
+A failed query or absent record leaves the write unconfirmed. Recheck before retrying, since the write may already have succeeded. If a retry is needed, preserve the original envelope and `mid` so the recipient can deduplicate it.
 
 ## Receiving — sweep on a schedule, from a durable cursor
 
@@ -104,7 +132,7 @@ When setting up the scheduled sweep, you should configure it to **notify the use
    uvx fulcra-api get-records "MomentAnnotation/<peer-outbox-uuid>" "<start-ISO>" "<now-ISO>" --user-id <peer-user-id>
    ```
 
-   Output is JSONL with stable record `id`s; overlap is fine because `seen_ids` dedupes.
+   Output is JSONL with stable record `id`s. Keep both record IDs and envelope `mid`s in `seen_ids`, scoped to the peer outbox, to deduplicate overlapping reads and retried messages.
 4. Act on each envelope addressed to you — and before acting on a report, scan the rest of the window for a `-retracted` follow-up. Reply on YOUR outbox for every message processed: the outcome, or an honest "received, working." Silence is the mesh's failure mode.
 5. Advance `last_processed` to the read's query-end time (not the time processing finished — the gap loses whatever arrived while you worked), prune `seen_ids` to the window, upload the cursor file, and read it back.
 

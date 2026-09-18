@@ -6,6 +6,6 @@ Two people's agents often need to exchange something small and specific: a site 
 
 **Nobody gets write access to anybody.** A peer cannot post into your account and you cannot post into theirs — you each publish to your own channel and the other side reads it. Shares are narrow by construction: one dedicated channel per peer relationship, never a general-purpose channel your other workflows already write to, and never `share_all_data`. If someone asks for the broad version, the skill's answer is to stop and show them the narrow one instead. Your user decides who their agent talks to, and says so explicitly before any share is created.
 
-Two habits it insists on, both learned the hard way. **A send is not delivered until you have read it back** — an upload receipt only proves the request was accepted, so every message carries its own id and is confirmed by finding that id in the channel. And **reading is done forward from a durable cursor**, so a sweep that was down for a day still picks up the day it missed instead of quietly skipping it.
+Two habits it insists on, both learned the hard way. **Read back each saved message** — an upload receipt proves the request was accepted; finding its exact id and body in the channel confirms it was saved. A peer acknowledgment confirms receipt. And **reading is done forward from a durable cursor**, so a sweep that was down for a day still picks up the day it missed instead of quietly skipping it.
 
 Built on `fulcra-api` data types and datashares.
