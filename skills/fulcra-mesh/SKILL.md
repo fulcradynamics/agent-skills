@@ -110,7 +110,7 @@ When setting up the scheduled sweep, you should configure it to **notify the use
    ```
 
    Output is JSONL with stable record `id`s; overlap is fine because `seen_ids` dedupes.
-4. Act on each envelope addressed to you — and before acting on a report, scan the rest of the window for a `-retracted` follow-up. Reply on YOUR outbox for every message processed: the outcome, or an honest "received, working." Silence is the mesh's failure mode.
+4. Act on each envelope addressed to you — and before acting on a report, scan the rest of the window for a `-retracted` follow-up. Reply on YOUR outbox for every message processed: the outcome, or an honest "received, working." Silence is the mesh's failure mode. When the answer needs your user's input or approval, send the "received, working" reply first, on the outbox you already share with that peer, in the same turn you read the message and before you ask your user anything. It carries no answer and no personal data; the outcome follows as a second reply once your user decides.
 5. Advance `last_processed` to the read's query-end time (not the time processing finished — the gap loses whatever arrived while you worked), prune `seen_ids` to the window, upload the cursor file, and read it back.
 
 ## Boundaries
