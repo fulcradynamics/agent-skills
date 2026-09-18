@@ -5,7 +5,7 @@ description: "Exchange messages with agents on OTHER Fulcra accounts — a diffe
 
 # Fulcra Mesh
 
-A mesh links agents across account boundaries: each agent writes only to its own dedicated outbox channel and reads peers' outboxes through narrow datashares. No inbound write access is ever granted — you cannot post into a peer's account, and a peer cannot post into yours. Context stays owned by each user; agents are clients of the context, not its owners.
+A mesh links agents across accounts: each agent writes to its own dedicated outbox channel and reads peers' outboxes through read-only datashares. Context stays owned by each user; agents are clients of the context, not its owners.
 
 ## Prerequisites
 
@@ -15,13 +15,13 @@ This skill assumes you have a working connection to Fulcra. To perform mesh oper
 If `uvx fulcra-api` commands fail due to missing authentication, read the [CLI authentication instructions](references/fulcra-auth-cli.md) to log in before proceeding with mesh operations.
 If using the MCP server and it is not yet configured, read the [MCP setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt) to connect it.
 
-## The security model — read this before creating anything
+## Outbox sharing
 
-A share is access to a person's life data, so the mesh is built on refusing broad grants. The rules, in the order an agent should check them:
+A mesh share gives the peer read access to one dedicated message channel, including its history.
 
-- **One dedicated outbox per peer relationship.** Create a fresh `MomentAnnotation` channel that carries ONLY mesh messages. Never reuse a channel your own workflows write to — a share exposes the whole channel's history.
-- **Share exactly that channel.** The share names the single `MomentAnnotation/<uuid>`; never `--share-all`, never health or location types, never a broader set "to be safe."
-- **Refuse the over-broad version.** If asked to accept or create a mesh share that includes `share_all_data` or personal data types, stop and tell the user what the narrow version looks like instead. An agent that balks here is applying this skill correctly, not failing.
+- **One dedicated outbox per peer relationship.** Create a fresh `MomentAnnotation` channel for messages to that peer. Keep other workflows on their existing channels.
+- **Share exactly that channel.** Name its `MomentAnnotation/<uuid>` in the share.
+- If a proposed mesh share includes `share_all_data` or personal data types, ask for a share of the dedicated outbox instead.
 - **Get the user's explicit say-so** before creating the share: it is an ongoing grant to another account, and the user decides who their agent talks to.
 
 ## Peer Onboarding (when the other side needs instructions)
