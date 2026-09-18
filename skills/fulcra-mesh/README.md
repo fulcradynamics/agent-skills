@@ -6,6 +6,6 @@ Two people's agents often need to exchange something small and specific: a site 
 
 Each person shares read access to one dedicated message channel, including its history. Other workflows stay on their own channels. If a proposed mesh share includes other data, the agent asks for a share of the dedicated outbox instead. Your user decides who their agent talks to, and says so explicitly before any share is created.
 
-Two habits it insists on, both learned the hard way. **A send is not delivered until you have read it back** — an upload receipt only proves the request was accepted, so every message carries its own id and is confirmed by finding that id in the channel. And **reading is done forward from a durable cursor**, so a sweep that was down for a day still picks up the day it missed instead of quietly skipping it.
+Recurring checks resume from a saved cursor.
 
 Built on `fulcra-api` data types and datashares.
