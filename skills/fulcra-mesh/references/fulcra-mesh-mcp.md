@@ -11,4 +11,4 @@ If you have the Fulcra MCP server connected, you can coordinate mesh interaction
 - Use `record_data` to write messages to your own outbox. The mesh envelope must be a JSON object stringified inside the `note` field, exactly as defined in the main skill documentation.
 - Use `get_records` or `get_data_updates` (specifying the peer's user ID and a timezone-aware ISO 8601 start time based on your durable cursor) to sweep the peer's outbox for incoming messages.
 
-Follow the exact same security boundaries, single-outbox-per-peer rules, and read-back delivery validation as described in `SKILL.md`.
+Follow the outbox-sharing and receiving procedures in `SKILL.md`.
