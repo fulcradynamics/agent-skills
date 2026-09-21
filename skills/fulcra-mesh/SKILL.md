@@ -75,13 +75,17 @@ Every message is one JSON object stored **as a string in the record's `note` fie
 
 ## Sending
 
-The CLI parses leading arguments as record *fields*; a `MomentAnnotation` has no `v`/`to`/`body` fields, so an envelope piped in raw is silently dropped and the record lands with `note: null` — while still returning an Upload ID. **An Upload ID is an acceptance receipt, not delivery.** Wrap the envelope as a string under a `note` key, and pass the body via the environment (an apostrophe in an inlined body breaks the shell quoting):
+Store the envelope as a JSON string in the record's `note` field. Use a JSON serializer for both the envelope and the enclosing record. In this example, write the message text to `body.txt`; Python reads it as data and pipes the encoded record to the CLI:
 
 ```bash
 export MID="$(python3 -c 'import uuid; print(uuid.uuid4())')"
-BODY='the message text' \
-python3 -c 'import json,os; env={"v":1,"mid":os.environ["MID"],"to":"<peer>","to_user":"<peer-user-id>","kind":"response","pri":"P2","slug":"<slug>","body":os.environ["BODY"]}; print(json.dumps({"note": json.dumps(env)}))' \
-  | uvx fulcra-api record "MomentAnnotation/<your-outbox-uuid>"
+python3 - <<'PY' | uvx --from fulcra-api@latest fulcra record "MomentAnnotation/<your-outbox-uuid>"
+import json, os
+from pathlib import Path
+
+env = {"v": 1, "mid": os.environ["MID"], "to": "<peer>", "to_user": "<peer-user-id>", "kind": "response", "pri": "P2", "slug": "<slug>", "body": Path("body.txt").read_text(encoding="utf-8")}
+print(json.dumps({"note": json.dumps(env)}))
+PY
 ```
 
 ## Receiving
