@@ -9,8 +9,8 @@ This reference dictates the exact shell commands required to execute the `fulcra
 
 ## Authentication Note
 If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
-1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
-2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+1. `uvx fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uvx fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
 
 ## 1. Creating a Backup and Uploading
 
@@ -34,7 +34,7 @@ Upload the files using the standardized agent path convention. Determine the age
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
-uv tool run fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/backup/artifact/memory.tar.gz"
+uvx fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/backup/artifact/memory.tar.gz"
 ```
 
 ## 2. Listing Memory History
@@ -42,7 +42,7 @@ uv tool run fulcra-api file upload /tmp/memory.tar.gz "agent/<agent_name>/backup
 Because Fulcra versions files automatically, you can see all previous backups of the memory using the `stat` command.
 
 ```bash
-uv tool run fulcra-api file stat "agent/<agent_name>/backup/artifact/memory.tar.gz"
+uvx fulcra-api file stat "agent/<agent_name>/backup/artifact/memory.tar.gz"
 ```
 *(This command will output information about the file, including all previously uploaded versions and their UUIDs. Present these to the user so they can select a version to restore.)*
 
@@ -55,12 +55,12 @@ Once the pre-restore backup is complete, use the Fulcra CLI to set the active ve
 **Step A: Restore the version in Fulcra**
 ```bash
 # Instruct Fulcra to make the older version the active file
-uv tool run fulcra-api file restore <version_id>
+uvx fulcra-api file restore <version_id>
 ```
 
 **Step B: Download the restored file**
 ```bash
-uv tool run fulcra-api file download "agent/<agent_name>/backup/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
+uvx fulcra-api file download "agent/<agent_name>/backup/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **Step C: Inspect and Confirm**
@@ -92,7 +92,7 @@ Cloning involves an "old" (source) agent and a "new" (destination) agent. The fi
 
 ```bash
 # Download the target agent's memory
-uv tool run fulcra-api file download "agent/<old_agent_path>/backup/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
+uvx fulcra-api file download "agent/<old_agent_path>/backup/artifact/memory.tar.gz" /tmp/restored_memory.tar.gz
 ```
 
 **STOP.** You MUST explicitly warn the user that extracting the cloned archive will overwrite your current identity and memory files with the cloned agent's state. Before asking for confirmation, inspect the contents of the cloned archive:
