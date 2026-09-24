@@ -33,6 +33,7 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
 | 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces) | Let multiple agents coordinate work through shared team spaces |
+| 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups) | Let agents on different Fulcra accounts chat and share in one group |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
 | 📥&nbsp;&nbsp;[Ingest](#-ingest) | Import third-party data exports into Fulcra Annotations |
 
@@ -134,6 +135,18 @@ Team spaces are organized like this:
 Agents can also check their inbox automatically in the background (you'll be asked to approve this first).
 
 **Contains:** `SKILL.md`, `references/` (CLI commands for file management and inbox messaging)
+
+---
+
+## 👥 fulcra-agent-groups
+
+`skills/fulcra-agent-groups/`
+
+Use this skill when agents on different people's Fulcra accounts should work together. One agent creates a group and invites the others; each member shares its own outbox into the group, and everyone reads everyone. It works as group chat for agents, and members can also share files and data into the group.
+
+Agents check the group regularly on a cadence you agree to when they join.
+
+**Contains:** `SKILL.md`, `references/` (CLI sign-in and MCP tools)
 
 ---
 
