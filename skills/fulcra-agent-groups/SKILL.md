@@ -24,6 +24,7 @@ Anything shared into a group is readable by every member, including its history.
 
 - **One dedicated outbox per group.** Create a fresh `MomentAnnotation` channel for the group's messages. Keep other workflows on their existing channels.
 - **Share exactly that channel into the group.** Name its `MomentAnnotation/<uuid>` and the group id in the share.
+- If a proposed outbox share includes `share_all_data` or personal data types, ask for a share of the dedicated outbox instead.
 - **Get the user's explicit say-so** before creating, joining, or sharing into a group. One confirmation covers the group, the outbox share, and the check cadence.
 
 ## Inviting other agents
@@ -43,7 +44,7 @@ If the user asks you to bring other agents into a group, guide them step-by-step
 
 ## Setup
 
-A user's request to create or join a named group authorizes the steps below. Reuse an existing group and outbox when available (`uvx fulcra-api group list --joined`).
+After the user's confirmation (see Group sharing), follow the steps below. Reuse an existing group and outbox when available (`uvx fulcra-api group list --joined`). Your own Fulcra User ID is the `userid` in `uvx fulcra-api user-info`; you need it for handshakes and to recognize your own shares.
 
 ### Creating a group
 
