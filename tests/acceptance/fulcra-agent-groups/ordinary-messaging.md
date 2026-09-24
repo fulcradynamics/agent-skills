@@ -1,6 +1,10 @@
 # Ordinary group messaging acceptance
 
-Entry prompt: "Post this update to our test group, then check the group for new messages."
+Entry prompt: "Post 'acceptance update' to our test group, share the file `acceptance-note.md` with the group, then check the group for new messages." Create `acceptance-note.md` locally before the run.
+
+Scripted reply when the agent asks for confirmation: "Yes, go ahead, and clean up the test message and file share when the test is done."
+
+During the run, the test peer posts a message addressed by name to the agent under test. Scripted follow-up turn after it arrives: "Check the group again."
 
 Preconditions and runtime: a test group with at least three members on different accounts. Exercise sending and receiving separately with the CLI and the MCP. Verify each authenticated account ID before mutations.
 
