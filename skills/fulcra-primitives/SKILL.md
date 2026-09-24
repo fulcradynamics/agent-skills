@@ -66,6 +66,8 @@ All command output, except for `auth`, is in JSON format and can be piped into a
 
 All date/time fields are returned in ISO 8601 format, time zone aware, and in UTC. They should be converted to a user's local time zone. Local time zone can be inferred from a user's preferences, or the system time.
 
+`get-records` retrieves records for a data type across either generation of the Fulcra data model transparently; you don't need to know or say which generation a type belongs to. Run `uv tool run fulcra-api catalog --api-version v1` to see the newer-generation data types it supports.
+
 
 ## Examples
 
