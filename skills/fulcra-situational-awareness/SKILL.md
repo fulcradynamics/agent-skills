@@ -1,6 +1,6 @@
 ---
 name: fulcra-situational-awareness
-description: "Equips agents with the ability to proactively scan Fulcra for recent memory files, team inbox messages, and newly ingested data to maintain high context awareness."
+description: "Use when an authorized agent needs to check Fulcra for recent memory files, workspace annotation messages, and newly ingested data."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
 user-invocable: true
@@ -13,10 +13,7 @@ The **primary role** of this skill is to empower agents to stay contextually up-
 
 ## 1. User Consent & Configuration
 
-Before adopting situational awareness habits, the agent **MUST** explicitly ask the user for permission.
-1. Explain to the user that you can periodically check Fulcra (and check at the start of new conversations) for relevant changes in knowledge files, team messages, and newly ingested data.
-2. If the user consents, record this preference in your core `MEMORY.md` so you know to perform an awareness scan when starting a new session.
-3. If you have a heartbeat mechanism (like `HEARTBEAT.md`), add an entry to periodically run the Awareness Scan.
+Ask the user before enabling recurring awareness checks. Check on request or at the start of an authorized session. Offer background scans only when this runtime has a verified scheduler or listener, and tell the user the actual cadence. Do not infer that an idle agent will wake because it joined a workspace.
 
 ## 2. The Awareness Scan Workflow
 
@@ -27,13 +24,11 @@ You can use the Fulcra API's `data-updates` command to quickly summarize all rec
 - Check `data-updates` for the past 24 hours (or since your last check).
 - This replaces the need to manually list directories or query raw `RecordsProcessed` events for situational awareness.
 - Review the summary:
-  - If team files or memory files changed (e.g., `agent/<agent-name>/memory/session/` or `team/<team-name>/progress.md`), take note. You can read the specific files that changed if they seem relevant to your current task.
+  - If workspace knowledge or memory files changed (e.g., `agent/<agent-name>/memory/session/` or `workspace/<name>/knowledge/`), take note. You can read the specific files that changed if they seem relevant to your current task.
   - If new data types have been processed recently (e.g., health, location), you will know fresh data is available if the user asks. Note that `data-updates` rolls custom annotations up under their base type (e.g., `MomentAnnotation`). If you see annotation types listed and need to know which specific custom concepts were updated, you may need to fetch the actual recent annotation records.
 
-### B. Check Team Inboxes
-Check for any pending coordination messages left by other agents or users.
-- List files in `team/<team-name>/member/<agent-name>/inbox/`.
-- If there are messages, you may decide to process them (download, archive, and delete from inbox) as defined by the `fulcradynamics/agent-skills/fulcra-workspaces` skill.
+### B. Check Workspace Messages
+For a workspace using `fulcra-workspaces`, read its channel ID from `workspace/<name>/index.md`, then fetch recent `MomentAnnotation` records from that channel. Process messages addressed to you as described in `fulcra-workspaces`. Do not treat a quiet `data-updates` summary as proof that no work is outstanding.
 
 ## Workflow
 

@@ -35,7 +35,7 @@ uv tool run fulcra-api data-updates "1 day"
 #       "...": "..."
 #     },
 #     {
-#       "full_name": "/team/first-olympiad/progress.md",
+#       "full_name": "/workspace/first-olympiad/knowledge/brief.md",
 #       "uploaded_at": "2026-07-01T21:23:28.690719Z",
 #       "state": "uploaded",
 #       "...": "..."
@@ -48,12 +48,13 @@ uv tool run fulcra-api data-updates "1 day"
 
 *If the summary shows that specific team or memory files were changed, you can then read those specific files to update your context. If new data types are listed, you know that fresh data is available for querying. Note that `data-updates` rolls custom annotations up under their base type (e.g., `MomentAnnotation`). If you see annotation types listed and need to know which specific custom concepts were updated, you may need to fetch the actual recent annotation records.*
 
-## 2. Checking Team Inboxes
+## 2. Checking Workspace Messages
 
-Check if you have any pending messages in your team inbox.
+Read the workspace descriptor for its channel ID, then query recent records:
 
 ```bash
-uv tool run fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbox/"
+uv tool run fulcra-api file download "workspace/<workspace_name>/index.md" /tmp/workspace-index.md
+uv tool run fulcra-api get-records "MomentAnnotation/<workspace-channel-uuid>" "<start-ISO>" "<end-ISO>"
 ```
 
-*(If you discover messages and need to process them, refer to the inbox lifecycle rules in the `fulcradynamics/agent-skills/fulcra-workspaces` skill.)*
+Parse the `note` envelope and follow the send/receive guidance in `fulcra-workspaces`. Use an overlapping read window and message-ID deduplication.
