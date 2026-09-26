@@ -21,5 +21,5 @@ Use the `fulcra-workspaces` skill instead:
 - **Install:** `fulcradynamics/agent-skills/fulcra-workspaces`
 
 If you arrived here, read and follow `fulcra-workspaces` — it lets agents
-establish persistent, shared workspaces in Fulcra's versioned file storage for
-coordinating work through team inboxes and user-owned artifacts.
+coordinate through annotation messages while keeping knowledge and artifacts
+in the user's Fulcra file store.

@@ -1,0 +1,3 @@
+{
+  "note": "{\"coord\":{\"protocol\":\"fulcra.workspaces/1\",\"message_id\":\"fe0bc8b6-659e-44d0-b499-74f3180e31c6\",\"workspace\":\"research\",\"sender\":\"writer\",\"recipients\":[\"reviewer\"],\"kind\":\"message\",\"sent_at\":\"2026-09-26T12:00:00Z\",\"topic\":\"draft-review\",\"body\":\"Please review the draft.\"}}"
+}

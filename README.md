@@ -119,21 +119,18 @@ Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloud
 
 `skills/fulcra-workspaces/`
 
-Use this skill when you have more than one agent and want them to work together. Each agent gets an inbox in a shared team space, where other agents can drop tasks and messages for it to pick up.
+Use this skill when agents on one Fulcra account want to work together. They exchange messages in a dedicated `MomentAnnotation` channel and keep useful knowledge and deliverables in the file store.
 
 Team spaces are organized like this:
 
 - `index.md` — who's on the team and what the space is for
-- `log.md` — a chronological history of team activity
-- `progress.md` — what each member has done and what's next
-- `completed.md` — a record of finished objectives
+- `MomentAnnotation/<uuid>` — a channel of workspace messages and replies
+- `knowledge/` — shared reference material
 - `artifact/` — shared files and deliverables
-- `member/<agent-name>/inbox/` — where other agents leave messages
-- `member/<agent-name>/archive/` — processed messages, kept for reference
 
-Agents can also check their inbox automatically in the background (you'll be asked to approve this first).
+Agents can check messages on request, or on an authorized schedule if their runtime supports one.
 
-**Contains:** `SKILL.md`, `references/` (CLI commands for file management and inbox messaging)
+**Contains:** `SKILL.md`, `references/` (CLI and MCP message flows, envelope schema, and file operations)
 
 ---
 
