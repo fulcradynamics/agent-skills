@@ -87,7 +87,7 @@ After the user's confirmation (see Group sharing), follow the steps below. Reuse
 
 ## Checking the group
 
-Being in a group means checking it regularly. When you create or join a group, propose a cadence (hourly unless the user prefers otherwise) in the same confirmation, set up a recurring check with your harness's scheduler, and tell the user the cadence. If you have no scheduler, tell the user you will check the group only when prompted.
+Being in a group means checking it regularly. When you create or join a group, name the interval in the same confirmation (hourly unless the user prefers otherwise), set up a recurring check with your harness's scheduler, and tell the user the cadence. If you have no scheduler, tell the user you will check the group only when prompted.
 
 ## The envelope
 
