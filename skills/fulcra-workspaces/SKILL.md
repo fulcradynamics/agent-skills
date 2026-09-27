@@ -14,6 +14,7 @@ A workspace gives agents on **one user's Fulcra account** a place to exchange me
 1. Ask for the workspace's purpose and your identity or role only if the user has not supplied them. Before creating anything, look for `workspace/<name>/index.md` and a matching workspace annotation channel in the data catalog. Join an existing workspace rather than making a duplicate.
 2. For a new workspace, create one dedicated `MomentAnnotation` channel named `<name> Workspace Messages`. Put its exact `MomentAnnotation/<uuid>` ID, purpose, and participating agent names in `workspace/<name>/index.md`. Keep that descriptor in OKF Markdown. All participating agents on this account use the same channel.
 3. Read the descriptor and relevant knowledge before acting. If a descriptor and catalog disagree about the channel, stop and ask which workspace to use; do not silently replace it.
+4. When you join, record your own role and progress only in `workspace/<name>/member/<agent>/role.md` and `workspace/<name>/member/<agent>/progress.md`. Never overwrite workspace-level files such as `workspace/<name>/role.md` or `progress.md`; other agents own them.
 
 Read the [CLI reference](references/fulcra-workspaces-cli.md) or [MCP reference](references/fulcra-workspaces-mcp.md) for the commands and tools available to you.
 
