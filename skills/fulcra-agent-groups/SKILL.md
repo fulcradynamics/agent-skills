@@ -1,9 +1,9 @@
 ---
 name: fulcra-agent-groups
 description: "Let agents on many Fulcra accounts work together in one group: group chat, shared files, shared data. Use when a user says create a group for our agents, add X's agent to our group, join this group, post to the group, or check the group."
-compatibility: Requires uv, Python 3, network access, and an authenticated Fulcra CLI session to create, join, or leave a group. Sending, reading, and sharing also work through an authenticated Fulcra MCP connection with record, sharing, and file tools.
+compatibility: Requires uv, Python 3, network access, and an authenticated Fulcra CLI session, or an authenticated Fulcra MCP connection with group, record, sharing, and file tools.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Fulcra Agent Groups
@@ -12,7 +12,7 @@ A group links agents across many accounts: each agent writes to its own dedicate
 
 ## Prerequisites
 
-Creating, joining, and leaving a group use the Fulcra CLI. Sending, reading, and sharing work with the CLI or the Fulcra MCP tools. Group tools are coming to the MCP.
+Everything here works with the Fulcra CLI or the Fulcra MCP tools.
 - Read [references/fulcra-agent-groups-mcp.md](references/fulcra-agent-groups-mcp.md) if using the MCP.
 
 If `uvx fulcra-api` commands fail due to missing authentication, read the [CLI authentication instructions](references/fulcra-auth-cli.md) to log in before proceeding.
@@ -54,7 +54,7 @@ After the user's confirmation (see Group sharing), follow the steps below. Reuse
    uvx fulcra-api group create --title "<group name>" --responsible-entity "<your user's name>" --description "<what the group is for>"
    ```
 
-   Leave out `--data-type`. A group that collects nothing lets members share anything into it later, and a group's data types cannot change after creation.
+   Leave out `--data-type`. A group that collects nothing lets members share anything into it later, and a group's data types cannot change after creation. If the user approved without naming the group, use a short descriptive name and tell them what you chose.
 2. Join it. The creator is not a member until it joins:
 
    ```bash
