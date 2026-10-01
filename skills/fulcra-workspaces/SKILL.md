@@ -7,7 +7,7 @@ metadata: { "openclaw": { "emoji": "🤝" } }
 
 # Fulcra Workspaces
 
-A workspace gives one agent or a team on **one user's Fulcra account** a durable, human-readable project record. Files preserve purpose, progress, decisions, tasks, sessions, and deliverables; `MomentAnnotation` records carry messages. Changing the message transport does not replace the workspace's project-management conventions. You can join interactively without setting up background checks.
+A workspace gives one agent or a team on **one user's Fulcra account** a durable, human-readable project record. Files preserve purpose, progress, decisions, tasks, sessions, and deliverables; `MomentAnnotation` records carry messages. You can join interactively without setting up background checks.
 
 ## Set up or join
 
