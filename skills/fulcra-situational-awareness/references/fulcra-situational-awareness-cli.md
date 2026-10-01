@@ -9,8 +9,8 @@ This reference dictates the exact shell commands required to execute the `fulcra
 
 ## Authentication Note
 If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
-1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
-2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+1. `uvx fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uvx fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
 
 ## 1. Checking Recent File Updates and Processed Data
 
@@ -19,7 +19,7 @@ Fulcra can summarize all recent data ingestion and file changes across the datas
 **Summarize recent updates (Last 24 Hours):**
 ```bash
 # Get a summary of data types processed and files changed in the last 1 day
-uv tool run fulcra-api data-updates "1 day"
+uvx fulcra-api data-updates "1 day"
 
 # Example output:
 # {
@@ -53,7 +53,7 @@ uv tool run fulcra-api data-updates "1 day"
 Check if you have any pending messages in your team inbox.
 
 ```bash
-uv tool run fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbox/"
+uvx fulcra-api file list "team/<team_name>/member/<your_agent_name>/inbox/"
 ```
 
 *(If you discover messages and need to process them, refer to the inbox lifecycle rules in the `fulcradynamics/agent-skills/fulcra-workspaces` skill.)*
