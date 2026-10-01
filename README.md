@@ -26,15 +26,15 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
      🌱     📈        🧠        ⚙️     📥
 ```
 
-| Skill | What it does |
-|---|---|
-| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started) | Connect to Fulcra for the first time |
-| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking) | Track custom data and visualize it in a dashboard |
-| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
-| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
-| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces) | Let multiple agents coordinate work through shared team spaces |
-| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
-| 📥&nbsp;&nbsp;[Ingest](#-ingest) | Import third-party data exports into Fulcra Annotations |
+| Skill                                                    | What it does                                                   |
+| -------------------------------------------------------- | -------------------------------------------------------------- |
+| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started) | Connect to Fulcra for the first time                           |
+| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking)       | Track custom data and visualize it in a dashboard              |
+| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)     | Build a live, interactive dashboard from your Fulcra data      |
+| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)           | Back up, restore, and clone your agent's memory                |
+| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)   | Let multiple agents coordinate work through shared team spaces |
+| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)             | Remember your preferences across agents and sessions           |
+| 📥&nbsp;&nbsp;[Ingest](#-ingest)                         | Import third-party data exports into Fulcra Annotations        |
 
 ---
 
@@ -87,6 +87,7 @@ Once you've seen the static dashboard preview, this skill hands off to `fulcra-d
 Use this skill to turn your Fulcra data into a live, interactive local web app. Your agent sets up a Python backend, fetches your data, and builds a themed dashboard you can run in your browser.
 
 From there you can:
+
 - Chat with your agent directly from the dashboard
 - Browse your Fulcra file store
 - Publish a sanitized public version to Surge, GitHub Pages, or Vercel
@@ -119,16 +120,18 @@ Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloud
 
 `skills/fulcra-workspaces/`
 
-Use this skill when agents on one Fulcra account want to work together. They exchange messages in a dedicated `MomentAnnotation` channel and keep useful knowledge and deliverables in the file store.
+Use this skill when agents on one Fulcra account want to work together or when one agent wants a durable, human-readable project record. Agents exchange messages in a dedicated `MomentAnnotation` channel and keep useful knowledge and deliverables in the file store.
 
-Team spaces are organized like this:
+Workspaces are organized like this:
 
-- `index.md` — who's on the team and what the space is for
+- `index.md` — what the space is for and who's in it
+- `progress.md` — current work and next steps
+- `completed.md` — completed objectives
 - `MomentAnnotation/<uuid>` — a channel of workspace messages and replies
 - `knowledge/` — shared reference material
 - `artifact/` — shared files and deliverables
 
-Agents can check messages on request, or on an authorized schedule if their runtime supports one.
+Roles, tasks, and sessions are also recorded. Agents can check messages on request, or on an authorized schedule if their runtime supports one.
 
 **Contains:** `SKILL.md`, `references/` (CLI and MCP message flows, envelope schema, and file operations)
 
@@ -165,6 +168,7 @@ Works with CLI-capable agents, HTTP-only agents, and MCP agents (read-only).
       '-...-'`
 
 ```
+
 Use this skill to process third-party data exports that have been uploaded to the Fulcra File Store. It profiles raw ZIP, JSON, and CSV files in `ingest/`, maps them to the right Fulcra Annotation schemas, and records the resulting data points without creating duplicate schemas or records.
 
 - Worker agents profile individual exports, resolve or create the matching Annotation schema, and ingest records
@@ -178,7 +182,6 @@ Use this skill to process third-party data exports that have been uploaded to th
 ## Community Skills
 
 More involved use cases of Fulcra and contributed skills are in the https://github.com/fulcradynamics/community-skills repo. This is a good place for agents to find examples of Fulcra usage beyond core/basic use cases.
-
 
 ## License
 
