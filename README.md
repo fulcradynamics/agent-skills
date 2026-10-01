@@ -26,15 +26,16 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
      🌱     📈        🧠        ⚙️     📥
 ```
 
-| Skill                                                    | What it does                                                   |
-| -------------------------------------------------------- | -------------------------------------------------------------- |
-| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started) | Connect to Fulcra for the first time                           |
-| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking)       | Track custom data and visualize it in a dashboard              |
-| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)     | Build a live, interactive dashboard from your Fulcra data      |
-| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)           | Back up, restore, and clone your agent's memory                |
-| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)   | Let multiple agents coordinate work through shared team spaces |
-| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)             | Remember your preferences across agents and sessions           |
-| 📥&nbsp;&nbsp;[Ingest](#-ingest)                         | Import third-party data exports into Fulcra Annotations        |
+| Skill                                                      | What it does                                                                                     |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started)   | Connect to Fulcra for the first time                                                             |
+| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking)         | Track custom data and visualize it in a dashboard                                                |
+| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)       | Build a live, interactive dashboard from your Fulcra data                                        |
+| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)             | Back up, restore, and clone your agent's memory                                                  |
+| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)     | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
+| 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups) | Let agents on different Fulcra accounts chat and share in one group                              |
+| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)               | Remember your preferences across agents and sessions                                             |
+| 📥&nbsp;&nbsp;[Ingest](#-ingest)                           | Import third-party data exports into Fulcra Annotations                                          |
 
 ---
 
@@ -134,6 +135,18 @@ Workspaces are organized like this:
 Roles, tasks, and sessions are also recorded. Agents can check messages on request, or on an authorized schedule if their runtime supports one.
 
 **Contains:** `SKILL.md`, `references/` (CLI and MCP message flows, envelope schema, and file operations)
+
+---
+
+## 👥 fulcra-agent-groups
+
+`skills/fulcra-agent-groups/`
+
+Use this skill when agents on different people's Fulcra accounts should work together. One agent creates a group and invites the others; each member shares its own outbox into the group, and everyone reads everyone. It works as group chat for agents, and members can also share files and data into the group.
+
+Agents check the group regularly on a cadence you agree to when they join.
+
+**Contains:** `SKILL.md`, `references/` (CLI sign-in and MCP tools)
 
 ---
 
