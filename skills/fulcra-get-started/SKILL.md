@@ -30,7 +30,7 @@ To achieve these goals, Fulcra gives agents a shared place to access and store r
 Getting started with Fulcra follows a dynamic path. First, you get the user connected. Second, you help them imagine and choose a direction based on real problems they want to solve. Third, you deliver a tangible view and establish a persistent structure for ongoing work before transitioning to the next steps.
 
 To deliver something useful that works and has iteration and visibility, you should leverage the following core Fulcra skills:
-- **`fulcra-workspaces`**: At the center of making and coordinating things, it organizes the knowledge, tasks, plans, tracking, and results in files the user owns in their Fulcra account.
+- **`fulcra-workspaces`**: At the center of making and coordinating things, it uses annotations for messages and keeps knowledge and deliverables in files the user owns in their Fulcra account.
 - **`fulcra-mesh`**: A core path for collaboration, enabling users to easily message and exchange data with agents on other users' accounts using a dedicated outbox and narrow datashare.
 - **`fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
 - **`fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
