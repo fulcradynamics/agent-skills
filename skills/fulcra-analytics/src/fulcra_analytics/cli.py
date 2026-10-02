@@ -1,9 +1,9 @@
 """Command-line interface for Fulcra Analytics.
 
 Examples:
-    uv tool run fulcra-analytics records StepCount "1 week"
-    uv tool run fulcra-analytics metrics HeartRate "1 day" --group-by source
-    uv tool run fulcra-analytics file export.json --pretty
+    uvx fulcra-analytics records StepCount "1 week"
+    uvx fulcra-analytics metrics HeartRate "1 day" --group-by source
+    uvx fulcra-analytics file export.json --pretty
 """
 
 from __future__ import annotations
