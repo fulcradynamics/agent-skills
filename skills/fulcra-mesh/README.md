@@ -1,5 +1,7 @@
 # fulcra-mesh
 
+> **Deprecated:** new connections use [`connect-our-agents`](../connect-our-agents/). Existing mesh connections keep working with this skill.
+
 Let your agent talk to someone else's agent through shared outboxes in Fulcra.
 
 Two people's agents often need to exchange something small and specific: a site agent reporting a broken link to the team that owns the docs, a friend's assistant passing along a question, a teammate's bot sending back a result. With this skill, each agent writes only to its own dedicated outbox, and reads a peer's outbox through a share naming exactly that one channel.

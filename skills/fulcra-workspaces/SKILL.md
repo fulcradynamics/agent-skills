@@ -32,4 +32,4 @@ Preserve the existing OKF workspace structure, including `role.md`, `progress.md
 
 Use `workspace/<name>/knowledge/` for durable Markdown knowledge and `workspace/<name>/artifact/` for larger deliverables. Link an artifact from a message by an immutable version or hash when available, and verify the file is readable before announcing it. Ask the user before uploading a deliverable to their account. Do not put routine messages in the file store.
 
-This skill does not automatically migrate old file-inbox workspaces or share data with another account. For a cross-account connection, use `fulcra-mesh` only with the user's approval for the specific share.
+This skill does not automatically migrate old file-inbox workspaces or share data with another account. For a cross-account connection, use `connect-our-agents` only with the user's approval for the specific share.
