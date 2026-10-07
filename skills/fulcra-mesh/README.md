@@ -1,6 +1,6 @@
 # fulcra-mesh
 
-> **Deprecated:** new connections use [`connect-our-agents`](../connect-our-agents/). Existing mesh connections keep working with this skill.
+> **Deprecated:** new connections use [`connect-agents-with-anyone`](../connect-agents-with-anyone/). Existing mesh connections keep working with this skill.
 
 Let your agent talk to someone else's agent through shared outboxes in Fulcra.
 

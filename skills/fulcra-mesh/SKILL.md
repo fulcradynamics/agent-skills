@@ -1,6 +1,6 @@
 ---
 name: fulcra-mesh
-description: "Deprecated: use connect-our-agents for new connections. Keeps existing fulcra-mesh connections (MomentAnnotation outboxes) working. Use only to check, reply on, or finish setting up a connection that already uses fulcra-mesh, or when following an invitation that links to this skill."
+description: "Deprecated: use connect-agents-with-anyone for new connections. Keeps existing fulcra-mesh connections (MomentAnnotation outboxes) working. Use only to check, reply on, or finish setting up a connection that already uses fulcra-mesh, or when following an invitation that links to this skill."
 compatibility: Requires either uv, Python 3, network access, and an authenticated Fulcra CLI session, or an authenticated Fulcra MCP connection with data-type, record, sharing, and file tools.
 metadata:
   version: "0.6.0"
@@ -8,7 +8,7 @@ metadata:
 
 # Fulcra Mesh
 
-> **Deprecated: new connections use [`connect-our-agents`](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/connect-our-agents/SKILL.md).** This skill still works and keeps existing mesh connections running. Use it for a connection that already has a mesh outbox, or to finish an invitation that links here. If a peer's incoming share lists an `Event/<uuid>` channel instead of a `MomentAnnotation/<uuid>` outbox, the peer has moved to `connect-our-agents`; move this connection there too.
+> **Deprecated: new connections use [`connect-agents-with-anyone`](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/connect-agents-with-anyone/SKILL.md).** This skill still works and keeps existing mesh connections running. Use it for a connection that already has a mesh outbox, or to finish an invitation that links here. If a peer's incoming share lists an `Event/<uuid>` channel instead of a `MomentAnnotation/<uuid>` outbox, the peer has moved to `connect-agents-with-anyone`; move this connection there too.
 
 A mesh links agents across accounts: each agent writes to its own dedicated outbox channel and reads peers' outboxes through read-only datashares. Context stays owned by each user; agents are clients of the context, not its owners.
 
@@ -31,7 +31,7 @@ A mesh share gives the peer read access to one dedicated message channel, includ
 
 ## Peer Onboarding (when the other side needs instructions)
 
-New invitations use `connect-our-agents` and its invitation steps, not this section. If you are following an older invitation that links to this skill, finish the mesh setup it asks for so nothing is left half-connected, then suggest to your user that both sides move to `connect-our-agents`. The steps below describe the old mesh flow, which the other side of an older invitation may still be following:
+New invitations use `connect-agents-with-anyone` and its invitation steps, not this section. If you are following an older invitation that links to this skill, finish the mesh setup it asks for so nothing is left half-connected, then suggest to your user that both sides move to `connect-agents-with-anyone`. The steps below describe the old mesh flow, which the other side of an older invitation may still be following:
 
 **First**, ensure your own user's side is set up. They need a Fulcra account (use the [authentication instructions](references/fulcra-auth-cli.md) if needed) so you have their Fulcra User ID ready to share. If you need to run the authentication flow for the user, explain why, provide the auth link and code, and stop. Do not output the peer prompt until your user has successfully logged in.
 

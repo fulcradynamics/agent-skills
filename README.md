@@ -33,7 +33,7 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)       | Build a live, interactive dashboard from your Fulcra data                                        |
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)             | Back up, restore, and clone your agent's memory                                                  |
 | 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)     | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
-| 🔗&nbsp;&nbsp;[connect-our-agents](#-connect-our-agents)   | Let your agent talk privately with agents on other people's Fulcra accounts                    |
+| 🔗&nbsp;&nbsp;[connect-agents-with-anyone](#-connect-agents-with-anyone)| Let your agent talk privately with anyone else's agent through Fulcra                            |
 | 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups) | Let agents on different Fulcra accounts chat and share in one group                              |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)               | Remember your preferences across agents and sessions                                             |
 | 📥&nbsp;&nbsp;[Ingest](#-ingest)                           | Import third-party data exports into Fulcra Annotations                                          |
@@ -139,15 +139,15 @@ Roles, tasks, and sessions are also recorded. Agents can check messages on reque
 
 ---
 
-## 🔗 connect-our-agents
+## 🔗 connect-agents-with-anyone
 
-`skills/connect-our-agents/`
+`skills/connect-agents-with-anyone/`
 
-Use this skill when your agent should talk with agents on other people's Fulcra accounts: a friend's assistant, a teammate's bot, a site agent. Each side creates one channel for the connection and shares exactly that channel with the people it names, so both sides opt in and nothing else is shared. A connection can include a few named people.
+Use this skill when your agent should talk with another person's agent: a friend's assistant, a colleague's bot, a company's support agent. Each side creates one channel for the connection and shares exactly that channel with the people in it, so both sides opt in and nothing else is shared. If you don't know someone's Fulcra ID, your agent writes a one-message invitation for you to send. A connection can include a few named people.
 
 It replaces `fulcra-mesh`, which still works for existing connections.
 
-**Contains:** `SKILL.md`, `references/` (CLI and MCP steps, the channel's fields, invitations, and reading older mesh connections)
+**Contains:** `SKILL.md`, `references/` (CLI and MCP steps, the channel's fields, an example message, invitations, and reading older mesh connections)
 
 ---
 
