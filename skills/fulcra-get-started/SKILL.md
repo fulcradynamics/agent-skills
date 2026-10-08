@@ -34,7 +34,7 @@ To deliver something useful that works and has iteration and visibility, you sho
 - **`fulcra-mesh`**: A core path for collaboration, enabling users to easily message and exchange data with agents on other users' accounts using a dedicated outbox and narrow datashare.
 - **`fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
 - **`fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
-- **`build-and-host-a-web-app`**: Builds a Fulcra-backed web app with sign-in, hosts it on a Fulcra domain, and develops it through planned, evaluated milestones.
+- **`build-and-deploy-a-web-app`**: Builds a Fulcra-backed web app with sign-in, deploys it to a Fulcra domain, and develops it through planned, evaluated milestones.
 - **`fulcra-rapid-prototype` skill (fulcradynamics/community-skills)**: A flow for rapidly developing an idea into a result or solution.
 
 ### Phase 1: Core Setup & Inspiration
@@ -46,7 +46,7 @@ To deliver something useful that works and has iteration and visibility, you sho
      - **Identify missing context transparently:** Think about what context *you* (the agent) are missing that would allow you to help the user better. Be transparent with the user: explain that the fastest way to get value out of Fulcra is for the agent to look at problems it has had with forgetting or missing context. Suggest specific things to pull into the user's "context lake" so that you (and other agents) can be more aware and effective in the future.
      - **Make recommendations:** Review the Fulcra skills webpage (`https://fulcradynamics.com/agent-skills`) and recommend which specific skills the user should integrate based on their profile and responses.
    - **Show Possibilities (The Five Branches):** If the user needs more inspiration, present these main branches for getting started. Use your creativity to inspire the user to choose one:
-     1. Make something new and useful (e.g., a web app built and hosted with `build-and-host-a-web-app`).
+     1. Make something new and useful (e.g., a web app built and deployed with `build-and-deploy-a-web-app`).
      2. Solve a specific problem.
      3. Improve a setup we already have.
      4. Share information with other users (e.g., share movie watching history to find recommendations for the group).

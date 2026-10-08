@@ -1,5 +1,5 @@
 ---
-name: build-and-host-a-web-app
+name: build-and-deploy-a-web-app
 description: "Build and iterate on Fulcra web apps through a required planning, generation, and evaluation harness, preserving requirements, decisions, and history."
 homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
@@ -7,7 +7,7 @@ user-invocable: true
 metadata: { "openclaw": { "emoji": "🛠️" } }
 ---
 
-# Build and Host a Web App
+# Build and Deploy a Web App
 
 Build a working, maintainable Fulcra-backed web application through planned, generated, and evaluated milestones. Use when starting a custom web app or continuing one created with this skill. Deployment alone is not completion: preserve requirements, user decisions, evaluation evidence, and history so later changes can be integrated and checked against what already works.
 
@@ -121,11 +121,11 @@ Create `AGENTS.md` at the project root:
 # Agent Information
 
 **Workspace**: `workspace/<project-name>/`  
-**Skill**: build-and-host-a-web-app (fulcradynamics/agent-skills)
+**Skill**: build-and-deploy-a-web-app (fulcradynamics/agent-skills)
 
 The Fulcra workspace is the primary source of truth. Read plan.md, spec.md,
 decisions.md, progress.md, and relevant history before continuing. Load the
-build-and-host-a-web-app skill and its harness-control-flow reference. All changes
+build-and-deploy-a-web-app skill and its harness-control-flow reference. All changes
 must use the harness: select a milestone, generate, perform separate evaluation
 with real tool evidence, then record the result and update workspace history.
 Never skip the harness or infer completion from a deployment alone.

@@ -1,6 +1,6 @@
 # Harness Control Flow
 
-Lifecycle for the build-and-host-a-web-app harness. A single **harness run** processes one
+Lifecycle for the build-and-deploy-a-web-app harness. A single **harness run** processes one
 milestone; the Nurse re-triggers runs (cron, manual, etc.) to advance the project.
 
 Every milestone requires evaluation of the experience the user will have in the

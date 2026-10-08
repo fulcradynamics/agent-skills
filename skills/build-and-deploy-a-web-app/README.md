@@ -1,6 +1,6 @@
-# build-and-host-a-web-app
+# build-and-deploy-a-web-app
 
-Build your own web app on Fulcra and get it hosted at a live address.
+Build your own web app on Fulcra and deploy it to a live address.
 
 Tell your agent what you want to make. It turns the idea into a plan that uses what Fulcra offers (sign-in, saved user data, sharing between users, file storage), starts from an official Svelte or React template with sign-in already working, and deploys it to a Fulcra domain. You don't need a hosting account.
 

@@ -1,6 +1,6 @@
-# Build and Host a Web App References
+# Build and Deploy a Web App References
 
-This directory contains reference implementations and documentation for the build-and-host-a-web-app skill.
+This directory contains reference implementations and documentation for the build-and-deploy-a-web-app skill.
 
 ## Structure
 

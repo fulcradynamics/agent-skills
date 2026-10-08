@@ -26,17 +26,17 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
      🌱     📈        🧠        ⚙️     📥
 ```
 
-| Skill                                                                | What it does                                                                                     |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started)             | Connect to Fulcra for the first time                                                             |
-| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking)                   | Track custom data and visualize it in a dashboard                                                |
-| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)                 | Build a live, interactive dashboard from your Fulcra data                                        |
-| 🛠️&nbsp;&nbsp;[build-and-host-a-web-app](#️-build-and-host-a-web-app) | Build a web app with Fulcra sign-in and host it on a Fulcra domain                               |
-| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)                       | Back up, restore, and clone your agent's memory                                                  |
-| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)               | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
-| 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups)           | Let agents on different Fulcra accounts chat and share in one group                              |
-| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)                         | Remember your preferences across agents and sessions                                             |
-| 📥&nbsp;&nbsp;[Ingest](#-ingest)                                     | Import third-party data exports into Fulcra Annotations                                          |
+| Skill                                                                    | What it does                                                                                     |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started)                 | Connect to Fulcra for the first time                                                             |
+| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking)                       | Track custom data and visualize it in a dashboard                                                |
+| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)                     | Build a live, interactive dashboard from your Fulcra data                                        |
+| 🛠️&nbsp;&nbsp;[build-and-deploy-a-web-app](#️-build-and-deploy-a-web-app) | Build a web app with Fulcra sign-in and deploy it to a Fulcra domain                             |
+| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)                           | Back up, restore, and clone your agent's memory                                                  |
+| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)                   | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
+| 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups)               | Let agents on different Fulcra accounts chat and share in one group                              |
+| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)                             | Remember your preferences across agents and sessions                                             |
+| 📥&nbsp;&nbsp;[Ingest](#-ingest)                                         | Import third-party data exports into Fulcra Annotations                                          |
 
 ---
 
@@ -100,11 +100,11 @@ From there you can:
 
 ---
 
-## 🛠️ build-and-host-a-web-app
+## 🛠️ build-and-deploy-a-web-app
 
-`skills/build-and-host-a-web-app/`
+`skills/build-and-deploy-a-web-app/`
 
-Use this skill to build your own web app on Fulcra and get it hosted. Your agent plans the app around what Fulcra offers, starts from an official Svelte or React template with sign-in already working, and deploys it to a Fulcra domain, with no hosting account needed.
+Use this skill to build your own web app on Fulcra. Your agent plans the app around what Fulcra offers, starts from an official Svelte or React template with sign-in already working, and deploys it to a Fulcra domain, with no hosting account needed.
 
 The app grows through small milestones, each generated and then checked against the live app before it counts as done. Plans, decisions, and history live in a Fulcra workspace so work can resume later, and an owner-only dashboard in the app shows each milestone's results.
 
