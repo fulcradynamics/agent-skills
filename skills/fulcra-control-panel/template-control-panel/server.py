@@ -105,7 +105,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             
             try:
                 # Use fulcra-api to list the files
-                list_output = subprocess.check_output(["uv", "tool", "run", "fulcra-api", "file", "list", target_path], text=True)
+                list_output = subprocess.check_output(["uvx", "fulcra-api", "file", "list", target_path], text=True)
                 lines = [line.strip() for line in list_output.strip().split('\n') if line.strip()]
                 
                 folders = []
@@ -128,7 +128,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                             # Fetch stat to get version count
                             full_path = f"{target_path}{name}" if target_path.endswith('/') or not target_path else f"{target_path}/{name}"
                             try:
-                                stat_out = subprocess.check_output(["uv", "tool", "run", "fulcra-api", "file", "stat", full_path], text=True, stderr=subprocess.DEVNULL)
+                                stat_out = subprocess.check_output(["uvx", "fulcra-api", "file", "stat", full_path], text=True, stderr=subprocess.DEVNULL)
                                 versions = 0
                                 for s_line in stat_out.split('\n'):
                                     if s_line.startswith('Previous Versions:'):
