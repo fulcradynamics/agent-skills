@@ -143,6 +143,8 @@ Follow the template's `README.md` ("Getting Started"): `npm install`, `cp .env.e
 
 Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a Fulcra domain without a Vercel account: create the app's deploy project once, saving it in `progress.md`, then deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which also covers falling back to the user's own Vercel account. Use the same deploy command for every later redeploy.
 
+Open deployed apps in the user's default system browser, not Claude's inline browser, which can block Auth0 popups and fallback sign-in links. If you cannot launch the user's browser, share the URL and ask them to open it there. Use this for the baseline and every later handoff.
+
 You may share this URL as an **in-progress baseline**, not a completed M1 handoff. Continue the same harness run with dashboard integration and evaluation before app-specific feature development.
 
 ### 9. Set Up Harness and Dashboard
