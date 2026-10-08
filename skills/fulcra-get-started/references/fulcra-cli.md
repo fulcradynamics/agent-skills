@@ -9,7 +9,7 @@ Fulcra Context is a universal data and memory platform that collects and records
 The `fulcra-api` CLI command is the easiest way to interact with the Life API and can be installed and run via `uv tool run`:
 
 ```
-uv tool run fulcra-api
+uvx fulcra-api
 ```
 
 
@@ -22,14 +22,14 @@ The `fulcra-api auth login` command should be run in a two-step process to avoid
 **Step 1: Get the Auth URL**
 Run the command with the `--get-auth-url` flag. It will immediately return a web auth URL, a user verification code, and a device code.
 ```
-uv tool run fulcra-api auth login --get-auth-url
+uvx fulcra-api auth login --get-auth-url
 ```
 You must extract the URL and user code and present them to the user so they can complete the flow in their browser. Keep the device code for the next step. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
 
 **Step 2: Complete Authentication**
 After the user confirms they have completed the flow in their browser, finish the login process by passing the device code. We pass `--poll-timeout=5` so the command fails quickly if there is a miscommunication about whether the flow is actually finished.
 ```
-uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
+uvx fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
 
 **Network Restrictions:** If the login command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and advise them on the MCP Connector option.
@@ -42,7 +42,7 @@ Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials
 Rely on the `--help` flag for in depth documentation on the command and individual subcommands.
 
 ```
-uv tool run fulcra-api --help
+uvx fulcra-api --help
 ```
 
 All command output, except for `auth`, is in JSON format and can be piped into another tool like `jq` for parsing and filtering structured data.
@@ -54,29 +54,29 @@ All date/time fields are returned in ISO 8601 format, time zone aware, and in UT
 
 Authenticate to the API:
 ```
-uv tool run fulcra-api auth login --get-auth-url
+uvx fulcra-api auth login --get-auth-url
 # ... present url/code to user, then ...
-uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
+uvx fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
 
 Get list of Fulcra data type identifiers:
 ```
-uv tool run fulcra-api catalog | jq -r '.id'
+uvx fulcra-api catalog | jq -r '.id'
 ```
 
 Return last week of step count records:
 ```
-uv tool run fulcra-api get-records StepCount "1 week"
+uvx fulcra-api get-records StepCount "1 week"
 ```
 
 Return a calculated time series of heart rate data for the last week:
 ```
-uv tool run fulcra-api metric-time-series HeartRate "1 week"
+uvx fulcra-api metric-time-series HeartRate "1 week"
 ```
 
 Return a user's configured time zone from user preferences:
 ```
-uv tool run fulcra-api user-info | jq -r '.preferences.timezone'
+uvx fulcra-api user-info | jq -r '.preferences.timezone'
 ```
 
 ## Creating Custom Data Types (Annotations)
@@ -84,11 +84,11 @@ uv tool run fulcra-api user-info | jq -r '.preferences.timezone'
 Fulcra supports creating custom schemas based on specific root "base types." You can create new schemas easily via the CLI.
 
 ```bash
-uv tool run fulcra-api data-type create <BASE_DATA_TYPE> "<NAME>" --description "<DESCRIPTION>"
+uvx fulcra-api data-type create <BASE_DATA_TYPE> "<NAME>" --description "<DESCRIPTION>"
 ```
 
 ### Base Data Types
-Run `uv tool run fulcra-api catalog --base-types-only` to see the exact IDs of the base types you can build upon.
+Run `uvx fulcra-api catalog --base-types-only` to see the exact IDs of the base types you can build upon.
 The most common base types for custom tracking are:
 *   `MomentAnnotation`: For tracking occurrences of an event without a specific measurement (e.g., "Took Medication").
 *   `NumericAnnotation`: For tracking a specific quantity or number (e.g., "Cups of Coffee").
@@ -98,16 +98,16 @@ The most common base types for custom tracking are:
 ### Creation Examples
 ```bash
 # Create a simple moment annotation
-uv tool run fulcra-api data-type create MomentAnnotation "Daily Walk" --description "Went for a walk today"
+uvx fulcra-api data-type create MomentAnnotation "Daily Walk" --description "Went for a walk today"
 
 # Create a boolean annotation
-uv tool run fulcra-api data-type create BooleanAnnotation "Ate Breakfast" --description "Did I eat breakfast?"
+uvx fulcra-api data-type create BooleanAnnotation "Ate Breakfast" --description "Did I eat breakfast?"
 
 # Create a numeric annotation
-uv tool run fulcra-api data-type create NumericAnnotation "Water Consumed" --description "Ounces of water drank"
+uvx fulcra-api data-type create NumericAnnotation "Water Consumed" --description "Ounces of water drank"
 
 # Create a scale annotation
-uv tool run fulcra-api data-type create ScaleAnnotation "Daily Mood" --description "1-5 scale of mood"
+uvx fulcra-api data-type create ScaleAnnotation "Daily Mood" --description "1-5 scale of mood"
 ```
 
 The `create` command will output the JSON definition of the new data type. Make sure to capture the returned `"id"` value (e.g., `com.fulcradynamics.annotation.12345`), as you will need it to record data against this schema.
@@ -122,16 +122,16 @@ You can manage versioned files using the `fulcra-api file` commands. This allows
 
 ```bash
 # Upload a file to a specific remote path
-uv tool run fulcra-api file upload ./local-file.md /remote/path/file.md
+uvx fulcra-api file upload ./local-file.md /remote/path/file.md
 
 # List files in a remote directory
-uv tool run fulcra-api file list /remote/path/
+uvx fulcra-api file list /remote/path/
 
 # Get information about a file, including previous versions
-uv tool run fulcra-api file stat /remote/path/file.md
+uvx fulcra-api file stat /remote/path/file.md
 
 # Download a file from the remote path
-uv tool run fulcra-api file download /remote/path/file.md ./downloaded-file.md
+uvx fulcra-api file download /remote/path/file.md ./downloaded-file.md
 ```
 
 ### Core OKF Principles
