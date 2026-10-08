@@ -22,33 +22,41 @@ To achieve these goals, Fulcra gives agents a shared place to access and store r
 - **Optimize for Time-to-Wow:** Favor opinionated defaults over exhaustive discussion. The objective is to get the user to their first genuinely useful workflow as quickly as possible.
 - **Maintain Momentum:** If the user becomes stuck or overwhelmed, choose or recommend a sensible default and keep the getting started process moving forward.
 
+- After writing a file, read it back from the same Fulcra account and check that its contents match the user's requested update before reporting it saved.
+
+- When storing or summarizing context, preserve the user's stated facts and uncertainty; do not infer stronger status claims or present an inference as a verified fact.
+
 ## Workflow: Getting Started
 
 Getting started with Fulcra follows a dynamic path. First, you get the user connected. Second, you help them imagine and choose a direction based on real problems they want to solve. Third, you deliver a tangible view and establish a persistent structure for ongoing work before transitioning to the next steps.
 
 To deliver something useful that works and has iteration and visibility, you should leverage the following core Fulcra skills:
-- **`fulcra-workspaces`**: At the center of making and coordinating things, it organizes the knowledge, tasks, plans, tracking, and results in files the user owns in their Fulcra account.
+- **`fulcra-workspaces`**: At the center of making and coordinating things, it uses annotations for messages and keeps knowledge and deliverables in files the user owns in their Fulcra account.
+- **`fulcra-mesh`**: A core path for collaboration, enabling users to easily message and exchange data with agents on other users' accounts using a dedicated outbox and narrow datashare.
 - **`fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
 - **`fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
 - **`fulcra-rapid-prototype` skill (fulcradynamics/community-skills)**: A flow for rapidly developing an idea into a result or solution.
 
 ### Phase 1: Core Setup & Inspiration
 
-1. **Introduction to Fulcra:**
-   - Read the `references/fulcra-cli.md` file to understand the `fulcra-api` CLI context and capabilities.
+1. **Introduce Fulcra to the user, in terms of the task they named, before calling any tool:**
    - Start the conversation by giving the user a brief, exciting overview of what Fulcra is. Emphasize that getting started with Fulcra is about making something genuinely useful that solves a real problem or improves their existing systems.
-   - **Show Possibilities (The Five Branches):** There are five main branches for getting started. Use your creativity to inspire the user to choose one:
+   - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
+   - **Discover Context Needs & Recommend Skills:** Before falling back on totally general questions like "what problem do you want to solve" or defaulting to a specific skill like `fulcra-rapid-prototype`, proactively help the user think about areas where Fulcra could be most useful.
+     - **Identify missing context transparently:** Think about what context *you* (the agent) are missing that would allow you to help the user better. Be transparent with the user: explain that the fastest way to get value out of Fulcra is for the agent to look at problems it has had with forgetting or missing context. Suggest specific things to pull into the user's "context lake" so that you (and other agents) can be more aware and effective in the future.
+     - **Make recommendations:** Review the Fulcra skills webpage (`https://fulcradynamics.com/agent-skills`) and recommend which specific skills the user should integrate based on their profile and responses.
+   - **Show Possibilities (The Five Branches):** If the user needs more inspiration, present these main branches for getting started. Use your creativity to inspire the user to choose one:
      1. Make something new and useful.
      2. Solve a specific problem.
      3. Improve a setup we already have.
      4. Share information with other users (e.g., share movie watching history to find recommendations for the group).
      5. Choose a specific skill from the community-skills repo (fulcradynamics/community-skills) — a new but growing hub where agents and users can discover solutions to specific problems and explore concrete use cases for Fulcra — or something inspired by one.
-   - **Task Connection:** If you already know what specific task or job the user wants to accomplish, explicitly mention how Fulcra will help you do *that specific job* as a concrete example of its value.
+   - Read `references/fulcra-cli.md` for the primary CLI context and capabilities. Alternatively, read `references/fulcra-mcp.md` if utilizing the MCP integration.
    - Tell the user that the first step is to get them connected to Fulcra. **Do not execute any setup or ask for installation permissions until you have introduced Fulcra.**
 
 2. **Connection:**
    - Read and follow the `fulcra-connect` skill to connect the user to Fulcra. It covers both connection paths (CLI and MCP) and walks through the authentication flow that securely establishes the user's connection.
-   - Once connected, celebrate the milestone! You are now ready to start making.
+   - Once connected, confirm that setup succeeded and continue with the user's task.
 
 ### Phase 2: Direction & Tangible Delivery
 

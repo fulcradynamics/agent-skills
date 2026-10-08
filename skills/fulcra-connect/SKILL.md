@@ -1,6 +1,6 @@
 ---
 name: fulcra-connect
-description: "Connect an agent to Fulcra: install the fulcra-api CLI, authenticate on the user's behalf via the device-login flow, or fall back to the hosted MCP connector in restricted environments. Use when connecting to Fulcra for the first time, when credentials are missing or expired, or when another skill needs an authenticated Fulcra environment."
+description: "Connects an agent to Fulcra through the CLI two-step login or the MCP connector, and recovers from a network-restricted shell. Use when connecting to Fulcra for the first time, when credentials are missing or expired, or when another skill needs an authenticated Fulcra environment."
 license: "MIT"
 metadata:
   homepage: "https://github.com/fulcradynamics/agent-skills"

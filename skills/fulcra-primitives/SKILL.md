@@ -67,6 +67,8 @@ All command output, except for `auth`, is in JSON format and can be piped into a
 
 All date/time fields are returned in ISO 8601 format, time zone aware, and in UTC. They should be converted to a user's local time zone. Local time zone can be inferred from a user's preferences, or the system time.
 
+`get-records` retrieves records for a data type across either generation of the Fulcra data model transparently; you don't need to know or say which generation a type belongs to. Run `uv tool run fulcra-api catalog --api-version v1` to see the newer-generation data types it supports.
+
 
 ## Examples
 
@@ -106,26 +108,30 @@ uv tool run fulcra-api data-type create <BASE_DATA_TYPE> "<NAME>" --description 
 ```
 
 ### Base Data Types
-Run `uv tool run fulcra-api catalog --base-types-only` to see the exact IDs of the base types you can build upon.
+Run `uv tool run fulcra-api catalog --base-types --recordable` to see the exact IDs of the recordable base types you can build upon.
 The most common base types for custom tracking are:
-*   `MomentAnnotation`: For tracking occurrences of an event without a specific measurement (e.g., "Took Medication").
-*   `NumericAnnotation`: For tracking a specific quantity or number (e.g., "Cups of Coffee").
-*   `BooleanAnnotation`: For tracking simple Yes/No or True/False states (e.g., "Did I go to the gym?").
-*   `ScaleAnnotation`: For 1-5 scales (e.g., mood, pain, intensity).
+*   `MomentAnnotation`: For tracking occurrences of an event without a specific measurement (e.g., "Deployment Started").
+*   `DurationAnnotation`: For tracking an event that occurs over a period of time (e.g., "Agent Run").
+*   `NumericAnnotation`: For tracking a specific quantity or number (e.g., "Tokens Consumed").
+*   `BooleanAnnotation`: For tracking simple Yes/No or True/False states (e.g., "Build Passed?").
+*   `ScaleAnnotation`: For 1-5 scales (e.g., task complexity, system load).
 
 ### Creation Examples
 ```bash
 # Create a simple moment annotation
-uv tool run fulcra-api data-type create MomentAnnotation "Daily Walk" --description "Went for a walk today"
+uv tool run fulcra-api data-type create MomentAnnotation "Deployment Started" --description "A new deployment was initiated"
+
+# Create a duration annotation
+uv tool run fulcra-api data-type create DurationAnnotation "Agent Run" --description "Time spent executing an agent task"
 
 # Create a boolean annotation
-uv tool run fulcra-api data-type create BooleanAnnotation "Ate Breakfast" --description "Did I eat breakfast?"
+uv tool run fulcra-api data-type create BooleanAnnotation "Build Passed" --description "Did the CI build pass?"
 
 # Create a numeric annotation
-uv tool run fulcra-api data-type create NumericAnnotation "Water Consumed" --description "Ounces of water drank"
+uv tool run fulcra-api data-type create NumericAnnotation "Tokens Consumed" --description "Number of LLM tokens used"
 
 # Create a scale annotation
-uv tool run fulcra-api data-type create ScaleAnnotation "Daily Mood" --description "1-5 scale of mood"
+uv tool run fulcra-api data-type create ScaleAnnotation "Task Complexity" --description "1-5 scale of task difficulty" -s "Trivial" -s "Easy" -s "Medium" -s "Hard" -s "Extreme"
 ```
 
 The `create` command will output the JSON definition of the new data type. Make sure to capture the returned `"id"` value (e.g., `com.fulcradynamics.annotation.12345`), as you will need it to record data against this schema.

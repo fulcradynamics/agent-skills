@@ -62,6 +62,23 @@ jobs:
               sys.exit(1)
           EOF
 
+  unit-tests:
+    name: Repository unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # tests/ has no __init__.py, so discover each suite directory on its own.
+      - name: Run every tests/*/test_*.py suite
+        run: |
+          fails=0
+          for d in $(find tests -name 'test_*.py' -exec dirname {} \; | sort -u); do
+            echo "::group::$d"
+            uv run --no-project --with jsonschema python -m unittest discover -s "$d" -p 'test_*.py' -v || fails=1
+            echo "::endgroup::"
+          done
+          exit $fails
+
   install-smoke:
     name: Install smoke test (skills CLI)
     runs-on: ubuntu-latest

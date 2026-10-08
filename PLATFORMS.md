@@ -6,7 +6,7 @@ Three facts hold everywhere:
 
 - **Skills shell out to `uvx fulcra-api …`** — whichever machine executes skills needs `uv` on PATH, outbound network access, and Fulcra auth (the `fulcra-connect` skill walks through it).
 - **MCP is opt-in by design.** Installing the skills never registers the hosted Fulcra Context MCP server (`https://mcp.fulcradynamics.com/mcp`, streamable HTTP, OAuth handled server-side). Each section shows its platform's opt-in syntax.
-- **Verify any install the same way:** `uvx fulcra-api --help` resolves, and your platform's skill listing shows one `fulcra-*` entry per directory in `skills/` (15 today, two of them deprecation pointers). Trust a real skill invocation over a green manifest check.
+- **Verify any install the same way:** `uvx fulcra-api --help` resolves, and your platform's skill listing shows one `fulcra-*` entry per directory in `skills/` (17 today, two of them deprecation pointers). Trust a real skill invocation over a green manifest check.
 
 Status lines record what was exercised against a live binary (with version and date) versus researched from docs. A report from a platform we can't run is the integration test — please open issues.
 

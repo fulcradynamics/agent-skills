@@ -64,7 +64,7 @@ Platforms marked "ported, not verified live" were built against each platform's 
 - **The root `plugin.json` must stay exactly `{name, description}`** — Antigravity's manifest schema is `additionalProperties: false` (verified live, agy v1.1.4). Do not add `$schema`/`version` to make it an Agent Plugins 1.0 manifest without re-verifying against a live agy; see [PLATFORMS.md](PLATFORMS.md#agent-plugins-10-clients-vs-code-cursor-copilot-kiro).
 - **Never add without a cross-platform check:** a root `package.json` (makes pi run `npm install --omit=dev` in its clone; a populated `pi.<resource>` key in it would also override pi's conventional `skills/` scan), a root `GEMINI.md` (auto-loads as context on Gemini CLI), a root `commands/` dir (auto-discovered by Claude Code), a root `mcp_config.json` or root `.mcp.json` (would auto-register MCP on skill installs — MCP is opt-in by design), a native `openclaw.plugin.json` (inert today, shape-changing the day OpenClaw fixes its detection precedence).
 - **Keep `.codex-plugin/plugin.json` free of a `hooks` key** — OpenClaw reads that manifest as a Codex bundle and interprets `hooks` differently.
-- **CI** (`.github/workflows/ci.yml`) gates every PR on: skillscheck spec lint (errors only — warnings are a burn-down list, flip to `--strict` at zero), the official agentskills.io reference validator (strict YAML, allowed frontmatter fields, string-valued `metadata` — pi drops non-compliant skills silently), Claude Code manifest validation, Agent Plugins 1.0 schema validation, the Antigravity minimal-manifest invariant, and a clean-room `npx skills add` smoke test asserting every `skills/` directory lands.
+- **CI** (`.github/workflows/ci.yml`) gates every PR on: skillscheck spec lint (errors only — warnings are a burn-down list, flip to `--strict` at zero), the official agentskills.io reference validator (strict YAML, allowed frontmatter fields, string-valued `metadata` — pi drops non-compliant skills silently), Claude Code manifest validation, Agent Plugins 1.0 schema validation, the Antigravity minimal-manifest invariant, every `tests/*/test_*.py` unit suite, and a clean-room `npx skills add` smoke test asserting every `skills/` directory lands.
 </details>
 
 ## Skills
@@ -79,15 +79,16 @@ Platforms marked "ported, not verified live" were built against each platform's 
      🌱     📈        🧠        ⚙️     📥
 ```
 
-| Skill | What it does |
-|---|---|
-| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started) | Connect to Fulcra for the first time |
-| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking) | Track custom data and visualize it in a dashboard |
-| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard) | Build a live, interactive dashboard from your Fulcra data |
-| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory) | Back up, restore, and clone your agent's memory |
-| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces) | Let multiple agents coordinate work through shared team spaces |
-| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs) | Remember your preferences across agents and sessions |
-| 📥&nbsp;&nbsp;[Ingest](#-ingest) | Import third-party data exports into Fulcra Annotations |
+| Skill                                                      | What it does                                                                                     |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 🌱&nbsp;&nbsp;[fulcra-get-started](#-fulcra-get-started)   | Connect to Fulcra for the first time                                                             |
+| 📈&nbsp;&nbsp;[fulcra-tracking](#-fulcra-tracking)         | Track custom data and visualize it in a dashboard                                                |
+| 📊&nbsp;&nbsp;[fulcra-dashboard](#-fulcra-dashboard)       | Build a live, interactive dashboard from your Fulcra data                                        |
+| 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)             | Back up, restore, and clone your agent's memory                                                  |
+| 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)     | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
+| 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups) | Let agents on different Fulcra accounts chat and share in one group                              |
+| ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)               | Remember your preferences across agents and sessions                                             |
+| 📥&nbsp;&nbsp;[Ingest](#-ingest)                           | Import third-party data exports into Fulcra Annotations                                          |
 
 ---
 
@@ -140,6 +141,7 @@ Once you've seen the static dashboard preview, this skill hands off to `fulcra-d
 Use this skill to turn your Fulcra data into a live, interactive local web app. Your agent sets up a Python backend, fetches your data, and builds a themed dashboard you can run in your browser.
 
 From there you can:
+
 - Chat with your agent directly from the dashboard
 - Browse your Fulcra file store
 - Publish a sanitized public version to Surge, GitHub Pages, or Vercel
@@ -172,21 +174,32 @@ Storage follows the [Open Knowledge Format (OKF)](https://github.com/GoogleCloud
 
 `skills/fulcra-workspaces/`
 
-Use this skill when you have more than one agent and want them to work together. Each agent gets an inbox in a shared team space, where other agents can drop tasks and messages for it to pick up.
+Use this skill when agents on one Fulcra account want to work together or when one agent wants a durable, human-readable project record. Agents exchange messages in a dedicated `MomentAnnotation` channel and keep useful knowledge and deliverables in the file store.
 
-Team spaces are organized like this:
+Workspaces are organized like this:
 
-- `index.md` — who's on the team and what the space is for
-- `log.md` — a chronological history of team activity
-- `progress.md` — what each member has done and what's next
-- `completed.md` — a record of finished objectives
+- `index.md` — what the space is for and who's in it
+- `progress.md` — current work and next steps
+- `completed.md` — completed objectives
+- `MomentAnnotation/<uuid>` — a channel of workspace messages and replies
+- `knowledge/` — shared reference material
 - `artifact/` — shared files and deliverables
-- `member/<agent-name>/inbox/` — where other agents leave messages
-- `member/<agent-name>/archive/` — processed messages, kept for reference
 
-Agents can also check their inbox automatically in the background (you'll be asked to approve this first).
+Roles, tasks, and sessions are also recorded. Agents can check messages on request, or on an authorized schedule if their runtime supports one.
 
-**Contains:** `SKILL.md`, `references/` (CLI commands for file management and inbox messaging)
+**Contains:** `SKILL.md`, `references/` (CLI and MCP message flows, envelope schema, and file operations)
+
+---
+
+## 👥 fulcra-agent-groups
+
+`skills/fulcra-agent-groups/`
+
+Use this skill when agents on different people's Fulcra accounts should work together. One agent creates a group and invites the others; each member shares its own outbox into the group, and everyone reads everyone. It works as group chat for agents, and members can also share files and data into the group.
+
+Agents check the group regularly on a cadence you agree to when they join.
+
+**Contains:** `SKILL.md`, `references/` (CLI sign-in and MCP tools)
 
 ---
 
@@ -221,6 +234,7 @@ Works with CLI-capable agents, HTTP-only agents, and MCP agents (read-only).
       '-...-'`
 
 ```
+
 Use this skill to process third-party data exports that have been uploaded to the Fulcra File Store. It profiles raw ZIP, JSON, and CSV files in `ingest/`, maps them to the right Fulcra Annotation schemas, and records the resulting data points without creating duplicate schemas or records.
 
 - Worker agents profile individual exports, resolve or create the matching Annotation schema, and ingest records
@@ -234,7 +248,6 @@ Use this skill to process third-party data exports that have been uploaded to th
 ## Community Skills
 
 More involved use cases of Fulcra and contributed skills are in the https://github.com/fulcradynamics/community-skills repo. This is a good place for agents to find examples of Fulcra usage beyond core/basic use cases.
-
 
 ## License
 
