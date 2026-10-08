@@ -46,11 +46,11 @@ This is an omni-repo: the same `skills/` directory installs natively on eight ag
 |---|---|---|---|---|
 | Claude Code | `claude plugin install fulcra-skills@fulcra` | skill auto-trigger | `fulcra-mcp@fulcra` plugin | verified live (Claude Code 2.1.212) |
 | Codex CLI | [PLATFORMS.md](PLATFORMS.md#codex-cli) | `$fulcra-skills:fulcra-…` | `fulcra-mcp@fulcra` plugin or `config.toml` | verified live (codex-cli 0.147.0) |
-| Gemini CLI | [PLATFORMS.md](PLATFORMS.md#gemini-cli) | model-invoked, per-use consent | `settings.json` | verified live (0.56.0-nightly) |
-| Antigravity | [PLATFORMS.md](PLATFORMS.md#antigravity-agy) | `/fulcra-…` | agy MCP config | verified live (agy v1.1.4) |
-| OpenCode | [PLATFORMS.md](PLATFORMS.md#opencode) | model-invoked | `opencode.json` | verified live (1.18.16) |
+| Gemini CLI | [PLATFORMS.md](PLATFORMS.md#gemini-cli) | `/fulcra-…` or model-invoked | `settings.json` | verified live (0.56.0-nightly) |
+| Antigravity | [PLATFORMS.md](PLATFORMS.md#antigravity-agy) | `/fulcra-skills:fulcra-…` | `mcp_config.json` | verified live (agy v1.1.4) |
+| OpenCode | [PLATFORMS.md](PLATFORMS.md#opencode) | `/fulcra-…` or model-invoked | `opencode.json` | verified live (1.18.16) |
 | Hermes | [PLATFORMS.md](PLATFORMS.md#hermes) | `/fulcra-…` | `config.yaml` | ported, not verified live |
-| Pi | [PLATFORMS.md](PLATFORMS.md#pi) | `/skill:fulcra-…` | none (pi has no MCP) | verified live (pi 0.84.1) |
+| Pi | [PLATFORMS.md](PLATFORMS.md#pi) | `/skill:fulcra-…` | `~/.pi/agent/mcp.json` (pi 0.99+) | verified live (pi 0.84.1) |
 | OpenClaw | [PLATFORMS.md](PLATFORMS.md#openclaw) | `/fulcra-…` on any chat surface | gateway config | ported, not verified live |
 | Agent Plugins 1.0 clients (VS Code, Cursor, Copilot, Kiro) | [PLATFORMS.md](PLATFORMS.md#agent-plugins-10-clients-vs-code-cursor-copilot-kiro) | per client | `plugins/fulcra-mcp/` as standard package | manifests schema-validated; not verified live |
 
@@ -62,9 +62,9 @@ Platforms marked "ported, not verified live" were built against each platform's 
 - **Version locations** (bump together on release): `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` (metadata), `plugins/fulcra-mcp/.claude-plugin/plugin.json`, `plugins/fulcra-mcp/plugin.json` (Agent Plugins 1.0), `.codex-plugin/plugin.json`, `plugins/fulcra-mcp/.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json` (metadata), `gemini-extension.json`. The Antigravity `plugin.json` deliberately has no version field.
 - **MCP server config lives in two files** that must stay in sync: `plugins/fulcra-mcp/.mcp.json` (Claude Code, `"type": "http"`) and `plugins/fulcra-mcp/mcp.json` (Agent Plugins 1.0, `"type": "streamable-http"`). Same server, two spellings — change both or neither.
 - **The root `plugin.json` must stay exactly `{name, description}`** — Antigravity's manifest schema is `additionalProperties: false` (verified live, agy v1.1.4). Do not add `$schema`/`version` to make it an Agent Plugins 1.0 manifest without re-verifying against a live agy; see [PLATFORMS.md](PLATFORMS.md#agent-plugins-10-clients-vs-code-cursor-copilot-kiro).
-- **Never add without a cross-platform check:** a root `package.json` (makes pi run `npm install --omit=dev` in its clone; a populated `pi.<resource>` key in it would also override pi's conventional `skills/` scan), a root `GEMINI.md` (auto-loads as context on Gemini CLI), a root `commands/` dir (auto-discovered by Claude Code), a root `mcp_config.json` or root `.mcp.json` (would auto-register MCP on skill installs — MCP is opt-in by design), a native `openclaw.plugin.json` (inert today, shape-changing the day OpenClaw fixes its detection precedence).
+- **Never add without a cross-platform check:** a root `package.json` (makes pi run `npm install --omit=dev` in its clone; any `pi` object in it would also switch off pi's conventional `skills/` scan), a root `GEMINI.md` (auto-loads as context on Gemini CLI), a root `commands/` dir (auto-discovered by Claude Code), a root `mcp_config.json` or root `.mcp.json` (would auto-register MCP on skill installs — MCP is opt-in by design), a native `openclaw.plugin.json` (inert today, shape-changing the day OpenClaw fixes its detection precedence).
 - **Keep `.codex-plugin/plugin.json` free of a `hooks` key** — OpenClaw reads that manifest as a Codex bundle and interprets `hooks` differently.
-- **CI** (`.github/workflows/ci.yml`) gates every PR on: skillscheck spec lint (errors only — warnings are a burn-down list, flip to `--strict` at zero), the official agentskills.io reference validator (strict YAML, allowed frontmatter fields, string-valued `metadata` — pi drops non-compliant skills silently), Claude Code manifest validation, Agent Plugins 1.0 schema validation, the Antigravity minimal-manifest invariant, every `tests/*/test_*.py` unit suite, and a clean-room `npx skills add` smoke test asserting every `skills/` directory lands.
+- **CI** (`.github/workflows/ci.yml`) gates every PR on: skillscheck spec lint (errors only — warnings are a burn-down list, flip to `--strict` at zero), the official agentskills.io reference validator (strict YAML, allowed frontmatter fields, name/description constraints; pinned to `skills-ref==0.1.1` because the next release renames its CLI), strict Claude Code manifest validation, Agent Plugins 1.0 schema validation, the Antigravity minimal-manifest invariant, every `tests/*/test_*.py` unit suite, and a clean-room `npx skills add` smoke test asserting every `skills/` directory lands.
 </details>
 
 ## Skills

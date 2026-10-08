@@ -25,12 +25,13 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       # The agentskills.io reference implementation: strict YAML, allowed
       # frontmatter fields only, name/description constraints, string-valued
-      # metadata. Guards against silent skill drops on strict parsers (pi).
+      # metadata. Pinned: the next skills-ref release renames this CLI to
+      # `skills-ref validate`.
       - name: Validate every skill with the reference validator
         run: |
           fails=0
           for d in skills/*/; do
-            uvx --from skills-ref agentskills validate "$d" || fails=1
+            uvx --from skills-ref==0.1.1 agentskills validate "$d" || fails=1
           done
           exit $fails
 
@@ -49,8 +50,9 @@ jobs:
       - name: Validate Claude Code marketplace and plugin manifests
         run: |
           npm install -g @anthropic-ai/claude-code
-          claude plugin validate .
-          claude plugin validate plugins/fulcra-mcp
+          claude plugin validate . --strict
+          claude plugin validate .claude-plugin/plugin.json --strict
+          claude plugin validate plugins/fulcra-mcp --strict
       - name: Antigravity manifest stays minimal (name + description only)
         run: |
           python3 - <<'EOF'
