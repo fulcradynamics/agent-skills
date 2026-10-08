@@ -135,7 +135,7 @@ Preserve the template's authentication flow during feature and styling work;
 change app copy and branding, not login behavior, unless explicitly requested.
 ```
 
-Customize only the app name, tagline, description, logo, and placeholder visibility in `LoginDeviceFlow`. Preserve its sign-in/sign-up handlers, synchronous popup opening, device-code polling, and the surrounding session initialization, auth routes, and token/cookie handling. Do not replace or bypass authentication to make unrelated features or tests work; if a login change is needed, agree on its scope with the user first.
+Breaking sign-in frustrates the user: they cannot test new features or even use existing ones. Customize only the app name, tagline, description, logo, and placeholder visibility in `LoginDeviceFlow`. Preserve its sign-in/sign-up handlers, synchronous popup opening, device-code polling, and the surrounding session initialization, auth routes, and token/cookie handling. Do not replace or bypass authentication to make unrelated features or tests work; if a login change is needed, agree on its scope with the user first.
 
 ### 7. Install, Configure, and Verify
 
