@@ -11,12 +11,10 @@ def completed(stdout: str = "", returncode: int = 0, stderr: str = ""):
     return subprocess.CompletedProcess(args=["fulcra-api"], returncode=returncode, stdout=stdout, stderr=stderr)
 
 
-def test_builds_uv_tool_command():
+def test_builds_uvx_command():
     client = FulcraClient()
     assert client.command(["get-records", "StepCount", "1 week"]) == [
-        "uv",
-        "tool",
-        "run",
+        "uvx",
         "fulcra-api",
         "get-records",
         "StepCount",
@@ -35,7 +33,7 @@ def test_json_parses_stdout(monkeypatch):
     client = FulcraClient(timeout=5)
 
     assert client.json(["get-records", "StepCount", "1 week"]) == {"records": [{"value": 1}]}
-    assert calls[0][0] == ["uv", "tool", "run", "fulcra-api", "get-records", "StepCount", "1 week"]
+    assert calls[0][0] == ["uvx", "fulcra-api", "get-records", "StepCount", "1 week"]
     assert calls[0][1]["timeout"] == 5
 
 
