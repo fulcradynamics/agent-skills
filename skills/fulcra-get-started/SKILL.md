@@ -31,7 +31,7 @@ Getting started with Fulcra follows a dynamic path. First, you get the user conn
 
 To deliver something useful that works and has iteration and visibility, you should leverage the following core Fulcra skills:
 - **`fulcra-workspaces`**: At the center of making and coordinating things, it uses annotations for messages and keeps knowledge and deliverables in files the user owns in their Fulcra account.
-- **`fulcra-mesh`**: A core path for collaboration, enabling users to easily message and exchange data with agents on other users' accounts using a dedicated outbox and narrow datashare.
+- **`connect-agents-with-anyone`**: A core path for collaboration, letting the user's agent message agents on other people's accounts privately, through a dedicated channel each side shares only with the people it names.
 - **`fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
 - **`fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
 - **`fulcra-rapid-prototype` skill (fulcradynamics/community-skills)**: A flow for rapidly developing an idea into a result or solution.
