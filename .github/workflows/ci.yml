@@ -64,6 +64,48 @@ jobs:
               sys.exit(1)
           EOF
 
+  openclaw:
+    name: OpenClaw / ClawHub packaging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # OpenClaw installs both plugins as Codex bundles, so ClawHub's validator
+      # inspects the bundle side only; it passes even with a broken
+      # openclaw.plugin.json. The script below guards the native manifests.
+      - name: ClawHub bundle validation
+        run: |
+          npx -y clawhub@0.23.3 package validate . --out /tmp/reports
+          npx -y clawhub@0.23.3 package validate plugins/fulcra-mcp --out /tmp/reports
+      - name: Native openclaw.plugin.json invariants
+        run: |
+          python3 - <<'EOF'
+          import json, os, sys
+          errors = []
+          catalog = {p['name'] for p in json.load(open('.claude-plugin/marketplace.json'))['plugins']}
+          for root in ('.', 'plugins/fulcra-mcp'):
+              path = os.path.join(root, 'openclaw.plugin.json')
+              m = json.load(open(path))
+              codex = json.load(open(os.path.join(root, '.codex-plugin/plugin.json')))
+              if not isinstance(m.get('configSchema'), dict):
+                  errors.append(f'{path}: configSchema object is required')
+              if m.get('id') not in catalog or m.get('id') != codex['name']:
+                  errors.append(f'{path}: id must match the marketplace and Codex plugin name')
+              if m.get('version') != codex['version']:
+                  errors.append(f'{path}: version {m.get("version")} != Codex manifest {codex["version"]}')
+              if len(m.get('categories', [])) != 1:
+                  errors.append(f'{path}: ClawHub accepts exactly one category')
+              for d in m.get('skills', []):
+                  if not os.path.isdir(os.path.join(root, d)):
+                      errors.append(f'{path}: skills dir {d} does not exist')
+          if 'mcpServers' in json.load(open('openclaw.plugin.json')):
+              errors.append('root openclaw.plugin.json must not declare mcpServers (MCP is opt-in via fulcra-mcp)')
+          print('\n'.join(errors) or 'openclaw manifests ok')
+          sys.exit(1 if errors else 0)
+          EOF
+
   unit-tests:
     name: Repository unit tests
     runs-on: ubuntu-latest

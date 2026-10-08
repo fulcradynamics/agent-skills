@@ -13,7 +13,7 @@
     {
       "name": "fulcra-skills",
       "source": "./",
-      "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent teams, preferences, and data ingest. Uses the Fulcra CLI (uvx fulcra-api)."
+      "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent workspaces, preferences, and data ingest. Uses the Fulcra CLI (uvx fulcra-api)."
     },
     {
       "name": "fulcra-mcp",

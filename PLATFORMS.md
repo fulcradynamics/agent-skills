@@ -157,21 +157,20 @@ pi install git:github.com/fulcradynamics/agent-skills   # or: pi install /path/t
 
 ```bash
 openclaw plugins install fulcra-skills --marketplace fulcradynamics/agent-skills
-# or: git clone … && openclaw plugins install /path/to/agent-skills
 ```
 
+Optionally add the MCP connector the same way (`openclaw plugins install fulcra-mcp --marketplace fulcradynamics/agent-skills`), or install from a local clone (`openclaw plugins install /path/to/agent-skills`). Once the packages are on ClawHub, `openclaw plugins install clawhub:fulcra-skills` and `clawhub:fulcra-mcp` also work, and `openclaw plugins update` follows new releases. OpenClaw asks you to confirm installs from outside ClawHub and to accept the plugin's capabilities.
+
 - The **gateway host** executes everything: it needs `uv`, network, and Fulcra auth (if it's a headless VPS, run the browser auth once elsewhere, or use the MCP route). Skills then work from Discord, Telegram, WhatsApp, any connected surface, as `/fulcra-…`.
-- OpenClaw reads the marketplace from `.claude-plugin/marketplace.json` and reports this repo as a **Codex bundle**: its detection checks for a Codex manifest before anything else (still true in 2026.9.9, despite docs saying a native manifest wins). Skills load identically.
+- OpenClaw reads the marketplace from `.claude-plugin/marketplace.json` and installs both plugins as **Codex bundles**. That is by design: bundles take precedence over a native `openclaw.plugin.json` unless a `package.json` declares `openclaw.extensions`. The `openclaw.plugin.json` files exist for ClawHub listings and describe the same skills and MCP server.
 - Skill emoji don't show on OpenClaw: it only honors `metadata.openclaw` as a nested object, which the Agent Skills spec forbids. See [CONTRIBUTING.md](CONTRIBUTING.md).
-- MCP opt-in in the gateway config (set `transport` explicitly; it defaults to SSE):
+- MCP opt-in: the `fulcra-mcp` plugin, or the gateway config (set `transport` explicitly; it defaults to SSE):
 
   ```json5
   { mcp: { servers: { "fulcra-context": { url: "https://mcp.fulcradynamics.com/mcp", transport: "streamable-http" } } } }
   ```
 
-- Not listed on ClawHub: a ClawHub plugin listing requires an `openclaw.plugin.json`, which this repo deliberately omits (see the maintainer notes in [README.md](README.md)).
-
-**Status:** bundle detection, full-repo staging and the marketplace path re-checked against OpenClaw 2026.9.9 source (2026-10-08); MCP syntax from current docs; no live gateway exercised. If the marketplace route mishandles the two-plugin catalog, install from a local clone and open an issue.
+**Status:** verified live on OpenClaw 2026.9.9 (2026-10-08, isolated state dir, from a local checkout): marketplace installs of both plugins from the two-plugin catalog, local-path install, detection as Codex bundles with the native manifests present, all 17 `fulcra-*` skills reported ready by `openclaw skills list`, and `fulcra-mcp` declaring the `fulcra-context` MCP server (only `fulcra-skills` contributes skills; it declares no MCP). Both packages pass `clawhub package validate` and `clawhub package publish --dry-run` (ClawHub CLI 0.23.3) as `bundle-plugin`. Not exercised: a running gateway, the MCP connection, a skill invocation from a chat surface, and an actual ClawHub publish.
 
 ## Agent Plugins 1.0 clients (VS Code, Cursor, Copilot, Codex, Kiro, Hermes, OpenClaw)
 

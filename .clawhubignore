@@ -1,0 +1,8 @@
+# Files left out of ClawHub packages (`clawhub package publish`).
+# .gitignore is honored too.
+.claude/
+.github/
+tests/
+reports/
+# fulcra-mcp is published as its own package from plugins/fulcra-mcp.
+plugins/

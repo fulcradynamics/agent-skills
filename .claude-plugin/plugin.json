@@ -1,7 +1,7 @@
 {
   "name": "fulcra-skills",
   "version": "0.1.0",
-  "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent teams, preferences, and data ingest.",
+  "description": "Skills that let your AI agent work with Fulcra: onboarding, custom data tracking, dashboards, memory backup, agent workspaces, preferences, and data ingest.",
   "author": {
     "name": "Fulcra Dynamics",
     "email": "support@fulcradynamics.com",
