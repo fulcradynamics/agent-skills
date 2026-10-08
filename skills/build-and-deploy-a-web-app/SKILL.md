@@ -131,9 +131,11 @@ with real tool evidence, then record the result and update workspace history.
 Never skip the harness or infer completion from a deployment alone.
 For a user-reported bug or adjustment, update the spec and decisions, insert a
 milestone after the last completed one (e.g., m2-1 after M2), and run the harness.
+Preserve the template's authentication flow during feature and styling work;
+change app copy and branding, not login behavior, unless explicitly requested.
 ```
 
-Update placeholder strings in the login flow. Each template includes placeholder text (like "Your App Name", "Your App Description", etc.) that should be replaced with content from the spec.
+Breaking sign-in frustrates the user: they cannot test new features or even use existing ones. Customize only the app name, tagline, description, logo, and placeholder visibility in `LoginDeviceFlow`. Preserve its sign-in/sign-up handlers, synchronous popup opening, device-code polling, and the surrounding session initialization, auth routes, and token/cookie handling. Do not replace or bypass authentication to make unrelated features or tests work; if a login change is needed, agree on its scope with the user first.
 
 ### 7. Install, Configure, and Verify
 
