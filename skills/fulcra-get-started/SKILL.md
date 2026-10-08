@@ -34,7 +34,7 @@ To deliver something useful that works and has iteration and visibility, you sho
 - **`fulcra-mesh`**: A core path for collaboration, enabling users to easily message and exchange data with agents on other users' accounts using a dedicated outbox and narrow datashare.
 - **`fulcra-ingest`**: Gets data and information into Fulcra so the user can make useful things connected to the real world and other people and data sources.
 - **`fulcra-situational-awareness`**: Shows agents everything that is changing so they can react and stay caught up on the project and general situation.
-- **`build-and-deploy-a-web-app`**: Builds a Fulcra-backed web app with sign-in, deploys it to a Fulcra domain, and develops it through planned, evaluated milestones.
+- **`build-and-deploy-a-web-app`**: Builds a Fulcra-backed web app with sign-in, deploys it to a my.fulcra.ai subdomain, and develops it through planned, evaluated milestones.
 - **`fulcra-rapid-prototype` skill (fulcradynamics/community-skills)**: A flow for rapidly developing an idea into a result or solution.
 
 ### Phase 1: Core Setup & Inspiration
