@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  skill-lint:
+    name: Agent Skills spec lint (skillscheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # Gate on spec errors. Warnings (description phrasing, orphans) are a
+      # burn-down list; switch to --strict once they reach zero.
+      - name: Lint skills against the Agent Skills spec
+        run: uvx skillscheck==0.9.5 ./skills
+
+  spec-reference-validator:
+    name: Official Agent Skills reference validator (skills-ref)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # The agentskills.io reference implementation: strict YAML, allowed
+      # frontmatter fields only, name/description constraints, string-valued
+      # metadata. Pinned: the next skills-ref release renames this CLI to
+      # `skills-ref validate`.
+      - name: Validate every skill with the reference validator
+        run: |
+          fails=0
+          for d in skills/*/; do
+            uvx --from skills-ref==0.1.1 agentskills validate "$d" || fails=1
+          done
+          exit $fails
+
+  manifest-validation:
+    name: Plugin manifest validation (Claude Code + Agent Plugins 1.0)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Validate Agent Plugins 1.0 manifests against official schemas
+        run: |
+          curl -sfL https://agent-plugins.org/schemas/1.0.0/plugin.schema.json -o /tmp/plugin.schema.json
+          curl -sfL https://agent-plugins.org/schemas/1.0.0/mcp.schema.json -o /tmp/mcp.schema.json
+          uvx check-jsonschema --schemafile /tmp/plugin.schema.json plugins/fulcra-mcp/plugin.json
+          uvx check-jsonschema --schemafile /tmp/mcp.schema.json plugins/fulcra-mcp/mcp.json
+      - name: Validate Claude Code marketplace and plugin manifests
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate . --strict
+          claude plugin validate .claude-plugin/plugin.json --strict
+          claude plugin validate plugins/fulcra-mcp --strict
+      - name: Antigravity manifest stays minimal (name + description only)
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          keys = set(json.load(open('plugin.json')).keys())
+          if keys != {'name', 'description'}:
+              print(f'root plugin.json must contain exactly name and description '
+                    f'(Antigravity schema is additionalProperties: false); found {sorted(keys)}')
+              sys.exit(1)
+          EOF
+
+  openclaw:
+    name: OpenClaw / ClawHub packaging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # OpenClaw installs both plugins as Codex bundles, so ClawHub's validator
+      # inspects the bundle side only; it passes even with a broken
+      # openclaw.plugin.json. The script below guards the native manifests.
+      - name: ClawHub bundle validation
+        run: |
+          npx -y clawhub@0.23.3 package validate . --out /tmp/reports
+          npx -y clawhub@0.23.3 package validate plugins/fulcra-mcp --out /tmp/reports
+      - name: Native openclaw.plugin.json invariants
+        run: |
+          python3 - <<'EOF'
+          import json, os, sys
+          errors = []
+          catalog = {p['name'] for p in json.load(open('.claude-plugin/marketplace.json'))['plugins']}
+          for root in ('.', 'plugins/fulcra-mcp'):
+              path = os.path.join(root, 'openclaw.plugin.json')
+              m = json.load(open(path))
+              codex = json.load(open(os.path.join(root, '.codex-plugin/plugin.json')))
+              if not isinstance(m.get('configSchema'), dict):
+                  errors.append(f'{path}: configSchema object is required')
+              if m.get('id') not in catalog or m.get('id') != codex['name']:
+                  errors.append(f'{path}: id must match the marketplace and Codex plugin name')
+              if m.get('version') != codex['version']:
+                  errors.append(f'{path}: version {m.get("version")} != Codex manifest {codex["version"]}')
+              if len(m.get('categories', [])) != 1:
+                  errors.append(f'{path}: ClawHub accepts exactly one category')
+              for d in m.get('skills', []):
+                  if not os.path.isdir(os.path.join(root, d)):
+                      errors.append(f'{path}: skills dir {d} does not exist')
+          if 'mcpServers' in json.load(open('openclaw.plugin.json')):
+              errors.append('root openclaw.plugin.json must not declare mcpServers (MCP is opt-in via fulcra-mcp)')
+          print('\n'.join(errors) or 'openclaw manifests ok')
+          sys.exit(1 if errors else 0)
+          EOF
+
+  unit-tests:
+    name: Repository unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      # tests/ has no __init__.py, so discover each suite directory on its own.
+      - name: Run every tests/*/test_*.py suite
+        run: |
+          fails=0
+          for d in $(find tests -name 'test_*.py' -exec dirname {} \; | sort -u); do
+            echo "::group::$d"
+            uv run --no-project --with jsonschema python -m unittest discover -s "$d" -p 'test_*.py' -v || fails=1
+            echo "::endgroup::"
+          done
+          exit $fails
+
+  install-smoke:
+    name: Install smoke test (skills CLI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install into a clean project via npx skills, assert all skills land
+        run: |
+          expected=$(ls -d "$GITHUB_WORKSPACE"/skills/fulcra-* | wc -l)
+          mkdir /tmp/target && cd /tmp/target
+          npx -y skills add "$GITHUB_WORKSPACE" --agent claude-code --yes
+          count=$(ls -d .claude/skills/fulcra-* | wc -l)
+          echo "installed: $count of $expected skills"
+          test "$count" -eq "$expected"
+          test -f .claude/skills/fulcra-get-started/SKILL.md

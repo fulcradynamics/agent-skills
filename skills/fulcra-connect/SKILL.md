@@ -1,10 +1,11 @@
 ---
 name: fulcra-connect
-description: "Connects an agent to Fulcra through the CLI two-step login or the MCP connector, and recovers from a network-restricted shell."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Connects an agent to Fulcra through the CLI two-step login or the MCP connector, and recovers from a network-restricted shell. Use when connecting to Fulcra for the first time, when credentials are missing or expired, or when another skill needs an authenticated Fulcra environment."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "🔌" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🔌\"}"
 ---
 
 # Agents Get Started with Fulcra

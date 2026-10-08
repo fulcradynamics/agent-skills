@@ -2,7 +2,8 @@
 name: fulcra-workspaces
 description: "Use when agents on one Fulcra account need a durable workspace for coordination messages, shared knowledge, or user artifacts."
 license: "MIT"
-metadata: { "openclaw": { "emoji": "🤝" } }
+metadata:
+  openclaw: "{\"emoji\": \"🤝\"}"
 ---
 
 # Fulcra Workspaces
