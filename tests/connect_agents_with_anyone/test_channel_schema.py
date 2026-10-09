@@ -119,6 +119,17 @@ class CliSnippetTests(unittest.TestCase):
         self.assertEqual(json.loads(run_python(script, "sender=7", "kind=message", stdin="7"))["body"], "7")
         self.assertLessEqual(set(message), set(FIELDS["properties"]))
 
+    def test_send_refuses_a_reply_or_ack_without_in_reply_to(self):
+        script = python_snippet("## Sending")
+        for kind in ("reply", "ack"):
+            result = subprocess.run(
+                [sys.executable, "-c", script, "sender=alice-claude", f"kind={kind}"],
+                input="hi", capture_output=True, text=True,
+            )
+            self.assertNotEqual(result.returncode, 0, kind)
+            self.assertEqual(result.stdout, "", kind)
+            self.assertIn("in_reply_to", result.stderr)
+
     def test_send_example_uses_only_channel_fields(self):
         names = set(re.findall(r" (\w+)=<", CLI_DOC[CLI_DOC.index("## Sending"):CLI_DOC.index("## Reading")]))
         self.assertTrue(names)
@@ -139,7 +150,7 @@ class CliSnippetTests(unittest.TestCase):
             mine_path = os.path.join(tmp, "mine.jsonl")
             Path(mine_path).write_text("".join(json.dumps(m) + "\n" for m in mine))
             out = run_python(
-                script.replace("/tmp/mine.jsonl", mine_path), "alice-claude",
+                script, "alice-claude", mine_path,
                 stdin="".join(json.dumps(m) + "\n" for m in theirs),
             )
         self.assertEqual([json.loads(l)["id"] for l in out.splitlines()], ["b", "e", "f"])

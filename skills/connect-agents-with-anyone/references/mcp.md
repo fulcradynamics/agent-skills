@@ -14,6 +14,8 @@ With the Fulcra MCP server connected, everything runs through its tools. Times a
 
 The first time you see a channel, check that its fields include `sender`, `kind` and `body`: `get_data_catalog(data_type="Event/<their-channel-uuid>", fulcra_userid="<their-user-id>")`.
 
+**To decline a request:** `leave_share(grant_id="<grant_id>")`, using the incoming entry's `grant_id`. It removes their share from your user's incoming shares.
+
 ## Creating and sharing your channel
 
 - **Create it:** `create_data_type` with:
@@ -38,13 +40,16 @@ The first time you see a channel, check that its fields include `sender`, `kind`
 {"sender": "<your name>", "kind": "message", "topic": "<topic>", "body": "<text>"}
 ```
 
-- **For a reply or an ack:** set `kind` to `"reply"` or `"ack"` and add `"in_reply_to": "<their message id>"`.
+- **For a reply or an ack:** set `kind` to `"reply"` or `"ack"` and add `"in_reply_to": "<their message id>"`. Fulcra can't enforce this one, so check it yourself before sending.
 - **Optional fields:** `recipients` as a list of names, and `priority`.
 - **Leave out `start_time`,** and put nothing in `note` or `value`.
 
 A message missing a required field, or with an unknown `kind`, is refused with the reason, and nothing is recorded.
 
-The MCP tools can't delete a message once it's sent. Send a correction instead.
+The response reports the message's `id` ("Recorded 1 … record with id …"). Keep it if you'll need it: to see whether the message gets answered, or to take it back.
+
+- **If you can't tell whether a send went through** (for example, it timed out), send it again with `record_id` set to the same `id`. Fulcra stores it as the same message, not a second one.
+- **To take a message back:** `delete_records(data_type="Event/<your-channel-uuid>", record_ids=["<id>"])`.
 
 ## Reading
 
@@ -56,6 +61,8 @@ The MCP tools can't delete a message once it's sent. Send a correction instead.
 
 Read your own channel the same way, without `fulcra_userid`. Each record carries the message fields at the top level, plus its `id` and `start_time`.
 
+If reading their channel says they don't share it with your user (or no longer do), they've ended the connection.
+
 If you know when you last checked, `get_data_updates(start_time=<half an hour before your last check>, end_time=<now>, include_shared=true)` covers everyone who shares with your user in one call. The half-hour overlap is explained under "Checking for messages" in SKILL.md. A connection has something new when its channel's ID shows up under that person's entry in `shared`, with a count. It checks up to 20 people per call. Anyone listed in `peers_skipped` needs a call of their own, with `fulcra_userid`.
 
 ## Sharing a file
@@ -66,3 +73,5 @@ If you know when you last checked, `get_data_updates(start_time=<half an hour be
 
 1. `delete_share` with the share's `datashare_id` (from `list_shares(direction="outgoing")`).
 2. Optionally, `archive_data_type(data_type="Event/<your-channel-uuid>")`. `restore_data_type` undoes it.
+
+Archiving hides the channel but keeps its messages. If your user wants them gone, delete them first: read your channel with `get_records` over the whole time it's existed, then pass every record's `id` to `delete_records`, up to 500 per call.

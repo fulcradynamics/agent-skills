@@ -1,7 +1,7 @@
 ---
 name: connect-agents-with-anyone
 description: "Connect your agent with the agent of anyone who uses Fulcra (a friend, a colleague, a company's support bot) and exchange messages privately: only the people in the connection can read them, and nothing else on either account is shared. Use when the user says connect my agent with X, invite X's agent, send this to X's agent, did X's agent reply, check my agent messages, accept this agent invitation, or who is my agent connected to."
-compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.46 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
+compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.47 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
   version: "1.0.0"
@@ -29,6 +29,12 @@ Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including l
   - **Connected:** both channels are shared.
   - **Ended:** either side has stopped sharing.
 - An `ack` from them means their agent has read your message, not that they agreed to anything.
+- Asked who your user is connected with, list each connection by name, with:
+  - its status;
+  - anything still unanswered;
+  - **last heard from:** the time of their most recent message, reply or ack, in your user's time zone, or "nothing yet".
+
+  Their channel is the only record of activity; there's no separate "online" signal, and their agents don't send heartbeats.
 - Pick a short name for yourself, such as `alice-claude`, and use it as `sender` every time. Ask your user only if they want to choose one.
 
 ## Connecting with someone
@@ -45,7 +51,7 @@ Your user asking to connect with a named person is their permission to create a 
 A channel shared with your user by someone they aren't connected with yet is a request. Read its introduction, tell your user who it's from and what they want, and share back only if your user agrees. A request from your user to accept that person's invitation already counts as agreement.
 
 - **To accept:** create your channel, share it with them, and `reply` to their introduction.
-- **To decline:** do nothing. Their channel stays visible to your user until they remove it, and your agent ignores it from then on.
+- **To decline:** give up their share, which removes it from your user's incoming shares. Nothing is sent to them, and they can share again later; if they do, it's a new request.
 
 ## Sending
 
@@ -62,18 +68,19 @@ Record the message on your own channel. Its fields:
 | `priority` | optional: `P1` (urgent), `P2`, or `P3` |
 | `artifacts` | optional: files the message points to, as `[{"path": …}]`, each shared with the same people first |
 
-- Don't set `id` or `start_time`. Fulcra assigns the `id` and stamps the time it receives the message.
+- Don't set `start_time`; Fulcra stamps the time it receives the message. Every message gets an `id`: the MCP's `record_data` reports it, and reading your channel shows it.
+- Every `reply` and `ack` needs `in_reply_to`. Fulcra can't enforce it, and without it the message you meant to answer keeps showing up as new. If you find one of yours missing it, answer that message again properly.
 - Send nothing outside these fields. A message missing a required field, or with an unknown `kind`, is refused before upload, with the reason.
 - **After sending:**
   - A send that returns an upload ID was accepted. The other side can read it within about a minute.
   - A send that ends in an error recorded nothing; fix the problem and send again.
   - If you can't tell whether a send went through (for example, it timed out), read your channel before sending again.
 - For anything longer than a message, such as a document or a list, put it in a file, share that file with the same people, and list its path in `artifacts`.
-- **To take a message back,** delete it with the CLI. It disappears for them within a minute, but they may already have read it. The MCP tools can't delete messages, so send a correction instead.
+- **To take a message back,** delete it by its `id`. It disappears for them within a minute, but they may already have read it. Never delete a `reply` or `ack`: the message it answered would count as new again.
 
 ## Checking for messages
 
-Check when your user asks, or on a schedule they agreed to. Agree what's worth notifying them about first, and only promise background checks once a schedule actually exists.
+Check when your user asks, or on a schedule they agreed to. To set up a schedule, follow [references/scheduled-checks.md](references/scheduled-checks.md): agree how often, what to interrupt them for and what may be answered unattended, and only promise background checks once a schedule actually exists and has run.
 
 1. **Find the connections.** For each one, you need their channel (an incoming share from them named `connect-agents-with-anyone: …`) and yours (your outgoing share to them). The first time you see a channel, check that it has `sender`, `kind` and `body` fields.
    - If someone shares more than one channel with your user, read them all.
@@ -91,7 +98,7 @@ Check when your user asks, or on a schedule they agreed to. Agree what's worth n
 - Ask for data updates starting half an hour before that check. Only connections whose channel shows up there have anything new, so skip reading the rest.
 - The half-hour overlap matters. Updates are dated by when Fulcra processed each message, but they appear only every few minutes. Without it, a message that arrived just before your last check would never show up.
 
-A failed read means you don't know, not that nothing came in. If reading their channel says the type isn't found and their share is gone from your incoming shares, they've ended the connection.
+A failed read means you don't know, not that nothing came in. If reading their channel says they don't share it with your user (or no longer do), or their share is gone from your incoming shares, they've ended the connection.
 
 ## What you may do with messages
 
@@ -109,6 +116,9 @@ Don't use a Fulcra group for private messages: anyone with a group's ID can join
 ## Ending a connection
 
 Tell them first if your user wants to say goodbye. Then delete your share of the channel. Archive the channel if the conversation is over for good; archiving can be undone.
+
+- **Archiving keeps the messages.** If your user wants them gone, delete them before archiving.
+- **If they ended it,** offer to stop sharing yours too. Your channel is still readable by them until you do.
 
 ## Older `fulcra-mesh` connections
 

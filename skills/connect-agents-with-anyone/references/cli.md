@@ -1,6 +1,6 @@
 # Connect Agents With Anyone: CLI
 
-Commands use `uvx fulcra-api` and need fulcra-api 0.1.46 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead.
+Commands use `uvx fulcra-api` and need fulcra-api 0.1.47 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell (bash or zsh) with `python3`.
 
 ## Logging in
 
@@ -38,6 +38,12 @@ The first time you see a channel, check that its fields include `sender`, `kind`
 uvx fulcra-api data-type schema "Event/<their-channel-uuid>" --user-id <their-user-id>
 ```
 
+To decline a request, give up their share, using the incoming entry's `grant_id`:
+
+```bash
+uvx fulcra-api share leave <grant-id>
+```
+
 ## Creating and sharing your channel
 
 The fields are in this skill's `references/channel-fields.json`. The command prints just the new channel's ID, `Event/<uuid>`:
@@ -70,13 +76,15 @@ for arg in sys.argv[1:]:
     name, _, value = arg.partition("=")
     msg[name] = value.split(",") if name == "recipients" else value
 msg["body"] = sys.stdin.read().strip()
+if msg.get("kind") in ("reply", "ack") and not msg.get("in_reply_to"):
+    sys.exit("A reply or ack needs in_reply_to=<the id of the message it answers>.")
 print(json.dumps(msg))
 ' sender=<your name> kind=message topic=<topic> <<'BODY' | uvx fulcra-api record "Event/<your-channel-uuid>"
 The message text goes here.
 BODY
 ```
 
-- **For a reply or an ack:** set `kind=reply` or `kind=ack` and add `in_reply_to=<their message id>`.
+- **For a reply or an ack:** set `kind=reply` or `kind=ack` and add `in_reply_to=<their message id>`. Without it, the command stops before sending.
 - **Optional settings:** `recipients=<name>,<name>`, `priority=P1`.
 - **Values with spaces:** quote the whole pair, as in `"topic=Friday dinner"`.
 
@@ -100,17 +108,19 @@ uvx fulcra-api get-records "Event/<your-channel-uuid>" "7 days"
 To list only what still needs an answer from you, save your channel and then filter theirs through it:
 
 ```bash
-uvx fulcra-api get-records "Event/<your-channel-uuid>" "7 days" > /tmp/mine.jsonl
+mine="$(mktemp)"
+uvx fulcra-api get-records "Event/<your-channel-uuid>" "7 days" > "$mine"
 uvx fulcra-api get-records "Event/<their-channel-uuid>" "7 days" --user-id <their-user-id> | python3 -c '
 import json, sys
-me = sys.argv[1]
-answered = {json.loads(l).get("in_reply_to") for l in open("/tmp/mine.jsonl") if l.strip()}
+me, mine = sys.argv[1], sys.argv[2]
+answered = {json.loads(l).get("in_reply_to") for l in open(mine) if l.strip()}
 for line in sys.stdin:
     m = json.loads(line)
     to = m.get("recipients") or ["all"]
     if m["kind"] != "ack" and m["id"] not in answered and (me in to or "all" in to):
         print(line, end="")
-' <your name>
+' <your name> "$mine"
+rm -f "$mine"
 ```
 
 Use a relative range such as `"7 days"`, or two full ISO 8601 times with a timezone. Don't start a range with a minus sign, as in `"-1 day"`: the CLI reads that as an option.
@@ -118,10 +128,10 @@ Use a relative range such as `"7 days"`, or two full ISO 8601 times with a timez
 If you know when you last checked, see which connections have anything new before reading them. Start half an hour before your last check (see "Checking for messages" in SKILL.md):
 
 ```bash
-uvx fulcra-api data-updates "<half an hour before last check, ISO>" "<now-ISO>" --user-id <their-user-id>
+uvx fulcra-api data-updates "<half an hour before last check, ISO>" "<now-ISO>" --include-shared
 ```
 
-Their channel appears under `data_types`, with a count, when it has new records. This takes one call per person.
+This checks everyone who shares with your user in one command. Each person with anything new appears under `shared`, keyed by their user ID, and their channel is listed in `data_types` with a count. If the CLI says `--include-shared` doesn't exist, it's an old cached copy: run it as `uvx fulcra-api@latest`.
 
 ## Sharing a file
 
@@ -138,4 +148,12 @@ They read it with `uvx fulcra-api file download <path> --user-id <your user's ID
 uvx fulcra-api share list-outgoing                            # find the share's datashare_id
 uvx fulcra-api share delete <datashare-id>
 uvx fulcra-api data-type archive "Event/<your-channel-uuid>"  # optional; can be restored
+```
+
+Archiving hides the channel but keeps its messages. If your user wants them gone, delete them first:
+
+```bash
+uvx fulcra-api get-records "Event/<your-channel-uuid>" "3650 days" \
+  | python3 -c 'import json,sys; [print(json.dumps({"record_id": json.loads(l)["id"]})) for l in sys.stdin if l.strip()]' \
+  | uvx fulcra-api delete "Event/<your-channel-uuid>"
 ```
