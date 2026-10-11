@@ -6,55 +6,24 @@ Install them once, and your agent will know what to do when you ask.
 
 ## Installation
 
-### Skills CLI (any agent)
+Install the plugin for your agent. One command adds every skill, and the agent's own update command keeps them current.
 
-The [skills CLI](https://github.com/vercel-labs/skills) installs the skills on Claude Code, Codex, Cursor, OpenCode, Gemini CLI, and dozens of other agents:
+| Agent | Install |
+|---|---|
+| Antigravity | `agy plugin install https://github.com/fulcradynamics/agent-skills` |
+| Claude Code | `claude plugin marketplace add fulcradynamics/agent-skills`, then `claude plugin install fulcra-skills@fulcra` |
+| Codex | `codex plugin marketplace add fulcradynamics/agent-skills`, then `codex plugin add fulcra-skills@fulcra` |
+| Gemini CLI | `gemini extensions install https://github.com/fulcradynamics/agent-skills` |
+| Hermes | clone the repo and add its `skills/` folder to `skills.external_dirs` ([details](PLATFORMS.md#hermes)) |
+| OpenClaw | `openclaw plugins install fulcra-skills --marketplace fulcradynamics/agent-skills` |
+| Pi | `pi install git:github.com/fulcradynamics/agent-skills` |
+| Any other agent (OpenCode, Cursor, Copilot, …) | `npx skills add fulcradynamics/agent-skills` with the [skills CLI](https://github.com/vercel-labs/skills) |
 
-```bash
-npx skills add fulcradynamics/agent-skills
-```
+**MCP connector (optional).** The skills work through the Fulcra CLI. Where the CLI can't run, connect the hosted Fulcra MCP server instead: on Claude Code and Codex install the `fulcra-mcp@fulcra` plugin from the same marketplace, on OpenClaw install `fulcra-mcp` the same way, and on other agents add `https://mcp.fulcradynamics.com/mcp` to the agent's MCP config ([snippets per agent](PLATFORMS.md)).
 
-### Claude Code plugin
+**Manual.** Clone the repo and copy the skill folders you want into your agent's skills directory (for example `.claude/skills/` for Claude Code). Copy whole folders: every skill reads its own `references/`, `scripts/`, and template directories at runtime.
 
-On Claude Code, the plugin marketplace is worth using over the skills CLI for two things the universal route can't do: it also carries the optional MCP connector plugin, and it gets native updates (`claude plugin update`). Add the marketplace, then install:
-
-```bash
-claude plugin marketplace add fulcradynamics/agent-skills
-```
-
-```bash
-claude plugin install fulcra-skills@fulcra
-```
-
-Optionally, install the MCP connector as well (recommended for restricted environments where the Fulcra CLI cannot run; connects to the hosted server at `mcp.fulcradynamics.com`):
-
-```bash
-claude plugin install fulcra-mcp@fulcra
-```
-
-Or from within Claude Code, run `/plugin marketplace add fulcradynamics/agent-skills` and pick plugins from the `/plugin` menu.
-
-### Manual
-
-Clone the repo and copy the skill folders you want into your agent's skills directory (e.g., `.claude/skills/` for Claude Code). Copy whole folders — every skill reads its own `references/`, `scripts/`, and template directories at runtime.
-
-## Other platforms
-
-This is an omni-repo: the same `skills/` directory installs natively on eight agentic platforms. Behavior is identical everywhere; only the install route and command spelling differ.
-
-| Platform | Install | Invoke | MCP connector | Status |
-|---|---|---|---|---|
-| Claude Code | `claude plugin install fulcra-skills@fulcra` | skill auto-trigger | `fulcra-mcp@fulcra` plugin | verified live (Claude Code 2.1.212) |
-| Codex CLI | [PLATFORMS.md](PLATFORMS.md#codex-cli) | `$fulcra-skills:fulcra-…` | `fulcra-mcp@fulcra` plugin or `config.toml` | verified live (codex-cli 0.147.0) |
-| Gemini CLI | [PLATFORMS.md](PLATFORMS.md#gemini-cli) | `/fulcra-…` or model-invoked | `settings.json` | verified live (0.56.0-nightly) |
-| Antigravity | [PLATFORMS.md](PLATFORMS.md#antigravity-agy) | `/fulcra-skills:fulcra-…` | `mcp_config.json` | verified live (agy v1.1.4) |
-| OpenCode | [PLATFORMS.md](PLATFORMS.md#opencode) | `/fulcra-…` or model-invoked | `opencode.json` | verified live (1.18.16) |
-| Hermes | [PLATFORMS.md](PLATFORMS.md#hermes) | `/fulcra-…` | `config.yaml` | ported, not verified live |
-| Pi | [PLATFORMS.md](PLATFORMS.md#pi) | `/skill:fulcra-…` | `~/.pi/agent/mcp.json` (pi 0.99+) | verified live (pi 0.84.1) |
-| OpenClaw | [PLATFORMS.md](PLATFORMS.md#openclaw) | `/fulcra-…` on any chat surface | `fulcra-mcp` plugin or gateway config | verified live (2026.9.9) |
-| Agent Plugins 1.0 clients (VS Code, Cursor, Copilot, Kiro) | [PLATFORMS.md](PLATFORMS.md#agent-plugins-10-clients-vs-code-cursor-copilot-kiro) | per client | `plugins/fulcra-mcp/` as standard package | manifests schema-validated; not verified live |
-
-Platforms marked "ported, not verified live" were built against each platform's current documentation (researched 2026-08, versions noted per section in [PLATFORMS.md](PLATFORMS.md)) but have not yet been exercised against a live install of that platform. Every port has a fallback route that is plain file placement. If something misbehaves, please open an issue — a report from a platform we can't run is the integration test.
+[PLATFORMS.md](PLATFORMS.md) covers each agent in detail: how skills are invoked there, the MCP setup, quirks that fail silently, and what has been verified on which version. If something misbehaves on your agent, please open an issue.
 
 <details>
 <summary>Maintainers: release + portability notes</summary>
