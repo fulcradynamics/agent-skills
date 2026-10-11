@@ -1,10 +1,11 @@
 ---
 name: build-and-deploy-a-web-app
-description: "Build and iterate on Fulcra web apps through a required planning, generation, and evaluation harness, preserving requirements, decisions, and history."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Build and iterate on Fulcra web apps through a required planning, generation, and evaluation harness, preserving requirements, decisions, and history. Use when starting a custom Fulcra-backed web app or continuing one created with this skill."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "🛠️" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🛠️\"}"
 ---
 
 # Build and Deploy a Web App

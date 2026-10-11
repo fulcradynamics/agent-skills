@@ -130,10 +130,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install into a clean project via npx skills, assert all skills land
         run: |
-          expected=$(ls -d "$GITHUB_WORKSPACE"/skills/fulcra-* | wc -l)
+          expected=$(ls -d "$GITHUB_WORKSPACE"/skills/*/ | wc -l)
           mkdir /tmp/target && cd /tmp/target
           npx -y skills add "$GITHUB_WORKSPACE" --agent claude-code --yes
-          count=$(ls -d .claude/skills/fulcra-* | wc -l)
+          count=$(ls -d .claude/skills/*/ | wc -l)
           echo "installed: $count of $expected skills"
           test "$count" -eq "$expected"
           test -f .claude/skills/fulcra-get-started/SKILL.md

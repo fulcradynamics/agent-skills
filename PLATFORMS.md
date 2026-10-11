@@ -6,7 +6,7 @@ Three facts hold everywhere:
 
 - **Skills shell out to `uvx fulcra-api …`**: whichever machine executes skills needs `uv` on PATH, outbound network access, and Fulcra auth (the `fulcra-connect` skill walks through it).
 - **MCP is opt-in by design.** Installing the skills never registers the hosted Fulcra Context MCP server (`https://mcp.fulcradynamics.com/mcp`, streamable HTTP, OAuth). Each section shows its platform's opt-in syntax.
-- **Verify any install the same way:** `uvx fulcra-api --help` resolves, and your platform's skill listing shows one `fulcra-*` entry per directory in `skills/` (17 today, two of them deprecation pointers). Trust a real skill invocation over a green manifest check.
+- **Verify any install the same way:** `uvx fulcra-api --help` resolves, and your platform's skill listing shows one entry per directory in `skills/` (18 today: `build-and-deploy-a-web-app` plus 17 `fulcra-*` skills, two of them deprecation pointers). Trust a real skill invocation over a green manifest check.
 
 Each section ends with a status line. "Verified live" names the binary version and date it was exercised against; everything else in a section was re-checked against each platform's current docs and source on 2026-10-08. A report from a platform we can't run is the integration test: please open issues.
 
@@ -97,7 +97,7 @@ agy plugin install https://github.com/fulcradynamics/agent-skills
 npx skills add fulcradynamics/agent-skills --agent opencode --global   # lands in ~/.agents/skills/
 ```
 
-Without `--global`, the skills CLI installs to the current project when run inside one. Or copy `skills/fulcra-*` folders into any scanned path (global: `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/`; per-project: `.opencode/skills/`, `.claude/skills/`, `.agents/skills/`). Skills are model-invoked through OpenCode's skill tool and also registered as `/fulcra-…` commands. MCP opt-in in `opencode.json`:
+Without `--global`, the skills CLI installs to the current project when run inside one. Or copy the `skills/*` folders into any scanned path (global: `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/`; per-project: `.opencode/skills/`, `.claude/skills/`, `.agents/skills/`). Skills are model-invoked through OpenCode's skill tool and also registered as `/fulcra-…` commands. MCP opt-in in `opencode.json`:
 
 ```json
 { "mcp": { "fulcra-context": { "type": "remote", "url": "https://mcp.fulcradynamics.com/mcp", "enabled": true } } }
@@ -159,7 +159,7 @@ pi install git:github.com/fulcradynamics/agent-skills   # or: pi install /path/t
 openclaw plugins install fulcra-skills --marketplace fulcradynamics/agent-skills
 ```
 
-Optionally add the MCP connector the same way (`openclaw plugins install fulcra-mcp --marketplace fulcradynamics/agent-skills`), or install from a local clone (`openclaw plugins install /path/to/agent-skills`). Once the packages are on ClawHub, `openclaw plugins install clawhub:fulcra-skills` and `clawhub:fulcra-mcp` also work, and `openclaw plugins update` follows new releases. OpenClaw asks you to confirm installs from outside ClawHub and to accept the plugin's capabilities.
+Optionally add the MCP connector the same way (`openclaw plugins install fulcra-mcp --marketplace fulcradynamics/agent-skills`), or install from a local clone (`openclaw plugins install /path/to/agent-skills`). Once the packages are on ClawHub, `openclaw plugins install clawhub:@fulcradynamics/fulcra-skills` and `clawhub:@fulcradynamics/fulcra-mcp` also work, and `openclaw plugins update` follows new releases. OpenClaw asks you to confirm installs from outside ClawHub and to accept the plugin's capabilities.
 
 - The **gateway host** executes everything: it needs `uv`, network, and Fulcra auth (if it's a headless VPS, run the browser auth once elsewhere, or use the MCP route). Skills then work from Discord, Telegram, WhatsApp, any connected surface, as `/fulcra-…`.
 - OpenClaw reads the marketplace from `.claude-plugin/marketplace.json` and installs both plugins as **Codex bundles**. That is by design: bundles take precedence over a native `openclaw.plugin.json` unless a `package.json` declares `openclaw.extensions`. The `openclaw.plugin.json` files exist for ClawHub listings and describe the same skills and MCP server.
