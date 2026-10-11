@@ -6,3 +6,6 @@ tests/
 reports/
 # fulcra-mcp is published as its own package from plugins/fulcra-mcp.
 plugins/
+# Contributor docs (the package README stays).
+AGENTS.md
+CONTRIBUTING.md
