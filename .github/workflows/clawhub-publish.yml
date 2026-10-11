@@ -24,7 +24,7 @@ permissions:
   contents: read
 
 env:
-  OWNER: fulcradynamics
+  OWNER: fulcra
   CLAWHUB: npx -y clawhub@0.23.3
 
 jobs:
@@ -35,9 +35,9 @@ jobs:
       matrix:
         include:
           - path: .
-            name: "@fulcradynamics/fulcra-skills"
+            name: "@fulcra/fulcra-skills"
           - path: plugins/fulcra-mcp
-            name: "@fulcradynamics/fulcra-mcp"
+            name: "@fulcra/fulcra-mcp"
     steps:
       - name: Refuse real publishes outside main
         if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
