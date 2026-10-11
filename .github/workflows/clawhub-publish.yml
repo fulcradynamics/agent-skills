@@ -8,8 +8,11 @@ name: ClawHub publish
 # - plugins: @fulcra/fulcra-skills (every skill in one bundle) and
 #   @fulcra/fulcra-mcp. Versions come from each openclaw.plugin.json, and
 #   ClawHub rejects a version it already has, so bump the manifests first.
-# - skills: one listing per folder under skills/, slug = folder name. ClawHub
-#   skips unchanged skills and bumps the patch version of changed ones.
+# - skills: updates the individual listings that already exist on ClawHub
+#   (LISTED_SKILLS below; slug = folder name). Other skills ship only inside
+#   @fulcra/fulcra-skills, so a new skill folder never becomes its own
+#   listing. ClawHub skips unchanged skills and bumps the patch version of
+#   changed ones.
 
 on:
   workflow_dispatch:
@@ -24,7 +27,7 @@ on:
         options: [all, plugins, skills]
         default: all
       skill:
-        description: Publish only this skill folder name (skills target only; blank = all)
+        description: Publish only this listed skill (skills target only; blank = all listed)
         type: string
         default: ""
       changelog:
@@ -129,6 +132,11 @@ jobs:
 
       - name: Publish skills
         env:
+          # The skills that have their own ClawHub listing. Add a name here
+          # only to create a new individual listing on purpose.
+          LISTED_SKILLS: >-
+            fulcra-agent-teams fulcra-dashboard fulcra-get-started fulcra-ingest
+            fulcra-memory fulcra-onboarding fulcra-tracking fulcra-workspaces
           ONLY: ${{ inputs.skill }}
           DRY_RUN: ${{ inputs.dry_run }}
           CHANGELOG: ${{ inputs.changelog }}
@@ -143,13 +151,19 @@ jobs:
               *) echo "$1" ;;
             esac
           }
-          if [ -n "$ONLY" ] && [ ! -f "skills/$ONLY/SKILL.md" ]; then
-            echo "No skill folder named '$ONLY' under skills/."
+          for slug in $LISTED_SKILLS; do
+            if [ ! -f "skills/$slug/SKILL.md" ]; then
+              echo "Listed skill '$slug' has no folder under skills/; update LISTED_SKILLS."
+              exit 1
+            fi
+          done
+          if [ -n "$ONLY" ] && [[ " $LISTED_SKILLS " != *" $ONLY "* ]]; then
+            echo "'$ONLY' has no individual ClawHub listing; it ships inside @fulcra/fulcra-skills."
             exit 1
           fi
           failed=()
-          for dir in skills/*/; do
-            slug=$(basename "$dir")
+          for slug in $LISTED_SKILLS; do
+            dir="skills/$slug/"
             if [ -n "$ONLY" ] && [ "$slug" != "$ONLY" ]; then continue; fi
             args=(skill publish "$dir"
               --slug "$slug"
