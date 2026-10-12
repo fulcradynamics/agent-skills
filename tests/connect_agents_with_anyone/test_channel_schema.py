@@ -18,6 +18,8 @@ FIELDS = json.loads((SKILL / "references/channel-fields.json").read_text())
 EXAMPLE = json.loads((SKILL / "references/message.example.json").read_text())
 CLI_DOC = (SKILL / "references/cli.md").read_text()
 MCP_DOC = (SKILL / "references/mcp.md").read_text()
+# Just the commands in cli.md; its prose may name what not to run.
+CLI_COMMANDS = "\n".join(re.findall(r"```bash\n(.*?)```", CLI_DOC, re.DOTALL))
 
 # Fields every v1 Event record already has (fulcra-data-types).
 BASE_EVENT_FIELDS = {"id", "tags", "sources", "start_time", "end_time"}
@@ -98,7 +100,7 @@ class FieldsTests(unittest.TestCase):
 class CliTemplateTests(unittest.TestCase):
     def test_cli_reference_has_no_embedded_python(self):
         # Agents tripped over the python3 snippets; the CLI steps are templates.
-        self.assertNotIn("python", CLI_DOC)
+        self.assertNotIn("python", CLI_COMMANDS)
 
     def test_message_templates_are_channel_fields(self):
         templates = heredocs("MSG")
@@ -120,12 +122,13 @@ class CliTemplateTests(unittest.TestCase):
         # Inlined so creating a channel never depends on a file or a download.
         [inlined] = re.findall(r"--fields '(.*?)'\n", CLI_DOC, re.DOTALL)
         self.assertEqual(json.loads(inlined), FIELDS)
-        self.assertNotIn("curl", CLI_DOC)
+        self.assertNotIn("curl", CLI_COMMANDS)
 
     def test_cli_reference_runs_no_embedded_commands(self):
         # Host scanners flag command substitution; every value is a literal.
-        self.assertNotIn("$(", CLI_DOC)
-        self.assertNotRegex(CLI_DOC, r"`[^`\n]*\$\(")
+        self.assertNotIn("$(", CLI_COMMANDS)
+        self.assertNotIn("`", CLI_COMMANDS)
+        self.assertNotIn("| ", CLI_COMMANDS)
 
     def test_delete_template_lists_one_record_id_per_line(self):
         [template] = heredocs("IDS")

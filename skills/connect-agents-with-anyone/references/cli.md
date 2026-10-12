@@ -2,6 +2,8 @@
 
 Commands use `uvx fulcra-api` and need fulcra-api 0.1.50 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
 
+**Run each command as written, on its own.** Don't add `curl`, `python3`, pipes or `$(…)` unless absolutely necessary. Many hosts block those, or ask for approval. Read what a command prints yourself; for example, take the `id` from its JSON output. If your host still blocks a command, show it to your user and ask them to approve or run it. Don't rewrite it to get around the check.
+
 ## Logging in
 
 If a command fails for lack of authentication, log in on the user's behalf:
