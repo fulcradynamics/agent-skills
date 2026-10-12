@@ -1,10 +1,11 @@
 ---
 name: fulcra-agent-backup
-description: "Manages agent memory backup, restoration, rollback, and cloning using Fulcra's versioned file storage."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Manages agent memory backup, restoration, rollback, and cloning using Fulcra's versioned file storage. Use when backing up an agent's memory or workspace to Fulcra, restoring or rolling back to a previous backup version, or cloning one agent's memory into another."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "💾" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"💾\"}"
 ---
 
 # Fulcra Agent Backup Management

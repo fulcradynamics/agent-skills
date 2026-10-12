@@ -1,10 +1,11 @@
 ---
 name: fulcra-situational-awareness
 description: "Use when an authorized agent needs to check Fulcra for recent memory files, workspace annotation messages, and newly ingested data."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "📡" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"📡\"}"
 ---
 
 # Fulcra Situational Awareness

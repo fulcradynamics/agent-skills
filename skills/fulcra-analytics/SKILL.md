@@ -1,20 +1,13 @@
 ---
 name: fulcra-analytics
-description: "Analyze Fulcra user data with privacy-respecting Python and CLI workflows: fetch records or metrics, normalize them into DataFrames, compute descriptive summaries, and produce auditable JSON or OKF-ready reports."
-homepage: https://github.com/fulcradynamics/agent-skills
+description: "Analyze Fulcra user data with privacy-respecting Python and CLI workflows: fetch records or metrics, normalize them into DataFrames, compute descriptive summaries, and produce auditable JSON or OKF-ready reports. Use when asked to analyze, summarize, or compute statistics over Fulcra data such as health metrics, calendar records, location visits, or file exports."
 license: MIT
-user-invocable: true
-tags:
-  - fulcra
-  - analytics
-  - data-science
-  - okf
-  - pandas
 metadata:
-  openclaw:
-    emoji: "📊"
-  fulcra:
-    default_output_namespace: analytics/
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  tags: "fulcra,analytics,data-science,okf,pandas"
+  openclaw: "{\"emoji\": \"📊\"}"
+  fulcra: "{\"default_output_namespace\": \"analytics/\"}"
 ---
 
 # Fulcra Analytics
@@ -301,7 +294,7 @@ What patterns are visible in StepCount records over the last week?
 
 Before reporting success:
 
-- [ ] The command or Python workflow executed successfully.
+- [ ] The command or Python workflow executed successfully (`scripts/validate_e2e.py` runs an end-to-end check).
 - [ ] Tests pass when modifying the package: `uv run --with pandas --with pytest --with typer --with rich python -m pytest tests -q`.
 - [ ] Python files compile: `uv run --with pandas --with typer --with rich python -m py_compile src/fulcra_analytics/*.py`.
 - [ ] CLI JSON parses: pipe output to `python3 -m json.tool` or `jq`.

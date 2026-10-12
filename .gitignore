@@ -1,3 +1,7 @@
 .DS_Store
 .vscode/
 __pycache__/
+.venv/
+skills-lock.json
+reports/
+.claude/settings.local.json

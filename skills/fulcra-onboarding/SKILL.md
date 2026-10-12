@@ -1,10 +1,11 @@
 ---
 name: fulcra-onboarding
 description: "Deprecated — renamed to fulcra-get-started. Use the fulcra-get-started skill instead."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "🌱" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🌱\"}"
 ---
 
 # Fulcra Onboarding — moved to `fulcra-get-started`

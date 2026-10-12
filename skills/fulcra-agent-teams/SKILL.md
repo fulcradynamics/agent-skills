@@ -1,10 +1,11 @@
 ---
 name: fulcra-agent-teams
 description: "Deprecated — renamed to fulcra-workspaces. Use the fulcra-workspaces skill instead."
-homepage: "https://github.com/fulcradynamics/agent-skills"
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "🤝" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🤝\"}"
 ---
 
 # Fulcra Agent Teams — moved to `fulcra-workspaces`

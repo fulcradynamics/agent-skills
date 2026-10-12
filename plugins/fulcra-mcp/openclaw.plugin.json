@@ -1,0 +1,18 @@
+{
+  "id": "fulcra-mcp",
+  "name": "Fulcra MCP",
+  "version": "0.1.0",
+  "description": "Connects your agent to the hosted Fulcra Context MCP server for direct access to your Fulcra data (sleep, workouts, location, calendars, custom metrics). Useful in restricted environments where the Fulcra CLI cannot run.",
+  "categories": ["integrations"],
+  "mcpServers": {
+    "fulcra-context": {
+      "url": "https://mcp.fulcradynamics.com/mcp",
+      "transport": "streamable-http"
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

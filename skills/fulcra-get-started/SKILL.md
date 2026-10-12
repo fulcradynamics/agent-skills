@@ -1,10 +1,11 @@
 ---
 name: fulcra-get-started
-description: "Guides a new user or agent through the initial setup, configuration, and capabilities of the Fulcra environment."
-homepage: "https://github.com/fulcradynamics/agent-skills"
+description: "Guides a new user or agent through the initial setup, configuration, and capabilities of the Fulcra environment. Use when setting up Fulcra for the first time or choosing what to build next; authentication itself is handled by the fulcra-connect skill."
 license: "MIT"
-user-invocable: true
-metadata: { "openclaw": { "emoji": "🌱" } }
+metadata:
+  homepage: "https://github.com/fulcradynamics/agent-skills"
+  user-invocable: "true"
+  openclaw: "{\"emoji\": \"🌱\"}"
 ---
 
 # Fulcra Get Started

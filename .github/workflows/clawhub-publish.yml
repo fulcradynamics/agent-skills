@@ -1,0 +1,185 @@
+name: ClawHub publish
+
+# Publishes to clawhub.ai/fulcra. Run it from the Actions tab. It defaults to a
+# dry run; a real publish is only allowed from main, so every listing records a
+# commit that is on main.
+#
+# Two kinds of listing:
+# - plugins: @fulcra/fulcra-skills (every skill in one bundle) and
+#   @fulcra/fulcra-mcp. Versions come from each openclaw.plugin.json, and
+#   ClawHub rejects a version it already has, so bump the manifests first.
+# - skills: updates the individual listings that already exist on ClawHub
+#   (LISTED_SKILLS below; slug = folder name). Other skills ship only inside
+#   @fulcra/fulcra-skills, so a new skill folder never becomes its own
+#   listing. ClawHub skips unchanged skills and bumps the patch version of
+#   changed ones.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Preview only; nothing is uploaded
+        type: boolean
+        default: true
+      target:
+        description: What to publish
+        type: choice
+        options: [all, plugins, skills]
+        default: all
+      skill:
+        description: Publish only this listed skill (skills target only; blank = all listed)
+        type: string
+        default: ""
+      changelog:
+        description: Release notes shown on ClawHub
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+env:
+  OWNER: fulcra
+  CLAWHUB: npx -y clawhub@0.23.3
+
+jobs:
+  plugins:
+    if: ${{ inputs.target != 'skills' }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - path: .
+            name: "@fulcra/fulcra-skills"
+          - path: plugins/fulcra-mcp
+            name: "@fulcra/fulcra-mcp"
+    steps:
+      - name: Refuse real publishes outside main
+        if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "Real publishes must run from main (this run: $GITHUB_REF)."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Log in to ClawHub
+        if: ${{ !inputs.dry_run }}
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          if [ -z "$CLAWHUB_TOKEN" ]; then
+            echo "The CLAWHUB_TOKEN repository secret is not set."
+            exit 1
+          fi
+          $CLAWHUB login --token "$CLAWHUB_TOKEN"
+
+      - name: Validate
+        run: $CLAWHUB package validate "${{ matrix.path }}" --out "$RUNNER_TEMP/reports"
+
+      - name: Publish ${{ matrix.name }}
+        env:
+          PKG_PATH: ${{ matrix.path }}
+          PKG_NAME: ${{ matrix.name }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          CHANGELOG: ${{ inputs.changelog }}
+        run: |
+          version=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "$PKG_PATH/openclaw.plugin.json")
+          args=(package publish "$PKG_PATH"
+            --family bundle-plugin
+            --name "$PKG_NAME"
+            --owner "$OWNER"
+            --version "$version"
+            --source-repo "$GITHUB_REPOSITORY"
+            --source-commit "$GITHUB_SHA"
+            --source-ref "$GITHUB_REF_NAME")
+          if [ "$PKG_PATH" != "." ]; then args+=(--source-path "$PKG_PATH"); fi
+          if [ -n "$CHANGELOG" ]; then args+=(--changelog "$CHANGELOG"); fi
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); else args+=(--wait); fi
+          echo "clawhub ${args[*]}"
+          $CLAWHUB "${args[@]}"
+
+  skills:
+    if: ${{ inputs.target != 'plugins' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refuse real publishes outside main
+        if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "Real publishes must run from main (this run: $GITHUB_REF)."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Log in to ClawHub
+        if: ${{ !inputs.dry_run }}
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          if [ -z "$CLAWHUB_TOKEN" ]; then
+            echo "The CLAWHUB_TOKEN repository secret is not set."
+            exit 1
+          fi
+          $CLAWHUB login --token "$CLAWHUB_TOKEN"
+
+      - name: Publish skills
+        env:
+          # The skills that have their own ClawHub listing. Add a name here
+          # only to create a new individual listing on purpose.
+          LISTED_SKILLS: >-
+            fulcra-agent-teams fulcra-dashboard fulcra-get-started fulcra-ingest
+            fulcra-memory fulcra-onboarding fulcra-tracking fulcra-workspaces
+          ONLY: ${{ inputs.skill }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          CHANGELOG: ${{ inputs.changelog }}
+        run: |
+          # Display names default to the folder name, matching the existing
+          # listings. The renamed skills keep the display names their pointer
+          # listings already carry.
+          display_name() {
+            case "$1" in
+              fulcra-onboarding) echo "Fulcra Onboarding (deprecated, use fulcra-get-started)" ;;
+              fulcra-agent-teams) echo "Fulcra Agent Teams (deprecated, use fulcra-workspaces)" ;;
+              *) echo "$1" ;;
+            esac
+          }
+          for slug in $LISTED_SKILLS; do
+            if [ ! -f "skills/$slug/SKILL.md" ]; then
+              echo "Listed skill '$slug' has no folder under skills/; update LISTED_SKILLS."
+              exit 1
+            fi
+          done
+          if [ -n "$ONLY" ] && [[ " $LISTED_SKILLS " != *" $ONLY "* ]]; then
+            echo "'$ONLY' has no individual ClawHub listing; it ships inside @fulcra/fulcra-skills."
+            exit 1
+          fi
+          failed=()
+          for slug in $LISTED_SKILLS; do
+            dir="skills/$slug/"
+            if [ -n "$ONLY" ] && [ "$slug" != "$ONLY" ]; then continue; fi
+            args=(skill publish "$dir"
+              --slug "$slug"
+              --name "$(display_name "$slug")"
+              --owner "$OWNER"
+              --source-repo "$GITHUB_REPOSITORY"
+              --source-commit "$GITHUB_SHA"
+              --source-ref "$GITHUB_REF_NAME"
+              --source-path "skills/$slug")
+            if [ -n "$CHANGELOG" ]; then args+=(--changelog "$CHANGELOG"); fi
+            if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+            echo "::group::$slug"
+            $CLAWHUB "${args[@]}" || failed+=("$slug")
+            echo "::endgroup::"
+          done
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "Failed: ${failed[*]}"
+            exit 1
+          fi
