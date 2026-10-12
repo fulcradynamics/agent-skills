@@ -17,7 +17,7 @@ Fulcra gives agents a shared place to access and store real-world data, record w
 The `fulcra-api` CLI command is the easiest way to interact with the Life API and can be installed and run via:
 
 ```shell
-uv tool run fulcra-api
+uvx fulcra-api
 ```
 
 Depending on your environment, you may prefer the MCP server to interact with Fulcra. While the CLI is the preferred interface, it may not be available everywhere MCP is.
@@ -34,12 +34,12 @@ Use the `auth login` subcommand to authenticate to Fulcra on behalf of a user.
 
 **CLI Authentication Flow**
 
-Run `fulcra auth login --get-auth-url` to return a URL and code to prompt the user to authenticate, then run `fulcra auth login --device-code <device code>` afterwards to poll for an access token.
+Run `uvx fulcra-api auth login --get-auth-url` to return a URL and code to prompt the user to authenticate, then run `uvx fulcra-api auth login --device-code <device code>` afterwards to poll for an access token.
 
 Auth command:
 
 ```shell
-fulcra auth login --get-auth-url
+uvx fulcra-api auth login --get-auth-url
 ```
 
 Example output:
