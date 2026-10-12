@@ -2,12 +2,8 @@
 
 import copy
 import json
-import os
 from pathlib import Path
 import re
-import subprocess
-import sys
-import tempfile
 import unittest
 
 try:
@@ -30,8 +26,8 @@ RESERVED_FIELDS = {
     "id", "fulcra_userid", "start_time", "end_time", "value", "unit", "tags",
     "sources", "metadata",
 }
-# A body that breaks naive shell or JSON quoting.
-TRICKY_BODY = "It's \"done\": $HOME `whoami` \\n {not json}\nsecond line"
+# Stands in for an ID placeholder when filling in the CLI templates.
+EXAMPLE_ID = "43775c1c-4c79-45a5-9370-535719f17233"
 
 
 def channel_schema():
@@ -45,19 +41,16 @@ def channel_schema():
     return schema
 
 
-def python_snippet(after):
-    """The python3 -c script in the first CLI code block following `after`."""
-    section = CLI_DOC[CLI_DOC.index(after):]
-    match = re.search(r"python3 -c '\n(.*?)\n'", section, re.DOTALL)
-    assert match, f"no python3 -c snippet after {after!r}"
-    return match.group(1)
+def heredocs(marker):
+    """The body of every `<<'MARKER'` heredoc in cli.md."""
+    return re.findall(rf"<<'{marker}'\n(.*?)\n{marker}\n", CLI_DOC, re.DOTALL)
 
 
-def run_python(script, *args, stdin=""):
-    return subprocess.run(
-        [sys.executable, "-c", script, *args], input=stdin, capture_output=True,
-        text=True, check=True,
-    ).stdout
+def fill(template):
+    """A template with its <placeholders> filled in: a UUID where an ID goes."""
+    return re.sub(
+        r"<([^>]+)>", lambda m: EXAMPLE_ID if "id" in m.group(1).split() else "x", template
+    )
 
 
 def walk(node):
@@ -102,58 +95,31 @@ class FieldsTests(unittest.TestCase):
                 self.assertNotRegex(path.read_text(), r"message_id|\"protocol\"", path.name)
 
 
-class CliSnippetTests(unittest.TestCase):
-    def test_send_builds_one_json_line_from_settings_and_body(self):
-        script = python_snippet("## Sending")
-        out = run_python(
-            script, "sender=alice-claude", "kind=reply", "topic=Friday dinner",
-            "recipients=bob-gpt,carol", "in_reply_to=43775c1c-4c79-45a5-9370-535719f17233",
-            stdin=TRICKY_BODY + "\n",
-        )
-        self.assertEqual(len(out.splitlines()), 1)
-        message = json.loads(out)
-        self.assertEqual(message["body"], TRICKY_BODY)
-        self.assertEqual(message["recipients"], ["bob-gpt", "carol"])
-        self.assertEqual(message["topic"], "Friday dinner")
-        # Every value stays a string: "7" must not become a number.
-        self.assertEqual(json.loads(run_python(script, "sender=7", "kind=message", stdin="7"))["body"], "7")
-        self.assertLessEqual(set(message), set(FIELDS["properties"]))
+class CliTemplateTests(unittest.TestCase):
+    def test_cli_reference_has_no_embedded_python(self):
+        # Agents tripped over the python3 snippets; the CLI steps are templates.
+        self.assertNotIn("python", CLI_DOC)
 
-    def test_send_refuses_a_reply_or_ack_without_in_reply_to(self):
-        script = python_snippet("## Sending")
-        for kind in ("reply", "ack"):
-            result = subprocess.run(
-                [sys.executable, "-c", script, "sender=alice-claude", f"kind={kind}"],
-                input="hi", capture_output=True, text=True,
-            )
-            self.assertNotEqual(result.returncode, 0, kind)
-            self.assertEqual(result.stdout, "", kind)
-            self.assertIn("in_reply_to", result.stderr)
+    def test_message_templates_are_one_line_of_channel_fields(self):
+        templates = heredocs("MSG")
+        self.assertGreaterEqual(len(templates), 2)
+        for template in templates:
+            # The CLI reads each line as a separate record.
+            self.assertEqual(len(template.splitlines()), 1, template)
+            message = json.loads(fill(template))
+            self.assertLessEqual(set(message), set(FIELDS["properties"]), template)
+            self.assertLessEqual(set(FIELDS["required"]), set(message), template)
 
-    def test_send_example_uses_only_channel_fields(self):
-        names = set(re.findall(r" (\w+)=<", CLI_DOC[CLI_DOC.index("## Sending"):CLI_DOC.index("## Reading")]))
-        self.assertTrue(names)
-        self.assertLessEqual(names, set(FIELDS["properties"]))
+    def test_reply_templates_carry_in_reply_to(self):
+        for template in heredocs("MSG"):
+            message = json.loads(fill(template))
+            if message["kind"] in ("reply", "ack"):
+                self.assertEqual(message.get("in_reply_to"), EXAMPLE_ID, template)
 
-    def test_unanswered_filter(self):
-        script = python_snippet("To list only what still needs an answer")
-        theirs = [
-            {"id": "a", "kind": "message", "body": "answered"},
-            {"id": "b", "kind": "message", "body": "open"},
-            {"id": "c", "kind": "ack", "in_reply_to": "x", "body": "read it"},
-            {"id": "d", "kind": "reply", "recipients": ["carol"], "body": "not for me"},
-            {"id": "e", "kind": "reply", "recipients": ["alice-claude"], "body": "for me"},
-            {"id": "f", "kind": "message", "recipients": ["all"], "body": "for all"},
-        ]
-        mine = [{"id": "z", "kind": "reply", "in_reply_to": "a", "body": "done"}]
-        with tempfile.TemporaryDirectory() as tmp:
-            mine_path = os.path.join(tmp, "mine.jsonl")
-            Path(mine_path).write_text("".join(json.dumps(m) + "\n" for m in mine))
-            out = run_python(
-                script, "alice-claude", mine_path,
-                stdin="".join(json.dumps(m) + "\n" for m in theirs),
-            )
-        self.assertEqual([json.loads(l)["id"] for l in out.splitlines()], ["b", "e", "f"])
+    def test_delete_template_lists_one_record_id_per_line(self):
+        [template] = heredocs("IDS")
+        for line in template.splitlines():
+            self.assertEqual(json.loads(fill(line)), {"record_id": EXAMPLE_ID})
 
 
 @unittest.skipIf(jsonschema is None, "jsonschema is required for schema validation")
@@ -176,10 +142,16 @@ class SchemaTests(unittest.TestCase):
         message = json.loads(re.sub(r"<[^>]+>", "x", example))
         self.validator.validate(message)
 
-    def test_cli_send_output_is_a_valid_message(self):
-        out = run_python(python_snippet("## Sending"), "sender=alice-claude", "kind=message",
-                         stdin=TRICKY_BODY)
-        self.validator.validate(json.loads(out))
+    def test_cli_message_templates_are_valid_messages(self):
+        for template in heredocs("MSG"):
+            self.validator.validate(json.loads(fill(template)))
+
+    def test_escaped_body_survives(self):
+        # cli.md: quotes as \", line breaks as \n, backslashes as \\.
+        line = '{"sender": "a", "kind": "message", "body": "It\'s \\"7pm\\" $40 `cash` C:\\\\tmp\\nnext"}'
+        message = json.loads(line)
+        self.assertEqual(message["body"], 'It\'s "7pm" $40 `cash` C:\\tmp\nnext')
+        self.validator.validate(message)
 
     def test_required_fields_are_enforced(self):
         for name in FIELDS["required"]:

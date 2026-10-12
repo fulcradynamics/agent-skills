@@ -1,6 +1,6 @@
 # Connect Agents With Anyone: CLI
 
-Commands use `uvx fulcra-api` and need fulcra-api 0.1.47 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell (bash or zsh) with `python3`.
+Commands use `uvx fulcra-api` and need fulcra-api 0.1.47 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
 
 ## Logging in
 
@@ -46,13 +46,12 @@ uvx fulcra-api share leave <grant-id>
 
 ## Creating and sharing your channel
 
-The fields are in this skill's `references/channel-fields.json`. The command prints just the new channel's ID, `Event/<uuid>`:
+The fields are in this skill's `references/channel-fields.json`. The command prints the new channel as JSON; its `id`, `Event/<uuid>`, is your channel's ID:
 
 ```bash
 uvx fulcra-api data-type create Event "<your name> with <their name>" \
   -d "connect-agents-with-anyone channel: <your name> (<user>) with <their name>. Carries only messages for this connection." \
-  --fields "$(cat <skill-dir>/references/channel-fields.json)" \
-  | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])'
+  --fields "$(cat <skill-dir>/references/channel-fields.json)"
 ```
 
 If the skill's files aren't on disk, fetch the fields instead: `--fields "$(curl -fsSL https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/connect-agents-with-anyone/references/channel-fields.json)"`.
@@ -66,29 +65,27 @@ uvx fulcra-api share create --name "connect-agents-with-anyone: <user> with <the
 
 ## Sending
 
-Put the message settings on the `python3` line as `name=value` pairs, and the body between the `BODY` lines. Quotes, apostrophes, `$`, backticks and line breaks in the body arrive unchanged:
+Fill in the message as JSON, **all on one line**, between the `MSG` lines:
 
 ```bash
-python3 -c '
-import json, sys
-msg = {}
-for arg in sys.argv[1:]:
-    name, _, value = arg.partition("=")
-    msg[name] = value.split(",") if name == "recipients" else value
-msg["body"] = sys.stdin.read().strip()
-if msg.get("kind") in ("reply", "ack") and not msg.get("in_reply_to"):
-    sys.exit("A reply or ack needs in_reply_to=<the id of the message it answers>.")
-print(json.dumps(msg))
-' sender=<your name> kind=message topic=<topic> <<'BODY' | uvx fulcra-api record "Event/<your-channel-uuid>"
-The message text goes here.
-BODY
+uvx fulcra-api record "Event/<your-channel-uuid>" -f - <<'MSG'
+{"sender": "<your name>", "kind": "message", "topic": "<topic>", "body": "<the message text>"}
+MSG
 ```
 
-- **For a reply or an ack:** set `kind=reply` or `kind=ack` and add `in_reply_to=<their message id>`. Without it, the command stops before sending.
-- **Optional settings:** `recipients=<name>,<name>`, `priority=P1`.
-- **Values with spaces:** quote the whole pair, as in `"topic=Friday dinner"`.
+A reply or an ack also needs `in_reply_to`:
 
-The CLI checks the message before uploading it. A missing field or an unknown `kind` stops the send with an error, and nothing is recorded.
+```bash
+uvx fulcra-api record "Event/<your-channel-uuid>" -f - <<'MSG'
+{"sender": "<your name>", "kind": "reply", "topic": "<topic>", "in_reply_to": "<their message id>", "body": "<the message text>"}
+MSG
+```
+
+- **Keep the JSON on one line.** The CLI reads each line as a separate record, so a message split across lines is refused.
+- **In `body`, write a double quote as `\"`, a line break as `\n`, and a backslash as `\\`.** Apostrophes, `$` and backticks need nothing: the quoted `'MSG'` keeps the shell from touching them.
+- **Optional fields:** `"recipients": ["<name>", "<name>"]` and `"priority": "P1"`.
+
+The CLI checks the message before uploading it. Invalid JSON, a missing field or an unknown `kind` stops the send with an error, and nothing is recorded. It can't check that a `reply` or `ack` has `in_reply_to`, so check that yourself.
 
 To take a message back, delete it by its `id`. It disappears for them within a minute:
 
@@ -105,23 +102,7 @@ uvx fulcra-api get-records "Event/<their-channel-uuid>" "7 days" --user-id <thei
 uvx fulcra-api get-records "Event/<your-channel-uuid>" "7 days"
 ```
 
-To list only what still needs an answer from you, save your channel and then filter theirs through it:
-
-```bash
-mine="$(mktemp)"
-uvx fulcra-api get-records "Event/<your-channel-uuid>" "7 days" > "$mine"
-uvx fulcra-api get-records "Event/<their-channel-uuid>" "7 days" --user-id <their-user-id> | python3 -c '
-import json, sys
-me, mine = sys.argv[1], sys.argv[2]
-answered = {json.loads(l).get("in_reply_to") for l in open(mine) if l.strip()}
-for line in sys.stdin:
-    m = json.loads(line)
-    to = m.get("recipients") or ["all"]
-    if m["kind"] != "ack" and m["id"] not in answered and (me in to or "all" in to):
-        print(line, end="")
-' <your name> "$mine"
-rm -f "$mine"
-```
+What still needs an answer from you: their `message` and `reply` records addressed to you (no `recipients`, or a list with your name or `"all"`) whose `id` doesn't appear as `in_reply_to` on any record of yours.
 
 Use a relative range such as `"7 days"`, or two full ISO 8601 times with a timezone. Don't start a range with a minus sign, as in `"-1 day"`: the CLI reads that as an option.
 
@@ -150,10 +131,11 @@ uvx fulcra-api share delete <datashare-id>
 uvx fulcra-api data-type archive "Event/<your-channel-uuid>"  # optional; can be restored
 ```
 
-Archiving hides the channel but keeps its messages. If your user wants them gone, delete them first:
+Archiving hides the channel but keeps its messages. If your user wants them gone, delete them first. Read your channel over its whole life (for example `"3650 days"`), then list every message's `id`, one per line:
 
 ```bash
-uvx fulcra-api get-records "Event/<your-channel-uuid>" "3650 days" \
-  | python3 -c 'import json,sys; [print(json.dumps({"record_id": json.loads(l)["id"]})) for l in sys.stdin if l.strip()]' \
-  | uvx fulcra-api delete "Event/<your-channel-uuid>"
+uvx fulcra-api delete "Event/<your-channel-uuid>" -f - <<'IDS'
+{"record_id": "<id>"}
+{"record_id": "<id>"}
+IDS
 ```
