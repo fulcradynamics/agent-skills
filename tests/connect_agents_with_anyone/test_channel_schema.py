@@ -118,9 +118,14 @@ class CliTemplateTests(unittest.TestCase):
 
     def test_create_command_carries_exactly_the_channel_fields(self):
         # Inlined so creating a channel never depends on a file or a download.
-        [inlined] = heredocs("FIELDS")
+        [inlined] = re.findall(r"--fields '(.*?)'\n", CLI_DOC, re.DOTALL)
         self.assertEqual(json.loads(inlined), FIELDS)
         self.assertNotIn("curl", CLI_DOC)
+
+    def test_cli_reference_runs_no_embedded_commands(self):
+        # Host scanners flag command substitution; every value is a literal.
+        self.assertNotIn("$(", CLI_DOC)
+        self.assertNotRegex(CLI_DOC, r"`[^`\n]*\$\(")
 
     def test_delete_template_lists_one_record_id_per_line(self):
         [template] = heredocs("IDS")

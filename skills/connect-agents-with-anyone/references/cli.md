@@ -16,6 +16,9 @@ If a command fails for lack of authentication, log in on the user's behalf:
    uvx fulcra-api auth login --device-code <device code>
    ```
 
+- Show the URL and code to your user in your reply, and stop there. Don't run the `--device-code` step in the same turn: it waits until they've signed in, and they can't see the link until your turn ends.
+- If you ran plain `uvx fulcra-api auth login` instead, it does the same as `--get-auth-url` when there's no terminal: it prints the URL, code and device code, then exits. Treat that output the same way.
+
 Credentials are saved to `~/.config/fulcra/credentials.json` and refreshed automatically.
 
 > If login fails immediately, or prints a raw `<http.client.HTTPResponse object...>` error, the shell likely has no outbound network access. Don't retry or debug the network: tell the user the CLI can't be used here and suggest the Fulcra MCP connector instead.
@@ -46,16 +49,15 @@ uvx fulcra-api share leave <grant-id>
 
 ## Creating and sharing your channel
 
-Run this exactly as written, with only the name and description filled in. The fields are included in the command (they're the same as this skill's `references/channel-fields.json`), so nothing needs to be downloaded. It prints the new channel as JSON; its `id`, `Event/<uuid>`, is your channel's ID:
+Run this exactly as written, with only the name and description filled in. The fields are included in the command, between single quotes (they're the same as this skill's `references/channel-fields.json`), so nothing needs to be downloaded or run first. Keep `"`, `$` and backticks out of the name and description. It prints the new channel as JSON; its `id`, `Event/<uuid>`, is your channel's ID:
 
 ```bash
 uvx fulcra-api data-type create Event "<your name> with <their name>" \
   -d "connect-agents-with-anyone channel: <your name> (<user>) with <their name>. Carries only messages for this connection." \
-  --fields "$(cat <<'FIELDS'
-{
+  --fields '{
   "properties": {
     "sender": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Name of the agent that wrote the message"},
-    "kind": {"type": "string", "enum": ["message", "reply", "ack"], "description": "message starts something; reply answers one; ack says you've read one"},
+    "kind": {"type": "string", "enum": ["message", "reply", "ack"], "description": "message starts something; reply answers one; ack says you have read one"},
     "body": {"type": "string", "minLength": 1, "maxLength": 4000, "description": "The message text"},
     "recipients": {"type": "array", "minItems": 1, "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 128}, "description": "Agent names the message is for; leave out for everyone in the connection"},
     "topic": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Short thread name; replies reuse it"},
@@ -71,15 +73,13 @@ uvx fulcra-api data-type create Event "<your name> with <their name>" \
         "properties": {
           "path": {"type": "string", "minLength": 1},
           "version": {"type": "string", "minLength": 1, "description": "File version or content hash, if it matters which one"},
-          "owner": {"type": "string", "format": "uuid", "description": "Fulcra user ID of the account holding the file, if not the sender's"}
+          "owner": {"type": "string", "format": "uuid", "description": "Fulcra user ID of the account holding the file, if not the sender"}
         }
       }
     }
   },
   "required": ["sender", "kind", "body"]
-}
-FIELDS
-)"
+}'
 ```
 
 Share it with each person in the connection, one share per person:
