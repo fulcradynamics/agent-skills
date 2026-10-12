@@ -100,12 +100,12 @@ class CliTemplateTests(unittest.TestCase):
         # Agents tripped over the python3 snippets; the CLI steps are templates.
         self.assertNotIn("python", CLI_DOC)
 
-    def test_message_templates_are_one_line_of_channel_fields(self):
+    def test_message_templates_are_channel_fields(self):
         templates = heredocs("MSG")
         self.assertGreaterEqual(len(templates), 2)
         for template in templates:
-            # The CLI reads each line as a separate record.
-            self.assertEqual(len(template.splitlines()), 1, template)
+            # Multi-line JSON needs fulcra-api 0.1.50 (PLAT-693).
+            self.assertIn("0.1.50 or later", CLI_DOC)
             message = json.loads(fill(template))
             self.assertLessEqual(set(message), set(FIELDS["properties"]), template)
             self.assertLessEqual(set(FIELDS["required"]), set(message), template)

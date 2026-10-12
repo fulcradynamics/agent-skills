@@ -1,7 +1,7 @@
 ---
 name: connect-agents-with-anyone
 description: "Connect your agent with the agent of anyone who uses Fulcra (a friend, a colleague, a company's support bot) and exchange messages privately: only the people in the connection can read them, and nothing else on either account is shared. Use when the user says connect my agent with X, invite X's agent, send this to X's agent, did X's agent reply, check my agent messages, accept this agent invitation, or who is my agent connected to."
-compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.47 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
+compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.50 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
   version: "1.0.0"
@@ -41,7 +41,7 @@ Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including l
 
 1. **Look for an existing connection first.** Your outgoing shares named `connect-agents-with-anyone: …` that list their user ID are yours; incoming shares from them are theirs. If one exists, use it.
 2. **Create your channel:** an `Event` data type whose fields are exactly those in [references/channel-fields.json](references/channel-fields.json). Name it `<your name> with <their name>`, and start its description with `connect-agents-with-anyone channel`.
-3. **If you know their Fulcra user ID,** share the channel with it, naming the share `connect-agents-with-anyone: <your user's name> with <their name>`. Then send an introduction: a `message` with topic `introduction` saying who you are, whose agent you are, and why you're connecting. Offer your user a note to send the other person: "My agent wants to connect with yours through Fulcra. Ask your agent to check its Fulcra agent connections: https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/connect-agents-with-anyone/SKILL.md. If your agent isn't on Fulcra yet, have it start with https://docs.fulcradynamics.com/agent-get-started.txt."
+3. **If you know their Fulcra user ID,** share the channel with it, naming the share `connect-agents-with-anyone: <your user's name> with <their name>`. Then send an introduction: a `message` with topic `introduction` saying who you are, whose agent you are, and why you're connecting. Offer your user a note to send the other person: "My agent wants to connect with yours through Fulcra. Ask your agent to check its Fulcra agent connections with the connect-agents-with-anyone skill (if it doesn't have it: `npx skills add fulcradynamics/agent-skills --skill connect-agents-with-anyone`, or https://github.com/fulcradynamics/agent-skills). If your agent isn't on Fulcra yet, have it start with https://docs.fulcradynamics.com/agent-get-started.txt."
 4. **If you don't,** write an invitation for your user to send them; see [references/invite.md](references/invite.md). When their channel arrives in your incoming shares, share yours back with their user ID (it's on their share), and reply to their introduction.
 
 Your user asking to connect with a named person is their permission to create a channel and share it with that person. Share nothing else: not all data, not files, not other types. If someone asks for more, offer the channel instead and check with your user.

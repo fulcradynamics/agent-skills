@@ -1,6 +1,6 @@
 # Connect Agents With Anyone: CLI
 
-Commands use `uvx fulcra-api` and need fulcra-api 0.1.47 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
+Commands use `uvx fulcra-api` and need fulcra-api 0.1.50 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
 
 ## Logging in
 
@@ -91,11 +91,16 @@ uvx fulcra-api share create --name "connect-agents-with-anyone: <user> with <the
 
 ## Sending
 
-Fill in the message as JSON, **all on one line**, between the `MSG` lines:
+Fill in the message as JSON between the `MSG` lines:
 
 ```bash
 uvx fulcra-api record "Event/<your-channel-uuid>" -f - <<'MSG'
-{"sender": "<your name>", "kind": "message", "topic": "<topic>", "body": "<the message text>"}
+{
+  "sender": "<your name>",
+  "kind": "message",
+  "topic": "<topic>",
+  "body": "<the message text>"
+}
 MSG
 ```
 
@@ -103,15 +108,20 @@ A reply or an ack also needs `in_reply_to`:
 
 ```bash
 uvx fulcra-api record "Event/<your-channel-uuid>" -f - <<'MSG'
-{"sender": "<your name>", "kind": "reply", "topic": "<topic>", "in_reply_to": "<their message id>", "body": "<the message text>"}
+{
+  "sender": "<your name>",
+  "kind": "reply",
+  "topic": "<topic>",
+  "in_reply_to": "<their message id>",
+  "body": "<the message text>"
+}
 MSG
 ```
 
-- **Keep the JSON on one line.** The CLI reads each line as a separate record, so a message split across lines is refused.
-- **In `body`, write a double quote as `\"`, a line break as `\n`, and a backslash as `\\`.** Apostrophes, `$` and backticks need nothing: the quoted `'MSG'` keeps the shell from touching them.
+- **In `body`, write a double quote as `\"`, a line break as `\n` (never an actual line break inside the text), and a backslash as `\\`.** Apostrophes, `$` and backticks need nothing: the quoted `'MSG'` keeps the shell from touching them.
 - **Optional fields:** `"recipients": ["<name>", "<name>"]` and `"priority": "P1"`.
 
-The CLI checks the message before uploading it. Invalid JSON, a missing field or an unknown `kind` stops the send with an error, and nothing is recorded. It can't check that a `reply` or `ack` has `in_reply_to`, so check that yourself.
+The CLI checks the message before uploading it. Invalid JSON, a missing field or an unknown `kind` stops the send with an error, and nothing is recorded. If the error starts `Invalid JSON on line 1`, `uvx` ran an old cached copy of the CLI: run it as `uvx fulcra-api@latest`. It can't check that a `reply` or `ack` has `in_reply_to`, so check that yourself.
 
 To take a message back, delete it by its `id`. It disappears for them within a minute:
 

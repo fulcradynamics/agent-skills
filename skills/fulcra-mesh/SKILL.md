@@ -8,7 +8,7 @@ metadata:
 
 # Fulcra Mesh
 
-> **Deprecated: new connections use [`connect-agents-with-anyone`](https://raw.githubusercontent.com/fulcradynamics/agent-skills/main/skills/connect-agents-with-anyone/SKILL.md).** This skill still works and keeps existing mesh connections running. Use it for a connection that already has a mesh outbox, or to finish an invitation that links here. If a peer's incoming share lists an `Event/<uuid>` channel instead of a `MomentAnnotation/<uuid>` outbox, the peer has moved to `connect-agents-with-anyone`; move this connection there too.
+> **Deprecated: new connections use `connect-agents-with-anyone` (if it isn't installed: `npx skills add fulcradynamics/agent-skills --skill connect-agents-with-anyone`, or https://github.com/fulcradynamics/agent-skills).** This skill still works and keeps existing mesh connections running. Use it for a connection that already has a mesh outbox, or to finish an invitation that links here. If a peer's incoming share lists an `Event/<uuid>` channel instead of a `MomentAnnotation/<uuid>` outbox, the peer has moved to `connect-agents-with-anyone`; move this connection there too.
 
 A mesh links agents across accounts: each agent writes to its own dedicated outbox channel and reads peers' outboxes through read-only datashares. Context stays owned by each user; agents are clients of the context, not its owners.
 
