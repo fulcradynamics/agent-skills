@@ -58,9 +58,25 @@ fulcra-api auth login --device-code 7dxrpM_971s4p-WGy2Cs3TUW
 
 > **⚠️ Network Restriction Troubleshooting**
 >
-> If the login command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and advise them on the MCP Connector option.
+> If the login command immediately fails or prints a raw `<http.client.HTTPResponse object...>` error, your shell likely lacks outbound network access. Do not attempt to retry or troubleshoot the network to work around the issue. Instead, inform the user that the CLI method cannot be used in this environment, and offer the MCP connector (see [When the CLI can't run](#when-the-cli-cant-run)).
 
 Credentials will be persisted on the filesystem to `~/.config/fulcra/credentials.json` and the tool will refresh access tokens as necessary.
+
+## When the CLI can't run
+
+The hosted MCP server reaches Fulcra through the agent's own MCP client, so it works where the shell has no network access or there is no shell at all. Give the user the one step for their setup; don't change their agent's configuration yourself.
+
+- **The agent installs plugins from a marketplace** (these skills arrived as the `fulcra-skills` plugin): the same marketplace has a `fulcra-mcp` plugin that registers the server.
+
+  | Agent | Command |
+  |---|---|
+  | Claude Code | `claude plugin install fulcra-mcp@fulcra` |
+  | Codex | `codex plugin add fulcra-mcp@fulcra`, then `codex mcp login fulcra-context` |
+  | OpenClaw | `openclaw plugins install fulcra-mcp --marketplace fulcradynamics/agent-skills` |
+
+- **Anything else, including chat apps:** add `https://mcp.fulcradynamics.com/mcp` as a remote (streamable HTTP) MCP server in the agent's MCP config or the app's connector settings. Per-agent snippets are in [PLATFORMS.md](https://github.com/fulcradynamics/agent-skills/blob/main/PLATFORMS.md).
+
+The server signs the user in with OAuth on first use. New MCP tools usually appear only after the agent restarts or reloads its plugins. Once they do, confirm the connection with `get_user_info`, then follow the MCP reference file of whichever skill you're using.
 
 ## Skills
 
