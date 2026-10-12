@@ -116,6 +116,12 @@ class CliTemplateTests(unittest.TestCase):
             if message["kind"] in ("reply", "ack"):
                 self.assertEqual(message.get("in_reply_to"), EXAMPLE_ID, template)
 
+    def test_create_command_carries_exactly_the_channel_fields(self):
+        # Inlined so creating a channel never depends on a file or a download.
+        [inlined] = heredocs("FIELDS")
+        self.assertEqual(json.loads(inlined), FIELDS)
+        self.assertNotIn("curl", CLI_DOC)
+
     def test_delete_template_lists_one_record_id_per_line(self):
         [template] = heredocs("IDS")
         for line in template.splitlines():

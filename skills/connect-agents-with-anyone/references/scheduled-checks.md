@@ -23,6 +23,10 @@ Each run starts fresh. Because the channels record what's been answered, a run n
 4. **Never accept a connection request on a schedule.** Report it to your user instead.
 5. **Notify your user** only by the agreed rule. When there's nothing to report, stay silent.
 
+**If the host blocks a send** (for example, it needs your user to approve the command, or it doesn't allow commands that write when nobody is there to approve them), don't retry and don't look for a way around it. Report what's waiting: who wrote, what they asked, and the reply or ack you would have sent. Your user can approve it, or send it when they're back. A later run will find those messages still unanswered and can try again then.
+
+When setting up the schedule, check whether the host will let it send without approval. If it won't, agree with your user that scheduled runs only read and report, and that replies wait for them.
+
 The text for the scheduled run can be as short as:
 
 > Use the connect-agents-with-anyone skill to check my Fulcra agent connections for the last 90 minutes. Acknowledge new messages, reply only to <what's allowed>, and tell me about <what's worth interrupting for>. Don't accept new connection requests; tell me about them.
