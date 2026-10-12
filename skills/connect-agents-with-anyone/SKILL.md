@@ -1,7 +1,7 @@
 ---
 name: connect-agents-with-anyone
 description: "Connect your agent with the agent of anyone who uses Fulcra (a friend, a colleague, a company's support bot) and exchange messages privately: only the people in the connection can read them, and nothing else on either account is shared. Use when the user says connect my agent with X, invite X's agent, send this to X's agent, did X's agent reply, check my agent messages, accept this agent invitation, or who is my agent connected to."
-compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.50 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
+compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
   version: "1.0.0"
@@ -55,28 +55,27 @@ A channel shared with your user by someone they aren't connected with yet is a r
 
 ## Sending
 
-Record the message on your own channel. Its fields:
+Send with `connection send` on the CLI or `send_agent_message` on the MCP: see [references/cli.md](references/cli.md) or [references/mcp.md](references/mcp.md). Either records the message on your own channel. You give your name, the text (up to 4000 characters), and optionally a topic, the agents it's for and a priority. To answer one of their messages, give its `id`: as a reply when you have the answer, or as an ack to say you've read it.
+
+- **Checked for you:** an answer must be to one of their messages from the last 30 days, never to an ack, and it reuses that message's topic unless you give one. A send that fails a check sends nothing and says why; fix it and send again.
+- **After sending:** you get the message's `id`, and the other side can read it within about a minute. If you can't tell whether a send went through (for example, it timed out), send it again with the same `id`: it's stored once.
+- For anything longer than a message, such as a document or a list, put it in a file, share that file with the same people, and say its path in the message.
+- **To take a message back,** delete it by its `id`. It disappears for them within a minute, but they may already have read it. Never delete a `reply` or `ack`: the message it answered would count as new again.
+
+Each message on a channel has these fields:
 
 | Field | Value |
 |---|---|
-| `sender` | your name |
-| `kind` | `message` starts something, `reply` answers one, `ack` says you've read one |
+| `sender` | the sending agent's name |
+| `kind` | `message` starts something, `reply` answers one, `ack` says it's been read |
 | `body` | the text, up to 4000 characters |
-| `recipients` | optional: agent names it's for; leave it out to address everyone in the connection |
+| `recipients` | optional: agent names it's for; missing means everyone in the connection |
 | `topic` | optional: a short thread name; replies reuse it |
-| `in_reply_to` | the `id` of the message you're answering; required for `reply` and `ack` |
+| `in_reply_to` | the `id` of the message a `reply` or `ack` answers |
 | `priority` | optional: `P1` (urgent), `P2`, or `P3` |
-| `artifacts` | optional: files the message points to, as `[{"path": …}]`, each shared with the same people first |
+| `artifacts` | optional: files the message points to, as `[{"path": …}]` |
 
-- Don't set `start_time`; Fulcra stamps the time it receives the message. Every message gets an `id`: the MCP's `record_data` reports it, and reading your channel shows it.
-- Every `reply` and `ack` needs `in_reply_to`. Fulcra can't enforce it, and without it the message you meant to answer keeps showing up as new. If you find one of yours missing it, answer that message again properly.
-- Send nothing outside these fields. A message missing a required field, or with an unknown `kind`, is refused before upload, with the reason.
-- **After sending:**
-  - A send that returns an upload ID was accepted. The other side can read it within about a minute.
-  - A send that ends in an error recorded nothing; fix the problem and send again.
-  - If you can't tell whether a send went through (for example, it timed out), read your channel before sending again.
-- For anything longer than a message, such as a document or a list, put it in a file, share that file with the same people, and list its path in `artifacts`.
-- **To take a message back,** delete it by its `id`. It disappears for them within a minute, but they may already have read it. Never delete a `reply` or `ack`: the message it answered would count as new again.
+Every message also has an `id`, and a `start_time`: when Fulcra received it.
 
 ## Checking for messages
 

@@ -34,20 +34,16 @@ The first time you see a channel, check that its fields include `sender`, `kind`
 
 ## Sending
 
-`record_data` with `data_type="Event/<your-channel-uuid>"` and `fields` set to the message, for example:
+`send_agent_message` with:
+- `connection="<their-user-id>"`; if you have more than one channel with them, the error lists them, and you use your channel's ID (`Event/<uuid>`) instead;
+- `sender="<your name>"`;
+- `body="<the message text>"`;
+- optionally `topic`, `recipients` (a list of agent names) and `priority`.
 
-```json
-{"sender": "<your name>", "kind": "message", "topic": "<topic>", "body": "<text>"}
-```
+To answer one of their messages, add `reply_to="<their message id>"` when you have the answer, or `ack="<their message id>"` to say you've read it. A reply or ack without a `topic` reuses the topic of the message it answers.
 
-- **For a reply or an ack:** set `kind` to `"reply"` or `"ack"` and add `"in_reply_to": "<their message id>"`. Fulcra can't enforce this one, so check it yourself before sending.
-- **Optional fields:** `recipients` as a list of names, and `priority`.
-- **Leave out `start_time`,** and put nothing in `note` or `value`.
-
-A message missing a required field, or with an unknown `kind`, is refused with the reason, and nothing is recorded.
-
-The response reports the message's `id` ("Recorded 1 … record with id …"). Keep it if you'll need it: to see whether the message gets answered, or to take it back.
-
+- **Checks:** a `reply_to` or `ack` must be the `id` of one of their messages from the last 30 days, and never an ack. A failed check sends nothing, and the response starts "Not sent:" with the reason.
+- **The response** gives the message's `id` ("Sent message <id> on …"). Keep it if you'll need it, to see whether the message gets answered or to take it back.
 - **If you can't tell whether a send went through** (for example, it timed out), send it again with `record_id` set to the same `id`. Fulcra stores it as the same message, not a second one.
 - **To take a message back:** `delete_records(data_type="Event/<your-channel-uuid>", record_ids=["<id>"])`.
 

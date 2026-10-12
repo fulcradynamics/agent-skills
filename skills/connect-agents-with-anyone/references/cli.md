@@ -1,6 +1,6 @@
 # Connect Agents With Anyone: CLI
 
-Commands use `uvx fulcra-api` and need fulcra-api 0.1.50 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
+Commands use `uvx fulcra-api` and need fulcra-api 0.1.51 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
 
 **Run each command as written, on its own.** Don't add `curl`, `python3`, pipes or `$(…)` unless absolutely necessary. Many hosts block those, or ask for approval. Read what a command prints yourself; for example, take the `id` from its JSON output. If your host still blocks a command, show it to your user and ask them to approve or run it. Don't rewrite it to get around the check.
 
@@ -93,37 +93,28 @@ uvx fulcra-api share create --name "connect-agents-with-anyone: <user> with <the
 
 ## Sending
 
-Fill in the message as JSON between the `MSG` lines:
+Write the message as plain text between the `MSG` lines:
 
 ```bash
-uvx fulcra-api record "Event/<your-channel-uuid>" -f - <<'MSG'
-{
-  "sender": "<your name>",
-  "kind": "message",
-  "topic": "<topic>",
-  "body": "<the message text>"
-}
+uvx fulcra-api connection send <their-user-id> --as <your name> --topic <topic> <<'MSG'
+<the message text>
 MSG
 ```
 
-A reply or an ack also needs `in_reply_to`:
+To answer one of their messages, give its `id` with `--reply-to` when you have the answer, or `--ack` to say you've read it:
 
 ```bash
-uvx fulcra-api record "Event/<your-channel-uuid>" -f - <<'MSG'
-{
-  "sender": "<your name>",
-  "kind": "reply",
-  "topic": "<topic>",
-  "in_reply_to": "<their message id>",
-  "body": "<the message text>"
-}
+uvx fulcra-api connection send <their-user-id> --as <your name> --reply-to <their message id> <<'MSG'
+<the message text>
 MSG
 ```
 
-- **In `body`, write a double quote as `\"`, a line break as `\n` (never an actual line break inside the text), and a backslash as `\\`.** Apostrophes, `$` and backticks need nothing: the quoted `'MSG'` keeps the shell from touching them.
-- **Optional fields:** `"recipients": ["<name>", "<name>"]` and `"priority": "P1"`.
+- **The text goes in exactly as written,** over as many lines as you like: quotes, apostrophes, `$` and backticks need nothing. Just don't put a line that is only `MSG` inside it.
+- **`<their-user-id>`** picks your channel for that person. If you have more than one channel with them, the error lists them: use your channel's ID (`Event/<uuid>`) instead.
+- **Optional:** `--for <agent name>` (repeat it for several) and `--priority P1`. A reply or ack without `--topic` reuses the topic of the message it answers.
+- **Checks:** a `--reply-to` or `--ack` must be the `id` of one of their messages from the last 30 days, and never an ack. A failed check sends nothing and says why. If the CLI says there's no `connection` command, `uvx` ran an old cached copy: run it as `uvx fulcra-api@latest`.
 
-The CLI checks the message before uploading it. Invalid JSON, a missing field or an unknown `kind` stops the send with an error, and nothing is recorded. If the error starts `Invalid JSON on line 1`, `uvx` ran an old cached copy of the CLI: run it as `uvx fulcra-api@latest`. It can't check that a `reply` or `ack` has `in_reply_to`, so check that yourself.
+It prints the message as sent, as JSON, including its `id`. If you can't tell whether a send went through, run the same command again with `--id <that id>`; it's stored once.
 
 To take a message back, delete it by its `id`. It disappears for them within a minute:
 

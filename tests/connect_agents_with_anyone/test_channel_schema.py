@@ -48,6 +48,13 @@ def heredocs(marker):
     return re.findall(rf"<<'{marker}'\n(.*?)\n{marker}\n", CLI_DOC, re.DOTALL)
 
 
+def send_commands():
+    """Each `connection send` in cli.md: its command line and its message."""
+    return re.findall(
+        r"^(uvx fulcra-api [^\n]*)<<'MSG'\n(.*?)\nMSG\n", CLI_DOC, re.DOTALL | re.MULTILINE
+    )
+
+
 def fill(template):
     """A template with its <placeholders> filled in: a UUID where an ID goes."""
     return re.sub(
@@ -93,7 +100,8 @@ class FieldsTests(unittest.TestCase):
     def test_retired_fields_are_gone(self):
         # Record ids replace message_id; channels no longer carry a protocol field.
         for path in SKILL.rglob("*"):
-            if path.is_file():
+            # skip editor swap files and other hidden files
+            if path.is_file() and not path.name.startswith("."):
                 self.assertNotRegex(path.read_text(), r"message_id|\"protocol\"", path.name)
 
 
@@ -102,21 +110,27 @@ class CliTemplateTests(unittest.TestCase):
         # Agents tripped over the python3 snippets; the CLI steps are templates.
         self.assertNotIn("python", CLI_COMMANDS)
 
-    def test_message_templates_are_channel_fields(self):
-        templates = heredocs("MSG")
-        self.assertGreaterEqual(len(templates), 2)
-        for template in templates:
-            # Multi-line JSON needs fulcra-api 0.1.50 (PLAT-693).
-            self.assertIn("0.1.50 or later", CLI_DOC)
-            message = json.loads(fill(template))
-            self.assertLessEqual(set(message), set(FIELDS["properties"]), template)
-            self.assertLessEqual(set(FIELDS["required"]), set(message), template)
+    def test_messages_are_sent_as_plain_text_with_connection_send(self):
+        # PLAT-696: no JSON to write or escape (needs fulcra-api 0.1.51).
+        self.assertIn("0.1.51 or later", CLI_DOC)
+        sends = send_commands()
+        self.assertGreaterEqual(len(sends), 2)
+        for command, body in sends:
+            self.assertRegex(
+                command, r"^uvx fulcra-api connection send <[^>]+> --as <your name> "
+            )
+            self.assertNotIn("{", body)
+        self.assertNotIn("fulcra-api record ", CLI_COMMANDS)
 
-    def test_reply_templates_carry_in_reply_to(self):
-        for template in heredocs("MSG"):
-            message = json.loads(fill(template))
-            if message["kind"] in ("reply", "ack"):
-                self.assertEqual(message.get("in_reply_to"), EXAMPLE_ID, template)
+    def test_a_reply_names_the_message_it_answers(self):
+        self.assertTrue(
+            any("--reply-to <their message id>" in c for c, _ in send_commands())
+        )
+
+    def test_mcp_sends_with_send_agent_message(self):
+        sending = MCP_DOC[MCP_DOC.index("## Sending"):MCP_DOC.index("## Reading")]
+        self.assertIn("send_agent_message", sending)
+        self.assertNotIn("record_data", MCP_DOC)
 
     def test_create_command_carries_exactly_the_channel_fields(self):
         # Inlined so creating a channel never depends on a file or a download.
@@ -150,22 +164,6 @@ class SchemaTests(unittest.TestCase):
 
     def test_example_is_a_valid_message(self):
         self.validator.validate(EXAMPLE)
-
-    def test_mcp_example_is_a_valid_message(self):
-        example = re.search(r"```json\n(.*?)\n```", MCP_DOC, re.DOTALL).group(1)
-        message = json.loads(re.sub(r"<[^>]+>", "x", example))
-        self.validator.validate(message)
-
-    def test_cli_message_templates_are_valid_messages(self):
-        for template in heredocs("MSG"):
-            self.validator.validate(json.loads(fill(template)))
-
-    def test_escaped_body_survives(self):
-        # cli.md: quotes as \", line breaks as \n, backslashes as \\.
-        line = '{"sender": "a", "kind": "message", "body": "It\'s \\"7pm\\" $40 `cash` C:\\\\tmp\\nnext"}'
-        message = json.loads(line)
-        self.assertEqual(message["body"], 'It\'s "7pm" $40 `cash` C:\\tmp\nnext')
-        self.validator.validate(message)
 
     def test_required_fields_are_enforced(self):
         for name in FIELDS["required"]:
