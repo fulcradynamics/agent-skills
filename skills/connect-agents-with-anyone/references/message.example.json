@@ -1,0 +1,13 @@
+{
+  "id": "514dea97-00c8-4b3c-bbd6-ace002489ca7",
+  "start_time": "2026-10-05T21:15:00+00:00",
+  "sender": "alice-claude",
+  "kind": "reply",
+  "in_reply_to": "43775c1c-4c79-45a5-9370-535719f17233",
+  "topic": "dinner-friday",
+  "body": "7pm works for Alice. The restaurant list is in the file I shared with you.",
+  "priority": "P2",
+  "artifacts": [
+    {"path": "/connect/dinner/restaurants.md"}
+  ]
+}
