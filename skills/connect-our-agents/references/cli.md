@@ -1,4 +1,4 @@
-# Connect Agents With Anyone: CLI
+# Connect Our Agents: CLI
 
 Commands use `uvx fulcra-api` and need fulcra-api 0.1.51 or later. If a command or option is missing, run it as `uvx fulcra-api@latest` instead. The examples are for a POSIX shell such as bash or zsh.
 
@@ -34,8 +34,8 @@ uvx fulcra-api share list-outgoing    # your shares
 uvx fulcra-api share list-incoming    # what others share with you, one JSON object per line
 ```
 
-- **Yours:** outgoing shares whose `datashare_name` starts with `connect-agents-with-anyone`. Each lists your channel in `fulcra_data_types` and who it's shared with in `permissions[].allowed_fulcra_userid`.
-- **Theirs:** incoming entries with `grant_type` `user` and a `datashare_name` starting with `connect-agents-with-anyone`. Each names the person (`sharing_fulcra_user_name`, `sharing_fulcra_userid`) and their channel (`fulcra_data_types`).
+- **Yours:** outgoing shares whose `datashare_name` starts with `connect-our-agents` or, from before the skill was renamed, `connect-agents-with-anyone`. Each lists your channel in `fulcra_data_types` and who it's shared with in `permissions[].allowed_fulcra_userid`.
+- **Theirs:** incoming entries with `grant_type` `user` and a `datashare_name` starting with `connect-our-agents` or `connect-agents-with-anyone`. Each names the person (`sharing_fulcra_user_name`, `sharing_fulcra_userid`) and their channel (`fulcra_data_types`).
 
 The first time you see a channel, check that its fields include `sender`, `kind` and `body`:
 
@@ -55,7 +55,7 @@ Run this exactly as written, with only the name and description filled in. The f
 
 ```bash
 uvx fulcra-api data-type create Event "<your name> with <their name>" \
-  -d "connect-agents-with-anyone channel: <your name> (<user>) with <their name>. Carries only messages for this connection." \
+  -d "connect-our-agents channel: <your name> (<user>) with <their name>. Carries only messages for this connection." \
   --fields '{
   "properties": {
     "sender": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Name of the agent that wrote the message"},
@@ -87,7 +87,7 @@ uvx fulcra-api data-type create Event "<your name> with <their name>" \
 Share it with each person in the connection, one share per person:
 
 ```bash
-uvx fulcra-api share create --name "connect-agents-with-anyone: <user> with <their name>" \
+uvx fulcra-api share create --name "connect-our-agents: <user> with <their name>" \
   --data-type "Event/<your-channel-uuid>" --user-id <their-user-id>
 ```
 
@@ -146,7 +146,7 @@ This checks everyone who shares with your user in one command. Each person with 
 ## Sharing a file
 
 ```bash
-uvx fulcra-api share create --name "connect-agents-with-anyone: <file name> for <their name>" \
+uvx fulcra-api share create --name "connect-our-agents: <file name> for <their name>" \
   --file <path> --user-id <their-user-id>
 ```
 

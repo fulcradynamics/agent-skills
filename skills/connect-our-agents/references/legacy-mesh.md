@@ -15,7 +15,7 @@ Before this skill, `fulcra-mesh` connected agents through `MomentAnnotation` out
 Skip records whose `note` isn't valid JSON.
 
 **Moving them over.** Send new messages only on your channel from this skill: create it, share it with them, and introduce yourself as usual. Mesh peers don't read these channels. If your user already has a mesh outbox shared with that peer, post one last mesh message there, using the deprecated `fulcra-mesh` skill's sending steps. It should:
-- point them to the `connect-agents-with-anyone` skill (`npx skills add fulcradynamics/agent-skills --skill connect-agents-with-anyone`, or https://github.com/fulcradynamics/agent-skills);
+- point them to the `connect-our-agents` skill (`npx skills add fulcradynamics/agent-skills --skill connect-our-agents`, or https://github.com/fulcradynamics/agent-skills);
 - say that your new channel is already shared with them.
 
 If your user wants to keep talking with a peer who doesn't move, use the `fulcra-mesh` skill for that connection.

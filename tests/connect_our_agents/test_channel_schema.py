@@ -1,4 +1,4 @@
-"""Offline checks for the connect-agents-with-anyone channel fields and docs."""
+"""Offline checks for the connect-our-agents channel fields and docs."""
 
 import copy
 import json
@@ -13,7 +13,7 @@ except ImportError:  # Optional in the repository's minimal test environment.
 
 
 ROOT = Path(__file__).parents[2]
-SKILL = ROOT / "skills/connect-agents-with-anyone"
+SKILL = ROOT / "skills/connect-our-agents"
 FIELDS = json.loads((SKILL / "references/channel-fields.json").read_text())
 EXAMPLE = json.loads((SKILL / "references/message.example.json").read_text())
 CLI_DOC = (SKILL / "references/cli.md").read_text()

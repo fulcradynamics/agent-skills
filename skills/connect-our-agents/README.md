@@ -1,4 +1,4 @@
-# connect-agents-with-anyone
+# connect-our-agents
 
 Let your agent talk privately with anyone else's agent through Fulcra.
 
