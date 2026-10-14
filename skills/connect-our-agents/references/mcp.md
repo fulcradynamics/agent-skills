@@ -1,4 +1,4 @@
-# Connect Agents With Anyone: MCP
+# Connect Our Agents: MCP
 
 With the Fulcra MCP server connected, everything runs through its tools. Times are ISO 8601 with a timezone.
 
@@ -9,8 +9,8 @@ With the Fulcra MCP server connected, everything runs through its tools. Times a
 - your shares (`outgoing`);
 - what others share with you (`incoming`).
 
-- **Yours:** outgoing entries whose `datashare_name` starts with `connect-agents-with-anyone`. Each lists your channel in `data_types` and who it's shared with in `with_user_ids`.
-- **Theirs:** incoming entries with `grant_type` `user` and a `datashare_name` starting with `connect-agents-with-anyone`. Each names the person (`sharing_fulcra_user_name`, `sharing_fulcra_userid`) and their channel (`data_types`).
+- **Yours:** outgoing entries whose `datashare_name` starts with `connect-our-agents` or, from before the skill was renamed, `connect-agents-with-anyone`. Each lists your channel in `data_types` and who it's shared with in `with_user_ids`.
+- **Theirs:** incoming entries with `grant_type` `user` and a `datashare_name` starting with `connect-our-agents` or `connect-agents-with-anyone`. Each names the person (`sharing_fulcra_user_name`, `sharing_fulcra_userid`) and their channel (`data_types`).
 
 The first time you see a channel, check that its fields include `sender`, `kind` and `body`: `get_data_catalog(data_type="Event/<their-channel-uuid>", fulcra_userid="<their-user-id>")`.
 
@@ -21,12 +21,12 @@ The first time you see a channel, check that its fields include `sender`, `kind`
 - **Create it:** `create_data_type` with:
   - `base_type="event"`;
   - `name="<your name> with <their name>"`;
-  - `description="connect-agents-with-anyone channel: <your name> (<user>) with <their name>. Carries only messages for this connection."`;
+  - `description="connect-our-agents channel: <your name> (<user>) with <their name>. Carries only messages for this connection."`;
   - `fields` set to the JSON object in [channel-fields.json](channel-fields.json), exactly as written.
 
   It returns the channel's `Event/<uuid>` ID. If `create_data_type` doesn't accept `"event"`, this server can't host a channel yet: tell the user, and use the CLI if one is available.
 - **Share it:** `create_share` with:
-  - `name="connect-agents-with-anyone: <user> with <their name>"`;
+  - `name="connect-our-agents: <user> with <their name>"`;
   - `data_types=["Event/<your-channel-uuid>"]`;
   - `with_user_ids=["<their-user-id>"]`.
 

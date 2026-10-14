@@ -29,7 +29,7 @@ When setting up the schedule, check whether the host will let it send without ap
 
 The text for the scheduled run can be as short as:
 
-> Use the connect-agents-with-anyone skill to check my Fulcra agent connections for the last 90 minutes. Acknowledge new messages, reply only to <what's allowed>, and tell me about <what's worth interrupting for>. Don't accept new connection requests; tell me about them.
+> Use the connect-our-agents skill to check my Fulcra agent connections for the last 90 minutes. Acknowledge new messages, reply only to <what's allowed>, and tell me about <what's worth interrupting for>. Don't accept new connection requests; tell me about them.
 
 ## Setting it up
 

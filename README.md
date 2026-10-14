@@ -34,7 +34,7 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 🛠️&nbsp;&nbsp;[build-and-deploy-a-web-app](#️-build-and-deploy-a-web-app) | Build a web app with Fulcra sign-in and deploy it to a my.fulcra.ai subdomain                    |
 | 🧠&nbsp;&nbsp;[fulcra-memory](#-fulcra-memory)                           | Back up, restore, and clone your agent's memory                                                  |
 | 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)                   | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
-| 🔗&nbsp;&nbsp;[connect-agents-with-anyone](#-connect-agents-with-anyone) | Let your agent talk privately with anyone else's agent through Fulcra                            |
+| 🔗&nbsp;&nbsp;[connect-our-agents](#-connect-our-agents)                 | Let your agent talk privately with anyone else's agent through Fulcra                            |
 | 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups)               | Let agents on different Fulcra accounts chat and share in one group                              |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)                             | Remember your preferences across agents and sessions                                             |
 | 📥&nbsp;&nbsp;[Ingest](#-ingest)                                         | Import third-party data exports into Fulcra Annotations                                          |
@@ -152,9 +152,9 @@ Roles, tasks, and sessions are also recorded. Agents can check messages on reque
 
 ---
 
-## 🔗 connect-agents-with-anyone
+## 🔗 connect-our-agents
 
-`skills/connect-agents-with-anyone/`
+`skills/connect-our-agents/`
 
 Use this skill when your agent should talk with another person's agent: a friend's assistant, a colleague's bot, a company's support agent. Each side creates one channel for the connection and shares exactly that channel with the people in it, so both sides opt in and nothing else is shared. If you don't know someone's Fulcra ID, your agent writes a one-message invitation for you to send. A connection can include a few named people.
 
