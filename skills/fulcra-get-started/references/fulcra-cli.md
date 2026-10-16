@@ -17,17 +17,16 @@ uv tool run fulcra-api
 
 Use the `auth login` subcommand to authenticate to Fulcra on behalf of a user.
 
-The `fulcra-api auth login` command should be run in a two-step process to avoid hanging and timing out while waiting for the user. 
+Logging in takes two steps, because a person has to approve it in a browser while you wait. Since you run this command without a terminal, `auth login` uses the agent-friendly flow by default: it prints a web auth URL, a user verification code, and a device code, then exits at once instead of waiting.
 
 **Step 1: Get the Auth URL**
-Run the command with the `--get-auth-url` flag. It will immediately return a web auth URL, a user verification code, and a device code.
 ```
-uv tool run fulcra-api auth login --get-auth-url
+uv tool run fulcra-api auth login
 ```
 You must extract the URL and user code and present them to the user so they can complete the flow in their browser. Keep the device code for the next step. **You must present the URL and code directly to the user; do not assume their browser will automatically open.**
 
 **Step 2: Complete Authentication**
-After the user confirms they have completed the flow in their browser, finish the login process by passing the device code. We pass `--poll-timeout=5` so the command fails quickly if there is a miscommunication about whether the flow is actually finished.
+After the user confirms they have completed the flow in their browser, finish the login process by passing the device code. This waits until they have approved it; we pass `--poll-timeout=5` so the command fails quickly if there is a miscommunication about whether the flow is actually finished.
 ```
 uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
@@ -54,7 +53,7 @@ All date/time fields are returned in ISO 8601 format, time zone aware, and in UT
 
 Authenticate to the API:
 ```
-uv tool run fulcra-api auth login --get-auth-url
+uv tool run fulcra-api auth login
 # ... present url/code to user, then ...
 uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5
 ```
