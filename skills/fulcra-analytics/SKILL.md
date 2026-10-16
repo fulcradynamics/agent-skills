@@ -79,11 +79,11 @@ skills/fulcra-analytics/
 Use the CLI for routine analysis. It writes JSON to stdout.
 
 ```bash
-uv tool run fulcra-analytics records StepCount "1 week" --pretty
-uv tool run fulcra-analytics metrics HeartRate "1 day" --pretty
-uv tool run fulcra-analytics file path/to/export.json --pretty
-uv tool run fulcra-analytics catalog --base-types-only --pretty
-uv tool run fulcra-analytics user-info --pretty
+uvx fulcra-analytics records StepCount "1 week" --pretty
+uvx fulcra-analytics metrics HeartRate "1 day" --pretty
+uvx fulcra-analytics file path/to/export.json --pretty
+uvx fulcra-analytics catalog --base-types-only --pretty
+uvx fulcra-analytics user-info --pretty
 ```
 
 You can also run the package module directly inside a checkout or installed environment:
@@ -110,7 +110,7 @@ Key modules:
 - `fulcra_analytics.client`: CLI-backed Fulcra API wrapper.
 - `fulcra_analytics.loader`: load JSON/JSONL/CSV exports and normalize Fulcra payloads into DataFrames.
 - `fulcra_analytics.statistics`: descriptive statistics over DataFrames.
-- `fulcra_analytics.cli`: Typer CLI for `uv tool run fulcra-analytics`.
+- `fulcra_analytics.cli`: Typer CLI for `uvx fulcra-analytics`.
 
 ## Recommended Workflow
 
@@ -145,7 +145,7 @@ Key modules:
 ### Summarize records from Fulcra
 
 ```bash
-uv tool run fulcra-analytics records StepCount "1 week" --pretty
+uvx fulcra-analytics records StepCount "1 week" --pretty
 ```
 
 This runs Fulcra CLI through `FulcraClient`, normalizes the result through the loader, computes descriptive summaries, and prints JSON.
@@ -153,7 +153,7 @@ This runs Fulcra CLI through `FulcraClient`, normalizes the result through the l
 ### Summarize metric time series
 
 ```bash
-uv tool run fulcra-analytics metrics HeartRate "1 day" --pretty
+uvx fulcra-analytics metrics HeartRate "1 day" --pretty
 ```
 
 Use this when the Fulcra data type is best represented as a metric time series.
@@ -161,7 +161,7 @@ Use this when the Fulcra data type is best represented as a metric time series.
 ### Group summaries by a column
 
 ```bash
-uv tool run fulcra-analytics records StepCount "1 week" --group-by source --pretty
+uvx fulcra-analytics records StepCount "1 week" --group-by source --pretty
 ```
 
 The `groups` section includes row counts and numeric means for each group.
@@ -169,9 +169,9 @@ The `groups` section includes row counts and numeric means for each group.
 ### Analyze a local export
 
 ```bash
-uv tool run fulcra-analytics file ./exports/step-count.json --pretty
-uv tool run fulcra-analytics file ./exports/annotations.jsonl --pretty
-uv tool run fulcra-analytics file ./exports/calendar.csv --group-by calendarName --pretty
+uvx fulcra-analytics file ./exports/step-count.json --pretty
+uvx fulcra-analytics file ./exports/annotations.jsonl --pretty
+uvx fulcra-analytics file ./exports/calendar.csv --group-by calendarName --pretty
 ```
 
 Use local exports for privacy-sensitive analysis, reproducible tests, or offline workflows.
@@ -179,8 +179,8 @@ Use local exports for privacy-sensitive analysis, reproducible tests, or offline
 ### Inspect Fulcra catalog or user preferences
 
 ```bash
-uv tool run fulcra-analytics catalog --base-types-only --pretty
-uv tool run fulcra-analytics user-info --pretty
+uvx fulcra-analytics catalog --base-types-only --pretty
+uvx fulcra-analytics user-info --pretty
 ```
 
 These are useful setup/debugging commands before choosing a data type or time range.
@@ -255,7 +255,7 @@ What patterns are visible in StepCount records over the last week?
 - Raw records: local only; not uploaded
 
 ## Methods
-- Fetched with `uv tool run fulcra-analytics records StepCount "1 week"`
+- Fetched with `uvx fulcra-analytics records StepCount "1 week"`
 - Normalized with `fulcra_analytics.loader`
 - Summarized with `fulcra_analytics.statistics`
 
