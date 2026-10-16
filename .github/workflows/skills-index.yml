@@ -1,0 +1,66 @@
+# Build the agent skills discovery index and publish it at
+# https://fulcradynamics.com/.well-known/agent-skills/index.json (served from the
+# fulcra-docs-prod bucket).
+name: skills index
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - skills/**
+      - scripts/build-skills-index.py
+      - .github/workflows/skills-index.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  BUCKET_OBJECT: gs://fulcra-docs-prod/.well-known/agent-skills/index.json
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test the index builder
+        run: python3 -m unittest discover -s tests/skills_index -p 'test_*.py' -v
+      - name: Build the index
+        run: python3 scripts/build-skills-index.py --out "$RUNNER_TEMP/index.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skills-index
+          path: ${{ runner.temp }}/index.json
+
+  publish:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: publish-skills-index
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: skills-index
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/378637393142/locations/global/workloadIdentityPools/fulcra-github-pool/providers/github
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Publish
+        run: |
+          gcloud storage cp index.json "$BUCKET_OBJECT" \
+            --content-type=application/json \
+            --cache-control=public,max-age=300
+      - name: Check the published copy
+        run: |
+          gcloud storage cat "$BUCKET_OBJECT" | cmp - index.json
+          echo "Published $(python3 -c 'import json; print(len(json.load(open("index.json"))["skills"]))') skills from ${GITHUB_SHA}" >> "$GITHUB_STEP_SUMMARY"
