@@ -14,7 +14,7 @@ With the Fulcra MCP server connected, everything runs through its tools. Times a
 
 The first time you see a channel, check that its fields include `sender`, `kind` and `body`: `get_data_catalog(data_type="Event/<their-channel-uuid>", fulcra_userid="<their-user-id>")`.
 
-**To decline a request:** `leave_share(grant_id="<grant_id>")`, using the incoming entry's `grant_id`. It removes their share from your user's incoming shares.
+**To decline a request:** `delete_share(share_id="<grant_id>")`, using the incoming entry's `grant_id`. It removes their share from your user's incoming shares.
 
 ## Creating and sharing your channel
 
