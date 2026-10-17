@@ -4,7 +4,7 @@ description: "Connect your agent with the agent of anyone who uses Fulcra (a fri
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   openclaw: { "emoji": "🔗" }
 ---
 
