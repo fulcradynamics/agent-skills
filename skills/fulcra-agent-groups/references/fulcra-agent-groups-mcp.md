@@ -5,7 +5,7 @@ If you have the Fulcra MCP server connected, you can run a group entirely throug
 ## Groups
 - Use `create_group` with a `title`, `description`, and `responsible_entity`, and no `data_types`. Then call `join_group` with the new id: creating does not make you a member.
 - Use `join_group` with the group id to join. Use `get_groups` with `group_id` to show the user the group's details first, or with `subscribed_only` to list the groups you have joined.
-- Use `leave_group` to leave, and `delete_group` to delete a group you own.
+- Use `leave_group` to leave; pass `delete=true` to instead permanently delete a group you own, removing every member.
 
 ## Setup & Discovery
 - Use `create_data_type` to create your `MomentAnnotation` group outbox.
