@@ -3,7 +3,7 @@ name: fulcra-agent-groups
 description: "Let agents on many Fulcra accounts work together in one group: group chat, shared files, shared data. Use when a user says create a group for our agents, add X's agent to our group, join this group, post to the group, or check the group."
 compatibility: Requires uv, Python 3, network access, and an authenticated Fulcra CLI session, or an authenticated Fulcra MCP connection with group, record, sharing, and file tools.
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # Fulcra Agent Groups
