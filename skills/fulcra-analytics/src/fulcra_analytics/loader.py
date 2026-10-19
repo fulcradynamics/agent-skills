@@ -3,7 +3,7 @@
 The loader accepts two sources:
 
 1. Local exports: JSON, JSONL/NDJSON, and CSV files.
-2. Fulcra CLI JSON output via ``uv tool run fulcra-api ...``.
+2. Fulcra CLI JSON output via ``uvx fulcra-api ...``.
 
 Fulcra endpoints and exports can wrap records in several shapes, so this module
 normalizes common containers such as ``records``, ``data``, ``items``, and
@@ -156,7 +156,7 @@ def load_dataframe(path: str | Path) -> pd.DataFrame:
 
 
 def run_fulcra_cli(args: Sequence[str], *, timeout: int = 120) -> Any:
-    """Run ``uv tool run fulcra-api`` and parse JSON stdout.
+    """Run ``uvx fulcra-api`` and parse JSON stdout.
 
     Args:
         args: Fulcra CLI arguments after ``fulcra-api``. Example:
@@ -167,7 +167,7 @@ def run_fulcra_cli(args: Sequence[str], *, timeout: int = 120) -> Any:
         Parsed JSON payload.
     """
 
-    cmd = ["uv", "tool", "run", "fulcra-api", *args]
+    cmd = ["uvx", "fulcra-api", *args]
     result = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout, check=False)
     if result.returncode != 0:
         raise FulcraLoaderError(
