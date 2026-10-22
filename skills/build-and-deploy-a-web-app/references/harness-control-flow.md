@@ -138,8 +138,7 @@ uvx fulcra-api data-type create MomentAnnotation "Harness Runs: <project-name>"
 
 The create response's `id` is a UUID; form `MomentAnnotation/<UUID>` from it.
 Save that full data type ID in `progress.md`, together with run state and retry
-counts. It becomes `PUBLIC_HARNESS_ANNOTATION_ID` in the Svelte dashboard
-(`NEXT_PUBLIC_HARNESS_ANNOTATION_ID` in the React dashboard). Do not create a
+counts. It becomes `PUBLIC_HARNESS_ANNOTATION_ID` in the Svelte dashboard. Do not create a
 second annotation when wiring the UI: it must display the records from M1.
 
 Mint the first `run_id`, health-check event storage and workspace access, then

@@ -20,17 +20,14 @@ Use the same ID as `PUBLIC_HARNESS_ANNOTATION_ID` below.
 Obtain the owner's Fulcra User ID by running `uvx fulcra-api user-info` in the CLI and extracting the `"userid"` field from the JSON response. Do not attempt to use `curl` or decode session tokens to find this ID.
 
 ```
-# Server-only — NO PUBLIC_/NEXT_PUBLIC_ prefix. This must never reach the
+# Server-only — NO PUBLIC_ prefix. This must never reach the
 # browser; the backend compares it against the authenticated user's Fulcra id.
 OWNER_USER_ID=<your-fulcra-user-id>
 
-# Client-readable (Svelte PUBLIC_*, React NEXT_PUBLIC_*).
+# Client-readable (PUBLIC_*).
 PUBLIC_HARNESS_ANNOTATION_ID=<annotation-id-from-above>
 PUBLIC_WORKSPACE_PATH=workspace/<project-name>
 ```
-
-(For React, use the `NEXT_PUBLIC_*` prefix for the two client-readable vars;
-keep `OWNER_USER_ID` server-only with no prefix.)
 
 ## Create server endpoints
 
@@ -59,21 +56,6 @@ slash) to resolve a file's input id, then download by id
   - `src/routes/api/harness/issues/+server.js` (export the GET_issues function as GET — 403s non-owners; serves `outstanding-issues.md`)
   - `src/routes/api/harness/overview/+server.js` (export the GET_overview function as GET — 403s non-owners; serves the nurse-authored `overview.md`)
   - `src/routes/api/harness/owner/+server.js` (export the GET_owner function as GET — returns `{ isOwner }` so the dashboard/nav can gate visibility without seeing the id)
-- For React (Next.js app router): the same four routes live in their own
-  `route.ts` files. See [`react/harness-api-server.ts`](react/harness-api-server.ts)
-  for all four handlers (named `GET_*` there only so they fit one file — rename
-  each to `GET` in its own route file) and
-  [`react/harness-owner.ts`](react/harness-owner.ts) for the shared `isOwner()`
-  check. Create:
-  - `lib/server/harness-owner.ts` (copy [`react/harness-owner.ts`](react/harness-owner.ts))
-  - `app/api/harness/runs/route.ts` (export the GET_runs body as GET — 403s non-owners)
-  - `app/api/harness/issues/route.ts` (export the GET_issues body as GET — 403s non-owners; serves `outstanding-issues.md`)
-  - `app/api/harness/overview/route.ts` (export the GET_overview body as GET — 403s non-owners; serves the nurse-authored `overview.md`)
-  - `app/api/harness/owner/route.ts` (export the GET_owner body as GET — returns `{ isOwner }` so the dashboard/nav can gate visibility without seeing the id)
-
-  Copy the shared `fetchWorkspaceFileText()` helper into a small module (e.g.
-  `lib/server/harness-files.ts`) or inline it in each route. Client-readable env
-  vars use the `NEXT_PUBLIC_*` prefix; `OWNER_USER_ID` stays server-only.
 
 ## Integrate dashboard components
 
@@ -83,13 +65,6 @@ slash) to resolve a file's input id, then download by id
   - Copy [`svelte/OwnerNav.svelte`](svelte/OwnerNav.svelte) to `src/lib/components/OwnerNav.svelte`
   - Create `src/routes/harness/+page.svelte` (see [`svelte/harness-page.svelte`](svelte/harness-page.svelte))
   - Add `<OwnerNav />` to `src/routes/+layout.svelte` before the main content
-
-- For React:
-  - Install the markdown renderer used for the overview and issues panels: `npm install marked dompurify`. The dashboard runs `marked` to turn the nurse-authored markdown into HTML and `DOMPurify` to sanitize it before injecting with `dangerouslySetInnerHTML`.
-  - Copy [`react/HarnessDashboard.tsx`](react/HarnessDashboard.tsx) to your `components/` directory
-  - Copy [`react/OwnerNav.tsx`](react/OwnerNav.tsx) to your `components/` directory
-  - Create the harness dashboard page route (e.g. `app/harness/page.tsx`) rendering `<HarnessDashboard />`
-  - Add `<OwnerNav />` inside `<UserProvider>` in `app/layout.tsx`, before the main content
 
 The navigation bar will only appear when logged in as the owner and provides
 quick access to the home page and harness dashboard. The dashboard will refresh
@@ -145,5 +120,5 @@ before sharing it as the finished baseline. If verification fails, keep M1
 incomplete and follow the retry/escalation rules in the control-flow reference.
 
 **Do not present an empty dashboard as complete.** A URL may be shared earlier
-only as an explicitly in-progress preview. This gate applies to both Svelte and
-React; lack of testing is not a harness exemption.
+only as an explicitly in-progress preview. Lack of testing is not a harness
+exemption.

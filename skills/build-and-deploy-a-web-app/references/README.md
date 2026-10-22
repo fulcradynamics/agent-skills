@@ -12,9 +12,6 @@ This directory contains reference implementations and documentation for the buil
   - `harness-page.svelte` - Harness route page
   - `harness-api-server.js` - Backend API endpoints (contains both runs and issues)
 
-- **`react/`** - React/Next.js reference implementations
-  - `HarnessDashboard.tsx` - Main dashboard component
-
 ### Shared Documentation
 
 - **`harness-control-flow.md`** - Harness design and tracking system
