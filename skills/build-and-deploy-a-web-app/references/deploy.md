@@ -13,13 +13,13 @@ If it has a deploy project, reuse it; never create a second one for the same app
 
 Otherwise, create one. `name` becomes the app's address, `<name>.<Fulcra domain>`,
 so use the project name as a lowercase DNS label (letters, digits, and inner
-hyphens). `framework` is `sveltekit` for Svelte or `nextjs` for React.
+hyphens). Set `framework` to `sveltekit`.
 
 ```bash
 curl -sS -X POST https://api.fulcradynamics.com/user/v1/deploy/project \
   -H "Authorization: Bearer $(uvx fulcra-api auth print-access-token)" \
   -H "Content-Type: application/json" \
-  -d '{"name": "<name>", "framework": "<sveltekit|nextjs>"}' \
+  -d '{"name": "<name>", "framework": "sveltekit"}' \
   -w '\n%{http_code}\n'
 ```
 
@@ -39,9 +39,9 @@ The subshell keeps the token out of your shell: never print it, or write it to a
 file or the workspace. If getting the token fails, the subshell stops before
 deploying.
 
-The app's `.env` variables are passed both at build time (`--build-env`, which
-React's `NEXT_PUBLIC_*` variables need) and at runtime (`--env`, which Svelte's
-`$env/dynamic` variables need), since Vercel doesn't set them from `.env`.
+The app's `.env` variables are passed both at build time (`--build-env`) and at
+runtime (`--env`, which Svelte's `$env/dynamic` variables need), since Vercel
+doesn't set them from `.env`.
 `--engine-strict=false` lets `npx` install the Vercel CLI when the template's
 `.npmrc` sets `engine-strict=true` and the local Node version is newer than one
 of the CLI's dependencies supports.
