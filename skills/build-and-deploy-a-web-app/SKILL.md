@@ -84,6 +84,8 @@ Ask only necessary clarifying questions one at a time to gather details needed f
 
 As you go, note each specific decision the user makes — their actual choice, not a paraphrase.
 
+Recommend search discoverability for public pages, and explicitly confirm that choice with the user before the first public deployment. Offer an opt-out that discourages indexing, explaining that it is not access control. Record the answer in the spec and `decisions.md`; preserve an existing app's recorded choice. Follow [Search discoverability](references/discoverability.md) for implementation and evaluation of either choice.
+
 Once you have enough detail, create the spec with milestone breakdown, then upload to the workspace: the spec to `spec.md` and the collected decisions to `decisions.md` (at the end, not after each question). Define M1's acceptance criteria using the [dashboard handoff gate](references/harness-dashboard-setup.md#evaluate-m1-before-handoff); app-specific features start at M2. Initialize `progress.md` with M1 pending. See [`references/workspace.md`](references/workspace.md).
 
 ### 4. Confirm Template
@@ -134,6 +136,8 @@ Breaking sign-in frustrates the user: they cannot test new features or even use 
 ### 7. Install, Configure, and Verify
 
 Follow the template's `README.md` ("Getting Started"): `npm install`, `cp .env.example .env`, then review and configure the Auth0 and Fulcra API values as directed. Run `npm run dev` and confirm the app starts locally and the sign-in screen renders before deploying—this verifies a working authentication foundation.
+
+Apply the confirmed [discoverability choice](references/discoverability.md): public pages remain indexable by default, with app-specific titles and descriptions; add the documented `noindex` directive only when the user opts out. Keep authentication, private data, and owner-only harness access protected in either mode.
 
 ### 8. Deploy Baseline
 
