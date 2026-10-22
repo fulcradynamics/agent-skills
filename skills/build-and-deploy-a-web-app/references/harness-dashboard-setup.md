@@ -102,6 +102,7 @@ against the spec with real tools and retains the evidence:
   while the Fulcra API still rejects the altered token. Expect `401` without a
   cookie, `403` with the altered token, and `{"isOwner": false}` from the owner
   route.
+- The deployed app matches the user's recorded [discoverability choice](discoverability.md#evaluate-before-handoff). Check initial public HTML, response headers, crawler rules, and private-data access; a local build alone does not verify the hosting policy.
 - Build/check commands and relevant baseline regression checks pass. Record
   the commands, results, tested deployment URL, and UI/API evidence in workspace
   history so the result can be inspected later.

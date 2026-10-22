@@ -6,4 +6,6 @@ Tell your agent what you want to make. It turns the idea into a plan that uses w
 
 The app is built in small milestones. Each one is generated, then checked separately against the live app before it counts as done. Your plan, spec, decisions, and history are kept in a Fulcra workspace, so you or another agent can pick the project back up and keep improving it. A dashboard inside the app, visible only to you, shows each milestone's runs and evaluation results.
 
+Public pages are intended to be findable in search. Your agent confirms that choice before deployment and can discourage indexing if you prefer. Private data and the owner dashboard remain protected either way; search settings are not access controls.
+
 Built on the Fulcra app templates, `fulcra-api`, and Fulcra deploy projects.
