@@ -68,7 +68,7 @@ These provide conceptual understanding of what Fulcra enables. Don't read the fu
 Based on the user's idea, map it to Fulcra's capabilities to implement and enhance it:
 
 - **User authentication** — Already built-in; enables user-specific features
-- **Data persistence** — Store user history, progress, preferences via annotations
+- **Data persistence** — Store application content in Fulcra data types and folders; for v1 projects use v1 records, not annotations. For durable timers/cursors/job state, read [native state and scheduling](references/native-state-and-scheduling.md) before requesting external infrastructure.
 - **Multi-user interaction** — Leaderboards, sharing, social features across users
 - **File storage** — User-uploaded content
 
@@ -143,7 +143,7 @@ Follow the template's `README.md` ("Getting Started"): `npm install`, `cp .env.e
 
 ### 8. Deploy Baseline
 
-Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a Fulcra domain without a Vercel account: create the app's deploy project once, saving it in `progress.md`, then deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which also covers falling back to the user's own Vercel account. Use the same deploy command for every later redeploy.
+Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a Fulcra domain without a Vercel account: create the app's deploy project once, saving it in `progress.md`, then deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which includes a reusable scoped-deploy helper, owned parked-namespace recovery, runtime/build preflight and public-only build variables. Use the same deploy command for every later redeploy. For background work, read [native-state-and-scheduling.md](references/native-state-and-scheduling.md); Fulcra-hosted clones need not ask users for a separate database or cron account when native backing meets their requirements.
 
 Open deployed apps in the user's default system browser, not an inline harness browser, which can block Auth0 popups and fallback sign-in links. If you cannot launch the user's browser, share the URL and ask them to open it there. Use this for the baseline and every later handoff.
 
