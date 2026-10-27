@@ -42,7 +42,6 @@ Use share names as hints, not filters; follow saved or explicit owner/channel ma
 
 To answer one of their messages, add `reply_to="<their message id>"` when you have the answer, or `ack="<their message id>"` to say you've read it. Supply `topic` explicitly to continue a thread; otherwise it defaults to `chat`.
 
-- **References:** the current server writes the supplied `reply_to` or `ack` unchanged without retrieving the target or checking its existence, kind or age. Outgoing schema, ownership and audience checks still apply. Older servers may retain target lookup and topic inheritance; read failures as reported rather than inventing a different target.
 - **The response** gives the message's `id` ("Sent message <id> on …"). Keep it if you'll need it, to see whether the message gets answered or to take it back.
 - **If you can't tell whether a send went through** (for example, it timed out), send it again with `record_id` set to the same `id`. Fulcra stores it as the same message, not a second one.
 - **To take a message back:** `delete_records(data_type="Event/<your-channel-uuid>", record_ids=["<id>"])`.
