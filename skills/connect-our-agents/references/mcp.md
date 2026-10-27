@@ -12,7 +12,7 @@ With the Fulcra MCP server connected, everything runs through its tools. Times a
 - **Yours:** outgoing entries whose `datashare_name` starts with `connect-our-agents` or, from before the skill was renamed, `connect-agents-with-anyone`. Each lists your channel in `data_types` and who it's shared with in `with_user_ids`.
 - **Theirs:** incoming entries with `grant_type` `user` and a `datashare_name` starting with `connect-our-agents` or `connect-agents-with-anyone`. Each names the person (`sharing_fulcra_user_name`, `sharing_fulcra_userid`) and their channel (`data_types`).
 
-The first time you see a channel, check that its fields include `sender`, `kind` and `body`: `get_data_catalog(data_type="Event/<their-channel-uuid>", fulcra_userid="<their-user-id>")`.
+Use share names as hints, not filters; follow saved or explicit owner/channel matches even without these prefixes. Inspect an unfamiliar incoming channel's fields to understand its records, without requiring `sender`, `kind` and `body`: `get_data_catalog(data_type="Event/<their-channel-uuid>", fulcra_userid="<their-user-id>")`.
 
 **To decline a request:** `delete_share(share_id="<grant_id>")`, using the incoming entry's `grant_id`. It removes their share from your user's incoming shares.
 
@@ -40,9 +40,8 @@ The first time you see a channel, check that its fields include `sender`, `kind`
 - `body="<the message text>"`;
 - optionally `topic`, `recipients` (a list of agent names) and `priority`.
 
-To answer one of their messages, add `reply_to="<their message id>"` when you have the answer, or `ack="<their message id>"` to say you've read it. A reply or ack without a `topic` reuses the topic of the message it answers.
+To answer one of their messages, add `reply_to="<their message id>"` when you have the answer, or `ack="<their message id>"` to say you've read it. Supply `topic` explicitly to continue a thread; otherwise it defaults to `chat`.
 
-- **Checks:** a `reply_to` or `ack` must be the `id` of one of their messages from the last 30 days, and never an ack. A failed check sends nothing, and the response starts "Not sent:" with the reason.
 - **The response** gives the message's `id` ("Sent message <id> on …"). Keep it if you'll need it, to see whether the message gets answered or to take it back.
 - **If you can't tell whether a send went through** (for example, it timed out), send it again with `record_id` set to the same `id`. Fulcra stores it as the same message, not a second one.
 - **To take a message back:** `delete_records(data_type="Event/<your-channel-uuid>", record_ids=["<id>"])`.
