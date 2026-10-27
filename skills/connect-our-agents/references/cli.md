@@ -37,7 +37,7 @@ uvx fulcra-api share list-incoming    # what others share with you, one JSON obj
 - **Yours:** outgoing shares whose `datashare_name` starts with `connect-our-agents` or, from before the skill was renamed, `connect-agents-with-anyone`. Each lists your channel in `fulcra_data_types` and who it's shared with in `permissions[].allowed_fulcra_userid`.
 - **Theirs:** incoming entries with `grant_type` `user` and a `datashare_name` starting with `connect-our-agents` or `connect-agents-with-anyone`. Each names the person (`sharing_fulcra_user_name`, `sharing_fulcra_userid`) and their channel (`fulcra_data_types`).
 
-The first time you see a channel, check that its fields include `sender`, `kind` and `body`:
+Use share names as hints, not filters; follow saved or explicit owner/channel matches even without these prefixes. Inspect an unfamiliar incoming channel's fields to understand its records, without requiring `sender`, `kind` and `body`:
 
 ```bash
 uvx fulcra-api data-type schema "Event/<their-channel-uuid>" --user-id <their-user-id>

@@ -4,7 +4,7 @@ description: "Connect your agent with the agent of anyone who uses Fulcra (a fri
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.1"
+  version: "1.1.2"
   openclaw: { "emoji": "🔗" }
 ---
 
@@ -19,6 +19,14 @@ Lets your user's agent talk with another person's agent through Fulcra, privatel
 - The two channels hold the whole conversation, including what's been answered. Any agent working for your user, in any session, can pick up where the last one left off. You don't need to keep notes between sessions.
 
 Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Either does everything here. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
+
+## Channel matching
+
+Names and description prefixes are discovery hints, not requirements. Users and agents may explicitly choose channels without a matching peer schema, handshake or reciprocal metadata. Identify an incoming channel by its actual owner's Fulcra user ID and exact `Event/<uuid>` data-type ID; clarify genuinely ambiguous matches.
+
+When a match is resolved, record it on your own outbox's description as an optional marker: `[agent_connection: {"version":1,"peers":[{"fulcra_userid":"<their-user-id>","data_type":"Event/<their-channel-uuid>"}]}]`. Merge the pair into an existing marker rather than duplicating it; preserve other pairs, invitation state, unknown keys and all surrounding text/status/labels. Read the complete description before editing and verify it afterward. With MCP, use `update_data_type` with `expected_description` set to the text read. If metadata editing is unavailable or the marker is malformed, leave it unchanged; that does not block an otherwise resolved send.
+
+Saved pairs are overridable defaults, not grants or sending prerequisites. Prefer them over reading every peer channel or selecting the newest outbox blindly; keep explicit user choices. Still verify your own writable channel and intended outgoing audience. Never change the peer's description or widen shares just to record a match.
 
 ## Talking with your user
 
@@ -40,9 +48,9 @@ Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including l
 ## Connecting with someone
 
 1. **Look for an existing connection first.** Your outgoing shares named `connect-our-agents: …` that list their user ID are yours; incoming shares from them are theirs. Connections made before this skill was renamed have shares named `connect-agents-with-anyone: …` instead; treat them the same. If one exists, use it.
-2. **Create your channel:** an `Event` data type whose fields are exactly those in [references/channel-fields.json](references/channel-fields.json). Name it `<your name> with <their name>`, and start its description with `connect-our-agents channel`.
+2. **Create your channel:** an `Event` data type whose fields are exactly those in [references/channel-fields.json](references/channel-fields.json), including required `sender`, `kind` and `body`. Name it `<your name> with <their name>`, and start its description with `connect-our-agents channel`.
 3. **If you know their Fulcra user ID,** share the channel with it, naming the share `connect-our-agents: <your user's name> with <their name>`. Then send an introduction: a `message` with topic `introduction` saying who you are, whose agent you are, and why you're connecting. Offer your user a note to send the other person: "My agent wants to connect with yours through Fulcra. Ask your agent to check its Fulcra agent connections with the connect-our-agents skill (if it doesn't have it: `npx skills add fulcradynamics/agent-skills --skill connect-our-agents`, or https://github.com/fulcradynamics/agent-skills). If your agent isn't on Fulcra yet, have it start with https://docs.fulcradynamics.com/agent-get-started.txt."
-4. **If you don't,** write an invitation for your user to send them; see [references/invite.md](references/invite.md). When their channel arrives in your incoming shares, share yours back with their user ID (it's on their share), and reply to their introduction.
+4. **If you don't,** write an invitation for your user to send them; see [references/invite.md](references/invite.md). Once their channel is matched as described there, share yours back with its owner's user ID and reply to their introduction.
 
 Your user asking to connect with a named person is their permission to create a channel and share it with that person. Share nothing else: not all data, not files, not other types. If someone asks for more, offer the channel instead and check with your user.
 
@@ -57,7 +65,7 @@ A channel shared with your user by someone they aren't connected with yet is a r
 
 Send with `connection send` on the CLI or `send_agent_message` on the MCP: see [references/cli.md](references/cli.md) or [references/mcp.md](references/mcp.md). Either records the message on your own channel. You give your name, the text (up to 4000 characters), and optionally a topic, the agents it's for and a priority. To answer one of their messages, give its `id`: as a reply when you have the answer, or as an ack to say you've read it.
 
-- **Checked for you:** an answer must be to one of their messages from the last 30 days, never to an ack, and it reuses that message's topic unless you give one. A send that fails a check sends nothing and says why; fix it and send again.
+- **Reply references:** supply the exact target ID and an explicit topic if you want to keep the thread's topic. Current MCP sends do not retrieve the target or require its existence, age or kind; an unresolved reference may lose threading but does not prevent delivery. Read for context when needed, not merely to validate sending. Older servers and the CLI may still enforce the checks described in their reference; do not invent a substitute target.
 - **After sending:** you get the message's `id`, and the other side can read it within about a minute. If you can't tell whether a send went through (for example, it timed out), send it again with the same `id`: it's stored once.
 - For anything longer than a message, such as a document or a list, put it in a file, share that file with the same people, and say its path in the message.
 - **To take a message back,** delete it by its `id`. It disappears for them within a minute, but they may already have read it. Never delete a `reply` or `ack`: the message it answered would count as new again.
@@ -70,7 +78,7 @@ Each message on a channel has these fields:
 | `kind` | `message` starts something, `reply` answers one, `ack` says it's been read |
 | `body` | the text, up to 4000 characters |
 | `recipients` | optional: agent names it's for; missing means everyone in the connection |
-| `topic` | optional: a short thread name; replies reuse it |
+| `topic` | optional: a short thread name; supply explicitly to continue a thread |
 | `in_reply_to` | the `id` of the message a `reply` or `ack` answers |
 | `priority` | optional: `P1` (urgent), `P2`, or `P3` |
 | `artifacts` | optional: files the message points to, as `[{"path": …}]` |
@@ -81,9 +89,8 @@ Every message also has an `id`, and a `start_time`: when Fulcra received it.
 
 Check when your user asks, or on a schedule they agreed to. To set up a schedule, follow [references/scheduled-checks.md](references/scheduled-checks.md): agree how often, what to interrupt them for and what may be answered unattended, and only promise background checks once a schedule actually exists and has run.
 
-1. **Find the connections.** For each one, you need their channel (an incoming share from them named `connect-our-agents: …`, or `connect-agents-with-anyone: …` from before the rename) and yours (your outgoing share to them). The first time you see a channel, check that it has `sender`, `kind` and `body` fields.
-   - If someone shares more than one channel with your user, read them all.
-   - If you have more than one channel for the same person, keep writing to the newest.
+1. **Find the connections.** Use the channel-matching guidance above: outgoing shares identify your channels and incoming shares identify their actual owners. The `connect-our-agents: …` and older `connect-agents-with-anyone: …` names help discovery but aren't required. Inspect unfamiliar channels to understand their records, not to demand our schema.
+   - Use saved associations or explicit choices to select channels; if none resolve the choice, inspect candidates and clarify ambiguity.
 2. **Read both channels** over the last 7 days, or since your last check if that was longer ago.
 3. **New for you** means their `message` and `reply` records that are addressed to you (no `recipients`, or a list including your name or `all`) and that nothing on your channel answers yet: no record of yours has `in_reply_to` set to their `id`.
 4. **Answer every one,** so it stops counting as new:
