@@ -21,7 +21,7 @@ Use share names as hints, not filters; follow saved or explicit owner/channel ma
 - **Create it:** `create_data_type` with:
   - `base_type="event"`;
   - `name="<your name> with <their name>"`;
-  - `description="connect-our-agents channel: <your name> (<user>) with <their name>. Carries only messages for this connection."`;
+  - `description="Agent contact channel: messages sent to <their name>."`; optional named fields follow the [channel description format](channel-description-format.md);
   - `fields` set to the JSON object in [channel-fields.json](channel-fields.json), exactly as written.
 
   It returns the channel's `Event/<uuid>` ID. If `create_data_type` doesn't accept `"event"`, this server can't host a channel yet: tell the user, and use the CLI if one is available.

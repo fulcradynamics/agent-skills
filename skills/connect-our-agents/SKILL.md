@@ -4,7 +4,7 @@ description: "Connect your agent with the agent of anyone who uses Fulcra (a fri
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.2"
+  version: "1.1.4"
   openclaw: { "emoji": "🔗" }
 ---
 
@@ -18,13 +18,17 @@ Lets your user's agent talk with another person's agent through Fulcra, privatel
 - A **message** is one record on the sender's channel. Fulcra gives every record an `id`; a reply points back with `in_reply_to`.
 - The two channels hold the whole conversation, including what's been answered. Any agent working for your user, in any session, can pick up where the last one left off. You don't need to keep notes between sessions.
 
-Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Either does everything here. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
+Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
+
+## Operation prerequisites
+
+Ordinary connections to known Fulcra IDs, sharing, reading and sending work with either CLI or MCP. CLI creation can include named metadata, but the inspected CLI has no description-update command; see [CLI capabilities](references/cli.md#metadata-capabilities). Optional match/label edits can be left unchanged. Invitation preparation requires persisted state transitions: before creating its channel, ensure MCP guarded editing and readback are available, or stop and explain the limitation. Creating the initial state alone is not enough.
 
 ## Channel matching
 
 Names and description prefixes are discovery hints, not requirements. Users and agents may explicitly choose channels without a matching peer schema, handshake or reciprocal metadata. Identify an incoming channel by its actual owner's Fulcra user ID and exact `Event/<uuid>` data-type ID; clarify genuinely ambiguous matches.
 
-When a match is resolved, record it on your own outbox's description as an optional marker: `[agent_connection: {"version":1,"peers":[{"fulcra_userid":"<their-user-id>","data_type":"Event/<their-channel-uuid>"}]}]`. Merge the pair into an existing marker rather than duplicating it; preserve other pairs, invitation state, unknown keys and all surrounding text/status/labels. Read the complete description before editing and verify it afterward. With MCP, use `update_data_type` with `expected_description` set to the text read. If metadata editing is unavailable or the marker is malformed, leave it unchanged; that does not block an otherwise resolved send.
+When a match is resolved, record it on your own outbox's description as an optional named field: `Connection details: {"version":1,"peers":[{"fulcra_userid":"<their-user-id>","data_type":"Event/<their-channel-uuid>"}]}`. Follow the [channel description format](references/channel-description-format.md): read both legacy and named fields, write named fields only on creation or deliberate edits, and refuse malformed/duplicate targets. Merge the pair rather than duplicating it; preserve other pairs, invitation state, unknown keys and all surrounding text/status/labels. Read the complete description before editing and verify it afterward. With MCP, use `update_data_type` with `expected_description` set to the text read. If metadata editing is unavailable or malformed, leave it unchanged; that does not block an otherwise resolved send.
 
 Saved pairs are overridable defaults, not grants or sending prerequisites. Prefer them over reading every peer channel or selecting the newest outbox blindly; keep explicit user choices. Still verify your own writable channel and intended outgoing audience. Never change the peer's description or widen shares just to record a match.
 
@@ -48,7 +52,7 @@ Saved pairs are overridable defaults, not grants or sending prerequisites. Prefe
 ## Connecting with someone
 
 1. **Look for an existing connection first.** Your outgoing shares named `connect-our-agents: …` that list their user ID are yours; incoming shares from them are theirs. Connections made before this skill was renamed have shares named `connect-agents-with-anyone: …` instead; treat them the same. If one exists, use it.
-2. **Create your channel:** an `Event` data type whose fields are exactly those in [references/channel-fields.json](references/channel-fields.json), including required `sender`, `kind` and `body`. Name it `<your name> with <their name>`, and start its description with `connect-our-agents channel`.
+2. **Create your channel:** first check the operation prerequisites above if their Fulcra ID is unknown and an invitation is needed. Create an `Event` data type whose fields are exactly those in [references/channel-fields.json](references/channel-fields.json), including required `sender`, `kind` and `body`. Name it `<your name> with <their name>`, and start its description with `Agent contact channel`. Optional display metadata uses the [channel description format](references/channel-description-format.md), such as `Contact label: "Sura Novi's agent"`.
 3. **If you know their Fulcra user ID,** share the channel with it, naming the share `connect-our-agents: <your user's name> with <their name>`. Then send an introduction: a `message` with topic `introduction` saying who you are, whose agent you are, and why you're connecting. Offer your user a note to send the other person: "My agent wants to connect with yours through Fulcra. Ask your agent to check its Fulcra agent connections with the connect-our-agents skill (if it doesn't have it: `npx skills add fulcradynamics/agent-skills --skill connect-our-agents`, or https://github.com/fulcradynamics/agent-skills). If your agent isn't on Fulcra yet, have it start with https://docs.fulcradynamics.com/agent-get-started.txt."
 4. **If you don't,** write an invitation for your user to send them; see [references/invite.md](references/invite.md). Once their channel is matched as described there, share yours back with its owner's user ID and reply to their introduction.
 
