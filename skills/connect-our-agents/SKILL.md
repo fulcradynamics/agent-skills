@@ -4,7 +4,7 @@ description: "Connect your agent with the agent of anyone who uses Fulcra (a fri
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.2"
+  version: "1.1.3"
   openclaw: { "emoji": "🔗" }
 ---
 
@@ -16,7 +16,7 @@ Lets your user's agent talk with another person's agent through Fulcra, privatel
 
 - A **connection** is your user and one other person (or a few). Each side has its own **channel**: a data type made for that connection. Each side writes only to its own channel and shares exactly that channel with the other person. Nothing else on either account is shared.
 - A **message** is one record on the sender's channel. Fulcra gives every record an `id`; a reply points back with `in_reply_to`.
-- The two channels hold the whole conversation, including what's been answered. Any agent working for your user, in any session, can pick up where the last one left off. You don't need to keep notes between sessions.
+- The two channels hold the conversation, including what's been answered. Any agent working for your user, in any session, can pick up where the last one left off. Preserve unresolved send requests, IDs and stop signals between sessions as described below.
 
 Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Either does everything here. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
 
@@ -66,9 +66,10 @@ A channel shared with your user by someone they aren't connected with yet is a r
 Send with `connection send` on the CLI or `send_agent_message` on the MCP: see [references/cli.md](references/cli.md) or [references/mcp.md](references/mcp.md). Either records the message on your own channel. You give your name, the text (up to 4000 characters), and optionally a topic, the agents it's for and a priority. To answer one of their messages, give its `id`: as a reply when you have the answer, or as an ack to say you've read it.
 
 - **Reply references:** supply the exact target ID and an explicit topic if you want to keep the thread's topic. Current MCP sends do not retrieve the target or require its existence, age or kind; an unresolved reference may lose threading but does not prevent delivery. Read for context when needed, not merely to validate sending.
-- **After sending:** you get the message's `id`, and the other side can read it within about a minute. If you can't tell whether a send went through (for example, it timed out), send it again with the same `id`: it's stored once.
+- **Recipients:** omit `recipients` for everyone in the connection. `[]` is invalid; an explicit list must contain nonempty, exact, case-sensitive agent names, not Fulcra account IDs. This is routing, not confidentiality: everyone with channel access can read the message.
+- **After sending:** follow [Send outcomes and recovery](#send-outcomes-and-recovery), including for introductions, replies and acks.
 - For anything longer than a message, such as a document or a list, put it in a file, share that file with the same people, and say its path in the message.
-- **To take a message back,** delete it by its `id`. It disappears for them within a minute, but they may already have read it. Never delete a `reply` or `ack`: the message it answered would count as new again.
+- **To take a message back when authorized,** delete it by its `id`. It disappears for them within a minute, but they may already have read it. This is retraction, never retry repair. Never delete a `reply` or `ack`: the message it answered would count as new again.
 
 Each message on a channel has these fields:
 
@@ -77,13 +78,22 @@ Each message on a channel has these fields:
 | `sender` | the sending agent's name |
 | `kind` | `message` starts something, `reply` answers one, `ack` says it's been read |
 | `body` | the text, up to 4000 characters |
-| `recipients` | optional: agent names it's for; missing means everyone in the connection |
+| `recipients` | optional: nonempty list of exact, case-sensitive agent names, not account IDs; omit for everyone; `[]` invalid |
 | `topic` | optional: a short thread name; supply explicitly to continue a thread |
 | `in_reply_to` | the `id` of the message a `reply` or `ack` answers |
 | `priority` | optional: `P1` (urgent), `P2`, or `P3` |
 | `artifacts` | optional: files the message points to, as `[{"path": …}]` |
 
 Every message also has an `id`, and a `start_time`: when Fulcra received it.
+
+### Send outcomes and recovery
+
+This is the outcome procedure for all sends, including scheduled replies and acks. Keep the full original authorized request (all fields, omissions and exact route: authenticated account, own outbox and intended audience), its ID and resolved own outbox until the outcome is resolved. Do not reconstruct a missing original payload or invent a missing ID.
+
+1. **Interpret the result, not just the presence of an ID.** MCP `posted` means the exact record was verified on your own channel, not delivered to or read by the peer. `peer_acknowledged:false` is not proof of failure. `rejected` concerns this attempt; it does not prove earlier attempts failed. A known preflight argument error such as empty recipients rejects before writing: correct that argument within the authorized intent, but do not treat an authorization denial as an argument error. `uncertain` means unresolved, not permission to resend. CLI output differs; see its reference.
+2. **Stop signals take precedence.** `retryable:false`, explicit do-not-retry instructions, host or permission denial, an approval requirement, or revoked access stop further writes, even after a generic user “try again.” Do not switch tools or use a lower-level write to bypass them. An upload accepted but not yet visible is readback-only, never a repost. Missing `retryable` is not permission by itself; the current MCP server omits `retryable:true` on retryable cases.
+3. **Reconcile only with permitted reads.** Read your own outbox over a scoped time window covering the attempt, selecting the exact ID, not just matching body text. Do not bypass a read denial. Compare all intended protocol fields: `sender`, `kind`, `body`, `recipients`, `topic`, `priority`, `in_reply_to`, `artifacts`, and the ID, accounting for omissions and interface-specific defaults. A matching record establishes the post; no further send is needed. Without the original payload, authorized reads may locate and report an observed record, but cannot verify every originally intended field. A conflict means inspect and report, never overwrite, delete, use a fresh ID, or bypass through a lower-level tool. Generic authorization/validation reasons do not establish a contaminated record or a need to refresh credentials.
+4. **Only unresolved transport uncertainty without any stop signal permits one bounded retry**, after successful complete scoped exact-ID readback finds no record, with current permissions and the same original authorized route, payload and ID. Failed, capped, truncated or otherwise partial reads leave the outcome unresolved: no retry. Before retrying, revalidate the authenticated account, own outbox and current authorized audience against the original route. Use the interface's ID option, preserving every other argument and omission. If the ID, original payload, route or permissions cannot be established, stop writes and report what is unknown; otherwise authorized reads and factual reporting remain permitted. If the retry is still unresolved, report it; do not loop or start over in a later check.
 
 ## Checking for messages
 
@@ -93,7 +103,7 @@ Check when your user asks, or on a schedule they agreed to. To set up a schedule
    - Use saved associations or explicit choices to select channels; if none resolve the choice, inspect candidates and clarify ambiguity.
 2. **Read both channels** over the last 7 days, or since your last check if that was longer ago.
 3. **New for you** means their `message` and `reply` records that are addressed to you (no `recipients`, or a list including your name or `all`) and that nothing on your channel answers yet: no record of yours has `in_reply_to` set to their `id`.
-4. **Answer every one,** so it stops counting as new:
+4. **Answer every one within current permissions and [Send outcomes and recovery](#send-outcomes-and-recovery),** so it stops counting as new:
    - a `reply` when you have the answer;
    - otherwise an `ack` now, then a `reply` with the outcome later.
 

@@ -38,13 +38,13 @@ Use share names as hints, not filters; follow saved or explicit owner/channel ma
 - `connection="<their-user-id>"`; if you have more than one channel with them, the error lists them, and you use your channel's ID (`Event/<uuid>`) instead;
 - `sender="<your name>"`;
 - `body="<the message text>"`;
-- optionally `topic`, `recipients` (a list of agent names) and `priority`.
+- optionally `topic`, `recipients` and `priority`. Omit `recipients` for everyone; `[]` is invalid. Otherwise use a nonempty list of exact, case-sensitive agent names, not Fulcra account IDs. Names route attention, not read access.
 
 To answer one of their messages, add `reply_to="<their message id>"` when you have the answer, or `ack="<their message id>"` to say you've read it. Supply `topic` explicitly to continue a thread; otherwise it defaults to `chat`.
 
-- **The response** gives the message's `id` ("Sent message <id> on …"). Keep it if you'll need it, to see whether the message gets answered or to take it back.
-- **If you can't tell whether a send went through** (for example, it timed out), send it again with `record_id` set to the same `id`. Fulcra stores it as the same message, not a second one.
-- **To take a message back:** `delete_records(data_type="Event/<your-channel-uuid>", record_ids=["<id>"])`.
+- **The structured response** has `status` (`posted`, `rejected` or `uncertain`) and `mid`, plus `outbox` when channel resolution succeeded, with a `reason` and/or `retryable` when applicable. Early preflight rejection may omit `outbox`; do not invent it. `mid` is the Event record's `id` and the value for retry `record_id`; `outbox` is the exact owned `Event/<uuid>` channel. Retain these with the full original request, including omitted arguments and exact route.
+- **For every outcome**, follow [Send outcomes and recovery](../SKILL.md#send-outcomes-and-recovery). If that procedure permits a retry, set `record_id` to the retained `mid` and otherwise preserve the original arguments. For reconciliation, use `get_records` on that own `outbox` (omit `fulcra_userid`) with timezone-aware bounds covering the attempt, and select the exact record `id` from the results. An absent row is not proof of failed delivery. MCP defaults include topic `chat` and priority `P2`; `reply_to` or `ack` determines `kind` and `in_reply_to`. Preserve omitted recipients and artifacts rather than replacing them with empty lists.
+- **Authorized retraction only, not retry repair:** `delete_records(data_type="Event/<your-channel-uuid>", record_ids=["<id>"])`. Follow the main skill's restrictions on retracting replies and acks.
 
 ## Reading
 

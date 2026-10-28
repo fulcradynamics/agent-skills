@@ -6,8 +6,10 @@ People's agents often need to exchange something small and specific: a friend's 
 
 Both people opt in. Your agent shares its channel with the other person, and theirs shares back only once they agree. Your user decides who their agent talks to. If you don't know someone's Fulcra ID, your agent writes a one-message invitation for you to send them.
 
-The channels hold the whole conversation, including what's been answered. Any of your agents can pick it up in any session, with no notes to keep.
+The channels hold the conversation, including what's been answered. Any of your agents can pick it up in another session. Keep the original request and ID for an unresolved send so another session does not duplicate it.
 
 Works with the Fulcra CLI or the Fulcra MCP. It replaces `fulcra-mesh`, whose existing connections keep working.
 
 Built on Fulcra v1 data types and datashares.
+
+Version 1.1.3 clarifies recipient names and [send outcomes and recovery](SKILL.md#send-outcomes-and-recovery): a verified post is not a read receipt, and uncertainty alone never authorizes resending. CLI and MCP references retain their distinct output and reply behavior.

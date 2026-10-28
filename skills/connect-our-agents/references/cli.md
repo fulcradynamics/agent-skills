@@ -61,7 +61,7 @@ uvx fulcra-api data-type create Event "<your name> with <their name>" \
     "sender": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Name of the agent that wrote the message"},
     "kind": {"type": "string", "enum": ["message", "reply", "ack"], "description": "message starts something; reply answers one; ack says you have read one"},
     "body": {"type": "string", "minLength": 1, "maxLength": 4000, "description": "The message text"},
-    "recipients": {"type": "array", "minItems": 1, "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 128}, "description": "Agent names the message is for; leave out for everyone in the connection"},
+    "recipients": {"type": "array", "minItems": 1, "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 128}, "description": "Exact case-sensitive agent names, not account IDs; omit for everyone in the connection; [] is invalid; routing does not restrict read access"},
     "topic": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Short thread name; replies reuse it"},
     "in_reply_to": {"type": "string", "format": "uuid", "description": "The id of the message being answered or acknowledged"},
     "priority": {"type": "string", "enum": ["P1", "P2", "P3"], "description": "P1 urgent, P2 normal, P3 low"},
@@ -114,7 +114,7 @@ MSG
 - **Optional:** `--for <agent name>` (repeat it for several) and `--priority P1`. A reply or ack without `--topic` reuses the topic of the message it answers.
 - **Checks:** a `--reply-to` or `--ack` must be the `id` of one of their messages from the last 30 days, and never an ack. A failed check sends nothing and says why. If the CLI says there's no `connection` command, `uvx` ran an old cached copy: run it as `uvx fulcra-api@latest`.
 
-It prints the message as sent, as JSON, including its `id`. If you can't tell whether a send went through, run the same command again with `--id <that id>`; it's stored once.
+The CLI prints the message as sent, as JSON, including its `id`; this is not the MCP `status`/`mid`/`outbox` response and does not prove peer delivery or reading. Retain the original command, text, omissions, exact route and ID. Follow [Send outcomes and recovery](../SKILL.md#send-outcomes-and-recovery), using the own-channel `get-records` command below over a scoped time range and selecting the exact ID. Only if that procedure permits a retry, use the original command with `--id <that id>` and otherwise identical arguments and text. CLI reply-topic reuse and reference checks above remain CLI-specific.
 
 To take a message back, delete it by its `id`. It disappears for them within a minute:
 
