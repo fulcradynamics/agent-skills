@@ -8,12 +8,13 @@ events are recorded, and [`workspace.md`](workspace.md) for the workspace files.
 
 ## Reuse the harness data type
 
-Read the full `MomentAnnotation/<UUID>` ID from `progress.md`, created by the
+Read the full `Event/<UUID>` ID from `progress.md`, created by the
 Nurse in step 5. Confirm it already contains M1's `RUN_START`, `FIND_MILESTONE`,
 and `GENERATE` started records. If absent, return to
 [harness setup](harness-control-flow.md#setup) before implementing the dashboard;
 do not fabricate retrospective records or create a second empty data type.
-Use the same ID as `PUBLIC_HARNESS_ANNOTATION_ID` below.
+Use the same ID as server-only `HARNESS_DATA_TYPE` below. Follow the shared
+[schema and recording contract](harness-events.md), not a JSON note payload.
 
 ## Add environment variables to `.env`
 
@@ -24,9 +25,8 @@ Obtain the owner's Fulcra User ID by running `uvx fulcra-api user-info` in the C
 # browser; the backend compares it against the authenticated user's Fulcra id.
 OWNER_USER_ID=<your-fulcra-user-id>
 
-# Client-readable (PUBLIC_*).
-PUBLIC_HARNESS_ANNOTATION_ID=<annotation-id-from-above>
-PUBLIC_WORKSPACE_PATH=workspace/<project-name>
+# Server-only — configured scope, not an arbitrary frontend data type.
+HARNESS_DATA_TYPE=Event/<UUID-from-above>
 ```
 
 ## Create server endpoints
@@ -43,24 +43,23 @@ call, so the identity provider is only hit once, at login. See
 implementation, which uses endpoints documented at
 https://docs.fulcradynamics.com/rest-api/.
 
-The `issues` and `overview` routes read markdown files from the workspace.
-Fulcra's file API is two-step: list the folder
-(`GET /input/v1/file?path=/<workspace-path>`, absolute path with a leading
-slash) to resolve a file's input id, then download by id
-(`GET /input/v1/file/{input_id}/download`, which returns raw text). The reference
-`fetchWorkspaceFileText()` helper does both.
+The runs route reads v1 JSONL via `/data/v1/records?q=...` and returns JSON.
+Summary/next actions/issues come from retained event state. There are no workspace
+overview/issues polling endpoints. Every upstream request forwards the caller's
+token for signature/expiry/per-user validation; the local owner claim gate alone
+is not authentication. Failed upstream reads are errors, never empty successes.
 
 - For Svelte: Create:
+  - `src/lib/harness-state.js` and `src/lib/harness-feed.js` (copy the corresponding files from `svelte/`)
+  - `src/lib/server/harness-api-server.js` (copy the complete reference)
   - `src/lib/server/harness-owner.js` (copy [`svelte/harness-owner.js`](svelte/harness-owner.js) — the shared `isOwner()` check)
-  - `src/routes/api/harness/runs/+server.js` (export the GET_runs function as GET — 403s non-owners)
-  - `src/routes/api/harness/issues/+server.js` (export the GET_issues function as GET — 403s non-owners; serves `outstanding-issues.md`)
-  - `src/routes/api/harness/overview/+server.js` (export the GET_overview function as GET — 403s non-owners; serves the nurse-authored `overview.md`)
-  - `src/routes/api/harness/owner/+server.js` (export the GET_owner function as GET — returns `{ isOwner }` so the dashboard/nav can gate visibility without seeing the id)
+  - `src/routes/api/harness/runs/+server.js`: `export { GET_runs as GET } from '$lib/server/harness-api-server.js';`
+  - `src/routes/api/harness/owner/+server.js`: `export { GET_owner as GET } from '$lib/server/harness-api-server.js';`
 
 ## Integrate dashboard components
 
 - For Svelte:
-  - Install the markdown renderer used for the overview and issues panels: `npm install marked dompurify`. The dashboard runs `marked` to turn the nurse-authored markdown into HTML and `DOMPurify` to sanitize it before injecting with `{@html}`.
+  - No extra UI dependencies: event strings are escaped by Svelte, not injected HTML.
   - Copy [`svelte/HarnessDashboard.svelte`](svelte/HarnessDashboard.svelte) to `src/lib/components/HarnessDashboard.svelte`
   - Copy [`svelte/OwnerNav.svelte`](svelte/OwnerNav.svelte) to `src/lib/components/OwnerNav.svelte`
   - Create `src/routes/harness/+page.svelte` (see [`svelte/harness-page.svelte`](svelte/harness-page.svelte))
@@ -68,7 +67,10 @@ slash) to resolve a file's input id, then download by id
 
 The navigation bar will only appear when logged in as the owner and provides
 quick access to the home page and harness dashboard. The dashboard will refresh
-every 5 seconds to show live harness progress.
+every 5 seconds, skipping ticks while a request is active. Latest discovery then
+run-relative reads handle idle runs; two-minute overlap and full reconciliation
+every twelfth successful poll recover delayed ingestion. History loads on demand
+and stays selected when newer runs arrive. See [query policy](harness-events.md#public-rest-contract-and-dashboard-queries).
 
 ## Deploy dashboard update
 
@@ -77,7 +79,8 @@ harness variables from `.env` to the deployment. Keep `OWNER_USER_ID` server-onl
 
 ## Evaluate M1 before handoff
 
-The Evaluator records `REVIEW` started, then checks the deployed application
+M1 is always full: a separate evaluator agent/context records `REVIEW` started,
+then checks the deployed application
 against the spec with real tools and retains the evidence:
 
 - The baseline starts, the sign-in page renders and starts a device flow, and an
@@ -90,11 +93,11 @@ against the spec with real tools and retains the evidence:
   dashboard renders them, not an empty state or hardcoded demonstration data.
 - Verify record writing during this first harness run: write a real REVIEW
   progress event, read it back with `fulcra-api get-records`, and check its run ID,
-  step, status, and JSON string note. Confirm the same event appears through the
-  runs endpoint and in the dashboard after refresh. Use this run's annotation,
-  not a separate command-test log. The overview and issues panels load their
-  workspace files without API errors.
-- Unauthenticated and non-owner requests cannot read runs, overview, or issues;
+  step, status, retained state and evidence fields. Confirm the same event appears
+  through the runs endpoint and in the dashboard after refresh. Use this run's
+  Event type, not a separate command-test log. Summary/next actions/issues must
+  render from live records without workspace file requests.
+- Unauthenticated and non-owner requests cannot read runs or their retained state;
   owner controls are hidden for a non-owner. Verify backend denial, not only
   conditional UI rendering. No second account is needed: send the owner's token
   with its `fulcradynamics.com/userid` claim changed. `isOwner()` reads the claim
@@ -109,13 +112,18 @@ against the spec with real tools and retains the evidence:
 
 Include the commands/UI actions, tested deployment URL, and observed results in
 the REVIEW event's required `evidence` string, with workspace paths for longer
-tool output. Confirm evidence appears below the detail in the dashboard cells.
+tool output. Confirm evidence expands in the actual step timeline; the milestone,
+tier/reason/check plan and Nurse intervention are visible. Verify request failures
+show errors/retained stale data, all explicit terminal outcomes display accurately,
+older selection remains pinned, and idle/delayed records reconcile. Fixtures used
+for local edge cases must be labeled fixtures, not claimed as live evidence.
 
 Only after these checks pass may the Evaluator record `REVIEW` completed with
 evidence of the successful evaluations actually performed. Missing or blocked
 checks are not passes; record the blocker and keep the milestone incomplete.
 The Coordinator then records `MARK_COMPLETE`, saves M1 completion and evidence,
-and records `RUN_COMPLETE`. Refresh the overview and read back the terminal
+and records `RUN_END` with `passed`, closes workspace/history and verifies
+`BOOKKEEPING` complete. Read back the terminal
 events; confirm the dashboard displays the real review and completed M1 run
 before sharing it as the finished baseline. If verification fails, keep M1
 incomplete and follow the retry/escalation rules in the control-flow reference.
@@ -123,3 +131,36 @@ incomplete and follow the retry/escalation rules in the control-flow reference.
 **Do not present an empty dashboard as complete.** A URL may be shared earlier
 only as an explicitly in-progress preview. Lack of testing is not a harness
 exemption.
+
+## Existing-app upgrade
+
+This reference renders v1 structured events only; it does not silently parse or
+migrate legacy JSON notes. Schedule an explicit full-tier harness upgrade. Inspect
+saved type IDs, deploy IDs/domain, unfinished runs and old history first. Confirm
+old workers stopped through runtime controls before switching writers.
+
+Preserve the legacy MomentAnnotation type and all records, workspace run history
+and deployment IDs. Record the old type ID and cutover time in progress/history.
+Create one new Event type only after deliberately choosing this upgrade and
+checking that no compatible replacement already exists. Save/verify its ID before
+the first new run. Never replay old successes as new evidence or create a new deploy
+project. Update AGENTS.md, helpers, routes and env wiring together; remove obsolete
+overview/issues routes and PUBLIC_HARNESS_ANNOTATION_ID/PUBLIC_WORKSPACE_PATH if
+unused elsewhere. Keep authentication and owner checks unchanged.
+
+The new UI's history begins at cutover. Older legacy runs remain available via the
+saved old type using CLI range reads and their existing workspace history; there
+is intentionally no legacy dual-renderer. Preserve any unique old overview content
+in progress before retiring its writes. Verify full deployed dashboard/auth/owner
+and discoverability gates on the existing deployment after upgrading.
+
+## Offline verification
+
+From this repository run `node --test tests/app_builder/*.test.mjs` (Node 22+).
+Validate the reusable schema with `uv run --with 'jsonschema[format]' python tests/app_builder/schema_test.py`.
+Tests exercise the actual parser/state/feed/query/route code against explicitly
+synthetic fixtures; they do not import another repository's private implementation.
+Copy references into a disposable official Svelte template with the paths above,
+run `npm ci`, `npm run check` and `npm run build`. No live writes are needed for
+these checks. Browser QA and the deployed M1 gates still require real execution
+in the authorized target; successful fixture tests do not replace them.
