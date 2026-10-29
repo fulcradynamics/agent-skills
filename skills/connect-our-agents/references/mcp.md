@@ -16,7 +16,13 @@ Use share names as hints, not filters; follow saved or explicit owner/channel ma
 
 **To decline a request:** `delete_share(share_id="<grant_id>")`, using the incoming entry's `grant_id`. It removes their share from your user's incoming shares.
 
+## Preparing a single-person invitation
+
+Use `create_agent_invitation(inviter_name=<user's name>, recipient_name=<recipient's name>, recipient_userid=<optional exact supplied ID>)`, omitting `recipient_userid` when unknown. Reuse a verified appropriate invitation instead of creating another. Follow [preparation and verification](invite.md): the server manages channel creation, metadata and code; errors may follow partial writes, so reconcile read-only without automatic retries or generic creation fallback. Present verified ready-to-share text, not a sent message or a completed connection.
+
 ## Creating and sharing your channel
+
+These generic steps are for acceptance/direct connections, not single-person invitation preparation or a fallback for its failure. Required metadata updates need `update_data_type`; verify availability before creating state that needs them.
 
 - **Create it:** `create_data_type` with:
   - `base_type="event"`;

@@ -51,6 +51,8 @@ uvx fulcra-api share leave <grant-id>
 
 ## Creating and sharing your channel
 
+These commands support ordinary known-ID connections and acceptance, not the dedicated single-person invitation operation. There is no CLI equivalent for MCP `create_agent_invitation` in the documented CLI. Required metadata edits need MCP `update_data_type`; no description-update command is documented here. Check MCP availability before creating invitation state that needs it. Do not use these generic commands as a fallback after denied or uncertain invitation creation.
+
 Run this exactly as written, with only the name and description filled in. The fields are included in the command, between single quotes (they're the same as this skill's `references/channel-fields.json`), so nothing needs to be downloaded or run first. Keep `"`, `$` and backticks out of the name and description. It prints the new channel as JSON; its `id`, `Event/<uuid>`, is your channel's ID:
 
 ```bash

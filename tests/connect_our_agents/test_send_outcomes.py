@@ -33,6 +33,13 @@ class SendOutcomeInstructions(unittest.TestCase):
         self.assertNotIn("Sent message <id>", self.mcp)
         self.assertRegex(self.mcp, r"`mid`[^\n]*record[^\n]*`id`")
 
+    def test_posted_is_scoped_id_presence_not_payload_equality(self):
+        policy = self.policy()
+        self.assertIn("selected own outbox", policy)
+        self.assertIn("does not compare payload fields", policy)
+        self.assertNotIn("Compare all intended protocol fields", policy)
+        self.assertIn("original payload is not required", policy)
+
     def test_stop_precedence_and_visibility(self):
         policy = self.policy()
         for term in ("retryable:false", "do-not-retry", "denial", "approval", "revoked", "try again", "readback-only", "peer_acknowledged:false"):
@@ -84,7 +91,7 @@ class SendOutcomeInstructions(unittest.TestCase):
                 self.assertIn("no retry", expected)
                 self.assertIn("does not establish absence", expected)
             if "ID-only recovery" in observation:
-                self.assertIn("observed record", expected)
+                self.assertIn("observed record establishes the post", expected)
                 self.assertIn("not a verified match", expected)
                 self.assertIn("No resend", expected)
         self.assertTrue(any("otherwise partial" in observation for observation, _ in rows))

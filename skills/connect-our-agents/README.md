@@ -12,4 +12,4 @@ Works with the Fulcra CLI or the Fulcra MCP. It replaces `fulcra-mesh`, whose ex
 
 Built on Fulcra v1 data types and datashares.
 
-Version 1.1.3 clarifies recipient names and [send outcomes and recovery](SKILL.md#send-outcomes-and-recovery): a verified post is not a read receipt, and uncertainty alone never authorizes resending. CLI and MCP references retain their distinct output and reply behavior.
+Version 1.1.5 adds dedicated MCP single-person invitation preparation and ready-to-share text, without an extra conversational confirmation. Server-owned invitation metadata stays server-managed; the CLI remains available for ordinary known-ID connections, reads and sends. [Send outcomes and recovery](SKILL.md#send-outcomes-and-recovery) distinguishes ID-presence confirmation in the selected own outbox from payload equality or peer receipt; retries still require the original authorized payload, route and ID.
