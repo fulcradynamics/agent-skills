@@ -8,7 +8,8 @@ later redeploy.
 
 ## Create the deploy project (once per app)
 
-Before the first deploy, check `progress.md` for a saved **Deployment** section.
+Before the first deploy, check startup `progress.md` and current/prior live run
+resource IDs for a saved **Deployment** section or newly created project.
 If it has a deploy project, reuse it; never create a second one for the same app.
 
 Otherwise, create one. `name` becomes the app's address, `<name>.<Fulcra domain>`,
@@ -23,8 +24,11 @@ curl -sS -X POST https://api.fulcradynamics.com/user/v1/deploy/project \
   -w '\n%{http_code}\n'
 ```
 
-- `200`: save the response's `id` and `domain` to the **Deployment** section of
-  `progress.md`. The app's URL is `https://<domain>`.
+- `200`: immediately record the response's `id` and `domain` in a live
+  `RESOURCE_CREATED` Event and read it back before deploying. Retain them in
+  subsequent events; write the **Deployment** section of `progress.md` at run
+  closure, not mid-run. The app's URL is `https://<domain>`. If recording fails,
+  retain the response locally and stop for Nurse repair; do not create again.
 - `409`: the name is taken, possibly by another user. Ask the user for another name.
 - `422`: the name is invalid or too long; the response says why. Fix it, confirming
   the new name with the user.
@@ -49,7 +53,7 @@ of the CLI's dependencies supports.
 ```bash
 (
   set -e
-  DEPLOY_PROJECT_ID=<id from progress.md>
+  DEPLOY_PROJECT_ID=<verified id from startup progress or live resource event>
   DEPLOY_TOKEN=$(curl -sSf -X POST \
     "https://api.fulcradynamics.com/user/v1/deploy/project/$DEPLOY_PROJECT_ID/token" \
     -H "Authorization: Bearer $(uvx fulcra-api auth print-access-token)")
@@ -65,7 +69,7 @@ of the CLI's dependencies supports.
 )
 ```
 
-The app is served at `https://<domain>` from `progress.md`, not at the
+The app is served at `https://<domain>` from the saved/live resource, not at the
 `*.vercel.app` URL the CLI prints. Evaluate the deployed app at `https://<domain>`.
 
 ## Fallback: your own Vercel account

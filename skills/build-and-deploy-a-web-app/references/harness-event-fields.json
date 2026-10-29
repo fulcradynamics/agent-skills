@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "project_id": { "type": "string", "minLength": 1 },
+    "run_id": { "type": "string", "minLength": 1 },
+    "run_start": { "type": "string", "format": "date-time" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "deadline": { "type": "string", "format": "date-time" },
+    "milestone": { "type": "string", "minLength": 1 },
+    "tier": { "type": "string", "enum": ["light", "focused", "full"] },
+    "tier_reason": { "type": "string", "minLength": 1 },
+    "check_plan": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "role": { "type": "string", "enum": ["Nurse", "Coordinator", "Generator", "Evaluator"] },
+    "step": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["started", "completed", "failed"] },
+    "outcome": { "type": "string", "enum": ["running", "passed", "retry-needed", "stopped", "escalated"] },
+    "detail": { "type": "string" },
+    "evidence": { "type": "string", "minLength": 1 },
+    "project_summary": { "type": "string", "minLength": 1 },
+    "next_actions": { "type": "array", "items": { "type": "string" } },
+    "open_issues": { "type": "array", "items": { "type": "string" } },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string" },
+          "id": { "type": "string" },
+          "url": { "type": "string" }
+        },
+        "required": ["kind", "id"]
+      }
+    },
+    "worker_handle": { "type": "string", "description": "Runtime/session handle for actual stop verification; never a credential." },
+    "previous_run_id": { "type": "string" },
+    "bookkeeping": { "type": "string", "enum": ["pending", "complete"] }
+  },
+  "required": ["schema_version", "project_id", "run_id", "run_start", "attempt", "deadline", "milestone", "tier", "tier_reason", "check_plan", "role", "step", "status", "outcome", "detail", "evidence", "project_summary", "next_actions", "open_issues", "resources"]
+}
