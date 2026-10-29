@@ -28,8 +28,9 @@ def test_named_field_contract_and_examples():
         json.loads(line.split(': ', 1)[1])
 
 
+@pytest.mark.parametrize('invitation', [False, True])
 @pytest.mark.parametrize('label', ["Sura Novi's agent", "Sura's \"agent\" $(exit 91) `exit 92` $HOME", 'Sura  Novi\u00a0agent'])
-def test_cli_creation_preserves_json_without_shell_interpolation(label):
+def test_cli_creation_preserves_json_without_shell_interpolation(label, invitation):
     text = (SKILL / 'references/cli.md').read_text()
     [example] = [block for block in re.findall(r'```bash\n(.*?)```', text, re.S)
                  if 'data-type create Event' in block]
@@ -37,6 +38,8 @@ def test_cli_creation_preserves_json_without_shell_interpolation(label):
     assert '-d "$description"' in example
     assert "<<'LABEL'" in example and "<<'PY'" in example
     example = example.replace("\nSura Novi's agent\n", '\n' + label + '\n')
+    if invitation:
+        example = example.replace('"$contact_label" <<', '"$contact_label" invitation <<')
     stub = "uvx() { python3 -c 'import json,sys; print(json.dumps(sys.argv[1:]))' \"$@\"; }\n"
     result = subprocess.run(['sh', '-c', stub + example], text=True,
                             capture_output=True, check=True)
@@ -46,15 +49,29 @@ def test_cli_creation_preserves_json_without_shell_interpolation(label):
     assert description.startswith('Agent contact channel')
     # Catalog folding must not change whitespace inside the decoded label.
     folded = ' '.join(description.split())
-    assert json.loads(folded.split('Contact label: ', 1)[1]) == label
+    decoder = json.JSONDecoder()
+    assert decoder.raw_decode(folded.split('Contact label: ', 1)[1])[0] == label
+    if invitation:
+        assert 'secrets.token_hex(16)' in example
+        details = decoder.raw_decode(folded.split('Connection details: ', 1)[1])[0]
+        code = details['invitation']['code']
+        assert re.fullmatch('[0-9a-f]{32}', code)
+        assert details == {'version': 1, 'peers': [], 'invitation': {
+            'code': code, 'prefix': 'handshake', 'state': 'prepared'}}
+        assert description.count('Connection details: ') == 1
+    else:
+        assert 'Connection details: ' not in description
     assert json.loads(args[args.index('--fields') + 1]) == json.loads(
         (SKILL / 'references/channel-fields.json').read_text())
 
 
-def test_cli_generation_failure_does_not_create():
+@pytest.mark.parametrize('invitation', [False, True])
+def test_cli_generation_failure_does_not_create(invitation):
     text = (SKILL / 'references/cli.md').read_text()
     [example] = [block for block in re.findall(r'```bash\n(.*?)```', text, re.S)
                  if 'data-type create Event' in block]
+    if invitation:
+        example = example.replace('"$contact_label" <<', '"$contact_label" invitation <<')
     stub = "python3() { return 7; }; uvx() { printf 'UNEXPECTED CREATE'; };\n"
     result = subprocess.run(['sh', '-c', stub + example], text=True, capture_output=True)
     assert result.returncode == 7
@@ -66,7 +83,7 @@ def test_format_is_integrated_without_legacy_writes():
     invite = (SKILL / 'references/invite.md').read_text()
     cli = (SKILL / 'references/cli.md').read_text()
     acceptance = (ROOT / 'tests/acceptance/connect-our-agents/connection-flow.md').read_text()
-    assert 'version: "1.1.6"' in main
+    assert 'version: "1.1.7"' in main
     assert 'optional named field' in main
     assert 'on an outbox using legacy metadata' not in main
     assert 'retain the existing named spelling or legacy wrapper' not in invite
@@ -74,8 +91,8 @@ def test_format_is_integrated_without_legacy_writes():
     assert 'write `Connection details: ` on deliberate edits' in invite
     assert '## Metadata capabilities' in cli
     assert 'no description-update command' in cli
-    assert 'no CLI equivalent' in cli
-    assert 'before creating' in invite
+    assert 'no CLI equivalent' not in cli
+    assert 'before step 2' in invite
     assert 'create_agent_invitation' in invite
     for path in SKILL.rglob('*.md'):
         text = path.read_text().lower()

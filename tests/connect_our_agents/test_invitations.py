@@ -20,7 +20,7 @@ class InvitationInstructions(unittest.TestCase):
         self.assertIn("no extra conversational confirmation", section)
         self.assertIn("host approval or denial", section)
         self.assertIn("acceptance/direct connection", section)
-        self.assertIn('version: "1.1.6"', self.main)
+        self.assertIn('version: "1.1.7"', self.main)
 
     def test_creation_contract_and_reuse(self):
         for term in ("inviter_name", "recipient_name", "recipient_userid", "shared_with", "identifier", "own_userid", "status", "prepared"):
@@ -35,7 +35,7 @@ class InvitationInstructions(unittest.TestCase):
 
     def test_server_owned_verification_not_legacy_only(self):
         for term in ("get_data_catalog", "list_shares", "server-managed", "legacy", "do not rewrite"):
-            self.assertIn(term, self.invite)
+            self.assertIn(term, self.invite.lower())
         self.assertIn("not require the legacy", self.invite)
         self.assertIn("create_agent_invitation", self.mcp)
         self.assertNotIn("plugin", self.main + self.invite + self.mcp + self.cli)
@@ -79,12 +79,20 @@ class InvitationInstructions(unittest.TestCase):
                      "no automatic retry", "denial", "partial", "changed binding"):
             self.assertIn(term, section)
 
-    def test_cli_limit_checked_before_state_creation(self):
+    def test_cli_preparation_and_later_handoff(self):
         self.assertNotIn("Either does everything here", self.main)
         for text in (self.cli, self.invite):
-            self.assertIn("before creating", text)
             self.assertIn("update_data_type", text)
-            self.assertIn("no CLI equivalent", text)
+            self.assertNotIn("no CLI equivalent", text)
+            self.assertNotIn("Check MCP availability before creating", text)
+        self.assertIn("CLI primitives", self.invite)
+        self.assertIn("CLI failure", self.invite)
+        self.assertIn("secrets.token_hex(16)", self.cli)
+        self.assertIn("Invitation sender", self.cli)
+        self.assertIn("catalog --data-type", self.cli)
+        self.assertIn("before step 2", self.invite)
+        self.assertIn("no stateless return-share", self.invite)
+        self.assertIn("MCP is not required", self.invite)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ description: "Connect your agent with the agent of anyone who uses Fulcra (a fri
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.6"
+  version: "1.1.7"
   openclaw: { "emoji": "🔗" }
 ---
 
@@ -18,7 +18,7 @@ Lets your user's agent talk with another person's agent through Fulcra, privatel
 - A **message** is one record on the sender's channel. Fulcra gives every record an `id`; a reply points back with `in_reply_to`.
 - The two channels hold the conversation, including what's been answered. Any agent working for your user, in any session, can pick up where the last one left off. Preserve unresolved send requests, IDs and stop signals between sessions as described below.
 
-Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Both support ordinary known-ID connections, reads and sends; single-person invitation creation uses MCP `create_agent_invitation`. Required description updates need MCP `update_data_type`; check availability before creating state that needs them. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
+Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Both support invitation preparation, acceptance, ordinary known-ID connections, reads and sends. Use CLI primitives or MCP convenience tools with the same public metadata format. Later invitation-state updates need MCP `update_data_type`; the currently available CLI has no description-update command. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
 
 ## Channel matching
 
@@ -50,7 +50,7 @@ Saved pairs are overridable defaults, not grants or sending prerequisites. Prefe
 ## Connecting with someone
 
 1. **Look for an existing connection or invitation first.** Reuse a verified connection with the intended person; share names are only hints. For an invitation, reuse only appropriate verified prepared state as described in [references/invite.md](references/invite.md).
-2. **To invite one person:** the user's request is permission to prepare it, with no extra conversational confirmation or mandatory explanation of the mechanics. Respect host approval or denial. Ask only for missing names; do not require their Fulcra ID. Unless reusing a verified invitation, call MCP `create_agent_invitation` once, verify it using [the invitation reference](references/invite.md#verify-single-person-preparation), then give ready-to-share text. Preparation does not send a message or establish a connection. Keep an optional first-message draft in chat.
+2. **To invite one person:** the user's request is permission to prepare it, with no extra conversational confirmation or mandatory explanation of the mechanics. Respect host approval or denial. Ask only for missing names; do not require their Fulcra ID. Unless reusing a verified invitation, prepare once through MCP `create_agent_invitation` or the equivalent CLI primitives in [the invitation reference](references/invite.md#prepare-a-single-person-invitation), verify saved state and shares, then give ready-to-share text. Preparation does not send a message or establish a connection. Keep an optional first-message draft in chat.
 3. **For acceptance/direct connection with a known ID:** create your channel as an `Event` data type with exactly the fields in [references/channel-fields.json](references/channel-fields.json), including required `sender`, `kind` and `body`. Name it `<your name> with <their name>`, and start its description with `Agent contact channel`. Optional display metadata uses the [channel description format](references/channel-description-format.md), such as `Contact label: "Sura Novi's agent"`. Share only that channel with the exact authorized person, naming the share `connect-our-agents: <your user's name> with <their name>`. Send an introduction only when authorized; accepting an invitation requires its exact first-message topic from [references/invite.md](references/invite.md). This is not a fallback for failed invitation creation.
 
 Your user's invitation request authorizes preparation and the narrow return share to the verified account answering its code; supplying the recipient's exact ID also authorizes sharing that outbox with them immediately. The recipient still chooses whether to accept. Sending messages, sharing other data and connecting other accounts require their own permission. Share nothing else: not all data, not files, not other types.

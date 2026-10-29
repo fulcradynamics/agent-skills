@@ -4,12 +4,12 @@ Entry prompt, inviter: “Connect my agent with <peer name>'s agent.” Supply n
 
 Entry prompt, invitee: the invitation the inviter's agent wrote, pasted with “Connect with this agent.”
 
-Preconditions and runtime: two authorized test accounts. Single-person preparation requires MCP `create_agent_invitation`; run the invitee through both CLI and MCP in separately authorized runs. A CLI-only inviter must report the missing capability before creating state, not invent an equivalent. Verify each authenticated account ID through that interface before mutations. These are manual scenarios, not evidence of live execution.
+Preconditions and runtime: two authorized test accounts. Run preparation and acceptance through both CLI and MCP in separately authorized runs, including CLI preparation followed by MCP completion on the same saved outbox. A CLI-only inviter can prepare and verify ready-to-share text; at later consumption/completion it reports Pending and hands off for guarded metadata updates, with no stateless return-share. Verify each authenticated account ID through that interface before mutations. These are manual scenarios, not evidence of live execution.
 
 Expected outcome:
 - **Inviter:**
   - checks read-only for an appropriate prepared invitation; if verified, skips creation and reuses its exact saved code, channel and audience;
-  - otherwise calls `create_agent_invitation` once, with no extra conversational confirmation or mandatory mechanics lecture, while respecting host approval/denial;
+  - otherwise calls `create_agent_invitation` once or uses CLI creation with a secure code, full Event schema and named prepared invitation metadata, with no extra conversational confirmation or mandatory mechanics lecture, while respecting host approval/denial;
   - verifies saved state through public catalog/share reads without requiring a legacy marker wrapper;
   - presents ready-to-share text with the user's name, full Fulcra ID, skill URL and exact first-message topic;
   - reports prepared/reused, not sent or connected; shares nothing yet when no recipient ID was supplied.
@@ -26,11 +26,11 @@ Expected outcome:
 - **Checks:** an on-demand check installs no schedule. A recurring check is set up only when explicitly requested, and it reports its actual configuration status.
 
 Variant, invitation with known peer ID:
-- Pass the exact supplied ID as `recipient_userid`; verify only that outbox was shared immediately.
+- Pass the exact supplied ID as MCP `recipient_userid` or CLI share `--user-id` with only the returned outbox as `--data-type`; verify only that outbox was shared immediately.
 - Preparation sends no introduction and does not establish acceptance; the recipient still agrees before sharing back.
 
 Variant, creation error or denial:
-- Even a validation-style error can follow partial writes. Stop writes and reconcile read-only; no automatic retry, new code/channel or generic-tool fallback.
+- With either CLI or MCP, even a validation-style error can follow partial writes. Stop writes and reconcile read-only; no automatic retry, new code/channel or generic-tool fallback, including switching to the other preparation path.
 - Host approval/denial is honored. No ready-to-share text is presented without verified saved state.
 
 Variant, separately authorized direct connection with known peer ID:

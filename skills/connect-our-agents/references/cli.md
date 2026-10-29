@@ -8,7 +8,7 @@ Commands use `uvx fulcra-api` and need fulcra-api 0.1.51 or later. If a command 
 
 The inspected `uvx fulcra-api data-type --help` lists `create`, `list`, `schema`, `add-fields`, `archive` and `restore`, but no description-update command. `data-type create --help` supports `-d/--description` at creation only; `add-fields` changes schema fields, not description metadata. Do not guess an update command. Guarded edits and their readback procedure in the [channel description format](channel-description-format.md#mcp-specific-readback-and-consent) are MCP-specific.
 
-Ordinary CLI connections and sends remain supported, including creation with optional labels below. Leave optional metadata edits unchanged when editing is unavailable. Single-person invitation preparation requires MCP `create_agent_invitation`; persisted state transitions require MCP guarded editing and readback. Check these before creating invitation state; initial creation metadata cannot substitute for later updates. See [invitation prerequisites](invite.md#prepare-a-single-person-invitation).
+The CLI supports invitation preparation, acceptance, ordinary connections, reads and sends. Preparation uses creation-time metadata below, equivalent to MCP `create_agent_invitation`. Later invitation consumption/completion needs guarded `update_data_type` editing and readback through MCP; hand off at that step, not before preparation or acceptance. Leave optional metadata edits unchanged when editing is unavailable. See [invitation completion](invite.md#complete-a-single-person-invitation).
 
 ## Logging in
 
@@ -57,9 +57,11 @@ uvx fulcra-api share leave <grant-id>
 
 ## Creating and sharing your channel
 
-These commands support ordinary known-ID connections and acceptance, not the dedicated single-person invitation operation. There is no CLI equivalent for MCP `create_agent_invitation` in the documented CLI. Required metadata edits need MCP `update_data_type`; no description-update command is documented here. Check MCP availability before creating invitation state that needs it. Do not use these generic commands as a fallback after denied or uncertain invitation creation.
+These primitives support ordinary known-ID connections, acceptance and single-person invitation preparation. Select the preparation path before writes; do not switch paths or create again after denied or uncertain creation.
 
-The synthetic example below creates a channel with a readable label under the [channel description format](channel-description-format.md). It needs `python3` solely to generate JSON safely; this is the exception to the simple-command guidance above. Run the block in one shell, only for an authorized creation, adapting the synthetic names. Put the validated single-line label between the quoted `LABEL` delimiters (not a line equal to `LABEL`). Keep the heredoc delimiters quoted: pass text as data, never interpolate it into Python source or use `eval`. Quote the channel name as a shell literal, escaping any apostrophe; do not insert untrusted text into shell source.
+The synthetic example below creates a channel with a readable label under the [channel description format](channel-description-format.md). It uses `python3` for safe JSON and, for an invitation, a secure code; this is the exception to the simple-command guidance above. Run the block in one shell, only for an authorized creation, adapting the synthetic names. Put the validated single-line label between the quoted `LABEL` delimiters (not a line equal to `LABEL`). Keep the heredoc delimiters quoted: pass text as data, never interpolate it into Python source or use `eval`. Quote the channel name as a shell literal, escaping any apostrophe; do not insert untrusted text into shell source.
+
+For a new invitation, use this same block, changing only `python3 - "$contact_label"` to `python3 - "$contact_label" invitation`. It saves `version:1`, `peers:[]` and the prepared handshake code with the full Event schema in the creation call. Never invent a code or rerun the block to recover an uncertain result. The name `<inviter> with <recipient>` and `Contact label: "<recipient>'s agent"` provide the single-person display metadata. `Invitation sender` is optional display metadata used for a standing invitation's saved name; single-person preparation does not require it. No setup link or status field is required.
 
 The description variable is passed as one quoted argument, retaining JSON double quotes and literal shell metacharacters. The generator escapes repeated spaces and non-ASCII whitespace against catalog folding. If generation fails, `&&` prevents creation. If the host blocks this block, ask for approval or use MCP; do not strip JSON quotes or bypass a denial. The inlined fields match `references/channel-fields.json`. The result's `id`, `Event/<uuid>`, is your channel's ID:
 
@@ -76,6 +78,11 @@ label_json = json.dumps(sys.argv[1], ensure_ascii=True)
 label_json = re.sub(r" {2,}", lambda match: r"\u0020" * len(match[0]), label_json)
 print("Agent contact channel: messages sent to this contact.")
 print("Contact label: " + label_json)
+if sys.argv[2:] == ["invitation"]:
+    import secrets
+    details = {"version": 1, "peers": [], "invitation": {
+        "code": secrets.token_hex(16), "prefix": "handshake", "state": "prepared"}}
+    print("Connection details: " + json.dumps(details))
 PY
 ) &&
 uvx fulcra-api data-type create Event 'Alice with Sura Novi' \
@@ -108,12 +115,23 @@ uvx fulcra-api data-type create Event 'Alice with Sura Novi' \
 }'
 ```
 
-Share it with each person in the connection, one share per person:
+For an invitation without a recipient ID, do not share yet. With an exact authorized recipient ID, share only this outbox with that person once, using the command below; omit group, file, time-bound and all-data options. For an ordinary connection, share with each authorized person, one share per person:
 
 ```bash
 uvx fulcra-api share create --name "connect-our-agents: <user> with <their name>" \
   --data-type "Event/<your-channel-uuid>" --user-id <their-user-id>
 ```
+
+Before creating, use `user-info`, `catalog --user-defined --recordable` and both share lists to check the account and reusable invitation state. After creation (and any authorized share), independently read back:
+
+```bash
+uvx fulcra-api user-info
+uvx fulcra-api catalog --data-type "Event/<your-channel-uuid>" --api-version v1
+uvx fulcra-api share list-outgoing
+uvx fulcra-api share list-incoming
+```
+
+Select the exact returned ID, not a matching label. Verify the active owned recordable Event schema, saved code/state and display metadata against the creation arguments. For connection-specific targeted grants, `fulcra_data_types` must contain only that outbox, and the union of `permissions[].allowed_fulcra_userid` must identify only the supplied peer (or no targeted grants without an ID), with valid `datashare_id` values and no groups, files/file history, time bounds or all-data access. Broader unrelated shares are not invitation evidence. Follow [preparation verification](invite.md#verify-single-person-preparation) before showing ready-to-share text with `handshake <saved-code>`; a create receipt alone is not proof. Creation/share failure means stop and reconcile read-only, not retry or switch to MCP creation.
 
 ## Sending
 
