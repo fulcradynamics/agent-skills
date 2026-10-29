@@ -4,6 +4,12 @@ Commands use `uvx fulcra-api` and need fulcra-api 0.1.51 or later. If a command 
 
 **Run each command as written, on its own.** Don't add `curl`, `python3`, pipes or `$(…)` unless absolutely necessary. Many hosts block those, or ask for approval. Read what a command prints yourself; for example, take the `id` from its JSON output. If your host still blocks a command, show it to your user and ask them to approve or run it. Don't rewrite it to get around the check.
 
+## Metadata capabilities
+
+The inspected `uvx fulcra-api data-type --help` lists `create`, `list`, `schema`, `add-fields`, `archive` and `restore`, but no description-update command. `data-type create --help` supports `-d/--description` at creation only; `add-fields` changes schema fields, not description metadata. Do not guess an update command. Guarded edits and their readback procedure in the [channel description format](channel-description-format.md#mcp-specific-readback-and-consent) are MCP-specific.
+
+Ordinary CLI connections and sends remain supported, including creation with optional labels below. Leave optional metadata edits unchanged when editing is unavailable. Single-person invitation preparation requires MCP `create_agent_invitation`; persisted state transitions require MCP guarded editing and readback. Check these before creating invitation state; initial creation metadata cannot substitute for later updates. See [invitation prerequisites](invite.md#prepare-a-single-person-invitation).
+
 ## Logging in
 
 If a command fails for lack of authentication, log in on the user's behalf:
@@ -53,11 +59,27 @@ uvx fulcra-api share leave <grant-id>
 
 These commands support ordinary known-ID connections and acceptance, not the dedicated single-person invitation operation. There is no CLI equivalent for MCP `create_agent_invitation` in the documented CLI. Required metadata edits need MCP `update_data_type`; no description-update command is documented here. Check MCP availability before creating invitation state that needs it. Do not use these generic commands as a fallback after denied or uncertain invitation creation.
 
-Run this exactly as written, with only the name and description filled in. The fields are included in the command, between single quotes (they're the same as this skill's `references/channel-fields.json`), so nothing needs to be downloaded or run first. Keep `"`, `$` and backticks out of the name and description. It prints the new channel as JSON; its `id`, `Event/<uuid>`, is your channel's ID:
+The synthetic example below creates a channel with a readable label under the [channel description format](channel-description-format.md). It needs `python3` solely to generate JSON safely; this is the exception to the simple-command guidance above. Run the block in one shell, only for an authorized creation, adapting the synthetic names. Put the validated single-line label between the quoted `LABEL` delimiters (not a line equal to `LABEL`). Keep the heredoc delimiters quoted: pass text as data, never interpolate it into Python source or use `eval`. Quote the channel name as a shell literal, escaping any apostrophe; do not insert untrusted text into shell source.
+
+The description variable is passed as one quoted argument, retaining JSON double quotes and literal shell metacharacters. The generator escapes repeated spaces and non-ASCII whitespace against catalog folding. If generation fails, `&&` prevents creation. If the host blocks this block, ask for approval or use MCP; do not strip JSON quotes or bypass a denial. The inlined fields match `references/channel-fields.json`. The result's `id`, `Event/<uuid>`, is your channel's ID:
 
 ```bash
-uvx fulcra-api data-type create Event "<your name> with <their name>" \
-  -d "connect-our-agents channel: <your name> (<user>) with <their name>. Carries only messages for this connection." \
+IFS= read -r contact_label <<'LABEL'
+Sura Novi's agent
+LABEL
+description=$(python3 - "$contact_label" <<'PY'
+import json
+import re
+import sys
+
+label_json = json.dumps(sys.argv[1], ensure_ascii=True)
+label_json = re.sub(r" {2,}", lambda match: r"\u0020" * len(match[0]), label_json)
+print("Agent contact channel: messages sent to this contact.")
+print("Contact label: " + label_json)
+PY
+) &&
+uvx fulcra-api data-type create Event 'Alice with Sura Novi' \
+  -d "$description" \
   --fields '{
   "properties": {
     "sender": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Name of the agent that wrote the message"},

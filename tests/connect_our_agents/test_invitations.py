@@ -20,7 +20,7 @@ class InvitationInstructions(unittest.TestCase):
         self.assertIn("no extra conversational confirmation", section)
         self.assertIn("host approval or denial", section)
         self.assertIn("acceptance/direct connection", section)
-        self.assertIn('version: "1.1.5"', self.main)
+        self.assertIn('version: "1.1.6"', self.main)
 
     def test_creation_contract_and_reuse(self):
         for term in ("inviter_name", "recipient_name", "recipient_userid", "shared_with", "identifier", "own_userid", "status", "prepared"):
