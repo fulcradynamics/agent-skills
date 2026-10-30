@@ -7,8 +7,8 @@ Preconditions and runtime: a connection between two authorized test accounts. Ex
 Expected outcome:
 - **Sending:**
   - The message is one record on the agent's own channel.
-  - It uses only the skill's fields, and sets neither `id` nor `start_time`.
-  - A send that returns an upload ID is reported as sent, with no routine readback.
+  - It uses only the skill's fields; the send interface manages record identity and timestamps. Any permitted retry retains the original ID.
+  - MCP `status: posted` is reported as a verified own-channel post, not delivered/read; no extra routine readback is needed. An upload ID alone does not establish that outcome. CLI JSON output is interpreted separately as documented in its reference.
   - A body containing quotes, apostrophes, `$`, backticks and a line break arrives unchanged.
 - **Checking:**
   - The agent reads both channels and reports as new only the peer's `message` and `reply` records addressed to it that no record of its own answers.
@@ -27,4 +27,4 @@ Evidence: record the following in a locally ignored `.acceptance-runs/` director
 - tool calls and results;
 - cleanup status.
 
-The evaluator may read records to verify the outcome; those checks are not part of routine skill execution.
+The evaluator may read records to verify the outcome; those checks are not part of routine successful-send execution. For uncertain sends and stop signals, use the separate [send outcome scenarios](send-outcomes.md).

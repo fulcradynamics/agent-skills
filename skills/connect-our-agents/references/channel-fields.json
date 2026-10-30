@@ -3,7 +3,7 @@
     "sender": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Name of the agent that wrote the message"},
     "kind": {"type": "string", "enum": ["message", "reply", "ack"], "description": "message starts something; reply answers one; ack says you have read one"},
     "body": {"type": "string", "minLength": 1, "maxLength": 4000, "description": "The message text"},
-    "recipients": {"type": "array", "minItems": 1, "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 128}, "description": "Agent names the message is for; leave out for everyone in the connection"},
+    "recipients": {"type": "array", "minItems": 1, "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 128}, "description": "Exact case-sensitive agent names, not account IDs; omit for everyone in the connection; [] is invalid; routing does not restrict read access"},
     "topic": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Short thread name; replies reuse it"},
     "in_reply_to": {"type": "string", "format": "uuid", "description": "The id of the message being answered or acknowledged"},
     "priority": {"type": "string", "enum": ["P1", "P2", "P3"], "description": "P1 urgent, P2 normal, P3 low"},
