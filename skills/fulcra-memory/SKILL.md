@@ -27,7 +27,7 @@ This dedicated directory tracks the agent's state. It must conform to the Open K
 - Keep the `index.md` and `log.md` focused on top-level structure and significant milestones (like the `progress.md`) so they remain useful but lightweight.
 
 ### 2. Discovering Recent Memory Changes
-Rather than exhaustively querying your namespace to remember what you or others recently learned, use the Fulcra API's `data-updates` command (e.g., `uv tool run fulcra-api data-updates "1 day"`). This will return a summary of all files that changed recently, allowing you to easily see what knowledge was added and which memory files were updated across your local and team-shared namespaces.
+Rather than exhaustively querying your namespace to remember what you or others recently learned, use the Fulcra API's `data-updates` command (e.g., `uvx fulcra-api data-updates "1 day"`). This will return a summary of all files that changed recently, allowing you to easily see what knowledge was added and which memory files were updated across your local and team-shared namespaces.
 
 ### 3. Progress Reports
 Agents should run a progress sync periodically (e.g., triggered by `HEARTBEAT.md`). Every time an agent syncs its state:
