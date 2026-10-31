@@ -1,0 +1,597 @@
+{
+ "blocks": {
+  "01000000-aaaa-bbbb-cccc-dddddddddddd": [
+   {
+    "has_children": false,
+    "id": "b01",
+    "object": "block",
+    "paragraph": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Welcome to the ",
+       "type": "text"
+      },
+      {
+       "annotations": {
+        "bold": true
+       },
+       "href": null,
+       "plain_text": "handbook",
+       "type": "text"
+      },
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": " with ",
+       "type": "text"
+      },
+      {
+       "annotations": {
+        "italic": true
+       },
+       "href": null,
+       "plain_text": "style",
+       "type": "text"
+      },
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": " and ",
+       "type": "text"
+      },
+      {
+       "annotations": {
+        "code": true
+       },
+       "href": null,
+       "plain_text": "code()",
+       "type": "text"
+      },
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": " and ",
+       "type": "text"
+      },
+      {
+       "annotations": {
+        "strikethrough": true
+       },
+       "href": null,
+       "plain_text": "gone",
+       "type": "text"
+      },
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": " and a ",
+       "type": "text"
+      },
+      {
+       "annotations": {},
+       "href": "https://example.com/x",
+       "plain_text": "link",
+       "type": "text"
+      }
+     ]
+    },
+    "type": "paragraph"
+   },
+   {
+    "has_children": false,
+    "heading_1": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Overview",
+       "type": "text"
+      }
+     ]
+    },
+    "id": "b02",
+    "object": "block",
+    "type": "heading_1"
+   },
+   {
+    "bulleted_list_item": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Parent",
+       "type": "text"
+      }
+     ]
+    },
+    "has_children": true,
+    "id": "b03",
+    "object": "block",
+    "type": "bulleted_list_item"
+   },
+   {
+    "has_children": false,
+    "id": "b04",
+    "object": "block",
+    "to_do": {
+     "checked": true,
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Ship it",
+       "type": "text"
+      }
+     ]
+    },
+    "type": "to_do"
+   },
+   {
+    "child_page": {
+     "title": "Meeting Notes"
+    },
+    "has_children": false,
+    "id": "02000000-aaaa-bbbb-cccc-dddddddddddd",
+    "object": "block",
+    "type": "child_page"
+   },
+   {
+    "child_database": {
+     "title": "Tasks"
+    },
+    "has_children": false,
+    "id": "03000000-aaaa-bbbb-cccc-dddddddddddd",
+    "object": "block",
+    "type": "child_database"
+   },
+   {
+    "child_page": {
+     "title": "Meeting Notes"
+    },
+    "has_children": false,
+    "id": "07000000-aaaa-bbbb-cccc-dddddddddddd",
+    "object": "block",
+    "type": "child_page"
+   },
+   {
+    "breadcrumb": {},
+    "has_children": false,
+    "id": "b08",
+    "object": "block",
+    "type": "breadcrumb"
+   },
+   {
+    "has_children": true,
+    "id": "b09",
+    "object": "block",
+    "table": {
+     "has_column_header": true,
+     "table_width": 2
+    },
+    "type": "table"
+   },
+   {
+    "code": {
+     "language": "python",
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "print('hi')",
+       "type": "text"
+      }
+     ]
+    },
+    "has_children": false,
+    "id": "b10",
+    "object": "block",
+    "type": "code"
+   },
+   {
+    "callout": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Heads up",
+       "type": "text"
+      }
+     ]
+    },
+    "has_children": false,
+    "id": "b11",
+    "object": "block",
+    "type": "callout"
+   },
+   {
+    "has_children": false,
+    "id": "b12",
+    "image": {
+     "caption": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Diagram",
+       "type": "text"
+      }
+     ],
+     "file": {
+      "url": "https://prod-files.example/img.png?sig=1"
+     },
+     "type": "file"
+    },
+    "object": "block",
+    "type": "image"
+   },
+   {
+    "has_children": false,
+    "id": "b13",
+    "object": "block",
+    "paragraph": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Last block after pagination",
+       "type": "text"
+      }
+     ]
+    },
+    "type": "paragraph"
+   }
+  ],
+  "02000000-aaaa-bbbb-cccc-dddddddddddd": [
+   {
+    "has_children": false,
+    "id": "m01",
+    "object": "block",
+    "paragraph": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "First meeting",
+       "type": "text"
+      }
+     ]
+    },
+    "type": "paragraph"
+   }
+  ],
+  "05000000-aaaa-bbbb-cccc-dddddddddddd": [
+   {
+    "has_children": false,
+    "id": "w01",
+    "object": "block",
+    "paragraph": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Row body",
+       "type": "text"
+      }
+     ]
+    },
+    "type": "paragraph"
+   }
+  ],
+  "06000000-aaaa-bbbb-cccc-dddddddddddd": [],
+  "07000000-aaaa-bbbb-cccc-dddddddddddd": [
+   {
+    "has_children": false,
+    "id": "m02",
+    "object": "block",
+    "paragraph": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Second meeting",
+       "type": "text"
+      }
+     ]
+    },
+    "type": "paragraph"
+   }
+  ],
+  "b03": [
+   {
+    "bulleted_list_item": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Child",
+       "type": "text"
+      }
+     ]
+    },
+    "has_children": true,
+    "id": "b03a",
+    "object": "block",
+    "type": "bulleted_list_item"
+   }
+  ],
+  "b03a": [
+   {
+    "has_children": false,
+    "id": "b03b",
+    "numbered_list_item": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Deep one",
+       "type": "text"
+      }
+     ]
+    },
+    "object": "block",
+    "type": "numbered_list_item"
+   },
+   {
+    "has_children": false,
+    "id": "b03c",
+    "numbered_list_item": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Deep two",
+       "type": "text"
+      }
+     ]
+    },
+    "object": "block",
+    "type": "numbered_list_item"
+   }
+  ],
+  "b09": [
+   {
+    "has_children": false,
+    "id": "r1",
+    "object": "block",
+    "table_row": {
+     "cells": [
+      [
+       {
+        "annotations": {},
+        "href": null,
+        "plain_text": "Name",
+        "type": "text"
+       }
+      ],
+      [
+       {
+        "annotations": {},
+        "href": null,
+        "plain_text": "Note",
+        "type": "text"
+       }
+      ]
+     ]
+    },
+    "type": "table_row"
+   },
+   {
+    "has_children": false,
+    "id": "r2",
+    "object": "block",
+    "table_row": {
+     "cells": [
+      [
+       {
+        "annotations": {},
+        "href": null,
+        "plain_text": "a|b",
+        "type": "text"
+       }
+      ],
+      [
+       {
+        "annotations": {},
+        "href": null,
+        "plain_text": "c",
+        "type": "text"
+       }
+      ]
+     ]
+    },
+    "type": "table_row"
+   }
+  ]
+ },
+ "data_sources": {
+  "04000000-aaaa-bbbb-cccc-dddddddddddd": [
+   "05000000-aaaa-bbbb-cccc-dddddddddddd",
+   "06000000-aaaa-bbbb-cccc-dddddddddddd"
+  ]
+ },
+ "databases": {
+  "03000000-aaaa-bbbb-cccc-dddddddddddd": {
+   "data_sources": [
+    {
+     "id": "04000000-aaaa-bbbb-cccc-dddddddddddd",
+     "name": "Tasks"
+    }
+   ],
+   "id": "03000000-aaaa-bbbb-cccc-dddddddddddd",
+   "last_edited_time": "2026-10-01T10:00:00.000Z",
+   "object": "database",
+   "title": [
+    {
+     "annotations": {},
+     "href": null,
+     "plain_text": "Tasks",
+     "type": "text"
+    }
+   ],
+   "url": "https://www.notion.so/03000000aaaabbbbccccdddddddddddd"
+  }
+ },
+ "pages": {
+  "01000000-aaaa-bbbb-cccc-dddddddddddd": {
+   "id": "01000000-aaaa-bbbb-cccc-dddddddddddd",
+   "last_edited_time": "2026-10-01T10:00:00.000Z",
+   "object": "page",
+   "properties": {
+    "Name": {
+     "title": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Handbook",
+       "type": "text"
+      }
+     ],
+     "type": "title"
+    }
+   },
+   "url": "https://www.notion.so/01000000aaaabbbbccccdddddddddddd"
+  },
+  "02000000-aaaa-bbbb-cccc-dddddddddddd": {
+   "id": "02000000-aaaa-bbbb-cccc-dddddddddddd",
+   "last_edited_time": "2026-10-01T10:00:00.000Z",
+   "object": "page",
+   "properties": {
+    "Name": {
+     "title": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Meeting Notes",
+       "type": "text"
+      }
+     ],
+     "type": "title"
+    }
+   },
+   "url": "https://www.notion.so/02000000aaaabbbbccccdddddddddddd"
+  },
+  "05000000-aaaa-bbbb-cccc-dddddddddddd": {
+   "id": "05000000-aaaa-bbbb-cccc-dddddddddddd",
+   "last_edited_time": "2026-10-01T10:00:00.000Z",
+   "object": "page",
+   "properties": {
+    "Done": {
+     "checkbox": false,
+     "type": "checkbox"
+    },
+    "Estimate": {
+     "number": 3,
+     "type": "number"
+    },
+    "Name": {
+     "title": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Write docs",
+       "type": "text"
+      }
+     ],
+     "type": "title"
+    },
+    "Notes": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "a|b",
+       "type": "text"
+      }
+     ],
+     "type": "rich_text"
+    },
+    "Status": {
+     "select": {
+      "name": "Open"
+     },
+     "type": "select"
+    },
+    "Tags": {
+     "multi_select": [
+      {
+       "name": "docs"
+      },
+      {
+       "name": "q4"
+      }
+     ],
+     "type": "multi_select"
+    }
+   },
+   "url": "https://www.notion.so/05000000aaaabbbbccccdddddddddddd"
+  },
+  "06000000-aaaa-bbbb-cccc-dddddddddddd": {
+   "id": "06000000-aaaa-bbbb-cccc-dddddddddddd",
+   "last_edited_time": "2026-10-01T10:00:00.000Z",
+   "object": "page",
+   "properties": {
+    "Done": {
+     "checkbox": true,
+     "type": "checkbox"
+    },
+    "Estimate": {
+     "number": 5,
+     "type": "number"
+    },
+    "Name": {
+     "title": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Ship it",
+       "type": "text"
+      }
+     ],
+     "type": "title"
+    },
+    "Notes": {
+     "rich_text": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "ok",
+       "type": "text"
+      }
+     ],
+     "type": "rich_text"
+    },
+    "Status": {
+     "select": {
+      "name": "Done"
+     },
+     "type": "select"
+    },
+    "Tags": {
+     "multi_select": [],
+     "type": "multi_select"
+    }
+   },
+   "url": "https://www.notion.so/06000000aaaabbbbccccdddddddddddd"
+  },
+  "07000000-aaaa-bbbb-cccc-dddddddddddd": {
+   "id": "07000000-aaaa-bbbb-cccc-dddddddddddd",
+   "last_edited_time": "2026-10-01T10:00:00.000Z",
+   "object": "page",
+   "properties": {
+    "Name": {
+     "title": [
+      {
+       "annotations": {},
+       "href": null,
+       "plain_text": "Meeting Notes",
+       "type": "text"
+      }
+     ],
+     "type": "title"
+    }
+   },
+   "url": "https://www.notion.so/07000000aaaabbbbccccdddddddddddd"
+  }
+ }
+}

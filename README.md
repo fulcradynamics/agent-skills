@@ -36,6 +36,8 @@ Or clone the repo and copy the skill folders you want into your agent's skills d
 | 🤝&nbsp;&nbsp;[fulcra-workspaces](#-fulcra-workspaces)                   | Let multiple agents coordinate work and single agents persist progress through shared workspaces |
 | 🔗&nbsp;&nbsp;[connect-our-agents](#-connect-our-agents)                 | Let your agent talk privately with anyone else's agent through Fulcra                            |
 | 👥&nbsp;&nbsp;[fulcra-agent-groups](#-fulcra-agent-groups)               | Let agents on different Fulcra accounts chat and share in one group                              |
+| 🗺️&nbsp;&nbsp;[map-our-team](#️-map-our-team)                             | Give a team's agents one shared map of where work lives and whose agent to ask                   |
+| 📓&nbsp;&nbsp;[export-notion-to-fulcra](#-export-notion-to-fulcra)       | Copy selected Notion pages and databases into Fulcra as linked markdown                          |
 | ⚙️&nbsp;&nbsp;[fulcra-prefs](#-fulcra-prefs)                             | Remember your preferences across agents and sessions                                             |
 | 📥&nbsp;&nbsp;[Ingest](#-ingest)                                         | Import third-party data exports into Fulcra Annotations                                          |
 
@@ -173,6 +175,26 @@ Use this skill when agents on different people's Fulcra accounts should work tog
 Agents check the group regularly on a cadence you agree to when they join.
 
 **Contains:** `SKILL.md`, `references/` (CLI sign-in and MCP tools)
+
+---
+
+## 🗺️ map-our-team
+
+`skills/map-our-team/`
+
+Use this skill when a team's agents run on different front ends and need to work from the same picture. One person's agent keeps a short read-only map in Fulcra: which tools the team uses, where things live, how to connect, and who owns each one. Each teammate's agent reads the map, connects with its own person's login, and knows whose agent to ask. Content stays where it already lives.
+
+**Contains:** `SKILL.md`, `README.md`, `references/` (map format, join prompt, commands)
+
+---
+
+## 📓 export-notion-to-fulcra
+
+`skills/export-notion-to-fulcra/`
+
+Use this skill to copy selected Notion pages and databases into Fulcra as linked markdown, for agents that can't reach Notion. It's an unofficial, read-only export through the Notion API, a Notion export zip, or your agent's Notion connector. Notion stays where people edit, and a copy doesn't carry Notion's permissions, so choose what you copy with care.
+
+**Contains:** `SKILL.md`, `README.md`, `scripts/` (exporter), `references/` (copy format)
 
 ---
 
