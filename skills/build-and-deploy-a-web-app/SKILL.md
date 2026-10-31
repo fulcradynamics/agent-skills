@@ -42,15 +42,9 @@ This skill helps users start a Fulcra-backed web application by cloning one of t
 
 The templates are the starting point; the harness makes the app reviewable and supports continued iteration against the stored plan, spec, decisions, and history.
 
-## Template Options
+## Template
 
-Choose between two frontend frameworks:
-
-1. **Svelte** (default) — Lightweight and beginner-friendly. Great for most projects.  
-   https://github.com/fulcradynamics/app-template-svelte
-
-2. **React** — Industry standard with extensive ecosystem and community resources.  
-   https://github.com/fulcradynamics/app-template-react
+Use the official [SvelteKit template](https://github.com/fulcradynamics/app-template-svelte). This is the only framework supported by this skill.
 
 ## Workflow
 
@@ -92,9 +86,9 @@ As you go, note each specific decision the user makes — their actual choice, n
 
 Once you have enough detail, create the spec with milestone breakdown, then upload to the workspace: the spec to `spec.md` and the collected decisions to `decisions.md` (at the end, not after each question). Define M1's acceptance criteria using the [dashboard handoff gate](references/harness-dashboard-setup.md#evaluate-m1-before-handoff); app-specific features start at M2. Initialize `progress.md` with M1 pending. See [`references/workspace.md`](references/workspace.md).
 
-### 4. Choose Template
+### 4. Confirm Template
 
-Use Svelte unless the user prefers React or has already specified a preference.
+Use SvelteKit. If the user requests another framework, explain that this skill supports only SvelteKit and agree on that choice before scaffolding.
 
 ### 5. Start the First Harness Run
 
@@ -109,7 +103,7 @@ Steps 6–9 below are the implementation work **inside this run**, not prerequis
 Clone the chosen template into a new directory named for their project:
 
 ```bash
-git clone https://github.com/fulcradynamics/app-template-[react|svelte] <project-name>
+git clone https://github.com/fulcradynamics/app-template-svelte <project-name>
 cd <project-name>
 rm -rf .git  # Remove template git history
 git init     # Start fresh git history
@@ -153,7 +147,7 @@ You may share this URL as an **in-progress baseline**, not a completed M1 handof
 
 Within M1, the Nurse sets up the dashboard as part of the harness machinery; the Generator handles baseline app code. Reuse the harness data type from step 5, add the environment variables (using `uvx fulcra-api user-info` to retrieve the owner's `"userid"`), create the backend-only server endpoints, integrate the dashboard components, and [redeploy](references/deploy.md#deploy). Keep role transitions explicit even when one agent performs both roles.
 
-Follow [`references/harness-dashboard-setup.md`](references/harness-dashboard-setup.md) for commands, env vars, endpoints, component wiring, and acceptance checks. Both frameworks must pass the same gate; an untested React path is a blocker, not permission to omit the harness.
+Follow [`references/harness-dashboard-setup.md`](references/harness-dashboard-setup.md) for commands, env vars, endpoints, component wiring, and acceptance checks. Missing testing is a blocker, not permission to omit the harness.
 
 Record `GENERATE` completed only after the implementation work is done. The Evaluator then records `REVIEW` started and executes the dashboard handoff gate against the deployed app, including the Harness page and global `<OwnerNav />`, live run data, and owner-only access. This is where you establish that the user can actually use what you are handing over, not just view it. Store the tool evidence in the workspace; do not record `REVIEW` completed until its checks pass.
 
