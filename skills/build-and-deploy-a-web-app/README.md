@@ -7,3 +7,5 @@ Tell your agent what you want to make. It turns the idea into a plan that uses w
 The app is built in small milestones. Each one is generated, then checked separately against the live app before it counts as done. Your plan, spec, decisions, and history are kept in a Fulcra workspace, so you or another agent can pick the project back up and keep improving it. A dashboard inside the app, visible only to you, shows each milestone's runs and evaluation results.
 
 Built on the Fulcra app templates, `fulcra-api`, and Fulcra deploy projects.
+
+Deployment instructions and a [reusable helper](scripts/deploy-fulcra.mjs) are included in [the deploy reference](references/deploy.md), including reuse of an already-owned namespace. Apps needing durable cursors or periodic background work can use the [native state and scheduling pattern](references/native-state-and-scheduling.md) through the same Fulcra deployment; a separate database/hosting account is not the default requirement.
