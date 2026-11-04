@@ -17,7 +17,7 @@ The goal is an app the user can actually use, not something that only looks like
 
 - Read [harness-control-flow.md](references/harness-control-flow.md) before implementation. The harness is the development process, not an optional dashboard or a final setup step.
 - **M1 — Working baseline and harness dashboard** is always the first milestone. Run scaffolding, baseline deployment, and dashboard integration through the harness; do not build features first and backfill events later.
-- Execute each role with real tools. For simple work one agent may take the roles sequentially, but keep generation and evaluation separate: the Evaluator checks the spec and evidence rather than accepting the Generator's claims. Only the Nurse creates or repairs harness machinery.
+- Coordinator autonomously selects light/focused/full with a reason and scoped checks, escalating for uncertainty. Light presentation-only work needs affected visual checks, not independent review; focused contained changes need affected tests and the changed journey, with optional independent review. Full new/cross-cutting/complex/security-sensitive work and M1 require a separate evaluator agent/context, not every unrelated suite. All tiers require real evidence against a fixed spec. Only the Nurse creates or repairs harness machinery.
 - Every run event must include a non-empty `evidence` string describing what was actually done and observed so far. A completed `REVIEW` must report the successful evaluations actually performed, with commands or UI actions, the tested target, and observed results; intentions, a build alone, or "tests passed" are not sufficient. The Coordinator must reject a passing review without this evidence and leave the milestone incomplete.
 - Before handing off M1, verify the deployed dashboard displays its actual run events and evaluation result. An empty dashboard, invented success records, or a deployed app without evaluation is not a completed milestone.
 - For user-reported bugs or adjustments, update the spec and decisions, [insert a milestone after the last completed milestone](references/harness-control-flow.md#user-reported-bugs-and-adjustments) (e.g., `m2-1` after M2), and run the harness as usual.
@@ -94,11 +94,11 @@ Use SvelteKit. If the user requests another framework, explain that this skill s
 
 ### 5. Start the First Harness Run
 
-Before cloning or writing app code, the Nurse bootstraps the minimal harness and its annotation data type using [harness-control-flow.md](references/harness-control-flow.md#setup). This is only the machinery needed to record and run M1, not an untracked dashboard implementation. Save the data type ID in `progress.md` and reuse it; do not create another in step 9.
+Before cloning or writing app code, the Nurse bootstraps the minimal harness and its v1 custom Event type using [harness-control-flow.md](references/harness-control-flow.md#setup) and the reusable [event schema](references/harness-events.md). This is only the machinery needed to record and run M1, not an untracked dashboard implementation. Save and verify the full type ID in `progress.md` before the first run and reuse it; do not create another in step 9.
 
-Mint a unique `run_id`, perform the Nurse health-check, write and read back `RUN_START`, and have the Coordinator record `FIND_MILESTONE` selecting M1. Record `GENERATE` started before implementation. Follow the recording instructions in the control-flow reference; if recording fails, stop and repair or escalate rather than continuing untracked.
+Before `RUN_START`, choose and persist the retry/timeout configuration in `plan.md`, including any explicit M1 timeout override, and use it to set the run's absolute deadline. Mint a unique `run_id`, perform the Nurse health-check, write and read back `RUN_START`, and have the Coordinator record `FIND_MILESTONE` selecting M1. Record `GENERATE` started before implementation. Follow the recording instructions in the control-flow reference; if recording fails, stop and repair or escalate rather than continuing untracked.
 
-Steps 6–9 below are the implementation work **inside this run**, not prerequisites to starting the harness. Keep the default retry/timeout rules; if M1 needs more time, record an explicit configuration override in `plan.md` before continuing rather than silently ignoring the timeout.
+Steps 6–9 below are the implementation work **inside this run**, not prerequisites to starting the harness. Keep the configured deadline; never silently extend it. If M1 times out, stop its workers and close the attempt under the control-flow rules. Any timeout override for a fresh attempt must be chosen and persisted before that attempt's `RUN_START`, within the remaining retry budget; do not extend or resume the timed-out attempt.
 
 ### 6. Generate the Baseline
 
@@ -119,11 +119,17 @@ Create `AGENTS.md` at the project root:
 **Workspace**: `workspace/<project-name>/`  
 **Skill**: build-and-deploy-a-web-app (fulcradynamics/agent-skills)
 
-The Fulcra workspace is the primary source of truth. Read plan.md, spec.md,
-decisions.md, progress.md, and relevant history before continuing. Load the
-build-and-deploy-a-web-app skill and its harness-control-flow reference. All changes
-must use the harness: select a milestone, generate, perform separate evaluation
-with real tool evidence, then record the result and update workspace history.
+Read the Fulcra workspace once at startup: plan.md, full spec.md, current
+decisions.md, progress.md, outstanding-issues.md and relevant history. Pass context
+among roles. Load this skill and its harness-control-flow reference. Coordinator
+selects light/focused/full with reason and scoped checks; escalate uncertainty.
+All tiers need real checks/evidence; full and M1 require a separate evaluator
+agent/context. Keep the spec fixed. Use the v1 Event stream for live state and
+new resource IDs; write workspace/history at closure, including failures/stops.
+Never resume the same product run. Nurse verifies the prior worker stopped with
+actual runtime controls, closes the attempt, then starts a fresh ID within budget.
+Reuse inspected resources, not assumed passes; repair bookkeeping-only failures
+without regenerating verified work. Preserve type and deployment IDs.
 Never skip the harness or infer completion from a deployment alone.
 For a user-reported bug or adjustment, update the spec and decisions, insert a
 milestone after the last completed one (e.g., m2-1 after M2), and run the harness.
@@ -141,7 +147,7 @@ Apply the confirmed [discoverability choice](references/discoverability.md): pub
 
 ### 8. Deploy Baseline
 
-Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a Fulcra domain without a Vercel account: create the app's deploy project once, saving it in `progress.md`, then deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which also covers falling back to the user's own Vercel account. Use the same deploy command for every later redeploy.
+Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a my.fulcra.ai subdomain without a Vercel account: create the app's deploy project once, immediately record its ID/domain in the live Event stream, and save it in `progress.md` at closure. Deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which also covers falling back to the user's own Vercel account. Use the same deploy command for every later redeploy.
 
 Open deployed apps in the user's default system browser, not an inline harness browser, which can block Auth0 popups and fallback sign-in links. If you cannot launch the user's browser, share the URL and ask them to open it there. Use this for the baseline and every later handoff.
 
@@ -153,17 +159,17 @@ Within M1, the Nurse sets up the dashboard as part of the harness machinery; the
 
 Follow [`references/harness-dashboard-setup.md`](references/harness-dashboard-setup.md) for commands, env vars, endpoints, component wiring, and acceptance checks. Missing testing is a blocker, not permission to omit the harness.
 
-Record `GENERATE` completed only after the implementation work is done. The Evaluator then records `REVIEW` started and executes the dashboard handoff gate against the deployed app, including the Harness page and global `<OwnerNav />`, live run data, and owner-only access. This is where you establish that the user can actually use what you are handing over, not just view it. Store the tool evidence in the workspace; do not record `REVIEW` completed until its checks pass.
+Record `GENERATE` completed only after the implementation work is done. The Evaluator then records `REVIEW` started and executes the dashboard handoff gate against the deployed app, including the Harness page and global `<OwnerNav />`, live run data, and owner-only access. This is where you establish that the user can actually use what you are handing over, not just view it. Keep detailed tool output locally for the closure history and put concise observed results in live events; do not record `REVIEW` completed until its checks pass.
 
 ### 10. Close M1 and Continue Through the Harness
 
-On a passing review, the Coordinator records `MARK_COMPLETE`, updates `progress.md` and milestone history with evidence, and records `RUN_COMPLETE`. The Nurse refreshes `overview.md`; verify that the dashboard now shows the real M1 result before presenting the completed baseline and dashboard to the user. On failure, leave M1 incomplete and follow the documented retry/escalation flow. Never manufacture a successful run to fill the dashboard.
+On a passing review, Coordinator records `MARK_COMPLETE` and `RUN_END` with outcome `passed` and bookkeeping pending, writes/verifies closure progress/history, then records `BOOKKEEPING` complete. The dashboard reads its compact overview/issues from events, not workspace polling. Verify it shows the real M1 result before handoff. On failure, keep M1 incomplete and record `retry-needed`, `stopped` or `escalated` explicitly. Never manufacture a successful run to fill the dashboard.
 
-For M2 onward, select the earliest incomplete milestone and execute the same [control flow](references/harness-control-flow.md) with a new run ID. Read the current requirements, decisions, and history, generate the change, then exercise the user's intended workflow against its acceptance criteria and check that previously working behavior still works. This evaluation is required for every milestone; recording success cannot substitute for doing it. Persist the actual result. User-requested changes update the recorded requirements before another run; roles cannot rewrite the spec merely to pass review. Resume this process after interruptions rather than switching to ad hoc coding.
+For M2 onward, select the earliest incomplete milestone and execute the same [control flow](references/harness-control-flow.md) with a fresh run ID and appropriate tier. Read workspace once at startup, pass context among roles, generate, then execute the scoped checks and relevant regressions against the fixed spec. Record actual results. After interruption, Nurse diagnoses and confirms the old worker stopped through runtime controls, closes that attempt and starts a fresh one within retry/time limits; never resume the same run. Recover final bookkeeping without rerunning verified product work.
 
 Keep this harness implementation as simple as possible: the Preferred Coding Style intention applies to the harness too, so favor the smallest thing that works instead of an elaborate framework.
 
-**Track progress** using the workspace pattern (see [`references/workspace.md`](references/workspace.md)) and write annotation records at each step (see tracking system instructions in harness-control-flow.md). The Coordinator updates progress.md and the dashboard shows live status.
+**Track progress** with structured v1 Event records at actual transitions (see [`references/harness-events.md`](references/harness-events.md)). Keep compact state on every event and evidence deltas, not repeated transcripts. Coordinator updates workspace at closure; the dashboard shows live event state.
 
 ## Key Points
 
