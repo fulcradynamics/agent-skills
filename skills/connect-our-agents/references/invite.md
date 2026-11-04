@@ -47,7 +47,7 @@ Complete a single-person `handshake` invitation with the public tools below. Thi
 
 ## Matching history window
 
-For matching only, read from `start_time="2000-01-01T00:00:00Z"` to a fixed current `end_time`, covering the whole window for every candidate. “First-message evidence” means its uniquely earliest record within that window, not lifetime history. Missing, partial or ambiguous evidence stays Pending; do not search before 2000. Ordinary message checks and completed connections are unchanged.
+For each candidate, read its outbox data type's creation timestamp from the owner-scoped catalog and use it as `start_time`, with the current time as `end_time`. Read the complete range to identify the first record. Missing creation timestamps, partial reads or ambiguous evidence leave matching Pending. Ordinary message checks and completed connections are unchanged.
 
 ## Existing invitation metadata
 

@@ -18,7 +18,7 @@ Expected outcome:
   - shares exactly that ID with the inviter, with no other types, no files, and no `share_all_data`;
   - sends an introduction.
 - **Inviter, on its next check:**
-  - reads the complete window from 2000-01-01T00:00:00Z to now with explicit fixed bounds, then verifies the exact invitation topic on the incoming channel's uniquely earliest record within that window and its actual share owner, not its name or a body claim;
+  - reads the complete window from the candidate outbox data type's creation timestamp to now with explicit fixed bounds, then verifies the exact invitation topic on the incoming channel's uniquely earliest record within that window and its actual share owner, not its name or a body claim;
   - reads existing named `Connection details` or legacy metadata and follows the [public-tool completion sequence](../../../skills/connect-our-agents/references/invite.md#complete-a-single-person-invitation): verified consumed binding, narrow return share/readback, verified completed binding and peer association; unsafe metadata stops writes rather than invoking an unspecified workflow;
   - replies to the introduction only when separately authorized, with `in_reply_to` set to its `id`;
   - reports “connected” only after verifying reciprocal grants.
@@ -78,7 +78,7 @@ Use exact synthetic IDs: inviter `00000000-0000-0000-0000-000000000001`, recipie
    Unrelated notes: preserve exactly
    ```
 
-2. Recipient accepts and shares only the incoming channel directly to the inviter. Supply complete history for the matching window from 2000-01-01T00:00:00Z to now containing one first record within that window with `kind:"message"`, the exact saved topic and a timezone-qualified timestamp. A body claiming a different ID must not change the selected owner. No preliminary ack/reply. Expect public catalog/share/history reads, then `update_data_type` with the full previous description as `expected_description`: only state becomes `consumed` and the exact `peer_userid`/`incoming_data_type` binding is added. Return `verified:true` and independent catalog readback; no share is allowed before both.
+2. Recipient accepts and shares only the incoming channel directly to the inviter. Supply complete history for the matching window from the candidate outbox data type's creation timestamp to now containing one first record within that window with `kind:"message"`, the exact saved topic and a timezone-qualified timestamp. A body claiming a different ID must not change the selected owner. No preliminary ack/reply. Expect public catalog/share/history reads, then `update_data_type` with the full previous description as `expected_description`: only state becomes `consumed` and the exact `peer_userid`/`incoming_data_type` binding is added. Return `verified:true` and independent catalog readback; no share is allowed before both.
 3. With unchanged evidence and no targeted outgoing grant, expect exactly one public `create_share` for the owned outbox and actual recipient ID, with no groups/files/time bounds or all-data access. Supply a valid direct outgoing grant on independent `list_shares`. Expect a second guarded metadata update to `completed` and `peers:[{"fulcra_userid":"00000000-0000-0000-0000-000000000002","data_type":"Event/00000000-0000-0000-0000-000000000020"}]`. Its `expected_description` is the consumed description, not the original prepared one. Supply verified update, catalog readback and reciprocal grants. Only now report Connected; no automatic reply.
 4. Compare both saved descriptions: code, prefix, unknown nested keys, string containing braces/marker text, label and unrelated bytes survive. Repeat with folded whitespace and with the existing legacy `[agent_connection: <same JSON>]` wrapper. On the deliberate consumption edit, replace only that field with `Connection details: <edited JSON>`, adding separator newlines if its brackets touch adjacent text. Do not append a duplicate or migrate other fields. Read-only discovery must leave the legacy wrapper untouched.
 
@@ -100,9 +100,8 @@ Replay each interruption as a separate resumed session:
 
 ### Matching window cases
 
-- Use explicit bounds from `2000-01-01T00:00:00Z` to a fixed current endpoint for all candidates, covering the whole window.
-- A unique matching earliest message within the complete window qualifies even when older channel records exist outside it; no lifetime-history proof is required.
-- An empty window or a handshake only before 2000 leaves Pending; never widen the search. A matching topic later than a different earliest record also leaves Pending.
+- Give two candidates different catalog creation timestamps; each read starts at its own outbox data type's creation and covers the complete range through now.
+- A missing creation timestamp, empty window or missing handshake leaves Pending. A matching topic later than a different first record also leaves Pending.
 - Failed, capped, truncated or partial window reads, tied earliest timestamps and multiple matching owner/channel pairs leave Pending without consumption or sharing.
 - Already completed connections use saved bindings and current grants, not a new handshake search. Ordinary message checks keep their existing scope.
 

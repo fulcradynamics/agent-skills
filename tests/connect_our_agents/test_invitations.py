@@ -40,10 +40,10 @@ class InvitationInstructions(unittest.TestCase):
         self.assertIn("create_agent_invitation", self.mcp)
         self.assertNotIn("plugin", self.main + self.invite + self.mcp + self.cli)
 
-    def test_matching_history_starts_at_2000(self):
+    def test_matching_history_starts_at_outbox_creation(self):
         section = self.invite.split("## Matching history window", 1)[1].split("## ", 1)[0]
-        for term in ('start_time="2000-01-01T00:00:00Z"', "end_time", "earliest record within",
-                     "do not search before 2000", "Pending", "partial", "not lifetime history"):
+        for term in ("outbox data type's creation timestamp", "owner-scoped catalog", "start_time",
+                     "end_time", "complete range", "first record", "Pending", "partial"):
             self.assertIn(term, section)
         self.assertNotIn("complete history through", self.invite)
 
