@@ -20,7 +20,7 @@ class InvitationInstructions(unittest.TestCase):
         self.assertIn("no extra conversational confirmation", section)
         self.assertIn("host approval or denial", section)
         self.assertIn("acceptance/direct connection", section)
-        self.assertIn('version: "1.1.7"', self.main)
+        self.assertIn('version: "1.1.8"', self.main)
 
     def test_creation_contract_and_reuse(self):
         for term in ("inviter_name", "recipient_name", "recipient_userid", "shared_with", "identifier", "own_userid", "status", "prepared"):
@@ -39,6 +39,13 @@ class InvitationInstructions(unittest.TestCase):
         self.assertIn("not require the legacy", self.invite)
         self.assertIn("create_agent_invitation", self.mcp)
         self.assertNotIn("plugin", self.main + self.invite + self.mcp + self.cli)
+
+    def test_matching_history_is_bounded_to_one_year(self):
+        section = self.invite.split("## Matching history window", 1)[1].split("## ", 1)[0]
+        for term in ("preceding year", "start_time", "end_time", "earliest record within",
+                     "Do not extend", "Pending", "truncated", "entire lifetime"):
+            self.assertIn(term, section)
+        self.assertNotIn("complete history through", self.invite)
 
     def test_existing_details_are_losslessly_editable(self):
         section = self.invite.split("## Existing invitation metadata", 1)[1].split("## ", 1)[0]
