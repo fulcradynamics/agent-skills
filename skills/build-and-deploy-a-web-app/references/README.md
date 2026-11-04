@@ -17,4 +17,5 @@ This directory contains reference implementations and documentation for the buil
 - **`harness-control-flow.md`** - Harness design and tracking system
 - **`harness-dashboard-setup.md`** - M1 dashboard implementation and required handoff checks
 - **`deploy.md`** - Deploy projects on a Fulcra domain, the deploy command, and the Vercel account fallback
+- **`discoverability.md`** - Confirm search discoverability, implement opt-out, and verify the deployed policy
 - **`workspace.md`** - Workspace structure and patterns
