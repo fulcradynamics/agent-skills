@@ -20,6 +20,10 @@ CLI_DOC = (SKILL / "references/cli.md").read_text()
 MCP_DOC = (SKILL / "references/mcp.md").read_text()
 # Just the commands in cli.md; its prose may name what not to run.
 CLI_COMMANDS = "\n".join(re.findall(r"```bash\n(.*?)```", CLI_DOC, re.DOTALL))
+SIMPLE_CLI_COMMANDS = "\n".join(
+    block for block in re.findall(r"```bash\n(.*?)```", CLI_DOC, re.DOTALL)
+    if "data-type create Event" not in block
+)
 
 # Fields every v1 Event record already has (fulcra-data-types).
 BASE_EVENT_FIELDS = {"id", "tags", "sources", "start_time", "end_time"}
@@ -106,9 +110,9 @@ class FieldsTests(unittest.TestCase):
 
 
 class CliTemplateTests(unittest.TestCase):
-    def test_cli_reference_has_no_embedded_python(self):
-        # Agents tripped over the python3 snippets; the CLI steps are templates.
-        self.assertNotIn("python", CLI_COMMANDS)
+    def test_only_creation_may_generate_json_with_python(self):
+        # Creation's quoted JSON generator has a separate offline argv test.
+        self.assertNotIn("python", SIMPLE_CLI_COMMANDS)
 
     def test_messages_are_sent_as_plain_text_with_connection_send(self):
         # PLAT-696: no JSON to write or escape (needs fulcra-api 0.1.51).
@@ -138,9 +142,9 @@ class CliTemplateTests(unittest.TestCase):
         self.assertEqual(json.loads(inlined), FIELDS)
         self.assertNotIn("curl", CLI_COMMANDS)
 
-    def test_cli_reference_runs_no_embedded_commands(self):
-        # Host scanners flag command substitution; every value is a literal.
-        self.assertNotIn("$(", CLI_COMMANDS)
+    def test_only_creation_may_use_command_substitution(self):
+        # Keep ordinary CLI templates simple; creation generates safe JSON.
+        self.assertNotIn("$(", SIMPLE_CLI_COMMANDS)
         self.assertNotIn("`", CLI_COMMANDS)
         self.assertNotIn("| ", CLI_COMMANDS)
 

@@ -13,7 +13,7 @@ Before setting anything up, agree with your user:
 
 ## What each run does
 
-Each run starts fresh. Because the channels record what's been answered, a run needs no memory of earlier runs, and a missed or doubled run does no harm.
+Each run checks the channels for what's been answered. Preserve unresolved send requests, IDs and stop signals across runs; an unanswered message is not permission to resend. If that context is missing, report the uncertainty rather than reconstructing a send. Apply [Send outcomes and recovery](../SKILL.md#send-outcomes-and-recovery) to every reply and ack.
 
 1. **Ask what's new** across everyone who shares with your user, over the schedule's interval **plus 30 minutes**. For example, check the last 90 minutes for an hourly schedule. The extra half hour covers updates that arrive late (see "Checking for messages" in SKILL.md).
    - CLI: `uvx fulcra-api data-updates "90 minutes" --include-shared`
@@ -23,7 +23,7 @@ Each run starts fresh. Because the channels record what's been answered, a run n
 4. **Never accept a connection request on a schedule.** Report it to your user instead.
 5. **Notify your user** only by the agreed rule. When there's nothing to report, stay silent.
 
-**If the host blocks a send** (for example, it needs your user to approve the command, or it doesn't allow commands that write when nobody is there to approve them), don't retry and don't look for a way around it. Report what's waiting: who wrote, what they asked, and the reply or ack you would have sent. Your user can approve it, or send it when they're back. A later run will find those messages still unanswered and can try again then.
+**If the host blocks a send** (for example, it needs your user to approve the command, or it doesn't allow commands that write when nobody is there to approve them), don't retry and don't look for a way around it. Report what's waiting: who wrote, what they asked, and the reply or ack you would have sent. A later run must still respect that block; elapsed time or a generic “try again” does not supply the missing approval or restore permission.
 
 When setting up the schedule, check whether the host will let it send without approval. If it won't, agree with your user that scheduled runs only read and report, and that replies wait for them.
 
