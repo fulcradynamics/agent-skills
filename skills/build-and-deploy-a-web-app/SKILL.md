@@ -81,7 +81,7 @@ the upload/deployment domains together so they can allow-list them in one pass:
 - `mcp.fulcradynamics.com` — Fulcra MCP and hosted upload links, when using that route.
 - `api.vercel.com` — Vercel app uploads and deployment, including Fulcra-managed projects and the own-account fallback.
 
-Explain that restricted environments such as Claude may prompt for domain approval
+Explain that restricted environments may prompt for domain approval
 or block these requests. Continue the flow after the notice; do not wait for a
 reply unless the environment requires approval. Do not defer the Vercel notice
 until deployment or repeat the list for each upload/redeploy. Include any other
