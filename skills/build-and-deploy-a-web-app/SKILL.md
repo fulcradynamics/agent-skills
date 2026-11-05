@@ -76,7 +76,7 @@ Get high-level approval from the user on this enhanced vision before proceeding.
 
 If the login command fails with a network error, inform the user that CLI authentication cannot be used in this environment and that MCP connector is an alternative option.
 
-**Initialize workspace**: Upload the approved plan to `workspace/<project-name>/plan.md` and initialize the workspace structure (see [`references/workspace.md`](references/workspace.md)).
+**Initialize workspace**: Before the first upload, give the brief [file-transfer domain notice](references/workspace.md#file-operations), then continue with the attempt. Upload the approved plan to `workspace/<project-name>/plan.md` and initialize the workspace structure (see [`references/workspace.md`](references/workspace.md)).
 
 ### 3. Interview for Spec
 

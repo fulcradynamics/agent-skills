@@ -8,6 +8,19 @@ later redeploy.
 
 ## Create the deploy project (once per app)
 
+Just before first accessing each deployment destination, give a brief notice:
+Fulcra project creation and tokens use `api.fulcradynamics.com`; app files are
+uploaded to Vercel through `api.vercel.com`, including when Fulcra provides the
+project token. Name any additional upload hostname returned by the tools before
+accessing it. Explain that restricted environments may prompt for approval or
+block access, requiring the user to allow-list the named hostname. Show hostnames
+only, not signed URLs or tokens. Continue with the attempt after the notice,
+without waiting for a reply unless the environment requires approval; do not
+repeat notices for already announced hosts on redeploys. If blocked, identify the
+hostname and required approval rather than bypassing the restriction. Do not
+treat unrelated deployment errors as allow-list failures. This also applies to
+the own-account fallback below.
+
 Before the first deploy, check startup `progress.md` and current/prior live run
 resource IDs for a saved **Deployment** section or newly created project.
 If it has a deploy project, reuse it; never create a second one for the same app.
