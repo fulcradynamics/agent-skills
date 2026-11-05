@@ -78,7 +78,6 @@ the upload/deployment domains together so they can allow-list them in one pass:
 
 - `api.fulcradynamics.com` — Fulcra API, deploy projects and tokens.
 - `storage.googleapis.com` — Google Cloud Storage for direct workspace uploads.
-- `mcp.fulcradynamics.com` — Fulcra MCP and hosted upload links, when using that route.
 - `api.vercel.com` — Vercel app uploads and deployment, including Fulcra-managed projects and the own-account fallback.
 
 Explain that restricted environments may prompt for domain approval
