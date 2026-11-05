@@ -72,6 +72,24 @@ Get high-level approval from the user on this enhanced vision before proceeding.
 
 ### 2. Connect to Fulcra and Initialize Workspace
 
+**Domain notice — give once, before any commands in this step:** Tell the user
+that workspace files will be uploaded to Fulcra and app files to Vercel. Present
+the upload/deployment domains together so they can allow-list them in one pass:
+
+- `api.fulcradynamics.com` — Fulcra API, deploy projects and tokens.
+- `storage.googleapis.com` — Google Cloud Storage for direct workspace uploads.
+- `api.vercel.com` — Vercel app uploads and deployment, including Fulcra-managed projects and the own-account fallback.
+
+Explain that restricted environments may prompt for domain approval
+or block these requests. Continue the flow after the notice; do not wait for a
+reply unless the environment requires approval. Do not defer the Vercel notice
+until deployment or repeat the list for each upload/redeploy. Include any other
+transfer hostnames already known from the tools; if a later response introduces
+an unexpected hostname, identify that addition before using it. Show hostnames,
+never signed URLs or tokens. If blocked, report the hostname and required approval
+without bypassing the restriction or claiming success; diagnose unrelated errors
+separately.
+
 **Authentication**: Run `uvx fulcra-api auth login --get-auth-url` to get authentication URL and device code. Share the URL with the user to authenticate in their browser, then run `uvx fulcra-api auth login --device-code <code>` to complete authentication.
 
 If the login command fails with a network error, inform the user that CLI authentication cannot be used in this environment and that MCP connector is an alternative option.

@@ -8,6 +8,11 @@ later redeploy.
 
 ## Create the deploy project (once per app)
 
+The combined upload/deployment domain notice belongs in [step 2](../SKILL.md#2-connect-to-fulcra-and-initialize-workspace),
+before first access, not at deployment time. If entering this reference directly,
+give that combined notice once before proceeding, including for the own-account
+fallback below.
+
 Before the first deploy, check startup `progress.md` and current/prior live run
 resource IDs for a saved **Deployment** section or newly created project.
 If it has a deploy project, reuse it; never create a second one for the same app.

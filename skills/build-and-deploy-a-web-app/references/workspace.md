@@ -67,6 +67,10 @@ There is no same-run product resumption.
 
 ## File operations
 
+The combined upload/deployment domain notice belongs in [step 2](../SKILL.md#2-connect-to-fulcra-and-initialize-workspace),
+before first access, not separately at each file operation. If entering this
+reference directly, give that combined notice once before proceeding.
+
 ```bash
 uvx fulcra-api file download "workspace/<project-name>/progress.md" ./progress.md
 uvx fulcra-api file upload ./progress.md "workspace/<project-name>/progress.md"
