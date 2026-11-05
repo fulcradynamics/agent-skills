@@ -67,18 +67,9 @@ There is no same-run product resumption.
 
 ## File operations
 
-Just before first accessing an upload destination, tell the user that you are
-saving workspace files to Fulcra and name the hostname the transfer will use.
-For direct storage uploads, use the Google hostname from the returned upload URL
-(commonly `storage.googleapis.com`); if the tool returns a Fulcra-hosted relay URL,
-name that hostname instead. Show only the hostname, never the signed URL or token.
-Explain that restricted environments such as Claude may prompt for domain approval
-or block the request, in which case the user may need to allow-list that hostname.
-Continue with the upload after the notice; do not wait for a reply unless the
-environment requires approval. Repeat only when a new upload hostname is needed.
-If a request is blocked, report the hostname and required approval without
-bypassing the restriction or claiming the file was saved. Other errors still need
-their own diagnosis; not every upload failure is an allow-list problem.
+The combined upload/deployment domain notice belongs in [step 2](../SKILL.md#2-connect-to-fulcra-and-initialize-workspace),
+before first access, not separately at each file operation. If entering this
+reference directly, give that combined notice once before proceeding.
 
 ```bash
 uvx fulcra-api file download "workspace/<project-name>/progress.md" ./progress.md
