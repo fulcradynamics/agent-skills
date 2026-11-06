@@ -83,7 +83,7 @@ def test_format_is_integrated_without_legacy_writes():
     invite = (SKILL / 'references/invite.md').read_text()
     cli = (SKILL / 'references/cli.md').read_text()
     acceptance = (ROOT / 'tests/acceptance/connect-our-agents/connection-flow.md').read_text()
-    assert 'version: "1.1.7"' in main
+    assert 'version: "1.1.8"' in main
     assert 'optional named field' in main
     assert 'on an outbox using legacy metadata' not in main
     assert 'retain the existing named spelling or legacy wrapper' not in invite
