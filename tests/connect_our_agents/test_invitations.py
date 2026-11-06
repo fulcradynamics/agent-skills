@@ -43,9 +43,11 @@ class InvitationInstructions(unittest.TestCase):
     def test_matching_history_starts_at_outbox_creation(self):
         section = self.invite.split("## Matching history window", 1)[1].split("## ", 1)[0]
         for term in ("outbox data type's creation timestamp", "owner-scoped catalog", "start_time",
-                     "end_time", "complete range", "first record", "Pending", "partial"):
+                     "one year before now", "end_time", "complete range", "not only the first",
+                     "Pending", "partial"):
             self.assertIn(term, section)
         self.assertNotIn("complete history through", self.invite)
+        self.assertNotIn("uniquely earliest", self.invite)
 
     def test_existing_details_are_losslessly_editable(self):
         section = self.invite.split("## Existing invitation metadata", 1)[1].split("## ", 1)[0]
@@ -81,7 +83,7 @@ class InvitationInstructions(unittest.TestCase):
         text = (SKILL.parents[1] / "tests/acceptance/connect-our-agents/connection-flow.md").read_text()
         section = text.split("## Named invitation lifecycle regression", 1)[1]
         for term in ("Connection details:", "expected_description", "prepared", "consumed",
-                     "completed", "peers", "first record", "create_share", "revoked",
+                     "completed", "peers", "handshake record", "create_share", "revoked",
                      "mixed old/new", "duplicate JSON keys", "unknown", "legacy",
                      "no automatic retry", "denial", "partial", "changed binding"):
             self.assertIn(term, section)
