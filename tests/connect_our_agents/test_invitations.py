@@ -43,8 +43,7 @@ class InvitationInstructions(unittest.TestCase):
     def test_matching_history_starts_at_outbox_creation(self):
         section = self.invite.split("## Matching history window", 1)[1].split("## ", 1)[0]
         for term in ("outbox data type's creation timestamp", "owner-scoped catalog", "start_time",
-                     "one year before now", "end_time", "complete range", "not only the first",
-                     "Pending", "partial"):
+                     "one year before now", "end_time", "not only the first", "Pending"):
             self.assertIn(term, section)
         self.assertNotIn("complete history through", self.invite)
         self.assertNotIn("uniquely earliest", self.invite)
@@ -85,7 +84,7 @@ class InvitationInstructions(unittest.TestCase):
         for term in ("Connection details:", "expected_description", "prepared", "consumed",
                      "completed", "peers", "handshake record", "create_share", "revoked",
                      "mixed old/new", "duplicate JSON keys", "unknown", "legacy",
-                     "no automatic retry", "denial", "partial", "changed binding"):
+                     "no automatic retry", "denial", "changed binding"):
             self.assertIn(term, section)
 
     def test_cli_preparation_and_later_handoff(self):

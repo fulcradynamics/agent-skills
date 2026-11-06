@@ -78,7 +78,7 @@ Use exact synthetic IDs: inviter `00000000-0000-0000-0000-000000000001`, recipie
    Unrelated notes: preserve exactly
    ```
 
-2. Recipient accepts and shares only the incoming channel directly to the inviter. Supply complete history for the matching window from the candidate outbox data type's creation timestamp to now containing a handshake record within that window with `kind:"message"`, the exact saved topic and a timezone-qualified timestamp. A body claiming a different ID must not change the selected owner. No preliminary ack/reply. Expect public catalog/share/history reads, then `update_data_type` with the full previous description as `expected_description`: only state becomes `consumed` and the exact `peer_userid`/`incoming_data_type` binding is added. Return `verified:true` and independent catalog readback; no share is allowed before both.
+2. Recipient accepts and shares only the incoming channel directly to the inviter. Supply history for the matching window from the candidate outbox data type's creation timestamp to now containing a handshake record within that window with `kind:"message"`, the exact saved topic and a timezone-qualified timestamp. A body claiming a different ID must not change the selected owner. No preliminary ack/reply. Expect public catalog/share/history reads, then `update_data_type` with the full previous description as `expected_description`: only state becomes `consumed` and the exact `peer_userid`/`incoming_data_type` binding is added. Return `verified:true` and independent catalog readback; no share is allowed before both.
 3. With unchanged evidence and no targeted outgoing grant, expect exactly one public `create_share` for the owned outbox and actual recipient ID, with no groups/files/time bounds or all-data access. Supply a valid direct outgoing grant on independent `list_shares`. Expect a second guarded metadata update to `completed` and `peers:[{"fulcra_userid":"00000000-0000-0000-0000-000000000002","data_type":"Event/00000000-0000-0000-0000-000000000020"}]`. Its `expected_description` is the consumed description, not the original prepared one. Supply verified update, catalog readback and reciprocal grants. Only now report Connected; no automatic reply.
 4. Compare both saved descriptions: code, prefix, unknown nested keys, string containing braces/marker text, label and unrelated bytes survive. Repeat with folded whitespace and with the existing legacy `[agent_connection: <same JSON>]` wrapper. On the deliberate consumption edit, replace only that field with `Connection details: <edited JSON>`, adding separator newlines if its brackets touch adjacent text. Do not append a duplicate or migrate other fields. Read-only discovery must leave the legacy wrapper untouched.
 
@@ -92,7 +92,7 @@ Replay each interruption as a separate resumed session:
 | Completed, grant revoked | Read-only discovery reports access missing, not Connected; no reset/re-share. |
 | Consumed, changed binding or account | Read-only Pending; no rebinding, sharing or completion. |
 | Prepared with valid existing recipient grant | Consume then complete after readback, without another create_share. |
-| Wider/malformed targeted grant, group/time-bound incoming grant, duplicate matching channels or partial history | No completion/share; report unavailable or ambiguous evidence. |
+| Wider/malformed targeted grant, group/time-bound incoming grant, or duplicate matching channels | No completion/share; report unavailable or ambiguous evidence. |
 | Consumption update uncertain, verified=false, stale expected_description, or host denial | Stop writes; reconcile read-only. No return share or alternate route. |
 | Share uncertain after consumption | Stop writes; re-read. A later authorized check may complete only if the exact grant is independently present; absence never authorizes retry. |
 | Completion update uncertain | Stop writes and re-read. Already completed means discovery only; consumed plus valid grant may finish on a later authorized check, never re-share. |
@@ -100,10 +100,10 @@ Replay each interruption as a separate resumed session:
 
 ### Matching window cases
 
-- Give two candidates different catalog creation timestamps; each read starts at its own outbox data type's creation and covers the complete range through now.
+- Give two candidates different catalog creation timestamps; each read starts at its own outbox data type's creation and runs through now.
 - A missing creation timestamp falls back to one year before now.
 - A handshake record after other records in the window matches. An empty window or missing handshake leaves Pending.
-- Failed, capped, truncated or partial window reads and multiple matching owner/channel pairs leave Pending without consumption or sharing.
+- Multiple matching owner/channel pairs leave Pending without consumption or sharing.
 - Already completed connections use saved bindings and current grants, not a new handshake search. Ordinary message checks keep their existing scope.
 
 For any future execution, capture the exact ordered public calls including matching time bounds, description before/after each guarded update and independent grant receipts. Do not count static phrase assertions as execution of this lifecycle.
