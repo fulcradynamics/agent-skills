@@ -77,6 +77,21 @@ of the CLI's dependencies supports.
 The app is served at `https://<domain>` from the saved/live resource, not at the
 `*.vercel.app` URL the CLI prints. Evaluate the deployed app at `https://<domain>`.
 
+## Delete the deployment
+
+If the user wants to take the app down, delete its deploy project. This removes
+the project and all its deployments, so the app's address stops serving. It
+doesn't touch the workspace: the plan, spec, decisions and history stay.
+
+```bash
+curl -sS -X DELETE "https://api.fulcradynamics.com/user/v1/deploy/project/<id>" \
+  -H "Authorization: Bearer $(uvx fulcra-api auth print-access-token)" \
+  -w '%{http_code}\n'
+```
+
+`204` means it's deleted; `404` means no such project. Note the deletion in the
+**Deployment** section of `progress.md`.
+
 ## Fallback: your own Vercel account
 
 Only use this when deploy projects are unavailable. Run `vercel whoami`. If the CLI

@@ -165,7 +165,7 @@ Apply the confirmed [discoverability choice](references/discoverability.md): pub
 
 ### 8. Deploy Baseline
 
-Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a my.fulcra.ai subdomain without a Vercel account: create the app's deploy project once, immediately record its ID/domain in the live Event stream, and save it in `progress.md` at closure. Deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which also covers falling back to the user's own Vercel account. Use the same deploy command for every later redeploy.
+Deploy the customized, working template so the user has a live baseline before feature development. Apps are deployed to a my.fulcra.ai subdomain without a Vercel account: create the app's deploy project once, immediately record its ID/domain in the live Event stream, and save it in `progress.md` at closure. Deploy with a fresh project token. Follow [`references/deploy.md`](references/deploy.md), which also covers falling back to the user's own Vercel account. Use the same deploy command for every later redeploy. To take an app down later, [delete its deployment](references/deploy.md#delete-the-deployment).
 
 Open deployed apps in the user's default system browser, not an inline harness browser, which can block Auth0 popups and fallback sign-in links. If you cannot launch the user's browser, share the URL and ask them to open it there. Use this for the baseline and every later handoff.
 
