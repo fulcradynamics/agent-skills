@@ -136,9 +136,16 @@ export function runFlow(events, allEvents = events) {
       }
     }
   }
+  // An incomplete outcome proves work remains, not that another worker started.
+  if (end && ['stopped', 'retry-needed', 'escalated'].includes(end.outcome)) {
+    Object.assign(byId.continue, {
+      state: end.outcome === 'escalated' ? 'attention' : 'waiting',
+      status: end.outcome === 'escalated' ? 'Help needed · not started' : 'Awaiting work · not started',
+      events: [end]
+    });
+    if (!byId.finish.events.length) Object.assign(byId.finish, { state: 'skipped', status: 'Work remains' });
+  }
   if (nextRun) Object.assign(byId.continue, { state: 'done', status: 'Linked retry started', events: [nextRun] });
-  else if (end?.outcome === 'retry-needed') Object.assign(byId.continue, { status: 'Retry needed', events: [end] });
-  else if (end?.outcome === 'escalated') Object.assign(byId.continue, { state: 'attention', status: 'Help needed', events: [end] });
   if (byId.finish.state === 'done') Object.assign(byId.continue, { state: 'skipped', status: 'Not taken' });
   const otherEvents = ordered.filter(event => event.role !== 'Nurse' && !Object.hasOwn(phaseForStep, event.step));
   return { cells, current, nurseSteps, nurseOutcomes, otherEvents };

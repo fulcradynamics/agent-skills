@@ -171,8 +171,22 @@
         {#if selected !== latest.run_id}<button onclick={() => openRun(latest)}>View latest run</button>{/if}
       </section>
     {:else if !loading && !message}<p>No run events yet. This is not evidence of completion.</p>{/if}
-    {#if current}
-      <section class="panel" aria-label="Selected run">
+    <section class="panel" aria-label="Selected run">
+      <div class="heading run-controls">
+        <h2>Selected run</h2>
+        <label>Run
+          <select value={selected || ''} disabled={!runs.length} onchange={(event) => {
+            const run = runs.find(run => run.run_id === event.currentTarget.value);
+            if (run) void openRun(run);
+          }}>
+            {#if !runs.length}<option value="">No runs loaded</option>{/if}
+            {#each runs as run}<option value={run.run_id}>{run.milestone} · {run.run_id} · {run.outcome}</option>{/each}
+          </select>
+        </label>
+        <button disabled={historyBusy} onclick={older}>Load older 30-day window</button>
+      </div>
+      <p aria-live="polite">{historyMessage}</p>
+      {#if current}
         <div class="heading"><h2>{current.milestone}</h2><span class:attention={current.outcome === 'escalated'}>{current.outcome === 'escalated' ? 'Help needed' : current.outcome}</span></div>
         <p class="muted">Run {current.run_id} · Attempt {current.attempt} · {current.tier}</p>
         <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard users must be able to scroll the diagram.) -->
@@ -192,7 +206,7 @@
             {/each}
           </div>
         </div>
-        <p class="legend">Green · completed &nbsp; Teal pulse · active &nbsp; Purple · failed step &nbsp; Orange · needs attention &nbsp; Faded · unused path</p>
+        <p class="legend">Green · completed &nbsp; Teal pulse · active &nbsp; Blue · awaiting work &nbsp; Purple · failed step &nbsp; Orange · needs attention &nbsp; Faded · unused path</p>
         <p class="muted">Nurse supervises throughout. Missing records stay unknown; an ended run is not necessarily a finished project.</p>
         <section class="phase-detail" aria-label="Selected phase details">
           <div class="heading"><h2>{phase.label}</h2><button onclick={follow} disabled={phaseSelection === null && nurseSelection === null}>Follow current step</button></div>
@@ -237,13 +251,8 @@
           <p>Final records: {current.bookkeeping || 'not recorded'}</p>
         </details>
         {#if flow.otherEvents.length}<details><summary>Other recorded steps</summary>{@render eventList(flow.otherEvents)}</details>{/if}
-      </section>
-    {/if}
-    <details class="panel"><summary>Run history</summary>
-      <ul>{#each runs as run}<li><button aria-pressed={selected === run.run_id} onclick={() => openRun(run)}>{run.milestone} · {run.run_id} · {run.outcome}</button></li>{/each}</ul>
-      <button disabled={historyBusy} onclick={older}>Load older 30-day window</button>
-      <p aria-live="polite">{historyMessage}</p>
-    </details>
+      {/if}
+    </section>
   {/if}
 </section>
 
@@ -253,13 +262,16 @@
   h1 { font-size: 1.75rem; margin-bottom: .75rem; } h2 { font-size: 1.25rem; font-weight: 600; } h3 { font-size: 1rem; font-weight: 600; margin: .75rem 0; }
   p { margin: .6rem 0; line-height: 1.5; } ul { padding-left: 1.25rem; list-style: disc; } small { display: block; font-size: .75rem; }
   .heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+  .run-controls { flex-wrap: wrap; align-items: center; }
+  .run-controls label { flex: 1 1 16rem; min-width: 0; }
+  select { display: block; width: 100%; min-height: 44px; font: inherit; color: #182025; background: white; border: 1px solid #849a9e; border-radius: .35rem; padding: .55rem; }
   .overview-columns, .nurse-columns { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 1.5rem; margin-top: 1rem; }
   .overview-columns { border-top: 1px solid #d6dfe0; padding-top: 1rem; }
   .overview-columns > section { padding: .75rem; border-radius: .5rem; }
   .muted, .legend, small { color: #546168; } .muted, .legend { font-size: .8rem; }
   button { font: inherit; border: 1px solid #849a9e; border-radius: .35rem; background: white; color: #182025; padding: .55rem .75rem; cursor: pointer; min-height: 44px; }
   button:disabled { opacity: .55; cursor: default; } button[aria-pressed='true'] { outline: 2px solid #182025; outline-offset: 3px; }
-  button:focus-visible, summary:focus-visible, .flow-scroll:focus-visible { outline: 3px solid #146dca; outline-offset: 4px; }
+  button:focus-visible, select:focus-visible, summary:focus-visible, .flow-scroll:focus-visible { outline: 3px solid #146dca; outline-offset: 4px; }
   .flow-scroll { overflow-x: auto; padding: 6px; margin: 1rem -6px 0; }
   .run-flow { position: relative; width: 918px; height: 156px; }
   .run-flow svg { position: absolute; inset: 0; }
@@ -278,6 +290,7 @@
   .event-list .heading { font-size: .85rem; } .event-list p { font-size: .85rem; }
   details { margin-top: .85rem; } summary { cursor: pointer; font-weight: 600; min-height: 30px; } .evidence { white-space: pre-wrap; overflow-wrap: anywhere; }
   .done { background: #e7f4ef; color: #225c43; border-color: #81b49e; }
+  .waiting { background: #eaf2ff; color: #224e85; border-color: #5683bd; }
   .active { background: #e0f3f1; color: #15534f; border-color: #247c76; }
   .active::before { content: ''; position: absolute; right: 5px; top: 5px; width: 5px; height: 5px; border-radius: 50%; background: #247c76; animation: pulse 1.8s infinite; }
   .failed { color: var(--color-fulcra-purple-100, #2b2b69); background: #f1edff; border-color: var(--color-fulcra-purple, #7b61ff); }

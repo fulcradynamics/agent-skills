@@ -88,6 +88,31 @@ test('a later continuation preserves earlier escalation evidence', () => {
 
 const cell = (flow, id) => flow.cells.find(cell => cell.id === id);
 
+for (const outcome of ['stopped', 'retry-needed', 'escalated']) {
+  test(`${outcome} awaits continuation without claiming a worker started`, () => {
+    const records = events({ step: 'RUN_END', outcome }, { step: 'BOOKKEEPING', outcome, bookkeeping: 'complete' });
+    const flow = state.runFlow(records);
+    assert.equal(cell(flow, 'continue').state, outcome === 'escalated' ? 'attention' : 'waiting');
+    assert.match(cell(flow, 'continue').status, /not started/i);
+    assert.equal(cell(flow, 'finish').state, 'skipped');
+    const unrelated = event({ id: 'other', step: 'RUN_START', run_id: 'other' });
+    const repair = event({ id: 'repair', role: 'Nurse', step: 'Repair configuration' });
+    assert.notEqual(cell(state.runFlow(records, [...records, unrelated, repair]), 'continue').state, 'done');
+    const linked = event({ id: 'next', step: 'RUN_START', run_id: 'run-b', previous_run_id: 'run-a' });
+    assert.equal(cell(state.runFlow(records, [...records, linked]), 'continue').status, 'Linked retry started');
+  });
+}
+
+test('insufficient records keep project branches unknown; explicit completion wins', () => {
+  for (const records of [[], events({ step: 'CHECK', status: 'failed' }), events({ step: 'BOOKKEEPING', outcome: 'stopped' }), events({ step: 'RUN_END', outcome: 'passed' })]) {
+    assert.equal(cell(state.runFlow(records), 'continue').state, 'pending');
+    assert.equal(cell(state.runFlow(records), 'finish').state, 'pending');
+  }
+  const records = events({ step: 'RUN_END', outcome: 'stopped' }, { step: 'PROJECT_COMPLETE', outcome: 'passed' });
+  assert.equal(cell(state.runFlow(records), 'finish').state, 'done');
+  assert.equal(cell(state.runFlow(records), 'continue').state, 'skipped');
+});
+
 test('finalization combines outcome and verified records without coloring successful failure handling as failure', () => {
   assert.equal(typeof state.runFlow, 'function', 'record-to-flow helper');
   const records = events(
