@@ -42,6 +42,12 @@ Use empty arrays for no issues/resources, not omitted fields. Include
 `bookkeeping` at closure. Resource entries have `kind`, `id`, and optional `url`;
 record deploy project ID and domain immediately after creation and retain them.
 
+Record the role actually performing the activity. Reserve `GENERATE` for
+Generator activity; for Nurse activity, use a descriptive step name for the
+actual action rather than borrowing the enclosing generation phase's name.
+This is an event-labeling convention only: it does not change role assignments,
+setup, execution order, or checks. Preserve original historical evidence.
+
 Keep UUID and timestamps stable when resolving an uncertain upload. Poll bounded
 by the deadline for that exact id; an upload receipt is not readback proof. Do
 not blindly submit a new ID or disable validation to bypass a failed write.
