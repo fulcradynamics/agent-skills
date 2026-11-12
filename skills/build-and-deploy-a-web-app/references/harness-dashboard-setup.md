@@ -82,6 +82,11 @@ records into phases; select a phase for its original details and evidence.
 Manual selection stays pinned across refreshes; **Follow current step** restores
 automatic selection. Nurse opens a dynamic sequence of recorded Nurse actions,
 not an inferred trace of every internal decision or proof that a repair was made.
+A Nurse result resolves the latest outstanding action with the same step name,
+even across other activity. Consecutive same-step progress stays grouped; a new
+start after intervening activity or a completed result retains a separate action.
+Failed milestone-completion attempts retain their evidence while an unsuccessful
+terminal outcome also confirms that the milestone was left unfinished.
 
 **Finalize run** groups `RUN_END` and `BOOKKEEPING`: completion requires a terminal
 outcome and completed, verified bookkeeping. Failed checks are purple; successful

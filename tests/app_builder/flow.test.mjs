@@ -32,6 +32,42 @@ test('Nurse activity uses original records, preserves attempts and only confirms
   assert.ok(escalated.cells.every(cell => cell.state !== 'active'), 'closed attempts cannot still pulse');
 });
 
+test('Nurse results resolve outstanding actions across interleaved activity without merging later attempts', () => {
+  const records = events(
+    { role: 'Nurse', step: 'Inspect worker', status: 'started' },
+    { role: 'Generator', step: 'GENERATE', status: 'started' },
+    { role: 'Nurse', step: 'Inspect configuration', status: 'started' },
+    { role: 'Nurse', step: 'Inspect worker', status: 'completed' },
+    { role: 'Nurse', step: 'Inspect worker', status: 'started' },
+    { role: 'Nurse', step: 'Inspect configuration', status: 'failed' }
+  );
+  const flow = state.runFlow(records);
+  assert.equal(flow.nurseSteps.length, 3);
+  assert.deepEqual(flow.nurseSteps.map(action => action.state), ['done', 'failed', 'active']);
+  assert.equal(flow.nurseSteps[0].id, records[0].id, 'selection keeps its original action ID');
+  assert.deepEqual(flow.nurseSteps[0].events, [records[0], records[3]]);
+  assert.deepEqual(flow.nurseSteps[1].events, [records[2], records[5]]);
+  assert.deepEqual(flow.nurseSteps[2].events, [records[4]], 'a later attempt stays separate');
+});
+
+test('interleaved Nurse starts retain separate action IDs while consecutive progress stays grouped', () => {
+  const records = events(
+    { role: 'Nurse', step: 'Inspect worker', status: 'started' },
+    { role: 'Generator', step: 'GENERATE', status: 'started' },
+    { role: 'Nurse', step: 'Inspect worker', status: 'started' },
+    { role: 'Nurse', step: 'Inspect worker', status: 'started' },
+    { role: 'Nurse', step: 'Inspect worker', status: 'completed' }
+  );
+  const flow = state.runFlow(records);
+  assert.equal(flow.nurseSteps.length, 2);
+  assert.equal(flow.nurseSteps[0].id, records[0].id);
+  assert.deepEqual(flow.nurseSteps[0].events, [records[0]]);
+  assert.equal(flow.nurseSteps[0].state, 'active', 'an unmatched earlier start has no result');
+  assert.equal(flow.nurseSteps[1].id, records[2].id);
+  assert.deepEqual(flow.nurseSteps[1].events, records.slice(2));
+  assert.equal(flow.nurseSteps[1].state, 'done');
+});
+
 test('branch styling uses recorded transitions, not absence, and retains unfamiliar events', () => {
   const records = events(
     { step: 'CHECK', status: 'started', tier: 'focused' },
@@ -84,6 +120,23 @@ test('a later continuation preserves earlier escalation evidence', () => {
   assert.equal(flow.nurseOutcomes[0].state, 'done');
   assert.equal(flow.nurseOutcomes[1].state, 'attention');
   assert.deepEqual(flow.nurseOutcomes[1].events, records);
+});
+
+test('unsuccessful completion preserves the attempted path and confirms unfinished work', () => {
+  for (const status of ['failed', 'started']) {
+    const records = events(
+      { step: 'CHECK' },
+      { step: 'MARK_COMPLETE', status },
+      { step: 'RUN_END', outcome: 'retry-needed' },
+      { step: 'BOOKKEEPING', outcome: 'retry-needed', bookkeeping: 'complete' }
+    );
+    const flow = state.runFlow(records);
+    assert.equal(cell(flow, 'unfinished').state, 'done');
+    assert.deepEqual(cell(flow, 'unfinished').events, [records[2]]);
+    assert.equal(cell(flow, 'complete').state, status === 'failed' ? 'failed' : 'pending');
+    assert.deepEqual(cell(flow, 'complete').events, [records[1]]);
+    assert.equal(cell(flow, 'finalize').state, 'done');
+  }
 });
 
 const cell = (flow, id) => flow.cells.find(cell => cell.id === id);

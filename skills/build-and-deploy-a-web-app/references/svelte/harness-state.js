@@ -72,8 +72,11 @@ export function runFlow(events, allEvents = events) {
   let previous;
   for (const event of ordered) {
     if (event.role === 'Nurse') {
-      let action = nurseSteps.at(-1);
-      if (!action || previous?.role !== 'Nurse' || action.label !== event.step || action.events.at(-1)?.status !== 'started') {
+      // Results can arrive across interleaved activity; new starts retain their own action.
+      let action = event.status === 'started'
+        ? (previous?.role === 'Nurse' ? nurseSteps.at(-1) : undefined)
+        : nurseSteps.findLast(action => action.label === event.step && action.events.at(-1)?.status === 'started');
+      if (!action || action.label !== event.step || action.events.at(-1)?.status !== 'started') {
         action = { id: event.id, label: event.step, events: [], state: 'pending', status: 'Not recorded' };
         nurseSteps.push(action);
       }
@@ -92,9 +95,9 @@ export function runFlow(events, allEvents = events) {
   }
   const end = ordered.findLast(event => event.step === 'RUN_END');
   const bookkeeping = ordered.findLast(event => event.step === 'BOOKKEEPING');
-  if (end && end.outcome !== 'running' && end.outcome !== 'passed' && !byId.complete.events.length) {
+  if (end && end.outcome !== 'running' && end.outcome !== 'passed' && byId.complete.state !== 'done') {
     Object.assign(byId.unfinished, { state: 'done', status: 'Left unfinished', events: [end] });
-    Object.assign(byId.complete, { state: 'skipped', status: 'Not taken' });
+    if (!byId.complete.events.length) Object.assign(byId.complete, { state: 'skipped', status: 'Not taken' });
   }
   const finalized = end && end.outcome !== 'running' && bookkeeping?.status === 'completed' && bookkeeping.bookkeeping === 'complete';
   const finalFailure = byId.finalize.events.at(-1)?.status === 'failed';
