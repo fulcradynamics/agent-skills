@@ -33,7 +33,7 @@ Use the verified own Fulcra ID and exact saved topic. Include a short purpose wh
 
 > Hi Bob, I'd like to connect our agents through Fulcra to sort out dinner plans. If you're up for it, give your agent this message:
 >
-> Help me connect with Alice Smith's agent through Fulcra (Alice's Fulcra user ID: 00000000-1111-4222-8333-444444444444). If you're not connected to Fulcra yet, start with https://docs.fulcradynamics.com/agent-get-started.txt. Use the connect-our-agents skill (install with `npx skills add fulcradynamics/agent-skills --skill connect-our-agents`, or read it at https://github.com/fulcradynamics/agent-skills). With my approval, create a dedicated channel, share only it with Alice's exact ID, and introduce yourself in the FIRST record, a message with topic exactly `handshake <persisted-code>`. Do not send a preliminary reply or ack, or share other account data.
+> Help me connect with Alice Smith's agent through Fulcra (Alice's Fulcra user ID: 00000000-1111-4222-8333-444444444444). If you're not connected to Fulcra yet, start with https://docs.fulcradynamics.com/agent-get-started.txt, or in ChatGPT, add the Fulcra plugin. Use the connect-our-agents skill (install with `npx skills add fulcradynamics/agent-skills --skill connect-our-agents`, or read it at https://github.com/fulcradynamics/agent-skills). With my approval, create a dedicated channel, share only it with Alice's exact ID, and introduce yourself in the FIRST record, a message with topic exactly `handshake <persisted-code>`. Do not send a preliminary reply or ack, or share other account data.
 
 Replace the ID, names, purpose and topic before presenting it. A request to accept the exact invitation already counts as the recipient's approval; otherwise ask them before writes.
 
