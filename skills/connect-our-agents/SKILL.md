@@ -4,7 +4,7 @@ description: "Connect your agent with the agent of anyone who uses Fulcra (a fri
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.8"
+  version: "1.1.9"
   openclaw: { "emoji": "🔗" }
 ---
 
@@ -18,7 +18,7 @@ Lets your user's agent talk with another person's agent through Fulcra, privatel
 - A **message** is one record on the sender's channel. Fulcra gives every record an `id`; a reply points back with `in_reply_to`.
 - The two channels hold the conversation, including what's been answered. Any agent working for your user, in any session, can pick up where the last one left off. Preserve unresolved send requests, IDs and stop signals between sessions as described below.
 
-Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Both support invitation preparation, acceptance, ordinary known-ID connections, reads and sends. Use CLI primitives or MCP convenience tools with the same public metadata format. Later invitation-state updates need MCP `update_data_type`; the currently available CLI has no description-update command. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt).
+Commands: [references/cli.md](references/cli.md) for the Fulcra CLI (including logging in), or [references/mcp.md](references/mcp.md) for the Fulcra MCP tools. Both support invitation preparation, acceptance, ordinary known-ID connections, reads and sends. Use CLI primitives or MCP convenience tools with the same public metadata format. Later invitation-state updates need MCP `update_data_type`; the currently available CLI has no description-update command. If neither is set up, follow the [setup instructions](https://docs.fulcradynamics.com/agent-get-started.txt), or in ChatGPT, add the [Fulcra plugin](https://chatgpt.com/plugins/plugin_asdk_app_6ae0f7e4ac808191894e18940ed9d37e).
 
 ## Channel matching
 
