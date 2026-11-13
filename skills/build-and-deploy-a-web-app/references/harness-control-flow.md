@@ -7,8 +7,7 @@ app-specific features start at M2.
 ## Roles and tiers
 
 - **Nurse** diagnoses interruptions, verifies workers have stopped, repairs and
-  monitors harness-run machinery. Only this role modifies that machinery; the
-  deployed dashboard is application code, not run-management machinery.
+  monitors harness machinery. Only this role modifies the harness.
 - **Coordinator** selects the earliest incomplete milestone, autonomously chooses
   a tier with a reason and scoped check plan, operates the run, inspects evidence,
   and closes it. Announce the choice; the user may override it.
@@ -74,8 +73,8 @@ Coordinator selects milestone/tier/check plan, mints a fresh `run_id`, sets
 `run_start`, `attempt` and absolute `deadline`, and records/read-backs `RUN_START`
 with Nurse health-check evidence before implementation. Include the actual
 runtime/session handle when workers are started. Emit `FIND_MILESTONE`, then
-`GENERATE` started/completed as work happens. M1 baseline deployment and dashboard
-implementation are inside this run, not untracked prerequisites.
+`GENERATE` started/completed as work happens. M1 baseline deployment and Nurse's
+dashboard implementation are inside this run, not untracked prerequisites.
 
 ## Run flow and evidence
 

@@ -173,7 +173,7 @@ You may share this URL as an **in-progress baseline**, not a completed M1 handof
 
 ### 9. Set Up Harness and Dashboard
 
-Within M1, the Generator implements the baseline app and deployed dashboard. The Nurse manages the actual harness-run machinery, not the dashboard application code; later dashboard theming, adjustments, and bug fixes are also Generator work. Reuse the harness data type from step 5, add the environment variables (using `uvx fulcra-api user-info` to retrieve the owner's `"userid"`), create the backend-only server endpoints, integrate the dashboard components, and [redeploy](references/deploy.md#deploy). Keep role transitions explicit even when one agent performs both roles.
+Within M1, the Nurse sets up the dashboard as part of the harness machinery; the Generator handles baseline app code. Reuse the harness data type from step 5, add the environment variables (using `uvx fulcra-api user-info` to retrieve the owner's `"userid"`), create the backend-only server endpoints, integrate the dashboard components, and [redeploy](references/deploy.md#deploy). Keep role transitions explicit even when one agent performs both roles.
 
 Follow [`references/harness-dashboard-setup.md`](references/harness-dashboard-setup.md) for commands, env vars, endpoints, component wiring, and acceptance checks. Missing testing is a blocker, not permission to omit the harness.
 
