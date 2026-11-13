@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { HarnessFeed } from '$lib/harness-feed.js';
   import { groupRuns, runFlow } from '$lib/harness-state.js';
 
@@ -15,6 +15,7 @@
   let now = $state(Date.now());
   let historyStart: string | null = $state(null);
   let historyBusy = $state(false);
+  let selectedRunSection: HTMLElement | undefined = $state();
   const feed = new HarnessFeed(async (params: Record<string, string>) => {
     const response = await fetch(`/api/harness/runs?${new URLSearchParams(params)}`, {
       signal: AbortSignal.timeout(20000), cache: 'no-store'
@@ -87,6 +88,16 @@
     } catch (error) {
       historyMessage = String(error);
     }
+  }
+
+  async function viewLatest() {
+    if (!latest) return;
+    if (selected !== latest.run_id) void openRun(latest);
+    await tick();
+    selectedRunSection?.scrollIntoView({
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start'
+    });
   }
 
   async function older() {
@@ -166,10 +177,10 @@
           </section>
         </div>
         {#if overdue}<p class="attention">Deadline passed without a terminal outcome. Nurse intervention needed; this is not an automatic stop confirmation.</p>{/if}
-        {#if selected !== latest.run_id}<button onclick={() => openRun(latest)}>View latest run</button>{/if}
+        <button onclick={viewLatest}>View latest run</button>
       </section>
     {:else if !loading && !message}<p>No run events yet. This is not evidence of completion.</p>{/if}
-    <section class="panel" aria-label="Selected run">
+    <section class="panel selected-run" aria-label="Selected run" bind:this={selectedRunSection}>
       <div class="heading run-controls">
         <h2>Selected run</h2>
           <select aria-label="Run" value={selected || ''} disabled={!runs.length} onchange={(event) => {
@@ -256,6 +267,7 @@
 <style>
   .harness { width: 100%; max-width: 78rem; min-width: 0; margin: auto; padding: 1.5rem; color: var(--color-fulcra-black, #182025); background: var(--color-fulcra-white, #fff); overflow-wrap: anywhere; }
   .panel { padding: 1.5rem; margin: 1rem 0; border: 1px solid #b8c4c7; border-radius: .75rem; background: var(--color-fulcra-white, #fff); }
+  .selected-run { scroll-margin-top: 5rem; }
   h1 { font-size: 1.75rem; margin-bottom: .75rem; } h2 { font-size: 1.25rem; font-weight: 600; } h3 { font-size: 1rem; font-weight: 600; margin: .75rem 0; }
   p { margin: .6rem 0; line-height: 1.5; } ul { padding-left: 1.25rem; list-style: disc; } small { display: block; font-size: .75rem; }
   .heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
