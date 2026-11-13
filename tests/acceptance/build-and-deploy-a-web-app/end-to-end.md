@@ -2,7 +2,7 @@
 
 Entry prompt: “I'd like to build a small web app with Fulcra: a task list for my AI agent, where I enter tasks I want it to do, mark them done when they're finished, and see what got done over the last seven days.”
 
-Preconditions and runtime: a fresh agent session with only this skill installed, logged in to a dedicated test account at its own Fulcra config path, with Node, `npm`, `jq` and `uvx` available. A tester plays the user and judges each turn against this scenario, not against exact wording.
+Preconditions and runtime: follow the mandatory [repository test account isolation](../../README.md#account-isolation-for-repository-tests) guidance. Use the agent-skills environment credentials, explicitly configured and verified as `leif+agent-skills-tester@fulcradynamics.com` before any writes, including by workers/evaluators. Never use Shell Beach/shared authentication or credential fallback. Start a fresh agent session with only this skill installed, with Node, `npm`, `jq` and `uvx` available. A tester plays the user and judges each turn against this scenario, not against exact wording.
 
 The simulated user:
 - wants exactly the app in the entry prompt, for personal use; no social features, sharing or file uploads;

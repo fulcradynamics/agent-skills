@@ -45,6 +45,123 @@ export function selectedRunId(selected, runs) {
   return selected || runs[0]?.run_id || null;
 }
 
+// Fixed presentation cells; the event schema and writers remain unchanged.
+export const flowCells = [
+  ['nurse', 'Nurse', 0, 0], ['plan', 'Plan & start', 1, 0],
+  ['build', 'Build', 2, 0], ['check', 'Check', 3, 0],
+  ['review', 'Independent review', 3, 1], ['complete', 'Mark milestone done', 4, 0],
+  ['unfinished', 'Milestone unfinished', 4, 1], ['finalize', 'Finalize run', 5, 0],
+  ['continue', 'Continue work', 6, 0], ['finish', 'Finish project', 6, 1]
+].map(([id, label, column, row]) => ({ id, label, column, row }));
+
+/** @type {Record<string, string>} */
+const phaseForStep = {
+  RUN_START: 'plan', FIND_MILESTONE: 'plan', GENERATE: 'build', RESOURCE_CREATED: 'build',
+  CHECK: 'check', REVIEW: 'review', MARK_COMPLETE: 'complete',
+  RUN_END: 'finalize', BOOKKEEPING: 'finalize', PROJECT_COMPLETE: 'finish'
+};
+
+/** @param {Record<string, any>[]} events @param {Record<string, any>[]} [allEvents] */
+export function runFlow(events, allEvents = events) {
+  const ordered = mergeEvents([], events);
+  const cells = flowCells.map(cell => ({ ...cell, state: 'pending', status: 'Not recorded', events: /** @type {Record<string, any>[]} */ ([]) }));
+  const byId = Object.fromEntries(cells.map(cell => [cell.id, cell]));
+  let current = 'plan';
+  /** @type {{id: string, label: string, events: Record<string, any>[], state: string, status: string}[]} */
+  const nurseSteps = [];
+  let previous;
+  for (const event of ordered) {
+    if (event.role === 'Nurse') {
+      // Results can arrive across interleaved activity; new starts retain their own action.
+      let action = event.status === 'started'
+        ? (previous?.role === 'Nurse' ? nurseSteps.at(-1) : undefined)
+        : nurseSteps.findLast(action => action.label === event.step && action.events.at(-1)?.status === 'started');
+      if (!action || action.label !== event.step || action.events.at(-1)?.status !== 'started') {
+        action = { id: event.id, label: event.step, events: [], state: 'pending', status: 'Not recorded' };
+        nurseSteps.push(action);
+      }
+      action.events.push(event);
+      Object.assign(action, eventState(event));
+      byId.nurse.events.push(event);
+      Object.assign(byId.nurse, eventState(event));
+    }
+    const id = Object.hasOwn(phaseForStep, event.step) ? phaseForStep[event.step] : undefined;
+    if (id) {
+      byId[id].events.push(event);
+      if (event.step !== 'RESOURCE_CREATED') Object.assign(byId[id], eventState(event));
+    }
+    if (id || event.role === 'Nurse') current = id || 'nurse';
+    previous = event;
+  }
+  const end = ordered.findLast(event => event.step === 'RUN_END');
+  const bookkeeping = ordered.findLast(event => event.step === 'BOOKKEEPING');
+  if (end && end.outcome !== 'running' && end.outcome !== 'passed' && byId.complete.state !== 'done') {
+    Object.assign(byId.unfinished, { state: 'done', status: 'Left unfinished', events: [end] });
+    if (!byId.complete.events.length) Object.assign(byId.complete, { state: 'skipped', status: 'Not taken' });
+  }
+  const finalized = end && end.outcome !== 'running' && bookkeeping?.status === 'completed' && bookkeeping.bookkeeping === 'complete';
+  const finalFailure = byId.finalize.events.at(-1)?.status === 'failed';
+  if (byId.finalize.events.length) {
+    Object.assign(byId.finalize, {
+      state: finalized ? 'done' : finalFailure ? 'failed' : 'pending',
+      status: finalized ? 'Completed' : finalFailure ? 'Could not finalize' : end ? 'Records pending' : 'Outcome not recorded'
+    });
+  }
+  if (byId.complete.state === 'done') Object.assign(byId.unfinished, { state: 'skipped', status: 'Not taken' });
+  // Only settle an unused verification branch after a recorded run end.
+  // Reconciliation can still add evidence and restore that branch later.
+  if (end && end.outcome !== 'running') {
+    for (const [used, unused] of [['check', 'review'], ['review', 'check']]) {
+      if (byId[used].events.length && !byId[unused].events.length) {
+        Object.assign(byId[unused], { state: 'skipped', status: 'Not recorded in run' });
+      }
+    }
+  }
+  const nextRun = allEvents.find(event => event.step === 'RUN_START' && event.previous_run_id === ordered[0]?.run_id && event.project_id === ordered[0]?.project_id && event.run_id !== ordered[0]?.run_id);
+  const nurseOutcomes = [
+    { id: 'continue', label: 'Continue', state: 'pending', status: 'Not confirmed yet', events: [] },
+    { id: 'help', label: 'Ask for help', state: 'pending', status: 'Not recorded', events: [] }
+  ];
+  if (nextRun) {
+    Object.assign(nurseOutcomes[0], { state: 'done', status: 'Linked retry started', events: [nextRun] });
+    Object.assign(nurseOutcomes[1], { state: 'skipped', status: 'Not taken' });
+  }
+  if (end?.outcome === 'escalated') {
+    if (!nextRun) Object.assign(nurseOutcomes[0], { state: 'skipped', status: 'Not taken' });
+    Object.assign(nurseOutcomes[1], { state: 'attention', status: 'Escalation recorded', events: [end] });
+  }
+  // A terminal record ends earlier activity, not later Nurse closure repairs.
+  if (end && end.outcome !== 'running') {
+    for (const cell of [...cells, ...nurseSteps]) {
+      const lastEvent = cell.events.at(-1);
+      if (cell.state === 'active' && lastEvent && ordered.indexOf(lastEvent) < ordered.indexOf(end)) {
+        Object.assign(cell, { state: 'pending', status: 'No result recorded' });
+      }
+    }
+  }
+  // An incomplete outcome proves work remains, not that another worker started.
+  if (end && ['stopped', 'retry-needed', 'escalated'].includes(end.outcome)) {
+    Object.assign(byId.continue, {
+      state: end.outcome === 'escalated' ? 'attention' : 'waiting',
+      status: end.outcome === 'escalated' ? 'Help needed · not started' : 'Awaiting work · not started',
+      events: [end]
+    });
+    if (!byId.finish.events.length) Object.assign(byId.finish, { state: 'skipped', status: 'Work remains' });
+  }
+  if (nextRun) Object.assign(byId.continue, { state: 'done', status: 'Linked retry started', events: [nextRun] });
+  if (byId.finish.state === 'done') Object.assign(byId.continue, { state: 'skipped', status: 'Not taken' });
+  const otherEvents = ordered.filter(event => event.role !== 'Nurse' && !Object.hasOwn(phaseForStep, event.step));
+  return { cells, current, nurseSteps, nurseOutcomes, otherEvents };
+}
+
+/** @param {Record<string, any>} event */
+function eventState(event) {
+  return {
+    state: event.status === 'failed' ? 'failed' : event.status === 'started' ? 'active' : 'done',
+    status: event.status === 'failed' ? 'Failed' : event.status === 'started' ? 'In progress' : 'Completed'
+  };
+}
+
 // Two-minute overlap handles ordinary ingestion delay. Every twelfth poll
 // reconciles from run_start, including idle/terminal runs. Never use event time
 // as a permanent high-water mark: arbitrarily late records need reconciliation.

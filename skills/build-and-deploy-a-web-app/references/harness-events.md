@@ -42,6 +42,12 @@ Use empty arrays for no issues/resources, not omitted fields. Include
 `bookkeeping` at closure. Resource entries have `kind`, `id`, and optional `url`;
 record deploy project ID and domain immediately after creation and retain them.
 
+Record the role actually performing the activity. Reserve `GENERATE` for
+Generator activity; for Nurse activity, use a descriptive step name for the
+actual action rather than borrowing the enclosing generation phase's name.
+This is an event-labeling convention only: it does not change role assignments,
+setup, execution order, or checks. Preserve original historical evidence.
+
 Keep UUID and timestamps stable when resolving an uncertain upload. Poll bounded
 by the deadline for that exact id; an upload receipt is not readback proof. Do
 not blindly submit a new ID or disable validation to bypass a failed write.
@@ -89,8 +95,10 @@ its own `{records: [...]}` envelope. Do not route v1 Events to v1alpha1 endpoint
 - Range: `{__name__="Event/<UUID>"}[<duration-seconds>s] @ <end-unix-seconds>`.
   Ranges return records overlapping `[start,end)`. The reference rounds start down
   and end up to seconds so subsecond boundary events are not lost; dedupe by id.
-- Bootstrap latest, then query from that record's `run_start` to now, even after
-  a long idle. No rolling 30-day current-run cutoff.
+- Bootstrap latest, then query from the earlier of seven days ago or that record's
+  `run_start` to now. This preloads recent history and retains the full current run
+  even after a long idle. Show the successfully loaded boundary in secondary text;
+  advance it only after a successful older-history request.
 - Every five seconds query latest for new-run discovery and the current run's
   incremental window, overlapping the last successful request time by two minutes.
   Every twelfth successful poll reconcile the entire current run, even terminal

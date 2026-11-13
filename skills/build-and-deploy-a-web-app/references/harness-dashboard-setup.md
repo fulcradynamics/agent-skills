@@ -72,6 +72,34 @@ run-relative reads handle idle runs; two-minute overlap and full reconciliation
 every twelfth successful poll recover delayed ingestion. History loads on demand
 and stays selected when newer runs arrive. See [query policy](harness-events.md#public-rest-contract-and-dashboard-queries).
 
+## Reading the workflow
+
+The latest project overview, next actions and open issues stay above the selected
+run, including when inspecting history. Select a run beside the Selected run
+heading; its Load older control retrieves earlier history without replacing the
+latest project overview. The compact main flow groups existing
+records into phases; select a phase for its original details and evidence.
+Manual selection stays pinned across refreshes; **Follow current step** restores
+automatic selection. Nurse opens a dynamic sequence of recorded Nurse actions,
+not an inferred trace of every internal decision or proof that a repair was made.
+A Nurse result resolves the latest outstanding action with the same step name,
+even across other activity. Consecutive same-step progress stays grouped; a new
+start after intervening activity or a completed result retains a separate action.
+Failed milestone-completion attempts retain their evidence while an unsuccessful
+terminal outcome also confirms that the milestone was left unfinished.
+
+**Finalize run** groups `RUN_END` and `BOOKKEEPING`: completion requires a terminal
+outcome and completed, verified bookkeeping. Failed checks are purple; successful
+handling and finalization remain green. Orange marks attention such as open
+issues and escalation. Missing records remain unknown, rather than becoming
+successful steps. A retry is confirmed only by a new `RUN_START` linked through
+`previous_run_id`; `retry-needed` alone does not prove continuation. Explicit
+`stopped`, `retry-needed` and `escalated` outcomes show Continue work as not started
+until that link exists and fade Finish project when work remains. Waiting uses
+steady blue, not the active-worker pulse; escalation stays orange. Absent terminal
+evidence leaves these branches unknown. No additional
+recording fields or writer obligations are required by this view.
+
 ## Deploy dashboard update
 
 Redeploy with the [deploy command](deploy.md#deploy), which passes the added
