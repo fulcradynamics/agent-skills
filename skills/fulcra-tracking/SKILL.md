@@ -29,6 +29,7 @@ Before executing this skill, determine your current context:
     - Ask the user what kind of specific data, events, or outputs they want to track for their project or life.
     - Propose the Universal Agent Visibility Package if they want visibility into background agent work or team accomplishments.
 2.  **Data Modeling:** 
+    - Before creating a new schema, check whether a usable one already exists with `fulcra-api catalog --user-defined`, which lists the custom data types the person can read: their own and any others shared with them. Add `--recordable` to narrow that to only their own, `--user-id <uuid>` to only one person's shared types, or `-n/--name` for a name match. This differs from `fulcra-api data-type list`, which lists only the types the person themselves created, the ones they can archive or restore.
     - Use the `fulcra-api data-type create` CLI command (or the MCP `create_data_type` alternative) to create schemas based on the user's intent.
     - Remember the `id`s returned by the create command.
 3.  **Record Data:** 
