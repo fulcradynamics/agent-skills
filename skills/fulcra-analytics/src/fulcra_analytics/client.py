@@ -1,7 +1,7 @@
 """Fulcra API client helpers for analytics workflows.
 
 The first implementation intentionally shells out to the supported Fulcra CLI
-(`uv tool run fulcra-api`) instead of reimplementing authentication or REST
+(`uvx fulcra-api`) instead of reimplementing authentication or REST
 transport. This keeps credentials, refresh behavior, and future API changes in
 one place while giving analytics code a typed Python interface.
 """
@@ -30,13 +30,13 @@ class FulcraClient:
 
     Args:
         executable: Command prefix used to invoke Fulcra. The default matches the
-            documented invocation: ``uv tool run fulcra-api``.
+            documented invocation: ``uvx fulcra-api``.
         timeout: Default subprocess timeout in seconds.
         env: Optional environment overrides for subprocess calls.
         cwd: Optional working directory for subprocess calls.
     """
 
-    executable: Sequence[str] = ("uv", "tool", "run", "fulcra-api")
+    executable: Sequence[str] = ("uvx", "fulcra-api")
     timeout: int = 120
     env: Mapping[str, str] | None = None
     cwd: str | Path | None = None

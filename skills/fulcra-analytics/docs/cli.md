@@ -11,7 +11,7 @@ description: Command-line entrypoint for fetching Fulcra data and printing descr
 The CLI lets users run Fulcra Analytics directly from the command line with:
 
 ```bash
-uv tool run fulcra-analytics ...
+uvx fulcra-analytics ...
 ```
 
 It uses `FulcraClient` for Fulcra CLI/API interactions, `loader` normalization for DataFrame creation, and `statistics` for descriptive summaries.
@@ -23,7 +23,7 @@ It uses `FulcraClient` for Fulcra CLI/API interactions, `loader` normalization f
 Fetch records via `fulcra-api get-records` and print JSON summary statistics:
 
 ```bash
-uv tool run fulcra-analytics records StepCount "1 week" --pretty
+uvx fulcra-analytics records StepCount "1 week" --pretty
 ```
 
 ### `metrics`
@@ -31,7 +31,7 @@ uv tool run fulcra-analytics records StepCount "1 week" --pretty
 Fetch metric time-series data via `fulcra-api metric-time-series` and print JSON summary statistics:
 
 ```bash
-uv tool run fulcra-analytics metrics HeartRate "1 day" --group-by source
+uvx fulcra-analytics metrics HeartRate "1 day" --group-by source
 ```
 
 ### `file`
@@ -39,7 +39,7 @@ uv tool run fulcra-analytics metrics HeartRate "1 day" --group-by source
 Analyze a local JSON, JSONL/NDJSON, or CSV export:
 
 ```bash
-uv tool run fulcra-analytics file export.json --pretty
+uvx fulcra-analytics file export.json --pretty
 ```
 
 ### `catalog`
@@ -47,7 +47,7 @@ uv tool run fulcra-analytics file export.json --pretty
 Print Fulcra catalog JSON:
 
 ```bash
-uv tool run fulcra-analytics catalog --base-types-only --pretty
+uvx fulcra-analytics catalog --base-types-only --pretty
 ```
 
 ### `user-info`
@@ -55,7 +55,7 @@ uv tool run fulcra-analytics catalog --base-types-only --pretty
 Print authenticated Fulcra user info JSON:
 
 ```bash
-uv tool run fulcra-analytics user-info --pretty
+uvx fulcra-analytics user-info --pretty
 ```
 
 ## Output

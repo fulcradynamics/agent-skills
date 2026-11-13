@@ -25,8 +25,8 @@ Defines lightweight Pydantic models for input metadata, analysis windows, and su
 Loads JSON, JSONL, and CSV files and returns analysis-ready records. Future versions should add direct wrappers around commands such as:
 
 ```bash
-uv tool run fulcra-api get-records <DataType> <Range>
-uv tool run fulcra-api metric-time-series <DataType> <Range>
+uvx fulcra-api get-records <DataType> <Range>
+uvx fulcra-api metric-time-series <DataType> <Range>
 ```
 
 ### `fulcra_analytics.statistics`
