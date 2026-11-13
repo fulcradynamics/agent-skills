@@ -13,6 +13,8 @@ export class HarnessFeed {
     this.current = null;
     /** @type {string | null} */
     this.lastRead = null;
+    /** @type {string | null} Successfully loaded contiguous history boundary. */
+    this.historyStart = null;
     this.polls = 0;
     this.busy = false;
     /** @type {Array<() => void>} */
@@ -26,16 +28,25 @@ export class HarnessFeed {
       const latest = await this.read({ mode: 'latest' });
       const current = groupRuns(latest)[0];
       let incoming = latest;
+      let initialStart = null;
+      if (!this.historyStart) {
+        const week = new Date(Date.parse(now) - 7 * 86400000).toISOString();
+        initialStart = current && Date.parse(current.run_start) < Date.parse(week) ? current.run_start : week;
+        incoming = mergeEvents(incoming, await this.read({ start: initialStart, end: now }));
+      }
       if (current) {
         const changed = current.run_id !== this.current;
-        const start = pollStart(current.run_start, changed ? null : this.lastRead, this.polls % 12 === 0);
-        incoming = mergeEvents(incoming, await this.read({ start, end: now }));
+        if (!initialStart) {
+          const start = pollStart(current.run_start, changed ? null : this.lastRead, this.polls % 12 === 0);
+          incoming = mergeEvents(incoming, await this.read({ start, end: now }));
+        }
         // Reconcile the previous run once on transition; it may have ended
         // between polls. Historical runs are reconciled when opened explicitly.
         const previous = groupRuns(this.events).find(run => run.run_id === this.current);
         if (changed && previous) incoming = mergeEvents(incoming, await this.read({start: previous.run_start, end: now}));
       }
       this.events = mergeEvents(this.events, incoming);
+      if (initialStart) this.historyStart = initialStart;
       this.current = current?.run_id || this.current;
       this.selected = selectedRunId(this.selected, groupRuns(this.events));
       this.lastRead = now;
@@ -50,6 +61,22 @@ export class HarnessFeed {
     // Transfer ownership without exposing an idle gap to the polling timer.
     if (next) next();
     else this.busy = false;
+  }
+
+  async loadOlder() {
+    if (this.busy) await new Promise(resolve => this.historyQueue.push(() => resolve(undefined)));
+    else this.busy = true;
+    try {
+      // Compute inside the lock: queued clicks must load consecutive windows.
+      if (!this.historyStart) throw new Error('Wait for initial history to load before loading older runs.');
+      const end = this.historyStart;
+      const start = new Date(Date.parse(end) - 30 * 86400000).toISOString();
+      this.events = mergeEvents(this.events, await this.read({ start, end }));
+      this.historyStart = start;
+      this.selected = selectedRunId(this.selected, groupRuns(this.events));
+    } finally {
+      this.release();
+    }
   }
 
   /** @param {string} start @param {string} end */

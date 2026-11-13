@@ -13,7 +13,7 @@
   let historyMessage = $state('');
   let lastSuccess = $state('');
   let now = $state(Date.now());
-  let historyEnd = $state('');
+  let historyStart: string | null = $state(null);
   let historyBusy = $state(false);
   const feed = new HarnessFeed(async (params: Record<string, string>) => {
     const response = await fetch(`/api/harness/runs?${new URLSearchParams(params)}`, {
@@ -60,6 +60,7 @@
   function sync() {
     runs = groupRuns(feed.events);
     selected = feed.selected;
+    historyStart = feed.historyStart;
   }
 
   async function poll() {
@@ -67,7 +68,7 @@
       await feed.refresh();
       sync();
       lastSuccess = feed.lastRead || '';
-      if (!historyEnd && runs.length) historyEnd = runs.at(-1).run_start;
+
       message = '';
     } catch (error) {
       message = error instanceof Error ? error.message : 'Refresh failed';
@@ -82,6 +83,7 @@
       // Explicit selection reconciles late history, not only its cached slice.
       await feed.history(run.run_start, new Date().toISOString());
       sync();
+      historyMessage = '';
     } catch (error) {
       historyMessage = String(error);
     }
@@ -89,14 +91,10 @@
 
   async function older() {
     historyBusy = true;
-    const end = historyEnd || new Date().toISOString();
-    const start = new Date(Date.parse(end) - 30 * 86400000).toISOString();
     try {
-      if (await feed.history(start, end)) {
-        sync();
-        historyEnd = start;
-        historyMessage = `Loaded history from ${start} to ${end}. Load again to go further back.`;
-      }
+      await feed.loadOlder();
+      sync();
+      historyMessage = '';
     } catch (error) {
       historyMessage = String(error);
     } finally {
@@ -174,18 +172,17 @@
     <section class="panel" aria-label="Selected run">
       <div class="heading run-controls">
         <h2>Selected run</h2>
-        <label>Run
-          <select value={selected || ''} disabled={!runs.length} onchange={(event) => {
+          <select aria-label="Run" value={selected || ''} disabled={!runs.length} onchange={(event) => {
             const run = runs.find(run => run.run_id === event.currentTarget.value);
             if (run) void openRun(run);
           }}>
             {#if !runs.length}<option value="">No runs loaded</option>{/if}
             {#each runs as run}<option value={run.run_id}>{run.milestone} · {run.run_id} · {run.outcome}</option>{/each}
           </select>
-        </label>
-        <button disabled={historyBusy} onclick={older}>Load older 30-day window</button>
+        <button disabled={historyBusy || !historyStart} onclick={older}>Load older 30-day window</button>
       </div>
-      <p aria-live="polite">{historyMessage}</p>
+      {#if historyStart}<p class="muted" aria-live="polite">History loaded from {new Date(historyStart).toLocaleString()}.</p>{/if}
+      {#if historyMessage}<p role="alert" class="attention">{historyMessage}</p>{/if}
       {#if current}
         <div class="heading"><h2>{current.milestone}</h2><span class:attention={current.outcome === 'escalated'}>{current.outcome === 'escalated' ? 'Help needed' : current.outcome}</span></div>
         <p class="muted">Run {current.run_id} · Attempt {current.attempt} · {current.tier}</p>
@@ -263,7 +260,7 @@
   p { margin: .6rem 0; line-height: 1.5; } ul { padding-left: 1.25rem; list-style: disc; } small { display: block; font-size: .75rem; }
   .heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
   .run-controls { flex-wrap: wrap; align-items: center; }
-  .run-controls label { flex: 1 1 16rem; min-width: 0; }
+  .run-controls select { flex: 1 1 16rem; min-width: 0; }
   select { display: block; width: 100%; min-height: 44px; font: inherit; color: #182025; background: white; border: 1px solid #849a9e; border-radius: .35rem; padding: .55rem; }
   .overview-columns, .nurse-columns { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 1.5rem; margin-top: 1rem; }
   .overview-columns { border-top: 1px solid #d6dfe0; padding-top: 1rem; }
@@ -299,5 +296,5 @@
   @keyframes pulse { 50% { opacity: .5; box-shadow: 0 0 0 5px #247c7620; } }
   @media (prefers-reduced-motion: reduce) { .active::before { animation: none; } }
   @media (max-width: 900px) { .overview-columns, .nurse-columns { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 600px) { .harness { padding: .75rem; } .panel { padding: 1rem; } }
+  @media (max-width: 600px) { .harness { padding: .75rem; } .panel { padding: 1rem; } .run-controls > h2, .run-controls > select, .run-controls > button { flex: 1 1 100%; width: 100%; } }
 </style>
