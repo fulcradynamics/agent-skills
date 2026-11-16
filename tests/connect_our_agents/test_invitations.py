@@ -20,7 +20,7 @@ class InvitationInstructions(unittest.TestCase):
         self.assertIn("no extra conversational confirmation", section)
         self.assertIn("host approval or denial", section)
         self.assertIn("acceptance/direct connection", section)
-        self.assertIn('version: "1.1.8"', self.main)
+        self.assertIn('version: "1.1.9"', self.main)
 
     def test_creation_contract_and_reuse(self):
         for term in ("inviter_name", "recipient_name", "recipient_userid", "shared_with", "identifier", "own_userid", "status", "prepared"):
@@ -38,7 +38,9 @@ class InvitationInstructions(unittest.TestCase):
             self.assertIn(term, self.invite.lower())
         self.assertIn("not require the legacy", self.invite)
         self.assertIn("create_agent_invitation", self.mcp)
-        self.assertNotIn("plugin", self.main + self.invite + self.mcp + self.cli)
+        plugin = "https://chatgpt.com/plugins/plugin_asdk_app_6ae0f7e4ac808191894e18940ed9d37e"
+        self.assertIn(f"or in ChatGPT, add the [Fulcra plugin]({plugin})", self.main)
+        self.assertIn(f"or in ChatGPT, add the Fulcra plugin: {plugin}.", self.invite)
 
     def test_matching_history_starts_at_outbox_creation(self):
         section = self.invite.split("## Matching history window", 1)[1].split("## ", 1)[0]
