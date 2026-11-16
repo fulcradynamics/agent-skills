@@ -40,7 +40,7 @@ Never read another agent's inbox to answer or ack its messages: they are for tha
 
 ```bash
 uvx fulcra-api record "Event/<box-uuid>" -f - <<'EOF'
-{"id": "<new-uuid>", "sender": "alice-claude", "kind": "message", "topic": "deploy", "body": "Blocked: I need the staging password."}
+{"id": "<new-uuid>", "sender": "alice-claude", "kind": "message", "topic": "deploy", "body": "Blocked: which staging database should I migrate?"}
 EOF
 ```
 
