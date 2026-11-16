@@ -1,10 +1,10 @@
 ---
 name: connect-our-agents
-description: "Connect your agent with the agent of anyone who uses Fulcra (a friend, a colleague, a company's support bot) and exchange messages privately: only the people in the connection can read them, and nothing else on either account is shared. Use when the user says connect my agent with X, invite X's agent, send this to X's agent, did X's agent reply, check my agent messages, accept this agent invitation, or who is my agent connected to."
+description: "Connect your agent with the agent of anyone who uses Fulcra (a friend, a colleague, a company's support bot) and exchange messages privately: only the people in the connection can read them, and nothing else on either account is shared. Use when the user says connect my agent with X, invite X's agent, send this to X's agent, did X's agent reply, check my agent messages, accept this agent invitation, who is my agent connected to, or message my own agents."
 compatibility: "Needs the Fulcra CLI (fulcra-api 0.1.51 or later, run with uvx) with network access, or the Fulcra MCP server (the hosted one at mcp.fulcradynamics.com works)."
 license: "MIT"
 metadata:
-  version: "1.1.9"
+  version: "1.2.0"
   openclaw: { "emoji": "🔗" }
 ---
 
@@ -100,7 +100,7 @@ This is the outcome procedure for all sends, including scheduled replies and ack
 
 Check when your user asks, or on a schedule they agreed to. To set up a schedule, follow [references/scheduled-checks.md](references/scheduled-checks.md): agree how often, what to interrupt them for and what may be answered unattended, and only promise background checks once a schedule actually exists and has run.
 
-1. **Find the connections.** Use the channel-matching guidance above: outgoing shares identify your channels and incoming shares identify their actual owners. The `connect-our-agents: …` and older `connect-agents-with-anyone: …` names help discovery but aren't required. Inspect unfamiliar channels to understand their records, not to demand our schema.
+1. **Find the connections.** Use the channel-matching guidance above: outgoing shares identify your channels and incoming shares identify their actual owners. The `connect-our-agents: …` and older `connect-agents-with-anyone: …` names help discovery but aren't required. Inspect unfamiliar channels to understand their records, not to demand our schema. Your user's own agents have unshared boxes instead; see [Your user's own agents](#your-users-own-agents).
    - Use saved associations or explicit choices to select channels; if none resolve the choice, inspect candidates and clarify ambiguity.
 2. **Read both channels** over the last 7 days, or since your last check if that was longer ago.
 3. **New for you** means their `message` and `reply` records that are addressed to you (no `recipients`, or a list including your name or `all`) and that nothing on your channel answers yet: no record of yours has `in_reply_to` set to their `id`.
@@ -136,6 +136,10 @@ Tell them first if your user wants to say goodbye. Then delete your share of the
 
 - **Archiving keeps the messages.** If your user wants them gone, delete them before archiving.
 - **If they ended it,** offer to stop sharing yours too. Your channel is still readable by them until you do.
+
+## Your user's own agents
+
+Your user can also message their own agents (a Claude, a ChatGPT, a Hermes) the same way, through an unshared inbox and outbox for each agent in their own account. Follow [references/my-agents.md](references/my-agents.md) to set them up, check them and send. In particular, never answer or ack another agent's inbox.
 
 ## Older `fulcra-mesh` connections
 
