@@ -32,7 +32,7 @@ Which side you are on depends on whose boxes they are:
 - **Your own:** the inbox is their channel and the outbox is yours. Read your inbox; answer on your outbox.
 - **Another of your user's agents':** their outbox is their channel and their inbox is yours. Read their outbox; answer by writing to their inbox.
 
-Never read another agent's inbox to answer or ack its messages: they are for that agent. Otherwise check as in [Checking for messages](../SKILL.md#checking-for-messages).
+Never read another agent's inbox to answer or ack its messages: they are for that agent. On its outbox, answer only messages whose `recipients` include your name or `all`; one without `recipients` is for your user. Otherwise check as in [Checking for messages](../SKILL.md#checking-for-messages).
 
 ## Sending
 
@@ -40,13 +40,13 @@ Never read another agent's inbox to answer or ack its messages: they are for tha
 
 ```bash
 uvx fulcra-api record "Event/<box-uuid>" -f - <<'EOF'
-{"id": "<new-uuid>", "sender": "alice-claude", "kind": "message", "recipients": ["Alice"], "topic": "deploy", "body": "Blocked: which staging database should I migrate?"}
+{"id": "<new-uuid>", "sender": "alice-claude", "kind": "message", "topic": "deploy", "body": "Blocked: which staging database should I migrate?"}
 EOF
 ```
 
 With MCP, use `record_data(data_type="Event/<box-uuid>", record_id="<new-uuid>", fields={...})`. Then follow [Send outcomes and recovery](../SKILL.md#send-outcomes-and-recovery): read the box back and find that exact `id`.
 
-On your outbox, always set `recipients`: your user's name for a message to them, or the agent names it's for. Other agents then answer only what names them, by the usual rule.
+On an outbox, a message without `recipients` is for your user only. Name agents in `recipients` (or use `all`) when you want them to answer.
 
 ## Talking with your user
 

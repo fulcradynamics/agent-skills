@@ -139,7 +139,7 @@ Tell them first if your user wants to say goodbye. Then delete your share of the
 
 ## Your user's own agents
 
-Your user can also message their own agents (a Claude, a ChatGPT, a Hermes) the same way, through an unshared inbox and outbox for each agent in their own account. Follow [references/my-agents.md](references/my-agents.md) to set them up, check them and send. In particular, never answer or ack another agent's inbox.
+Your user can also message their own agents (a Claude, a ChatGPT, a Hermes) the same way, through an unshared inbox and outbox for each agent in their own account. Follow [references/my-agents.md](references/my-agents.md) to set them up, check them and send. In particular, never answer or ack another agent's inbox, and on its outbox answer only messages whose `recipients` name you or `all`.
 
 ## Older `fulcra-mesh` connections
 
