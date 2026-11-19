@@ -13,13 +13,14 @@ globalThis.harnessTestOwner = owner.isOwner;
 const api = await load('harness-api-server.js', [
   [/import .* from '\$env\/dynamic\/public';/, "const env = { PUBLIC_FULCRA_API_ENDPOINT: 'https://fixture.invalid/' };"],
   [/import .* from '\$env\/dynamic\/private';/, "const privateEnv = { HARNESS_DATA_TYPE: 'Event/00000000-0000-4000-8000-000000000000' };"],
+  [/import .* from '\$app\/environment';/, 'const dev = false;'],
   [/import .* from '@sveltejs\/kit';/, 'const error = (status, message) => Object.assign(new Error(message), {status}); const json = data => Response.json(data);'],
   [/import .* from '\$lib\/api-client.js';/, 'const FulcraAPI = class {};'],
   [/import .* from '\$lib\/server\/harness-owner.js';/, 'const isOwner = globalThis.harnessTestOwner;'],
   [/from '\$lib\/harness-state.js'/, `from '${new URL('harness-state.js', root).href}'`]
 ]);
 const token = user => `fixture.${Buffer.from(JSON.stringify({'fulcradynamics.com/userid': user})).toString('base64url')}.unverified`;
-const request = (query = '', user = 'owner') => ({ cookies: {get: () => user ? token(user) : undefined}, url: new URL('https://fixture.invalid/api/harness/runs' + query), fetch: globalThis.fetch });
+const request = (query = '', user = 'owner') => ({ cookies: {get: name => user && name === '__Host-fulcra_access_token' ? token(user) : undefined}, url: new URL('https://fixture.invalid/api/harness/runs' + query), fetch: globalThis.fetch });
 test('backend denies missing/nonowner tokens before upstream requests', async () => {
   await assert.rejects(api.GET_runs(request('', null)), {status: 401});
   await assert.rejects(api.GET_runs(request('', 'other')), {status: 403});

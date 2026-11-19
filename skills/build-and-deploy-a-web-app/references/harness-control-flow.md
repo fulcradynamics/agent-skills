@@ -38,7 +38,8 @@ an explicit phase after implementation, not a claim that writing code suffices.
   Builds, reading code and API calls alone do not establish a user journey.
   Missing tools/credentials/checks are blockers, not passes.
 - Preserve template authentication. For authenticated checks use the existing
-  `fulcra_access_token` HTTP-only cookie and the CLI access token without logging
+  `__Host-fulcra_access_token` HTTP-only cookie (`fulcra_access_token` in local
+  development) and the CLI access token without logging
   credentials. Test backend denials, not only hidden controls.
 - When establishing/changing sign-in, test device-flow startup and authenticated
   behavior. Ask the user to complete interactive sign-in once at the deployed URL;

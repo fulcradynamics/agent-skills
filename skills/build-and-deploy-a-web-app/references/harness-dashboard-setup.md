@@ -114,7 +114,8 @@ against the spec with real tools and retains the evidence:
 - The baseline starts, the sign-in page renders and starts a device flow, and an
   authenticated owner can use the app and reach `/harness` from the global
   Harness navigation. Sign the browser in with the CLI token as the
-  `fulcra_access_token` cookie, and ask the user to try the real sign-in once
+  `__Host-fulcra_access_token` cookie (Secure, Path `/`, no Domain), and ask the
+  user to try the real sign-in once
   through `outstanding-issues.md` (non-blocking; see the
   [control-flow rules](harness-control-flow.md#rules)).
 - The runs endpoint returns the actual M1 run ID and its recorded steps; the
