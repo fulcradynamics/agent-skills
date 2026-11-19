@@ -9,8 +9,8 @@ This reference dictates the exact shell commands required to execute the `fulcra
 
 ## Authentication Note
 If you need to authenticate to Fulcra before running these commands, you must use the non-blocking two-step login process to prevent the CLI from hanging:
-1. `uv tool run fulcra-api auth login --get-auth-url` (present URL and code to user)
-2. `uv tool run fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
+1. `uvx fulcra-api auth login --get-auth-url` (present URL and code to user)
+2. `uvx fulcra-api auth login --device-code <DEVICE_CODE> --poll-timeout=5` (after user finishes flow)
 
 ## 1. Discovering Recent Memory Changes
 
@@ -18,7 +18,7 @@ To quickly see what memory files were updated or new knowledge was added recentl
 
 ```bash
 # Get a summary of files changed in the last 1 day
-uv tool run fulcra-api data-updates "1 day"
+uvx fulcra-api data-updates "1 day"
 
 # Example output:
 # {
@@ -83,16 +83,16 @@ Upload the files using the standardized agent path convention. Determine the age
 
 ```bash
 # Replace <agent_name> with the agent's actual name (e.g., treecle, wazir) in lowercase
-uv tool run fulcra-api file upload memory/progress.md "agent/<agent_name>/progress.md"
-uv tool run fulcra-api file upload memory/log.md "agent/<agent_name>/log.md"
-uv tool run fulcra-api file upload memory/index.md "agent/<agent_name>/index.md"
+uvx fulcra-api file upload memory/progress.md "agent/<agent_name>/progress.md"
+uvx fulcra-api file upload memory/log.md "agent/<agent_name>/log.md"
+uvx fulcra-api file upload memory/index.md "agent/<agent_name>/index.md"
 ```
 
 **Step C: Sync Identity & Role**
 If the agent's identity, duties, or standard operating procedures change, update the `role.md` file and upload it. Include OKF YAML frontmatter (`type: Role`).
 
 ```bash
-uv tool run fulcra-api file upload memory/role.md "agent/<agent_name>/role.md"
+uvx fulcra-api file upload memory/role.md "agent/<agent_name>/role.md"
 ```
 
 ## 2. Saving Session Summaries
@@ -107,7 +107,7 @@ Generate a concise markdown file capturing the session's context, decisions, and
 Upload the file to the `session/` namespace using the agent's name.
 
 ```bash
-uv tool run fulcra-api file upload memory/session/20260623-180530_setup-dashboard.md "agent/<agent_name>/session/20260623-180530_setup-dashboard.md"
+uvx fulcra-api file upload memory/session/20260623-180530_setup-dashboard.md "agent/<agent_name>/session/20260623-180530_setup-dashboard.md"
 ```
 
 ## 3. Managing Long-Running Tasks
@@ -124,8 +124,8 @@ Ensure `memory/task/index.md` is updated to include a link to the new or active 
 **Step C: Upload to Fulcra**
 Upload both the task file and the task index.
 
-uv tool run fulcra-api file upload memory/task/setup-dashboard.md "agent/<agent_name>/task/setup-dashboard.md"
-uv tool run fulcra-api file upload memory/task/index.md "agent/<agent_name>/task/index.md"
+uvx fulcra-api file upload memory/task/setup-dashboard.md "agent/<agent_name>/task/setup-dashboard.md"
+uvx fulcra-api file upload memory/task/index.md "agent/<agent_name>/task/index.md"
 ```
 
 ## 4. Personal Inbox Lifecycle
@@ -137,12 +137,12 @@ Read the file from the inbox. Once processed, you must upload it to the `archive
 
 ```bash
 # Example for a file originally named "todo.md"
-uv tool run fulcra-api file upload memory/archive/20260624-153000_todo.md "agent/<agent_name>/archive/20260624-153000_todo.md"
+uvx fulcra-api file upload memory/archive/20260624-153000_todo.md "agent/<agent_name>/archive/20260624-153000_todo.md"
 ```
 
 **Step B: Delete from Inbox**
 Once safely archived, delete the original file from the inbox.
 
 ```bash
-uv tool run fulcra-api file delete "agent/<agent_name>/inbox/todo.md"
+uvx fulcra-api file delete "agent/<agent_name>/inbox/todo.md"
 ```
