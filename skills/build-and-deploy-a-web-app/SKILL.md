@@ -46,6 +46,8 @@ The templates are the starting point; the harness makes the app reviewable and s
 
 Use the official [SvelteKit template](https://github.com/fulcradynamics/app-template-svelte). This is the only framework supported by this skill.
 
+When working on an existing app, compare its `TEMPLATE_VERSION` (`src/lib/template-version.js`; missing means before 1.0.0) with the template's latest [`CHANGELOG.md`](https://github.com/fulcradynamics/app-template-svelte/blob/main/CHANGELOG.md), which lists breaking changes since.
+
 ## Workflow
 
 ### 1. Idea and Enhancement

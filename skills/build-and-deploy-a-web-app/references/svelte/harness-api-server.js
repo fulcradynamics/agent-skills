@@ -1,15 +1,20 @@
 import { env } from '$env/dynamic/public';
 import { env as privateEnv } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 import { isOwner } from '$lib/server/harness-owner.js';
 import { parseRecords, recordsQuery } from '$lib/harness-state.js';
 
 // Copy to src/lib/server/harness-api-server.js; route files re-export handlers.
 // The claim gate is unchanged. Every data read also forwards the caller's token
 // to Fulcra for signature/expiry and per-user authorization checks.
+// The template's session cookie has the __Host- prefix except in local development.
+/** @param {import('@sveltejs/kit').Cookies} cookies */
+const sessionToken = (cookies) => cookies.get(`${dev ? '' : '__Host-'}fulcra_access_token`);
+
 /** @param {import('@sveltejs/kit').RequestEvent} event */
 export async function GET_runs({ cookies, url, fetch }) {
-  const accessToken = cookies.get('fulcra_access_token');
+  const accessToken = sessionToken(cookies);
   if (!accessToken) throw error(401, 'Not authenticated');
   if (!isOwner(accessToken)) throw error(403, 'Forbidden');
 
@@ -54,7 +59,7 @@ export async function GET_runs({ cookies, url, fetch }) {
 
 /** @param {import('@sveltejs/kit').RequestEvent} event */
 export async function GET_owner({ cookies }) {
-  return json({ isOwner: isOwner(cookies.get('fulcra_access_token')) }, {
+  return json({ isOwner: isOwner(sessionToken(cookies)) }, {
     headers: { 'Cache-Control': 'private, no-store' }
   });
 }
