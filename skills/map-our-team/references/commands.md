@@ -1,0 +1,18 @@
+# Commands
+
+Use whichever you have. `<steward>` is the steward's Fulcra user ID.
+
+| Do | MCP | CLI |
+|---|---|---|
+| Who am I | `get_user_info` or `list_shares` (`own_fulcra_userid`) | `uvx fulcra-api user-info` |
+| Write a file | `write_file(path, content)` | `uvx fulcra-api file upload local.md /team-map/index.md` |
+| Read your own | `read_file(path)` | `uvx fulcra-api file download /team-map/index.md -` |
+| Read the steward's | `read_file(path, fulcra_userid=<steward>)` | `uvx fulcra-api file download /team-map/index.md - --user-id <steward>` |
+| List the steward's | `list_files(path="/team-map/", fulcra_userid=<steward>)` | `uvx fulcra-api file list /team-map/ --user-id <steward>` |
+| Find incoming maps | `list_shares(direction="incoming")` | `uvx fulcra-api share list-incoming` |
+| Share the map with one person | `create_share(name="<team> team map", file_paths=["/team-map/"], with_user_ids=[<id>])` | `uvx fulcra-api share create --name "<team> team map" --file /team-map/ --user-id <id>` |
+| Remove a person | `delete_share(share_id)` | `uvx fulcra-api share delete <share-id>` |
+| List shares | `list_shares(direction="outgoing")` | `uvx fulcra-api share list-outgoing` |
+| Notice changes | `get_data_updates(start_time, end_time, fulcra_userid=<steward>)`, under `file_changes` | `uvx fulcra-api data-updates "1 hour" --include-shared` |
+
+Folder paths end in `/`. A folder share includes files added later, is read-only for recipients, and shares only the latest versions unless you ask for history.
