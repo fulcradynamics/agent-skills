@@ -19,11 +19,11 @@ If you have never set up the preference system before, you must create the schem
 
 1. Check if the schema exists:
    ```bash
-   uv tool run fulcra-api catalog --user-only | jq '[.[] | select(.name == "User Preference")]'
+   uvx fulcra-api catalog --user-only | jq '[.[] | select(.name == "User Preference")]'
    ```
 2. If it does not exist, create it:
    ```bash
-   uv tool run fulcra-api data-type create MomentAnnotation "User Preference" --description "Cross-platform user preferences and facts"
+   uvx fulcra-api data-type create MomentAnnotation "User Preference" --description "Cross-platform user preferences and facts"
    ```
    **Capture the returned `"id"`** (e.g., `com.fulcradynamics.annotation.xyz`). You will need this ID for loading and capturing preferences.
 
@@ -33,7 +33,7 @@ Run this early in any session where you need context about the user's preference
 
 1. Retrieve all recorded preferences using the schema ID:
    ```bash
-   uv tool run fulcra-api get-records MomentAnnotation "10 years" | jq '[.[] | select(.source_id == "<USER_PREFERENCE_ID>")]'
+   uvx fulcra-api get-records MomentAnnotation "10 years" | jq '[.[] | select(.source_id == "<USER_PREFERENCE_ID>")]'
    ```
 2. The output will contain JSON payloads in the `data` field representing individual preference signals.
 3. Review these signals and **synthesize** them into your working context. If there are conflicting signals for the same "key" (e.g., an older preference vs. a newer correction), always honor the most recent one.
@@ -60,7 +60,7 @@ Record the preference using the Fulcra Ingest API (injecting the token securely)
 
 ```bash
 curl -i -X POST \
-  -H "Authorization: Bearer $(uv tool run fulcra-api auth print-access-token)" \
+  -H "Authorization: Bearer $(uvx fulcra-api auth print-access-token)" \
   -H "Content-Type: application/json" \
   -d '{
     "metadata": {
