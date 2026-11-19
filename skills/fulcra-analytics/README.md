@@ -22,9 +22,9 @@ fulcra-analytics records StepCount "1 week" --pretty
 You can also run the package entrypoint directly:
 
 ```bash
-uv tool run fulcra-analytics records StepCount "1 week"
-uv tool run fulcra-analytics metrics HeartRate "1 day"
-uv tool run fulcra-analytics file path/to/export.json --pretty
+uvx fulcra-analytics records StepCount "1 week"
+uvx fulcra-analytics metrics HeartRate "1 day"
+uvx fulcra-analytics file path/to/export.json --pretty
 ```
 
 ## Privacy stance
