@@ -13,6 +13,17 @@ Build a working, maintainable Fulcra-backed web application through planned, gen
 
 The goal is an app the user can actually use, not something that only looks like their request. Evaluation is required and is often the most important part of the job: it establishes that the deployed experience works. Skipping or faking it does not finish the job; delivering broken functionality as working erodes the user's trust and interest.
 
+## Recommend a Coding Agent First
+
+When the host is known to be ChatGPT or Claude chat, start the first reply with a brief recommendation before asking about the app or running setup. Explain that this skill works better in a coding agent, which can work directly with project files, run commands and tests, and coordinate the build and evaluation.
+
+- **ChatGPT chat:** recommend [Codex](https://developers.openai.com/codex/cli). Follow its setup guide, sign in, open the project directory and run `codex`.
+- **Claude chat:** recommend [Claude Code](https://code.claude.com/docs/en/quickstart). Follow its setup guide, sign in, open the project directory and run `claude`.
+
+To switch, install this skill in the chosen agent (`npx skills add fulcradynamics/agent-skills`), then ask it to use `build-and-deploy-a-web-app`. Carry over the app request and any existing project directory, Fulcra workspace path, plan and decisions; switching does not transfer the chat automatically.
+
+Keep this advisory: say that continuing here is fine and proceed with the normal workflow in the same reply, without waiting for acknowledgment or repeating the recommendation. If the user chooses to switch, give them a concise handoff. Do not show the notice in Codex, Claude Code or other coding-agent hosts. Use explicit host context or the user's statement, not the model name; if the host is unknown, continue without a host-detection question or warning.
+
 ## Required Harness Contract
 
 - Read [harness-control-flow.md](references/harness-control-flow.md) before implementation. The harness is the development process, not an optional dashboard or a final setup step.

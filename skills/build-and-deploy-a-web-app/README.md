@@ -2,6 +2,8 @@
 
 Build your own web app on Fulcra and deploy it to a live address.
 
+For the best experience, use Codex or Claude Code: they can edit project files, run commands and tests, and coordinate the build and evaluation. If you start in ChatGPT or Claude chat, the skill first offers switching instructions; you can still continue in chat.
+
 Tell your agent what you want to make. It turns the idea into a plan that uses what Fulcra offers (sign-in, saved user data, sharing between users, file storage), starts from the official SvelteKit template with sign-in already working, and deploys it to a my.fulcra.ai subdomain. You don't need a hosting account.
 
 The app is built in small milestones. The Coordinator chooses light, focused or full checks with a reason: visual checks for presentation-only work, affected tests and user journeys for contained changes, and a separate evaluator for new, complex or security-sensitive work. The first baseline milestone always uses full deployed checks. Every tier needs real evidence, not just a successful build.
