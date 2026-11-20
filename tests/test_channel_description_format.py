@@ -12,7 +12,7 @@ SKILL = ROOT / 'skills/connect-our-agents'
 
 def test_named_field_contract_and_examples():
     text = (SKILL / 'references/channel-description-format.md').read_text()
-    for name in ('Contact label', 'Connection details', 'Contact status', 'Setup conversation', 'Invitation sender', 'Converted from mesh'):
+    for name in ('Contact label', 'Connection details', 'Contact status', 'Setup conversation', 'Invitation sender', 'Converted from mesh', 'My agent'):
         assert f'`{name}: `' in text
     for rule in ('mixed old/new duplicate', 'duplicate JSON keys',
                  'No bulk or read-triggered migration', 'separator newlines',
@@ -83,7 +83,7 @@ def test_format_is_integrated_without_legacy_writes():
     invite = (SKILL / 'references/invite.md').read_text()
     cli = (SKILL / 'references/cli.md').read_text()
     acceptance = (ROOT / 'tests/acceptance/connect-our-agents/connection-flow.md').read_text()
-    assert 'version: "1.1.9"' in main
+    assert 'version: "1.2.0"' in main
     assert 'optional named field' in main
     assert 'on an outbox using legacy metadata' not in main
     assert 'retain the existing named spelling or legacy wrapper' not in invite
@@ -101,3 +101,13 @@ def test_description_reference_links_resolve():
         for target in re.findall(r'\]\(([^)]+)\)', path.read_text()):
             if ':' not in target and not target.startswith('#'):
                 assert (path.parent / target.split('#')[0]).exists(), (path, target)
+
+
+def test_my_agent_boxes_example():
+    text = (SKILL / 'references/my-agents.md').read_text()
+    [example] = re.findall(r'```text\n(.*?)\n```', text, re.S)
+    first, field = example.splitlines()
+    assert first == 'Agent contact channel'
+    name, value = field.split(': ', 1)
+    assert name == 'My agent'
+    assert json.loads(value) == {'agent': 'alice-claude', 'box': 'inbox'}
